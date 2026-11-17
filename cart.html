@@ -50,20 +50,22 @@
     </main>
   </div>
 
-  <!-- Thanh Tổng kết Dính Đáy -->
-  <div id="cartStickyBottomBar" class="hidden fixed bottom-16 lg:bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 shadow-2xl">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
-      <label class="flex items-center gap-2.5 text-xs font-bold text-slate-700 cursor-pointer">
-        <input id="cartSelectAllCheckbox" type="checkbox" onchange="toggleSelectAllCartItems(this.checked)" class="w-4 h-4 accent-brand-500 rounded cursor-pointer" />
-        <span>Chọn tất cả (<span id="cartStickyAllCount">0</span>)</span>
+  <!-- Thanh Tổng kết Dính Đáy (Chuẩn 1 hàng ngang Single-row layout đồng bộ) -->
+  <div id="cartStickyBottomBar" class="hidden fixed bottom-16 lg:bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_25px_rgba(15,23,42,0.08)]">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4 flex-nowrap">
+      <!-- Cột trái: Checkbox Chọn tất cả -->
+      <label class="flex items-center gap-2 sm:gap-2.5 text-xs font-bold text-slate-700 cursor-pointer select-none shrink-0">
+        <input id="cartSelectAllCheckbox" type="checkbox" onchange="toggleSelectAllCartItems(this.checked)" class="w-4 h-4 accent-[#F25C22] rounded cursor-pointer shrink-0" />
+        <span class="whitespace-nowrap text-xs font-bold text-slate-700">Chọn tất cả (<span id="cartStickyAllCount">0</span>)</span>
       </label>
 
-      <div class="flex items-center gap-4 ml-auto">
-        <div class="text-right">
-          <div class="text-[11px] text-slate-500">Tổng thanh toán (<span id="cartStickyTicketsCount">0</span> vé):</div>
-          <div id="cartStickyTotalAmount" class="text-lg font-black text-brand-600">0 đ</div>
+      <!-- Cột phải: Cụm Tổng tiền và Nút Thanh toán (Cùng 1 hàng ngang, không rớt dòng) -->
+      <div class="flex items-center gap-2.5 sm:gap-4 shrink-0 min-w-0">
+        <div class="text-right leading-tight shrink-0">
+          <div class="text-[10px] sm:text-[11px] text-slate-500 whitespace-nowrap">Tổng thanh toán (<span id="cartStickyTicketsCount" class="font-bold text-slate-700">0</span> vé):</div>
+          <div id="cartStickyTotalAmount" class="text-sm sm:text-base md:text-lg font-black text-[#F25C22] tracking-tight whitespace-nowrap">0 đ</div>
         </div>
-        <button id="btnCheckoutFromCartPage" type="button" onclick="proceedToCheckoutFromCart()" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-extrabold shadow-sm cursor-pointer transition-colors">
+        <button id="btnCheckoutFromCartPage" type="button" onclick="proceedToCheckoutFromCart()" class="px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#F25C22] hover:bg-[#d84814] disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none text-white text-xs sm:text-sm font-extrabold shadow-md shadow-orange-500/25 cursor-pointer disabled:cursor-not-allowed transition-all active:scale-95 disabled:active:scale-100 whitespace-nowrap shrink-0 flex items-center justify-center">
           Thanh toán (<span id="cartCheckoutSelectedCount">0</span>)
         </button>
       </div>
