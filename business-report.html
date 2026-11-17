@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo cáo Hiệu quả Kinh doanh - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <div id="viewReportBusiness" class=" space-y-6 animate-in fade-in duration-200">
+
+      <!-- Page Header + Mục đích -->
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div class="space-y-1">
+          <h1 class="text-[24px] sm:text-[28px] font-extrabold text-slate-900 tracking-tight leading-tight">
+            Báo cáo Hiệu quả kinh doanh
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 font-medium max-w-3xl">
+            Đánh giá mức độ hoàn thành kế hoạch kinh doanh và theo dõi bức tranh lỗ lãi chi tiết tới từng giao dịch đơn hàng phát sinh trên toàn sàn.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
+          <span id="businessPastPeriodBadge" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-bold text-[11px]">
+            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+            <span>Dữ liệu quá khứ: Đã ẩn Dự kiến</span>
+          </span>
+          <button type="button"
+                  onclick="resetReportFilters('business')"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition-all cursor-pointer">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-brand-500"></i>
+            <span>Làm mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- A. BỘ LỌC ĐA CHIỀU (GIỐNG BÁO CÁO PHÂN TÍCH + SEARCHABLE SELECT) -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <!-- 1. Kênh bán -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kênh bán</label>
+            <select id="businessFilterChannel" onchange="onReportChannelChange('business')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả kênh bán</option>
+              <option value="Website">Website</option>
+              <option value="Đại lý (TA)">Đại lý (TA)</option>
+              <option value="Nội bộ">Nội bộ</option>
+            </select>
+          </div>
+
+          <!-- 2. Loại -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Loại (Optional)</label>
+            <select id="businessFilterSubType" onchange="onReportSubTypeChange('business')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400">
+              <option value="ALL">Tất cả loại</option>
+            </select>
+          </div>
+
+          <!-- 3. Nhân viên phụ trách (Searchable Select cho Đại lý, CTV, Sale) -->
+          <div class="relative" id="businessStaffDropdownWrap">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhân viên phụ trách</label>
+            <button type="button" id="businessStaffBtn" onclick="toggleSearchableDropdown('business', 'staff')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl flex items-center justify-between gap-2 hover:border-slate-300 focus:outline-none focus:border-brand-500 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400">
+              <span id="businessStaffLabel" class="truncate">Tất cả nhân viên</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            </button>
+            <div id="businessStaffPopover" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-40 p-2 space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="businessStaffSearch" oninput="renderSearchableOptions('business', 'staff')" placeholder="Tìm Đại lý / CTV / Sale..." class="w-full pl-8 pr-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500">
+              </div>
+              <div id="businessStaffList" class="max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 4. Tập đoàn -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tập đoàn</label>
+            <select id="businessFilterCorp" onchange="onReportCorpChange('business')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả tập đoàn</option>
+              <option value="Sun World">Sun World</option>
+              <option value="VinWonders">VinWonders</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+
+          <!-- 5. Khu du lịch (Searchable Select) -->
+          <div class="relative" id="businessSiteDropdownWrap">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khu du lịch (Site)</label>
+            <button type="button" id="businessSiteBtn" onclick="toggleSearchableDropdown('business', 'site')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl flex items-center justify-between gap-2 hover:border-slate-300 focus:outline-none focus:border-brand-500 cursor-pointer">
+              <span id="businessSiteLabel" class="truncate">Tất cả khu du lịch</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            </button>
+            <div id="businessSitePopover" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-40 p-2 space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="businessSiteSearch" oninput="renderSearchableOptions('business', 'site')" placeholder="Tìm khu du lịch..." class="w-full pl-8 pr-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500">
+              </div>
+              <div id="businessSiteList" class="max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thời gian: Tag select + Date picker -->
+        <div class="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Thời gian:</span>
+            <button type="button" data-tag="7d" onclick="selectReportDateTag('business', '7d')" class="business-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all">7 ngày</button>
+            <button type="button" data-tag="30d" onclick="selectReportDateTag('business', '30d')" class="business-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-brand-500 bg-brand-50 text-brand-600 cursor-pointer transition-all">30 ngày</button>
+            <button type="button" data-tag="this_month" onclick="selectReportDateTag('business', 'this_month')" class="business-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all">Tháng này</button>
+            <button type="button" data-tag="custom" onclick="selectReportDateTag('business', 'custom')" class="business-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all inline-flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <span>Tùy chỉnh</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+              <span class="text-[11px] font-semibold text-slate-400">Từ</span>
+              <input type="date" id="businessDateStart" onchange="onReportCustomDateChange('business')" class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none">
+              <span class="text-slate-300">-</span>
+              <span class="text-[11px] font-semibold text-slate-400">Đến</span>
+              <input type="date" id="businessDateEnd" onchange="onReportCustomDateChange('business')" class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none">
+            </div>
+            <span class="text-[11px] font-medium text-slate-400">(Tùy chỉnh tối đa 3 tháng)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- B. 6 CARD CHỈ SỐ KINH DOANH -->
+      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+        <!-- Card 1: Doanh thu -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h2 class="text-sm font-extrabold text-slate-900">1. Doanh thu</h2>
+              <p class="text-[11px] text-slate-400 font-medium mt-0.5">SUM(Doanh thu thuộc tất cả)</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i data-lucide="wallet" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="bizCardRevenueGrid">
+            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100">
+              <span class="text-[10.5px] font-bold text-blue-700 uppercase tracking-wider block">Thực tế</span>
+              <div id="bizRevActualVal" class="text-lg font-black text-slate-900 mt-1">0 đ</div>
+              <div id="bizRevActualTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+            <div id="bizRevExpectedBox" class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block">Dự kiến</span>
+              <div id="bizRevExpectedVal" class="text-lg font-black text-slate-900 mt-1">0 đ</div>
+              <div id="bizRevExpectedTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Chi phí -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h2 class="text-sm font-extrabold text-slate-900">2. Chi phí</h2>
+              <p class="text-[11px] text-slate-400 font-medium mt-0.5">Doanh thu – Lợi nhuận = Chi phí</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <i data-lucide="receipt" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="bizCardCostGrid">
+            <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-100">
+              <span class="text-[10.5px] font-bold text-amber-700 uppercase tracking-wider block">Thực tế</span>
+              <div id="bizCostActualVal" class="text-lg font-black text-slate-900 mt-1">0 đ</div>
+              <div id="bizCostActualTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+            <div id="bizCostExpectedBox" class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block">Dự kiến</span>
+              <div id="bizCostExpectedVal" class="text-lg font-black text-slate-900 mt-1">0 đ</div>
+              <div id="bizCostExpectedTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Lợi nhuận ròng -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h2 class="text-sm font-extrabold text-slate-900">3. Lợi nhuận ròng</h2>
+              <p class="text-[11px] text-slate-400 font-medium mt-0.5">SUM(Lợi nhuận thuộc tất cả)</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="bizCardProfitGrid">
+            <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+              <span class="text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider block">Thực tế</span>
+              <div id="bizProfitActualVal" class="text-lg font-black text-emerald-700 mt-1">0 đ</div>
+              <div id="bizProfitActualTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+            <div id="bizProfitExpectedBox" class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block">Dự kiến</span>
+              <div id="bizProfitExpectedVal" class="text-lg font-black text-slate-900 mt-1">0 đ</div>
+              <div id="bizProfitExpectedTrend" class="text-[11px] font-bold mt-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Trạng thái đơn hàng -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <i data-lucide="list-checks" class="w-4 h-4"></i>
+              </span>
+              <h2 class="text-sm font-extrabold text-slate-900">4. Trạng thái đơn hàng</h2>
+            </div>
+            <button type="button" onclick="openBusinessOrderStatusModal()" class="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline cursor-pointer shrink-0">Xem tất cả →</button>
+          </div>
+          <div id="bizOrderStatusGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs"></div>
+        </div>
+
+        <!-- Card 5: Số dư ví Đại lý -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                <i data-lucide="landmark" class="w-4 h-4"></i>
+              </span>
+              <h2 class="text-sm font-extrabold text-slate-900">5. Số dư ví Đại lý</h2>
+            </div>
+            <button type="button" onclick="openBusinessAgencyWalletsModal()" class="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline cursor-pointer shrink-0">Xem tất cả →</button>
+          </div>
+          <div>
+            <div class="text-[11px] font-semibold text-slate-400">Tổng số dư ví hệ thống Đại lý</div>
+            <div id="bizAgencyWalletTotal" class="text-2xl font-black text-blue-900 mt-1">0 đ</div>
+          </div>
+          <div id="bizAgencyWalletMiniList" class="space-y-1.5 pt-2 border-t border-slate-100 text-xs"></div>
+        </div>
+
+        <!-- Card 6: Top 3 nhân viên theo doanh thu -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-9 h-9 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                <i data-lucide="award" class="w-4 h-4"></i>
+              </span>
+              <div>
+                <h2 class="text-sm font-extrabold text-slate-900">6. Top 3 nhân viên theo doanh thu</h2>
+                <p class="text-[10.5px] text-slate-400 font-medium">Tính từ đơn Đã thanh toán &amp; Đã xuất vé</p>
+              </div>
+            </div>
+          </div>
+          <div id="bizTop3StaffList" class="space-y-2"></div>
+        </div>
+
+      </section>
+
+      <!-- C. TAGS HIỂN THỊ TỶ LỆ HOÀN THÀNH ĐƠN -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          </span>
+          <div>
+            <span class="text-xs font-extrabold text-slate-900 block">Tỷ lệ hoàn thành đơn</span>
+            <span class="text-[11px] text-slate-400 font-medium">Tính trên tổng số đơn theo bộ lọc hiện tại</span>
+          </div>
+        </div>
+        <div id="bizCompletionTagsContainer" class="flex flex-wrap items-center gap-2 text-xs"></div>
+      </section>
+
+      <!-- D. CHI TIẾT HIỆU QUẢ THEO ĐƠN HÀNG -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wide">CHI TIẾT HIỆU QUẢ THEO ĐƠN HÀNG</h2>
+          </div>
+          <span id="bizOrderTableCountBadge" class="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">0 đơn hàng</span>
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="hidden lg:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/90 border-b border-slate-100 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                <th class="py-3.5 px-4">Mã đơn</th>
+                <th class="py-3.5 px-4">Ngày tạo</th>
+                <th class="py-3.5 px-4">Khách hàng</th>
+                <th class="py-3.5 px-4 text-right">Doanh thu</th>
+                <th class="py-3.5 px-4 text-right">Chi phí</th>
+                <th class="py-3.5 px-4 text-right">Lợi nhuận</th>
+                <th class="py-3.5 px-4">Trạng thái</th>
+                <th class="py-3.5 px-4">Nhân viên phụ trách</th>
+              </tr>
+            </thead>
+            <tbody id="bizOrderTableBody" class="divide-y divide-slate-100 text-xs"></tbody>
+            <tfoot id="bizOrderTableFooter" class="bg-slate-50 border-t-2 border-slate-200 text-xs font-extrabold text-slate-900"></tfoot>
+          </table>
+        </div>
+
+        <!-- Mobile / Tablet Card List -->
+        <div id="bizOrderMobileList" class="lg:hidden p-4 space-y-3 bg-slate-50/40"></div>
+        <div id="bizOrderMobileSummary" class="lg:hidden px-4 py-3 bg-slate-100 border-t border-slate-200 text-xs font-bold"></div>
+
+        <!-- Thanh phân trang Chi tiết hiệu quả theo đơn hàng (Top 10 đơn/trang) -->
+        <div id="bizOrderPaginationFooter" class="px-5 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <!-- Rendered via renderGenericPaginationFooter() -->
+        </div>
+      </section>
+
+    </div> <!-- /#viewReportBusiness -->
+
+    <!-- ================= VIEW 0D: DANH SÁCH ĐƠN HÀNG ================= -->
+    </main>
+  </div>
+
+  <div id="modalBusinessOrderStatus" class="fixed inset-0 z-[55] bg-black/50 backdrop-blur-[2px] hidden items-end justify-center p-0" onclick="if(event.target === this) closeReportModal('modalBusinessOrderStatus')">
+    <div class="bg-white rounded-t-3xl shadow-[0_-12px_40px_rgba(15,23,42,0.22)] max-w-2xl w-full overflow-hidden flex flex-col max-h-[88vh] animate-in fade-in duration-200">
+      <div class="w-11 h-1.5 rounded-full bg-slate-300 mx-auto mt-2.5 mb-1 shrink-0"></div>
+      <div class="px-6 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+        <div>
+          <h3 class="font-extrabold text-base text-slate-900">Danh sách Trạng thái đơn hàng</h3>
+        </div>
+        <button type="button" onclick="closeReportModal('modalBusinessOrderStatus')" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-400 hover:text-slate-700 border border-slate-200 flex items-center justify-center cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div id="modalBusinessOrderStatusBody" class="p-5 sm:p-6 overflow-y-auto space-y-3 flex-1"></div>
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+        <button type="button" onclick="closeReportModal('modalBusinessOrderStatus')" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs cursor-pointer transition-colors">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DANH SÁCH SỐ DƯ VÍ ĐẠI LÝ ================= -->
+  <div id="modalBusinessAgencyWallets" class="fixed inset-0 z-[55] bg-black/50 backdrop-blur-[2px] hidden items-end justify-center p-0" onclick="if(event.target === this) closeReportModal('modalBusinessAgencyWallets')">
+    <div class="bg-white rounded-t-3xl shadow-[0_-12px_40px_rgba(15,23,42,0.22)] max-w-2xl w-full overflow-hidden flex flex-col max-h-[88vh] animate-in fade-in duration-200">
+      <div class="w-11 h-1.5 rounded-full bg-slate-300 mx-auto mt-2.5 mb-1 shrink-0"></div>
+      <div class="px-6 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+        <div>
+          <h3 class="font-extrabold text-base text-slate-900">Danh sách Số dư ví Đại lý</h3>
+        </div>
+        <button type="button" onclick="closeReportModal('modalBusinessAgencyWallets')" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-400 hover:text-slate-700 border border-slate-200 flex items-center justify-center cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div id="modalBusinessAgencyWalletsBody" class="p-5 sm:p-6 overflow-y-auto flex-1"></div>
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+        <button type="button" onclick="closeReportModal('modalBusinessAgencyWallets')" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs cursor-pointer transition-colors">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE FULL-SCREEN SEARCH SCREEN (< md) ================= -->
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/reports.js"></script>
+  <script>
+    renderSharedShell({
+      activePage: 'business-report.html',
+      pageTitle: 'Hiệu quả kinh doanh',
+      showGlobalHeader: true
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Tổng quan - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <div id="viewDashboardOverview" class=" space-y-6 animate-in fade-in duration-200">
+
+      <!-- 2. TIÊU ĐỀ TRANG & BỘ LỌC NGÀY (DATE FILTER) -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
+        <div>
+          <h1 class="text-[24px] sm:text-[28px] font-extrabold text-slate-900 tracking-tight leading-tight">
+            Dashboard tổng quan
+          </h1>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="relative flex items-center gap-2 w-full md:w-auto">
+          <!-- Date Range Picker Button -->
+          <button type="button"
+                  id="btnDashboardDatePicker"
+                  onclick="toggleDashboardDatePopover()"
+                  class="flex-1 md:flex-initial inline-flex items-center justify-between md:justify-start gap-2.5 px-3.5 py-2 rounded-xl border border-sky-200 bg-white hover:bg-sky-50/50 text-slate-700 font-semibold text-xs sm:text-sm shadow-2xs transition-colors cursor-pointer focus:outline-none">
+            <span class="inline-flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-sky-600 shrink-0"></i>
+              <span id="dashboardDateRangeLabel">01/11/2026 - 10/11/2026</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+          </button>
+
+          <!-- Mobile Clear Filter Button -->
+          <button type="button"
+                  onclick="resetDashboardDateFilter()"
+                  class="flex md:hidden items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0 focus:outline-none">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            <span>Xóa bộ lọc</span>
+          </button>
+
+          <!-- Date Range Picker Popover -->
+          <div id="dashboardDatePopover" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-40 space-y-3">
+            <div class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Chọn khoảng thời gian</div>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="applyDashboardDatePreset('01/11/2026 - 10/11/2026', 'nov_1_10')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors cursor-pointer text-left">
+                01/11 - 10/11/2026
+              </button>
+              <button type="button" onclick="applyDashboardDatePreset('01/10/2026 - 31/10/2026', 'oct_full')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
+                Tháng 10/2026
+              </button>
+              <button type="button" onclick="applyDashboardDatePreset('04/11/2026 - 10/11/2026', 'last_7')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
+                7 ngày gần nhất
+              </button>
+              <button type="button" onclick="applyDashboardDatePreset('01/11/2026 - 30/11/2026', 'nov_full')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
+                Cả tháng 11/2026
+              </button>
+            </div>
+            <div class="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Từ ngày</label>
+                <input type="date" id="dashStartDate" value="2026-11-01" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-sky-400">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Đến ngày</label>
+                <input type="date" id="dashEndDate" value="2026-11-10" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-sky-400">
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-1">
+              <button type="button" onclick="resetDashboardDateFilter()" class="px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">Đặt lại</button>
+              <button type="button" onclick="applyCustomDashboardDateRange()" class="px-3.5 py-1.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors cursor-pointer">Áp dụng</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. KHỐI THẺ CHỈ SỐ KPI (METRIC STAT CARDS) -->
+      <section aria-label="Chỉ số KPI tổng quan" class="flex flex-col space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 sm:gap-4">
+        
+        <!-- KPI 1: Tổng doanh thu -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-500 leading-snug">Tổng doanh thu</span>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i data-lucide="wallet" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpiTotalRevenue" class="text-[28px] sm:text-[30px] font-extrabold text-slate-900 tracking-tight leading-none">
+            6.4M
+          </div>
+          <div id="kpiTotalRevenueTrend" class="flex items-center gap-1.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-0.5 font-bold text-rose-500">
+              <span>↓</span><span>29.48%</span>
+            </span>
+            <span class="text-slate-400">so với tháng trước</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Tổng vé bán ra -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-500 leading-snug">Tổng vé bán ra</span>
+            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+              <i data-lucide="ticket" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpiTotalTickets" class="text-[28px] sm:text-[30px] font-extrabold text-slate-900 tracking-tight leading-none">
+            10
+          </div>
+          <div id="kpiTotalTicketsTrend" class="flex items-center gap-1.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-0.5 font-bold text-rose-500">
+              <span>↓</span><span>33.33%</span>
+            </span>
+            <span class="text-slate-400">so với tháng trước</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Số đại lý hoạt động -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-500 leading-snug">Số đại lý hoạt động</span>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpiActiveAgencies" class="text-[28px] sm:text-[30px] font-extrabold text-slate-900 tracking-tight leading-none">
+            8
+          </div>
+          <div id="kpiActiveAgenciesTrend" class="flex items-center gap-1.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-0.5 font-bold text-emerald-600">
+              <span>↑</span><span>14.29%</span>
+            </span>
+            <span class="text-slate-400">so với tháng trước</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Số KOL hoạt động -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-500 leading-snug">Số KOL hoạt động</span>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
+              <i data-lucide="star" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpiActiveKols" class="text-[28px] sm:text-[30px] font-extrabold text-slate-900 tracking-tight leading-none">
+            25
+          </div>
+          <div id="kpiActiveKolsTrend" class="flex items-center gap-1.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-0.5 font-bold text-emerald-600">
+              <span>↑</span><span>0.00%</span>
+            </span>
+            <span class="text-slate-400">so với tháng trước</span>
+          </div>
+        </div>
+
+        <!-- KPI 5: Tỷ lệ hoàn thành đơn -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-500 leading-snug">Tỷ lệ hoàn thành đơn</span>
+            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpiCompletionRate" class="text-[28px] sm:text-[30px] font-extrabold text-slate-900 tracking-tight leading-none">
+            25.00%
+          </div>
+          <div id="kpiCompletionRateTrend" class="flex items-center gap-1.5 text-xs font-medium">
+            <span class="inline-flex items-center gap-0.5 font-bold text-emerald-600">
+              <span>↑</span><span>8.33%</span>
+            </span>
+            <span class="text-slate-400">so với tháng trước</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 4. BIỂU ĐỒ: DOANH THU THEO THỜI GIAN -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6">
+        <!-- Header & Legend -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wide">
+              DOANH THU THEO THỜI GIAN
+            </h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">So sánh theo kênh bán</p>
+          </div>
+
+          <!-- Legend: Desktop inline right, Mobile wrapped below -->
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-600" id="revenueChartLegend">
+            <button type="button" onclick="toggleChartDataset(0, this)" class="inline-flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-opacity">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6] shrink-0"></span>
+              <span>Đại lý</span>
+            </button>
+            <button type="button" onclick="toggleChartDataset(1, this)" class="inline-flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-opacity">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6] shrink-0"></span>
+              <span>CTV/KOL</span>
+            </button>
+            <button type="button" onclick="toggleChartDataset(2, this)" class="inline-flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-opacity">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#F15A24] shrink-0"></span>
+              <span>Booking</span>
+            </button>
+            <button type="button" onclick="toggleChartDataset(3, this)" class="inline-flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-opacity">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#22C55E] shrink-0"></span>
+              <span>Nội bộ</span>
+            </button>
+            <button type="button" onclick="toggleChartDataset(4, this)" class="inline-flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-opacity">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#14B8A6] shrink-0"></span>
+              <span>Tổng doanh thu</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Y-Axis Label -->
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+          ĐƠN VỊ: TRIỆU ĐỒNG
+        </div>
+
+        <!-- Chart Canvas -->
+        <div class="relative h-64 sm:h-80 w-full">
+          <canvas id="revenueTimelineChart"></canvas>
+        </div>
+      </section>
+
+      <!-- 5. DANH SÁCH: TỔNG DOANH THU THEO KÊNH BÁN -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wide">
+            TỔNG DOANH THU THEO KÊNH BÁN
+          </h2>
+          <span class="text-xs font-semibold text-slate-400 hidden sm:inline" id="channelTableCountLabel">2 kênh hoạt động</span>
+        </div>
+
+        <!-- Desktop Layout: Data Table -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/80 border-b border-slate-100 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                <th class="py-3.5 px-5 text-center w-20">HẠNG</th>
+                <th class="py-3.5 px-4">TÊN ĐẠI LÝ / CTV</th>
+                <th class="py-3.5 px-4">VAI TRÒ</th>
+                <th class="py-3.5 px-4 text-right">SỐ VÉ</th>
+                <th class="py-3.5 px-4 text-right">DOANH THU (VND)</th>
+                <th class="py-3.5 px-4 text-right">TĂNG TRƯỞNG</th>
+                <th class="py-3.5 px-5 text-right">THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardChannelTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm">
+              <!-- Rendered via renderChannelRevenueSection() -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Layout: Card-based List -->
+        <div id="dashboardChannelMobileList" class="md:hidden p-4 space-y-3 bg-slate-50/40">
+          <!-- Rendered via renderChannelRevenueSection() -->
+        </div>
+
+        <!-- Thanh phân trang bảng Tổng doanh thu theo kênh bán -->
+        <div id="dashboardChannelPaginationFooter" class="px-5 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <!-- Rendered via renderGenericPaginationFooter() -->
+        </div>
+      </section>
+
+    </div> <!-- /#viewDashboardOverview -->
+
+    </main>
+  </div>
+
+  <div id="modalChannelDetail" class="fixed inset-0 z-[55] bg-black/50 backdrop-blur-[2px] hidden items-end justify-center p-0" onclick="if(event.target === this) closeChannelDetailModal()">
+    <div class="bg-white rounded-t-3xl shadow-[0_-12px_40px_rgba(15,23,42,0.22)] max-w-lg w-full flex flex-col max-h-[88vh] overflow-hidden animate-in fade-in duration-200">
+      <div class="w-11 h-1.5 rounded-full bg-slate-300 mx-auto mt-2.5 mb-1 shrink-0"></div>
+      <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div id="modalChannelAvatar" class="w-9 h-9 rounded-full bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0">CH</div>
+          <div class="min-w-0">
+            <h3 id="modalChannelName" class="font-extrabold text-sm text-slate-900 truncate">CONG TY TNHH DVDL BA MIEN HCM</h3>
+            <span id="modalChannelRole" class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-orange-50 text-orange-600 border border-orange-200 mt-0.5">ĐẠI LÝ</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeChannelDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-400 hover:text-slate-700 border border-slate-200 flex items-center justify-center cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-3 text-xs sm:text-sm">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase">Số vé đã bán</div>
+            <div id="modalChannelTickets" class="text-lg font-extrabold text-slate-900 mt-0.5">8 vé</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase">Tăng trưởng</div>
+            <div id="modalChannelGrowth" class="text-lg font-extrabold text-rose-500 mt-0.5">↓ 50.19%</div>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-between">
+          <span class="text-xs font-semibold text-blue-900">Tổng doanh thu (VND)</span>
+          <span id="modalChannelRevenue" class="text-base font-black text-blue-900">4.850.000 đ</span>
+        </div>
+        <div class="text-xs text-slate-500 leading-relaxed">
+          Dữ liệu được tổng hợp theo khoảng thời gian lọc hiện tại trên Dashboard Tổng quan.
+        </div>
+      </div>
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <button type="button" onclick="closeChannelDetailModal()" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs cursor-pointer transition-colors">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL CHI TIẾT BÁO CÁO PHÂN TÍCH (TABS KÊNH BÁN -> LOẠI) ================= -->
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    renderSharedShell({
+      activePage: 'dashboard.html',
+      pageTitle: 'Dashboard Tổng quan',
+      showGlobalHeader: true
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thông tin Nhà cung cấp - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Thông tin Nhà cung cấp Dịch vụ</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Danh bạ các tập đoàn vui chơi giải trí, chính sách hoa hồng B2B và kênh kết nối kỹ thuật</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="product-sync.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+            <i class="fa-solid fa-arrows-rotate text-xs"></i>
+            <span>Đồng bộ API</span>
+          </a>
+          <button type="button" onclick="showToast('Liên kết đối tác', 'Vui lòng liên hệ bộ phận PKD để tạo hồ sơ nhà cung cấp mới.')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer">
+            <i class="fa-solid fa-plus text-[11px]"></i>
+            <span>Thêm đối tác mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-building text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tập đoàn đối tác</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">3 Tập đoàn</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-building absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-map-location-dot text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Khu du lịch &amp; Công viên</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">11 Điểm đến</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-map-location-dot absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-percent text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Chiết khấu B2B TB</div>
+              <div class="text-xl font-extrabold text-brand-600 leading-tight mt-0.5">15.2%</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-percent absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-server text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Uptime kết nối API</div>
+              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5">99.9%</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-server absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+      </section>
+
+      <!-- Danh sách Nhà cung cấp dạng Card chi tiết -->
+      <section class="space-y-4">
+        <!-- Sun World -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-4 hover:border-blue-300 transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+                <i class="fa-solid fa-sun text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-slate-900">Sun World (Tập đoàn Sun Group)</h3>
+                <p class="text-xs text-slate-500">Đối tác chiến lược toàn diện • Hợp đồng B2B HĐ-SG-2026-088</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Cổng API Live
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div><span class="text-slate-400 block mb-0.5">Khu vui chơi trực thuộc:</span><strong class="text-slate-800">5 Quần thể du lịch</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Mức chiết khấu đại lý:</span><strong class="text-brand-600 font-bold">14.0% - 15.0%</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Đầu mối phụ trách B2B:</span><strong class="text-slate-800">Mr. Hoàng Long (Key Account)</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Hotline hỗ trợ kỹ thuật:</span><strong class="text-slate-800">1900 1234 (Nhánh 2)</strong></div>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+            <span class="font-bold text-slate-700 block mb-1">Các khu vui chơi áp dụng xuất vé QR tức thì:</span>
+            <div class="flex flex-wrap gap-2 text-[11.5px]">
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">Sun World Ba Na Hills (Đà Nẵng)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">Sun World Bà Đen Mountain (Tây Ninh)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">Sun World Hon Thom (Phú Quốc)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">Sun World Hạ Long (Quảng Ninh)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">Sun World Fansipan Legend (Sa Pa)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VinWonders -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-4 hover:border-blue-300 transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+                <i class="fa-solid fa-crown text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-slate-900">VinWonders (Tập đoàn Vingroup)</h3>
+                <p class="text-xs text-slate-500">Đối tác phân phối vé điện tử toàn quốc • Hợp đồng HĐ-VW-2026-042</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Cổng Token API
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div><span class="text-slate-400 block mb-0.5">Khu vui chơi trực thuộc:</span><strong class="text-slate-800">4 Quần thể giải trí</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Mức chiết khấu đại lý:</span><strong class="text-brand-600 font-bold">14.5%</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Đầu mối phụ trách B2B:</span><strong class="text-slate-800">Ms. Thu Hà (Key Account)</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Hotline hỗ trợ kỹ thuật:</span><strong class="text-slate-800">1900 2345</strong></div>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+            <span class="font-bold text-slate-700 block mb-1">Các khu vui chơi áp dụng xuất vé QR tức thì:</span>
+            <div class="flex flex-wrap gap-2 text-[11.5px]">
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">VinWonders Phú Quốc &amp; Safari</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">VinWonders Nha Trang (Hòn Tre)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">VinWonders Nam Hội An</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium">VinWonders Grand World Phú Quốc</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khác: Đầm Sen & Suối Tiên -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs space-y-4 hover:border-blue-300 transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                <i class="fa-solid fa-water-ladder text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-slate-900">Đối tác Độc lập (Công viên Đầm Sen &amp; KDL Suối Tiên)</h3>
+                <p class="text-xs text-slate-500">Đối tác công viên nước &amp; giải trí truyền thống TP.HCM</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Cổng Barcode E-Ticket
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div><span class="text-slate-400 block mb-0.5">Khu vui chơi trực thuộc:</span><strong class="text-slate-800">2 Công viên tại TP.HCM</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Mức chiết khấu đại lý:</span><strong class="text-brand-600 font-bold">16.0%</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Đầu mối phụ trách B2B:</span><strong class="text-slate-800">Mr. Minh Tuấn (Sale Lead)</strong></div>
+            <div><span class="text-slate-400 block mb-0.5">Hotline hỗ trợ kỹ thuật:</span><strong class="text-slate-800">1900 3456</strong></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'suppliers', pageTitle: 'Thông tin Nhà cung cấp' });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý Khách hàng (CRM) - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900">CRM Quản lý Khách hàng</h1>
+          <p class="text-xs text-slate-500">Tổng hợp lịch sử đặt vé đa kênh (Zalo, Facebook, Email, TikTok) & Hạng thành viên</p>
+        </div>
+        <button type="button" onclick="openAddCrmCustomerModal()" class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-extrabold shadow-sm cursor-pointer transition-colors">
+          + Thêm khách hàng mới
+        </button>
+      </div>
+
+      <!-- Thẻ Tổng quan theo Nguồn Khách hàng -->
+      <section id="crmSourceSummaryCards" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></section>
+
+      <!-- Thanh Tìm kiếm, Lọc nguồn & Sắp xếp -->
+      <section class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div id="crmSourceFilterPills" class="flex flex-wrap gap-2">
+            <button type="button" data-source="ALL" onclick="selectCrmSourceFilter('ALL')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-500 text-white cursor-pointer">Tất cả nguồn</button>
+            <button type="button" data-source="Zalo" onclick="selectCrmSourceFilter('Zalo')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">Zalo</button>
+            <button type="button" data-source="Facebook" onclick="selectCrmSourceFilter('Facebook')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">Facebook</button>
+            <button type="button" data-source="Email" onclick="selectCrmSourceFilter('Email')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">Email</button>
+            <button type="button" data-source="TikTok" onclick="selectCrmSourceFilter('TikTok')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">TikTok</button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="crmSearchInput" type="text" oninput="applyCrmFilters()" placeholder="Tìm tên, SĐT, Email, thành phố..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs w-full sm:w-64 focus:outline-none focus:border-brand-500" />
+            <select id="crmSortSelect" onchange="applyCrmFilters()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold bg-white focus:outline-none focus:border-brand-500">
+              <option value="spent_desc">Chi tiêu cao nhất</option>
+              <option value="orders_desc">Nhiều đơn nhất</option>
+              <option value="recent_desc">Đặt gần đây nhất</option>
+              <option value="name_asc">Tên A - Z</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bảng Danh sách CRM -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3">Khách hàng</th>
+                <th class="px-4 py-3">Liên hệ</th>
+                <th class="px-4 py-3">Nguồn / Khu vực</th>
+                <th class="px-4 py-3">Hạng</th>
+                <th class="px-4 py-3 text-right">Số đơn</th>
+                <th class="px-4 py-3 text-right">Tổng chi tiêu</th>
+                <th class="px-4 py-3">Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody id="crmCustomersTableBody" class="divide-y divide-slate-100 text-xs"></tbody>
+          </table>
+        </div>
+
+        <div id="crmCustomersMobileCards" class="md:hidden p-4 space-y-3"></div>
+        <div id="crmCustomersPaginationFooter" class="p-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal Thêm Khách hàng mới -->
+  <div id="modalAddCrmCustomer" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-slate-900">Thêm Khách hàng mới (CRM)</h3>
+        <button type="button" onclick="closeAddCrmCustomerModal()" class="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
+      </div>
+      <form id="formAddCrmCustomer" onsubmit="submitNewCrmCustomer(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Họ và tên <span class="text-rose-500">*</span></label>
+          <input id="newCrmName" type="text" required placeholder="Trần Minh Quân" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Số điện thoại <span class="text-rose-500">*</span></label>
+            <input id="newCrmPhone" type="tel" required placeholder="0912345678" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nguồn khách</label>
+            <select id="newCrmSource" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white">
+              <option value="Zalo">Zalo</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Email">Email</option>
+              <option value="TikTok">TikTok</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Email</label>
+            <input id="newCrmEmail" type="email" placeholder="khach@domain.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tỉnh / Thành phố</label>
+            <input id="newCrmCity" type="text" placeholder="TP.HCM" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Ghi chú chăm sóc</label>
+          <textarea id="newCrmNote" rows="2" placeholder="Khách VIP thường đặt vé gia đình..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-2 pt-2">
+          <button type="button" onclick="closeAddCrmCustomerModal()" class="py-2.5 rounded-xl border border-slate-200 font-bold text-slate-600 cursor-pointer">Hủy</button>
+          <button type="submit" class="py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold cursor-pointer">Lưu khách hàng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/crm.js"></script>
+</body>
+</html>

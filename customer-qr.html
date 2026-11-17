@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanh toán VietQR Khách hàng - Techera Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <style>
+    #btnMobileFloatingCart, #btnDesktopFloatingCart, #floatingSpeedDialWrap {
+      display: none !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-xl w-full mx-auto px-4 sm:px-6 py-6 pb-20 space-y-4">
+
+      <div class="flex items-center justify-between">
+        <a href="checkout.html" class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-brand-600">
+          <i class="fa-solid fa-arrow-left text-xs"></i>
+          <span>Quay lại Xác nhận đơn hàng</span>
+        </a>
+        <span id="qrOrderStatusBadge" class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold">Chờ khách thanh toán</span>
+      </div>
+
+      <!-- Main Unified Card -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden divide-y divide-slate-100">
+        <!-- KHU VỰC 1: CỤM QUÉT MÃ VIETQR & THANH TOÁN -->
+        <div class="p-6 sm:p-7 bg-gradient-to-b from-orange-50/50 to-white flex flex-col items-center text-center space-y-3.5">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/70 border border-orange-200 text-brand-700 text-[11px] font-black uppercase tracking-wider">
+            <i class="fa-solid fa-qrcode text-xs"></i>
+            <span>Mã VietQR 24/7</span>
+          </div>
+
+          <h1 class="text-base sm:text-lg font-extrabold text-slate-900">Đơn hàng <span id="qrOrderCodeBadge" class="font-mono text-brand-600">-</span></h1>
+
+          <!-- Khung chứa ảnh QR -->
+          <div class="p-3.5 bg-white rounded-2xl border-2 border-slate-100 shadow-md">
+            <img id="vietQrImageElement" src="https://img.vietqr.io/image/MB-0909888777-compact2.png?amount=1000000&addInfo=TECHERA" alt="Mã VietQR thanh toán" class="w-52 h-52 sm:w-60 sm:h-60 object-contain rounded-xl" />
+          </div>
+
+          <div class="space-y-0.5">
+            <div class="text-xs font-bold text-slate-500">Số tiền khách thanh toán</div>
+            <div id="qrCustomerPayableAmount" class="text-2xl sm:text-3xl font-black text-[#F25C22]">0 đ</div>
+          </div>
+
+          <!-- Badge đếm ngược hết hạn -->
+          <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold shadow-2xs">
+            <i class="fa-regular fa-clock text-xs"></i>
+            <span>(Hết hạn sau: <span id="qrCountdownDisplay" class="font-mono font-black">15:00</span>)</span>
+          </div>
+
+          <!-- Cụm 2 nút hành động QR -->
+          <div class="w-full grid grid-cols-2 gap-2.5 pt-1">
+            <button type="button" onclick="downloadQrPosterImage()" class="py-2.5 px-3 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-xs font-extrabold text-slate-700 cursor-pointer transition-colors shadow-2xs flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-download text-xs text-slate-500"></i>
+              <span>Tải ảnh QR gửi khách</span>
+            </button>
+            <button type="button" onclick="simulateWebhookQrPaymentSuccess()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold cursor-pointer transition-colors shadow-sm flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-circle-check text-xs"></i>
+              <span>Xác nhận đã nhận tiền</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KHU VỰC 2: THÔNG TIN KHÁCH HÀNG (Khu vực bổ sung mới) -->
+        <div class="p-5 sm:p-6 space-y-2.5 bg-white">
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">THÔNG TIN KHÁCH HÀNG</div>
+          <div class="rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] p-3.5 sm:p-4 space-y-3">
+            <!-- Dòng 1: Họ và tên -->
+            <div class="flex items-center justify-between gap-3 text-xs sm:text-sm">
+              <span class="text-slate-500 font-medium flex items-center gap-2 shrink-0">
+                <span class="text-sm">👤</span>
+                <span>Họ và tên:</span>
+              </span>
+              <span id="qrCustomerFullName" class="font-bold text-[#1E293B] text-right truncate max-w-[65%]">Nguyễn Văn Booker</span>
+            </div>
+            <!-- Dòng 2: Số điện thoại -->
+            <div class="flex items-center justify-between gap-3 text-xs sm:text-sm">
+              <span class="text-slate-500 font-medium flex items-center gap-2 shrink-0">
+                <span class="text-sm">📞</span>
+                <span>Số điện thoại:</span>
+              </span>
+              <span id="qrCustomerPhone" class="font-bold text-[#1E293B] text-right font-mono">0909123456</span>
+            </div>
+            <!-- Dòng 3: Email nhận vé -->
+            <div class="flex items-center justify-between gap-3 text-xs sm:text-sm">
+              <span class="text-slate-500 font-medium flex items-center gap-2 shrink-0">
+                <span class="text-sm">✉️</span>
+                <span>Email nhận vé:</span>
+              </span>
+              <span id="qrCustomerEmail" class="font-semibold text-[#F25C22] text-right break-all max-w-[65%]">booker.techera@gmail.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KHU VỰC 3: THÔNG TIN NHÀ CUNG CẤP & DANH SÁCH VÉ TRONG ĐƠN -->
+        <div class="p-5 sm:p-6 space-y-4 bg-white">
+          <!-- Thông tin NCC & Ngày dùng -->
+          <div class="flex items-center gap-3">
+            <img id="qrDestImage" src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=300&q=80" alt="Destination" class="w-14 h-14 rounded-2xl object-cover shrink-0 border border-slate-200" />
+            <div class="min-w-0 flex-1">
+              <div id="qrSupplierTitle" class="text-sm sm:text-base font-extrabold text-slate-900 truncate">NCC: Tập đoàn Sun World</div>
+              <div class="text-xs text-slate-500 mt-0.5">Ngày sử dụng: <strong id="qrUsageDateText" class="text-slate-800 font-bold">-</strong></div>
+            </div>
+          </div>
+
+          <!-- Danh sách vé -->
+          <div class="space-y-2">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">DANH SÁCH VÉ TRONG ĐƠN</div>
+            <div id="qrTicketsListContainer" class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar"></div>
+          </div>
+
+          <!-- Tổng thanh toán -->
+          <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+            <span class="font-black text-slate-700 uppercase text-xs sm:text-sm tracking-wide">Tổng thanh toán:</span>
+            <span id="qrTotalPayableText" class="px-3.5 py-1.5 rounded-xl border-2 border-[#F25C22] bg-[#FFF7ED] text-[#F25C22] text-lg sm:text-xl font-black tracking-tight shadow-2xs">0 đ</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/customer-qr.js"></script>
+</body>
+</html>

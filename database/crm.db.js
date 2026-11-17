@@ -1,0 +1,42 @@
+// ============================================================================
+// DATABASE: CRM CUSTOMERS (DANH SÁCH KHÁCH HÀNG)
+// ============================================================================
+
+const CRM_CUSTOMERS_SEED = [
+  { id: 'CUS-001', name: 'Nguyễn Minh Quân', phone: '0903128451', email: 'minhquan.nguyen@gmail.com', source: 'Zalo', tier: 'VIP Gold', city: 'TP.HCM', note: 'Khách đặt đoàn gia đình định kỳ' },
+  { id: 'CUS-002', name: 'Lê Thị Thu Hà', phone: '0918456723', email: 'thuha.le@yahoo.com', source: 'Facebook', tier: 'Thân thiết', city: 'Đà Nẵng', note: 'Thường đặt combo Bà Nà Hills cuối tuần' },
+  { id: 'CUS-003', name: 'Trần Đức Thắng', phone: '0987234119', email: 'thang.tran@techcorp.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'Hà Nội', note: 'Phụ trách team building TechCorp' },
+  { id: 'CUS-004', name: 'Phạm Ngọc Lan', phone: '0938771204', email: 'ngoclan.pham@gmail.com', source: 'TikTok', tier: 'Mới', city: 'TP.HCM', note: 'Biết qua video review VinWonders' },
+  { id: 'CUS-005', name: 'Võ Hoàng Long', phone: '0909543218', email: 'hoanglong.vo@outlook.com', source: 'Zalo', tier: 'VIP Gold', city: 'Nha Trang', note: 'Ưa thích gói Fastpass không xếp hàng' },
+  { id: 'CUS-006', name: 'Đoàn Khách Công Ty An Phát', phone: '0902665890', email: 'hr@anphatgroup.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'Bình Dương', note: 'Đoàn 40-60 người mỗi quý' },
+  { id: 'CUS-007', name: 'Hoàng Gia Bảo', phone: '0974332198', email: 'giabao.hoang@gmail.com', source: 'Facebook', tier: 'Thân thiết', city: 'Hà Nội', note: 'Thường đi Sa Pa - Fansipan' },
+  { id: 'CUS-008', name: 'Bùi Thanh Tùng', phone: '0913998271', email: 'thanhtung.bui@gmail.com', source: 'TikTok', tier: 'Tiềm năng', city: 'Hải Phòng', note: 'Quan tâm Sun World Hạ Long' },
+  { id: 'CUS-009', name: 'Đặng Kim Chi', phone: '0932114587', email: 'kimchi.dang@icloud.com', source: 'Zalo', tier: 'VIP Silver', city: 'Đà Nẵng', note: 'Đặt vé nhanh qua Zalo OA' },
+  { id: 'CUS-010', name: 'Lý Quang Khải', phone: '0945887123', email: 'quangkhai.ly@gmail.com', source: 'Email', tier: 'Thân thiết', city: 'Cần Thơ', note: 'Đặt vé Phú Quốc cho gia đình' },
+  { id: 'CUS-011', name: 'Ngô Phương Linh', phone: '0968223410', email: 'phuonglinh.ngo@gmail.com', source: 'TikTok', tier: 'Mới', city: 'TP.HCM', note: 'Check-in Đầm Sen & Suối Tiên' },
+  { id: 'CUS-012', name: 'Đỗ Hải Đăng', phone: '0907554321', email: 'haidang.do@viettravel.vn', source: 'Facebook', tier: 'VIP Gold', city: 'TP.HCM', note: 'Khách đoàn du lịch miền Trung' },
+  { id: 'CUS-013', name: 'Trịnh Bảo Ngọc', phone: '0916443890', email: 'baongoc.trinh@gmail.com', source: 'Zalo', tier: 'Thân thiết', city: 'Huế', note: 'Đặt vé Nam Hội An' },
+  { id: 'CUS-014', name: 'Tạ Minh Đức', phone: '0983776542', email: 'minhduc.ta@gmail.com', source: 'Facebook', tier: 'Tiềm năng', city: 'Hà Nội', note: 'Tư vấn combo gia đình' },
+  { id: 'CUS-015', name: 'Phan Khánh Linh', phone: '0934990123', email: 'khanhlinh.phan@gmail.com', source: 'TikTok', tier: 'Mới', city: 'Đà Lạt', note: 'Đặt vé TTC World' },
+  { id: 'CUS-016', name: 'Vũ Anh Tuấn', phone: '0905889234', email: 'anhtuan.vu@fpt.com.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'Đà Nẵng', note: 'Xuất hóa đơn VAT công ty' },
+  { id: 'CUS-017', name: 'Nguyễn Thị Hương', phone: '0912334765', email: 'huong.nguyen@gmail.com', source: 'Zalo', tier: 'VIP Silver', city: 'TP.HCM', note: 'Thích buffet trưa kèm cáp treo' },
+  { id: 'CUS-018', name: 'Cao Văn Nam', phone: '0978665432', email: 'nam.cao@gmail.com', source: 'Facebook', tier: 'Thân thiết', city: 'Nghệ An', note: 'Đặt vé theo nhóm bạn' },
+  { id: 'CUS-019', name: 'Phùng Gia Huy', phone: '0908112345', email: 'giahuy.phung@gmail.com', source: 'TikTok', tier: 'Tiềm năng', city: 'TP.HCM', note: 'Quan tâm NovaWorld Phan Thiết' },
+  { id: 'CUS-020', name: 'Dương Minh Thư', phone: '0939223876', email: 'minhthu.duong@gmail.com', source: 'Zalo', tier: 'VIP Silver', city: 'Vũng Tàu', note: 'Thanh toán qua VietQR' },
+  { id: 'CUS-021', name: 'Lâm Thành Đạt', phone: '0914556789', email: 'thanhdat.lam@saigonbank.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'TP.HCM', note: 'Khách công đoàn ngân hàng' },
+  { id: 'CUS-022', name: 'Chu Bảo Trâm', phone: '0966778899', email: 'baotram.chu@gmail.com', source: 'Facebook', tier: 'Thân thiết', city: 'Hà Nội', note: 'Đặt vé công viên nước' },
+  { id: 'CUS-023', name: 'Hồ Ngọc Sơn', phone: '0904221199', email: 'ngocson.ho@gmail.com', source: 'Zalo', tier: 'Thân thiết', city: 'Quảng Nam', note: 'Đặt vé Hòn Thơm Nature Park' },
+  { id: 'CUS-024', name: 'Mai Anh Đào', phone: '0937654321', email: 'anhdao.mai@gmail.com', source: 'TikTok', tier: 'Mới', city: 'TP.HCM', note: 'Khách trẻ đặt vé online' },
+  { id: 'CUS-025', name: 'Đoàn Trường THPT Lê Quý Đôn', phone: '0901887766', email: 'bgh@lequydon.edu.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'Đà Nẵng', note: 'Đoàn học sinh ngoại khóa' },
+  { id: 'CUS-026', name: 'Huỳnh Tấn Phát', phone: '0919332211', email: 'tanphat.huynh@gmail.com', source: 'Facebook', tier: 'Tiềm năng', city: 'Long An', note: 'Đi Đầm Sen cuối tuần' },
+  { id: 'CUS-027', name: 'Vương Mỹ Linh', phone: '0989445566', email: 'mylinh.vuong@gmail.com', source: 'TikTok', tier: 'Thân thiết', city: 'Hà Nội', note: 'Săn voucher khuyến mãi' },
+  { id: 'CUS-028', name: 'Tống Quốc Việt', phone: '0933557799', email: 'quocviet.tong@gmail.com', source: 'Zalo', tier: 'VIP Gold', city: 'Nha Trang', note: 'Đặt vé đoàn tour gia đình' },
+  { id: 'CUS-029', name: 'Công Đoàn Ngân Hàng ACB', phone: '0906998877', email: 'congdoan@acb.com.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'TP.HCM', note: 'Yêu cầu xuất hóa đơn đỏ' },
+  { id: 'CUS-030', name: 'Kiều Thanh Thảo', phone: '0944667788', email: 'thanhthao.kieu@gmail.com', source: 'Facebook', tier: 'Mới', city: 'Đồng Nai', note: 'Đi Suối Tiên cùng gia đình' },
+  { id: 'CUS-031', name: 'Trương Hoàng Phúc', phone: '0971223344', email: 'hoangphuc.truong@gmail.com', source: 'Zalo', tier: 'Thân thiết', city: 'Đà Nẵng', note: 'Khách quen đặt vé Asia Park' },
+  { id: 'CUS-032', name: 'Lưu Bích Ngọc', phone: '0935667711', email: 'bichngoc.luu@gmail.com', source: 'TikTok', tier: 'Tiềm năng', city: 'TP.HCM', note: 'Hỏi lịch show Tata Nha Trang' },
+  { id: 'CUS-033', name: 'Công Ty TNHH Minh Long', phone: '0909112288', email: 'admin@minhlong.vn', source: 'Email', tier: 'Doanh nghiệp', city: 'Bình Dương', note: 'Đặt tour khen thưởng nhân viên' },
+  { id: 'CUS-034', name: 'Hà Trọng Nghĩa', phone: '0917889900', email: 'trongnghia.ha@gmail.com', source: 'Facebook', tier: 'Thân thiết', city: 'Quảng Ninh', note: 'Khách quen Sun World Hạ Long' },
+  { id: 'CUS-035', name: 'Đinh Thảo Nguyên', phone: '0965443322', email: 'thaonguyen.dinh@gmail.com', source: 'Zalo', tier: 'VIP Silver', city: 'Đà Lạt', note: 'Ưu tiên xuất vé qua Zalo/Email' },
+  { id: 'CUS-036', name: 'Bành Tuấn Kiệt', phone: '0982110099', email: 'tuankiet.banh@gmail.com', source: 'TikTok', tier: 'Mới', city: 'TP.HCM', note: 'Khách lẻ đặt vé qua link CTV' }
+];

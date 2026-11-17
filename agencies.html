@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thông tin Đại lý - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Thông tin Đại lý &amp; Đối tác Lữ hành</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Mạng lưới 10 đại lý B2B cấp 1 (TA Partner), phân hạng tài khoản, công nợ và doanh số tích lũy</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="wallet.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+            <i class="fa-solid fa-wallet text-brand-500"></i>
+            <span>Ví đại lý</span>
+          </a>
+          <button type="button" onclick="showToast('Thêm đại lý', 'Vui lòng liên hệ Trưởng phòng KD để thiết lập hợp đồng B2B mới.')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer">
+            <i class="fa-solid fa-plus text-[11px]"></i>
+            <span>Thêm đại lý mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-users-rectangle text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Đại lý đối tác B2B</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">10 Đại lý</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-users-rectangle absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-medal text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Đại lý Platinum</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">6 Đại lý</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-medal absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-scale-balanced text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tổng hạn mức công nợ</div>
+              <div class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5">500 Triệu đ</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-scale-balanced absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-chart-line text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Doanh thu quý này</div>
+              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5">1.45 Tỷ đ</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chart-line absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+      </section>
+
+      <!-- Bảng danh sách đại lý -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="font-extrabold text-sm text-slate-900">Danh bạ Đối tác Đại lý Lữ hành Cấp 1</div>
+          <input type="text" placeholder="Tìm tên công ty, mã đại lý, NVKD..." class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500 max-w-xs" />
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3">Tên đại lý / Mã đối tác</th>
+                <th class="px-4 py-3">Phân hạng</th>
+                <th class="px-4 py-3">NVKD phụ trách</th>
+                <th class="px-4 py-3 text-right">Số dư ví</th>
+                <th class="px-4 py-3 text-right">Hạn mức công nợ</th>
+                <th class="px-4 py-3 text-center">Trạng thái</th>
+                <th class="px-4 py-3 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="agenciesTableBody" class="divide-y divide-slate-100">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    const DEMO_AGENCIES = [
+      { name: 'CÔNG TY TNHH DVDL BA MIEN HCM', code: 'TA-BAMIEN', tier: 'Platinum', sales: 'Nguyễn Văn An (Sale)', balance: 14500000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'DU LỊCH VIỆT HOLIDAY', code: 'TA-VIETHOLIDAY', tier: 'Platinum', sales: 'Trần Thị Mai (Sale)', balance: 8200000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'SAIGON TOURIST PRO', code: 'TA-SAIGONTOUR', tier: 'Gold', sales: 'Lê Quốc Bảo (Sale)', balance: -12500000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'VIETRAVEL B2B', code: 'TA-VIETRAVEL', tier: 'Platinum', sales: 'Phạm Minh Tuấn (Sale)', balance: 35000000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'BEN THANH TOURIST B2B', code: 'TA-BENTHANH', tier: 'Gold', sales: 'Hoàng Thảo Linh (Sale)', balance: 4100000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'FIDITOUR TRAVEL', code: 'TA-FIDITOUR', tier: 'Platinum', sales: 'Nguyễn Văn An (Sale)', balance: 19800000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'DAT VIET TOUR', code: 'TA-DATVIET', tier: 'Gold', sales: 'Trần Thị Mai (Sale)', balance: 6500000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'TST TOURIST PRO', code: 'TA-TSTTOUR', tier: 'Platinum', sales: 'Lê Quốc Bảo (Sale)', balance: 22400000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'HANOI RED TOURS', code: 'TA-REDTOURS', tier: 'Gold', sales: 'Phạm Minh Tuấn (Sale)', balance: 3200000, debtLimit: 50000000, status: 'Hoạt động' },
+      { name: 'PHÚ QUỐC SUNSHINE TOURS', code: 'TA-PQSUNSHINE', tier: 'Platinum', sales: 'Hoàng Thảo Linh (Sale)', balance: 11600000, debtLimit: 50000000, status: 'Hoạt động' }
+    ];
+
+    function renderAgenciesTable() {
+      const tbody = document.getElementById('agenciesTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = DEMO_AGENCIES.map(a => `
+        <tr class="hover:bg-slate-50/80 transition-colors">
+          <td class="px-4 py-3.5">
+            <strong class="text-slate-900 block text-xs font-bold">${a.name}</strong>
+            <span class="text-[11px] text-slate-400 font-mono">${a.code}</span>
+          </td>
+          <td class="px-4 py-3.5">
+            <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold ${a.tier === 'Platinum' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${a.tier}</span>
+          </td>
+          <td class="px-4 py-3.5 font-medium text-slate-700">${a.sales}</td>
+          <td class="px-4 py-3.5 text-right font-extrabold ${a.balance < 0 ? 'text-rose-600' : 'text-emerald-700'}">${formatMoney(a.balance)} đ</td>
+          <td class="px-4 py-3.5 text-right font-bold text-slate-800">${formatMoney(a.debtLimit)} đ</td>
+          <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">${a.status}</span></td>
+          <td class="px-4 py-3.5 text-right">
+            <button type="button" onclick="showToast('Hồ sơ đại lý', 'Đang mở thông tin hợp đồng và công nợ của đại lý ${a.code}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Chi tiết</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'agencies', pageTitle: 'Thông tin Đại lý' });
+      renderAgenciesTable();
+    });
+  </script>
+</body>
+</html>

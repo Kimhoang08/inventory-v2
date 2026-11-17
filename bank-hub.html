@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bank Hub - Cổng Kết nối Ngân hàng - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Bank Hub - Kết nối Ngân hàng &amp; Đối soát</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Cổng nạp tiền tự động VietQR Pro 24/7, Open Banking API và khớp lệnh giao dịch tức thì</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="cashflow.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+            <i class="fa-solid fa-money-bill-transfer text-xs"></i>
+            <span>Dòng tiền tổng</span>
+          </a>
+          <button type="button" onclick="showToast('Khởi động Webhook', 'Cổng Webhook Napas 24/7 đang hoạt động bình thường, độ trễ 1.2s.')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer">
+            <i class="fa-solid fa-bolt text-[11px]"></i>
+            <span>Kiểm tra Webhook IPN</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Thẻ Tài khoản Ngân hàng Doanh nghiệp (Banking Account Cards) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- VCB -->
+        <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-700 via-emerald-800 to-slate-900 text-white shadow-md space-y-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10.5px] font-bold text-emerald-200 uppercase tracking-wider">TÀI KHOẢN VIETQR CHÍNH (VCB)</span>
+              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-1 font-mono">1038699999</div>
+              <div class="text-xs font-bold mt-0.5 text-emerald-100">CÔNG TY TNHH CÔNG NGHỆ TECHERA</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white/20 text-white text-[10.5px] font-bold border border-white/20">
+              Cổng VietQR 24/7
+            </span>
+          </div>
+          <div class="pt-3 border-t border-white/15 flex items-center justify-between text-xs text-emerald-100">
+            <span>Ngân hàng Ngoại Thương (Vietcombank)</span>
+            <span>CN Tân Định • TP.HCM</span>
+          </div>
+        </div>
+
+        <!-- MB Bank -->
+        <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 text-white shadow-md space-y-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10.5px] font-bold text-blue-200 uppercase tracking-wider">TÀI KHOẢN DỰ PHÒNG (MB BANK)</span>
+              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-1 font-mono">99998888TECHERA</div>
+              <div class="text-xs font-bold mt-0.5 text-blue-100">CÔNG TY TNHH CÔNG NGHỆ TECHERA</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white/20 text-white text-[10.5px] font-bold border border-white/20">
+              Open Banking API
+            </span>
+          </div>
+          <div class="pt-3 border-t border-white/15 flex items-center justify-between text-xs text-blue-100">
+            <span>Ngân hàng Quân Đội (MBBank)</span>
+            <span>CN Sài Gòn • TP.HCM</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-coins text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Dòng tiền nạp tháng</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">1.25 Tỷ đ</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-coins absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-arrow-right-arrow-left text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Giao dịch khớp lệnh</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">342 lệnh</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-right-arrow-left absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-bullseye text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tỷ lệ khớp lệnh</div>
+              <div class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5">100%</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-bullseye absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-stopwatch text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tốc độ xử lý TB</div>
+              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5">1.8 giây</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-stopwatch absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+      </section>
+
+      <!-- Bảng sao kê giao dịch ngân hàng thời gian thực -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="font-extrabold text-sm text-slate-900">Nhật ký Giao dịch Khớp lệnh Ngân hàng Tự động</div>
+          <span class="text-xs text-slate-400">Thời gian thực • Webhook IPN</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3">Mã GD Ngân hàng</th>
+                <th class="px-4 py-3">Thời gian</th>
+                <th class="px-4 py-3">Cổng ngân hàng</th>
+                <th class="px-4 py-3 text-right">Số tiền nhận</th>
+                <th class="px-4 py-3">Nội dung chuyển khoản</th>
+                <th class="px-4 py-3">Tài khoản thụ hưởng</th>
+                <th class="px-4 py-3 text-center">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">VCB-9841289</td>
+                <td class="px-4 py-3.5 text-slate-500">17/11/2026 14:18</td>
+                <td class="px-4 py-3.5 font-semibold text-slate-700">Vietcombank 247</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+10.000.000 đ</td>
+                <td class="px-4 py-3.5 font-mono text-slate-800">NAPVI TA089</td>
+                <td class="px-4 py-3.5 font-medium text-slate-700">Ví Đại lý HuyEra</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">MB-4512903</td>
+                <td class="px-4 py-3.5 text-slate-500">17/11/2026 12:40</td>
+                <td class="px-4 py-3.5 font-semibold text-slate-700">MB Bank API</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+4.704.000 đ</td>
+                <td class="px-4 py-3.5 font-mono text-slate-800">THANHTOAN TEC-00000277</td>
+                <td class="px-4 py-3.5 font-medium text-slate-700">Đơn hàng Ba Na Hills</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">VCB-9840112</td>
+                <td class="px-4 py-3.5 text-slate-500">17/11/2026 10:15</td>
+                <td class="px-4 py-3.5 font-semibold text-slate-700">Vietcombank 247</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+25.000.000 đ</td>
+                <td class="px-4 py-3.5 font-mono text-slate-800">NAPVI TA-BAMIEN</td>
+                <td class="px-4 py-3.5 font-medium text-slate-700">Ví Cty Ba Miền HCM</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'bank-hub', pageTitle: 'Bank Hub' });
+    });
+  </script>
+</body>
+</html>

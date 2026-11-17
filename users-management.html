@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý Tài khoản Người dùng - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Quản lý Tài khoản Người dùng</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Quản trị danh sách tài khoản nội bộ công ty và đối tác đại lý B2B</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="rbac-matrix.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>Ma trận RBAC</span>
+          </a>
+          <button type="button" onclick="showToast('Thêm người dùng', 'Mở biểu mẫu tạo tài khoản người dùng nội bộ/đại lý.')" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-plus text-[11px]"></i>
+            <span>+ Thêm người dùng</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-users text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tổng tài khoản</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">18 Users</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-users absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-user-shield text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Quản trị viên (Admin)</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">3 Admins</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-user-shield absolute -right-2 -bottom-2 text-rose-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-handshake text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tài khoản Đại lý B2B</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">10 Partners</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-handshake absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-user-tag text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Sales &amp; Kế toán</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">5 Users</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-user-tag absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+      </section>
+
+      <!-- Bảng Danh sách Người dùng -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="font-extrabold text-sm text-slate-900">Danh sách Người dùng &amp; Phân quyền</div>
+          <input type="text" placeholder="Tìm tên, email, vai trò..." class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-slate-500 max-w-xs" />
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3">Họ và tên / Email</th>
+                <th class="px-4 py-3">Vai trò phân quyền</th>
+                <th class="px-4 py-3">Bộ phận / Đơn vị</th>
+                <th class="px-4 py-3">Số điện thoại</th>
+                <th class="px-4 py-3">Lần đăng nhập cuối</th>
+                <th class="px-4 py-3 text-center">Trạng thái</th>
+                <th class="px-4 py-3 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-extrabold flex items-center justify-center text-xs">NL</div>
+                  <div>
+                    <strong class="text-slate-900 block font-bold text-xs">Nguyễn Diệu Linh</strong>
+                    <span class="text-[11px] text-slate-400">admin@techera.vn</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Super Admin</span>
+                </td>
+                <td class="px-4 py-3.5 text-slate-600">Ban Giám Đốc</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 111 222</td>
+                <td class="px-4 py-3.5 text-slate-400 text-[11px]">Vừa xong • 17/11</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-right">
+                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user admin@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-xs">KH</div>
+                  <div>
+                    <strong class="text-slate-900 block font-bold text-xs">Nguyễn Thị Kim Hoàng</strong>
+                    <span class="text-[11px] text-slate-400">hoang.sale@techera.vn</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Trưởng phòng KD</span>
+                </td>
+                <td class="px-4 py-3.5 text-slate-600">Ban Kinh Doanh</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 333 444</td>
+                <td class="px-4 py-3.5 text-slate-400 text-[11px]">10 phút trước</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-right">
+                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user hoang.sale@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center text-xs">LT</div>
+                  <div>
+                    <strong class="text-slate-900 block font-bold text-xs">Lê Văn Tuấn</strong>
+                    <span class="text-[11px] text-slate-400">ketoan@techera.vn</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Kế toán Vé &amp; VAT</span>
+                </td>
+                <td class="px-4 py-3.5 text-slate-600">Ban Tài Chính</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 555 666</td>
+                <td class="px-4 py-3.5 text-slate-400 text-[11px]">1 giờ trước</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-right">
+                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user ketoan@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-extrabold flex items-center justify-center text-xs">HE</div>
+                  <div>
+                    <strong class="text-slate-900 block font-bold text-xs">Đại lý HuyEra B2B</strong>
+                    <span class="text-[11px] text-slate-400">booking@huyera.vn</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đại lý Cấp 1</span>
+                </td>
+                <td class="px-4 py-3.5 text-slate-600">Đối tác TA-089</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 888 777</td>
+                <td class="px-4 py-3.5 text-slate-400 text-[11px]">Hôm nay 11:20</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-right">
+                  <button type="button" onclick="showToast('Khóa/Mở tài khoản', 'Cấu hình quyền đại lý booking@huyera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'users-management', pageTitle: 'Quản lý Tài khoản Người dùng' });
+    });
+  </script>
+</body>
+</html>

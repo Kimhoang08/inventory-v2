@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khám phá Việt Nam - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <script>
+    // Global instant handlers for Date & Pax Picker (prevents ReferenceError during load)
+    function toggleInlineDatePicker(force) {
+      if (window._catalogToggleInlineDatePicker) return window._catalogToggleInlineDatePicker(force);
+      const p = document.getElementById('inlineDatePickerPanel');
+      if (p) p.classList.toggle('hidden');
+    }
+    function closeInlineDatePicker() {
+      if (window._catalogCloseInlineDatePicker) return window._catalogCloseInlineDatePicker();
+      const p = document.getElementById('inlineDatePickerPanel');
+      if (p) p.classList.add('hidden');
+    }
+    function toggleInlinePaxPicker(force) {
+      if (window._catalogToggleInlinePaxPicker) return window._catalogToggleInlinePaxPicker(force);
+      const p = document.getElementById('inlinePaxPickerPanel');
+      if (p) p.classList.toggle('hidden');
+    }
+    function closeInlinePaxPicker() {
+      if (window._catalogCloseInlinePaxPicker) return window._catalogCloseInlinePaxPicker();
+      const p = document.getElementById('inlinePaxPickerPanel');
+      if (p) p.classList.add('hidden');
+    }
+    window.toggleInlineDatePicker = toggleInlineDatePicker;
+    window.closeInlineDatePicker = closeInlineDatePicker;
+    window.toggleInlinePaxPicker = toggleInlinePaxPicker;
+    window.closeInlinePaxPicker = closeInlinePaxPicker;
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 lg:pb-12 space-y-4 sm:space-y-6">
+
+      <!-- ================================================================= -->
+      <!-- 1. HEADER: KHÁM PHÁ VIỆT NAM (MÀU CAM CHỦ ĐẠO & PHỤ ĐỀ) -->
+      <!-- ================================================================= -->
+      <header class="text-center sm:text-center space-y-3 sm:space-y-4 pt-2 sm:pt-4">
+        <!-- Tiêu đề chính toàn bộ màu cam, xuống dòng tự nhiên theo không gian -->
+        <h1 class="text-xl sm:text-3xl lg:text-4xl font-black text-brand-500 tracking-tight leading-snug max-w-2xl mx-auto">
+          <span class="block text-2xl sm:text-4xl lg:text-5xl mb-1"> Khám phá Việt Nam theo cách của riêng bạn </span>
+        </h1>
+        
+        <!-- Phụ đề -->
+        <p class="text-sm sm:text-base text-slate-600 font-semibold">
+          Trải nghiệm đa dạng, đặt vé tức thì
+        </p>
+
+
+      <!-- ================================================================= -->
+      <!-- 2. THANH TÌM KIẾM CHÍNH & CỤM BỘ LỌC 4 TẦNG XẾP CHỒNG DỌC -->
+      <!-- ================================================================= -->
+      <section class="space-y-3">
+        
+        <!-- THANH SEARCH BAR (MỐC TRÊN: KHỐI BO TRÒN VIỀN CAM) -->
+    <div id="catalogSearchWrapper" class="relative z-30">
+      <div class="bg-white rounded-full p-1.5 sm:p-2 border border-[#F25C22] shadow-sm focus-within:shadow-md transition-all flex items-center gap-2 text-slate-800">
+        <!-- Icon kính lúp bên trái -->
+        <div class="pl-3 sm:pl-4 text-slate-400 shrink-0">
+          <i class="fa-solid fa-magnifying-glass text-sm sm:text-base"></i>
+        </div>
+        
+        <!-- Input tìm kiếm -->
+        <input id="input_search_destination" type="text"
+              oninput="onCatalogSearchInput(this.value)"
+              onfocus="openDesktopSearchDropdown()"
+              onkeydown="if(event.key === 'Enter') handleSearchSubmit()"
+              placeholder="Vé Safari Nam Hội An"
+              class="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm font-semibold bg-transparent focus:outline-none placeholder:text-slate-400" />
+        
+        <!-- Nút clear input -->
+        <button id="btnClearCatalogSearch" type="button" onclick="clearCatalogSearch()" class="hidden p-1.5 rounded-full hover:bg-slate-100 text-slate-400 cursor-pointer">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+
+        <!-- Nút hành động: Nút 'Tìm kiếm' màu cam bo tròn đồng bộ -->
+        <button id="btnCatalogSearchSubmit" type="button" onclick="handleSearchSubmit()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs sm:text-sm shadow-md shadow-brand-500/25 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+          <i class="fa-solid fa-magnifying-glass text-xs hidden sm:inline"></i>
+          <span>Tìm kiếm</span>
+        </button>
+      </div>
+
+      <!-- Dropdown Gợi ý Tìm Kiếm Trực quan -->
+      <div id="desktopSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-200/90 shadow-2xl p-4 z-40 text-slate-800 space-y-3">
+        <div id="desktopSearchSuggestionsWrap" class="hidden space-y-2">
+          <div class="text-[11px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
+            <span>Gợi ý phù hợp</span>
+            <span id="desktopSuggestCount" class="text-brand-600 font-extrabold">0</span>
+          </div>
+          <div id="desktopSearchSuggestions" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+        </div>
+      </div>
+    </div>
+
+
+        <!-- HÀNG 1 (NGAY DƯỚI SEARCH BAR): CỤM SẮP XẾP & BỘ LỌC ĐA ĐIỀU KIỆN (FLEX ROW TỶ LỆ ~48% : 52%, GAP 8-10px) -->
+        <div class="flex items-center gap-2 sm:gap-2.5">
+          <!-- Bên trái (Cột 1, ~48%): Dropdown Sắp xếp bo tròn dạng viên thuốc, nền trắng, viền xám nhạt -->
+          <div class="relative w-[48%] flex-[48] min-w-0">
+            <select id="catalogSortSelect" onchange="handleSortChange(this.value)" class="w-full appearance-none bg-white border border-slate-200/90 rounded-full px-4 py-2.5 pr-8 text-xs font-black text-slate-700 hover:border-brand-400 focus:outline-none focus:border-brand-500 shadow-2xs transition-colors cursor-pointer truncate">
+              <option value="popular">Phổ biến nhất</option>
+              <option value="price_asc">Giá: Thấp đến cao</option>
+              <option value="price_desc">Giá: Cao đến thấp</option>
+              <option value="rating_desc">Đánh giá cao nhất</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
+          </div>
+
+          <!-- Bên phải (Cột 2, ~52%): Nút mở Drawer lọc Tập đoàn & Khu vực bo tròn dạng viên thuốc, viền cam #F25C22, chữ cam, kèm badge tròn màu cam -->
+          <div class="w-[52%] flex-[52] min-w-0">
+            <button id="btnOpenFilterDrawer" type="button" onclick="openFilterDrawer()" class="w-full flex items-center justify-between gap-1.5 px-3.5 py-2.5 rounded-full border border-slate-200 hover:border-brand-300 bg-white hover:bg-orange-50/50 text-xs font-black text-slate-700 shadow-2xs transition-all cursor-pointer active:scale-[0.99]">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <i class="fa-solid fa-filter text-[#F25C22] text-xs shrink-0"></i>
+                <span class="truncate">Tập đoàn &amp; Khu vực</span>
+              </div>
+              <span id="activeFilterBadgeCount" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-[#F25C22] text-white text-[10px] font-black items-center justify-center shrink-0">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- HÀNG 2 (DƯỚI HÀNG 1): THẺ CHỌN NGÀY SỬ DỤNG (FULL-WIDTH 100% CONTAINER) -->
+        <div class="w-full">
+          <button id="btnTriggerDatePicker" type="button" onclick="toggleInlineDatePicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
+            <!-- 1. Góc trái: Icon Lịch nằm trong khối vuông bo góc màu cam nhạt -->
+            <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+              <i class="fa-regular fa-calendar-days text-sm"></i>
+            </div>
+            
+            <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ NGÀY SỬ DỤNG & giá trị ngày) -->
+            <div class="flex-1 min-w-0">
+              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">NGÀY SỬ DỤNG</div>
+              <div id="catalogDateDisplayValue" class="text-xs sm:text-sm font-black text-slate-800 truncate">Thứ Năm, 19/11/2026</div>
+            </div>
+            
+            <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
+            <div class="pr-1 text-slate-400 shrink-0">
+              <i id="iconChevronDate" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+            </div>
+          </button>
+
+          <!-- Khung lịch Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
+          <div id="inlineDatePickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+            <!-- Điều hướng Tháng & Năm -->
+            <div class="flex items-center justify-between">
+              <button type="button" onclick="changeCatalogCalMonth(-1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">‹</button>
+              <span id="catalogDateMonthTitle" class="text-sm font-black text-slate-800">Tháng 11 / 2026</span>
+              <button type="button" onclick="changeCatalogCalMonth(1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">›</button>
+            </div>
+
+            <!-- Thứ trong tuần -->
+            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-black text-slate-400">
+              <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div class="text-rose-500">CN</div>
+            </div>
+
+            <!-- Lưới ngày -->
+            <div id="catalogDateGrid" class="grid grid-cols-7 gap-1 text-xs"></div>
+
+            <!-- Chân khối lịch -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <button type="button" onclick="selectCatalogQuickTodayPreset()" class="text-brand-600 font-extrabold hover:underline cursor-pointer">Hôm nay</button>
+              <button type="button" onclick="closeInlineDatePicker()" class="text-slate-500 font-bold hover:text-slate-800 cursor-pointer">Đóng</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- HÀNG 3 (DƯỚI HÀNG 2): THẺ CHỌN SỐ LƯỢNG KHÁCH (FULL-WIDTH 100% CONTAINER) -->
+        <div class="w-full">
+          <button id="btnTriggerPaxPicker" type="button" onclick="toggleInlinePaxPicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
+            <!-- 1. Góc trái: Icon Nhóm khách trong khối vuông bo góc màu cam nhạt -->
+            <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-user-group text-sm"></i>
+            </div>
+            
+            <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ SỐ LƯỢNG KHÁCH & tóm tắt số khách) -->
+            <div class="flex-1 min-w-0">
+              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">SỐ LƯỢNG KHÁCH</div>
+              <div id="catalogPaxDisplayValue" class="text-xs sm:text-sm font-black text-slate-800 truncate">2 Người lớn, 0 Trẻ em</div>
+            </div>
+            
+            <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
+            <div class="pr-1 text-slate-400 shrink-0">
+              <i id="iconChevronPax" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+            </div>
+          </button>
+
+          <!-- Khung chọn Pax Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
+          <div id="inlinePaxPickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+            <!-- Header khối: Tiêu đề bên trái & nút xác nhận Xong (màu cam) bên phải -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+              <h4 class="text-xs font-black text-slate-900">Chọn số lượng đối tượng</h4>
+              <button type="button" onclick="confirmInlinePaxPicker()" class="px-3.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs shadow-xs cursor-pointer transition-all">Xong</button>
+            </div>
+
+            <!-- Danh sách đối tượng (Stepper / +/-) -->
+            <div class="space-y-3">
+              <!-- 1. Người lớn (Phụ đề: Cao trên 1m4) -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div>
+                  <div class="text-xs font-black text-slate-800">Người lớn</div>
+                  <div class="text-[10.5px] text-slate-400 font-medium">Cao trên 1m4</div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <button id="btnPaxMinusAdult" type="button" onclick="updateCatalogQuickPax('adult', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer">-</button>
+                  <span id="catalogQuickAdultQty" class="w-6 text-center text-xs font-black text-slate-900">2</span>
+                  <button id="btnPaxPlusAdult" type="button" onclick="updateCatalogQuickPax('adult', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                </div>
+              </div>
+
+              <!-- 2. Trẻ em (Phụ đề: Cao từ 1m – 1m4) -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div>
+                  <div class="text-xs font-black text-slate-800">Trẻ em</div>
+                  <div class="text-[10.5px] text-slate-400 font-medium">Cao từ 1m – 1m4</div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <button id="btnPaxMinusChild" type="button" onclick="updateCatalogQuickPax('child', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
+                  <span id="catalogQuickChildQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
+                  <button id="btnPaxPlusChild" type="button" onclick="updateCatalogQuickPax('child', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                </div>
+              </div>
+
+              <!-- 3. Người cao tuổi (Phụ đề: Từ 60 tuổi trở lên) -->
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div>
+                  <div class="text-xs font-black text-slate-800">Người cao tuổi</div>
+                  <div class="text-[10.5px] text-slate-400 font-medium">Từ 60 tuổi trở lên</div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <button id="btnPaxMinusSenior" type="button" onclick="updateCatalogQuickPax('senior', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
+                  <span id="catalogQuickSeniorQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
+                  <button id="btnPaxPlusSenior" type="button" onclick="updateCatalogQuickPax('senior', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HÀNG 4 (DƯỚI HÀNG 3): KHỐI TỪ KHÓA GẦN ĐÂY & TAG PHỔ BIẾN (FULL-WIDTH 100% CONTAINER) -->
+        <div class="w-full bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-2xs space-y-3">
+          <!-- Nửa trên: Gần đây -->
+          <div id="recentSearchSection">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-clock-rotate-left text-slate-400 text-[11px]"></i>
+                <span>Gần đây:</span>
+              </span>
+              <button id="btnClearRecentTags" type="button" onclick="clearRecentSearches()" class="text-[11px] font-bold text-rose-500 hover:underline cursor-pointer flex items-center gap-1">
+                <i class="fa-regular fa-trash-can text-[10px]"></i>
+                <span>Xóa lịch sử</span>
+              </button>
+            </div>
+            <div id="recentSearchTagsList" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Nửa dưới (ngăn cách bởi đường kẻ mờ): Phổ biến -->
+          <div class="pt-2.5 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-1.5 text-xs font-black text-slate-700">
+                <span>🔥</span>
+                <span>Phổ biến:</span>
+              </div>
+              <!-- Nút mở rộng [⌄] ở góc dưới bên phải để xem thêm toàn bộ hashtag -->
+              <button id="btnToggleTrendingExtra" type="button" onclick="toggleMoreTrendingTags()" class="w-7 h-7 rounded-full bg-slate-50 hover:bg-orange-50 border border-slate-200/80 flex items-center justify-center text-slate-400 hover:text-brand-600 transition-colors cursor-pointer text-xs" title="Xem thêm hashtag">
+                <i id="iconToggleTrendingRows" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200"></i>
+              </button>
+            </div>
+            <div id="trendingTagsList" class="flex flex-wrap gap-2"></div>
+            <div id="trendingRowExtra" class="hidden flex-wrap gap-2 pt-2"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 6. RESULT SECTION (VÙNG KẾT QUẢ TÌM KIẾM) -->
+      <!-- ================================================================= -->
+      <section class="space-y-3.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-black text-slate-800">
+              <span id="searchResultCountNum" class="font-black text-brand-600">66</span> kết quả tìm thấy
+            </h2>
+          </div>
+        </div>
+
+        <!-- Danh sách dạng thẻ card hiển thị sản phẩm -->
+        <div id="destinationGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
+        
+        <!-- Phân trang -->
+        <div id="pagination_site_catalog" class="pt-2 flex items-center justify-center gap-1.5"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- BỘ LỌC TÌM KIẾM ĐA ĐIỀU KIỆN (SLIDE-OVER DRAWER TỪ CẠNH PHẢI ~85% WIDTH) -->
+  <!-- ===================================================================== -->
+  <div id="drawer_search_filter" class="hidden fixed inset-0 z-50 overflow-hidden">
+    <!-- Backdrop làm mờ -->
+    <div id="drawer_filter_backdrop" onclick="closeFilterDrawer()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs opacity-0 transition-opacity duration-300"></div>
+    
+    <!-- Slide-over Drawer Panel -->
+    <div id="drawer_filter_panel" class="fixed inset-y-0 right-0 w-[85vw] max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col h-full overflow-hidden z-50">
+      
+      <!-- Drawer Header -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-start justify-between bg-slate-50/80 shrink-0">
+        <div>
+          <h3 class="text-sm sm:text-base font-black text-slate-900 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-orange-50 text-brand-500 border border-brand-200 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-filter"></i>
+            </span>
+            <span>Bộ lọc tìm kiếm</span>
+          </h3>
+          <p class="text-[11px] text-slate-500 font-medium mt-0.5">Chọn nhiều điều kiện để thu hẹp danh sách site phù hợp</p>
+        </div>
+        <button type="button" onclick="closeFilterDrawer()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer transition-colors shrink-0">✕</button>
+      </div>
+
+      <!-- Drawer Scrollable Body -->
+      <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 custom-scrollbar">
+        <!-- Nhóm lọc 1 – TẬP ĐOÀN (Multi-select Checkbox) -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <span>🏢</span>
+              <span>TẬP ĐOÀN</span>
+              <span id="drawerBadgeChainsCount" class="text-[11px] font-black text-brand-600"></span>
+            </div>
+            <button type="button" onclick="clearCheckboxGroup('chain')" class="text-[11px] font-bold text-slate-500 hover:text-rose-500 hover:underline cursor-pointer transition-colors">Xóa chọn</button>
+          </div>
+          <!-- Lưới 2 cột các tập đoàn -->
+          <div id="filterChainsContainer" class="grid grid-cols-2 gap-2"></div>
+        </div>
+
+        <!-- Nhóm lọc 2 – KHU VỰC (Multi-select Checkbox) -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <span>📍</span>
+              <span>KHU VỰC</span>
+              <span id="drawerBadgeRegionsCount" class="text-[11px] font-black text-brand-600"></span>
+            </div>
+            <button type="button" onclick="clearCheckboxGroup('region')" class="text-[11px] font-bold text-slate-500 hover:text-rose-500 hover:underline cursor-pointer transition-colors">Xóa chọn</button>
+          </div>
+          <!-- Lưới 2 cột các khu vực -->
+          <div id="filterRegionsContainer" class="grid grid-cols-2 gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="p-4 border-t border-slate-100 bg-white flex items-center gap-3 shrink-0 shadow-[0_-4px_16px_rgba(15,23,42,0.06)]">
+        <button type="button" onclick="resetAllFiltersInDrawer()" class="py-2.5 px-4 rounded-xl border border-slate-200 text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer">
+          Đặt lại
+        </button>
+        <button type="button" id="btnDrawerApplyFilters" onclick="applyCatalogFilterDrawer()" class="flex-1 py-2.5 px-4 rounded-xl bg-brand-500 hover:bg-brand-600 active:scale-95 text-white text-xs font-black shadow-md shadow-brand-500/25 transition-all cursor-pointer text-center">
+          Áp dụng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- DATABASE & CORE JS DEPENDENCIES -->
+  <!-- ===================================================================== -->
+  <script src="database/products.db.js?v=2.2"></script>
+  <script src="database/crm.db.js?v=2.2"></script>
+  <script src="database/orders.db.js?v=2.2"></script>
+  <script src="database/cashflow.db.js?v=2.2"></script>
+  <script src="database/db-store.js?v=2.2"></script>
+  <script src="assets/js/utils.js?v=2.2"></script>
+  <script src="assets/js/layout.js?v=2.2"></script>
+  <script src="assets/js/catalog.js?v=2.2"></script>
+
+</body>
+</html>

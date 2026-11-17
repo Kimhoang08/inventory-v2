@@ -1,0 +1,114 @@
+/* ==========================================================================
+   TECHERA B2B PORTAL - MAIN STYLESHEET
+   ========================================================================== */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #CBD5E1;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Accordion & Collapse Transitions */
+.collapse-transition {
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+}
+.collapsed-box {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden;
+}
+.expanded-box {
+  max-height: 1200px;
+  opacity: 1;
+  overflow: visible;
+}
+
+/* Toggle Switch Custom Animation */
+.toggle-checkbox {
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+.toggle-checkbox:checked {
+  transform: translateX(20px);
+  border-color: #F15A24;
+  background-color: #F15A24;
+}
+.toggle-checkbox:checked + .toggle-track {
+  background-color: #FFCEB8;
+}
+
+/* Clean Number Inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* =========================================================================
+   VERTICAL NAVIGATION SIDEBAR STYLES (EXPANDED & COLLAPSED MINI-SIDEBAR)
+   ========================================================================= */
+.sidebar-expanded {
+  width: 16rem; /* 256px */
+}
+.sidebar-collapsed {
+  width: 4.5rem; /* 72px */
+}
+
+/* Hide text elements, labels, and inline accordions in collapsed mode */
+.sidebar-collapsed .nav-text-content,
+.sidebar-collapsed .nav-group-label,
+.sidebar-collapsed #nav_group_label_management,
+.sidebar-collapsed .sidebar-brand-text,
+.sidebar-collapsed .submenu-accordion {
+  display: none !important;
+}
+
+/* Center logo & icon items in collapsed mode */
+.sidebar-collapsed #sidebar_brand_logo {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.sidebar-collapsed .nav-item-btn {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Flyout & Tooltip behaviors */
+.nav-tooltip,
+.nav-flyout {
+  display: none;
+}
+
+.sidebar-collapsed .nav-group-item:hover .nav-tooltip {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.sidebar-collapsed .nav-group-item:hover .nav-flyout {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}

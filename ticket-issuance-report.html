@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo cáo Xuất vé - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <span class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-receipt text-lg"></i>
+            </span>
+            Báo cáo Xuất vé
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Thống kê lưu lượng xuất vé điện tử, trạng thái soát vé tại cổng kiểm soát đối tác và đối soát QR e-Ticket.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="exportTicketReportExcel()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-file-excel text-emerald-600"></i>
+            <span>Xuất Excel</span>
+          </button>
+          <button type="button" onclick="syncGateStatusAll()" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Đồng bộ cổng QR</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold">Tổng vé phát hành</span>
+            <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-ticket"></i>
+            </div>
+          </div>
+          <div id="statTotalTickets" class="text-xl sm:text-2xl font-black text-slate-900">2.486</div>
+          <div class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <span>+12.4% so với kỳ trước</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-emerald-600">
+            <span class="text-xs font-semibold text-slate-600">Đã qua cổng (Check-in)</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+          <div id="statCheckedInTickets" class="text-xl sm:text-2xl font-black text-emerald-600">1.890</div>
+          <div class="text-[11px] text-slate-400 font-medium">Tỷ lệ qua cổng: 76.0%</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-blue-600">
+            <span class="text-xs font-semibold text-slate-600">Chưa sử dụng</span>
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+          </div>
+          <div id="statPendingTickets" class="text-xl sm:text-2xl font-black text-blue-600">578</div>
+          <div class="text-[11px] text-slate-400 font-medium">Trong hạn sử dụng (23.2%)</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-rose-600">
+            <span class="text-xs font-semibold text-slate-600">Đã thu hồi / Hoàn vé</span>
+            <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-ban"></i>
+            </div>
+          </div>
+          <div id="statRevokedTickets" class="text-xl sm:text-2xl font-black text-rose-600">18</div>
+          <div class="text-[11px] text-slate-400 font-medium">Khóa mã QR hoàn vé: 0.8%</div>
+        </div>
+      </div>
+
+      <!-- Filter Card -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <!-- Tìm kiếm -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">Tìm kiếm vé</label>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="ticketSearchInput" oninput="renderTicketReportTable()" placeholder="Mã vé TKT, mã đơn ORD, tên khách..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-brand-500 bg-white" />
+            </div>
+          </div>
+
+          <!-- Lọc Tập đoàn -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">Tập đoàn / Đối tác</label>
+            <select id="ticketCorpFilter" onchange="renderTicketReportTable()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-brand-500 bg-white">
+              <option value="ALL">Tất cả tập đoàn</option>
+              <option value="Sun World">Sun World</option>
+              <option value="VinWonders">VinWonders</option>
+              <option value="Khác">Đối tác khác</option>
+            </select>
+          </div>
+
+          <!-- Trạng thái vé -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 mb-1">Trạng thái soát vé</label>
+            <select id="ticketGateFilter" onchange="renderTicketReportTable()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-brand-500 bg-white">
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="Đã qua cổng">Đã qua cổng (Check-in)</option>
+              <option value="Chưa sử dụng">Chưa sử dụng</option>
+              <option value="Đã thu hồi">Đã thu hồi / Hoàn vé</option>
+            </select>
+          </div>
+
+          <!-- Thao tác lọc -->
+          <div class="flex items-end gap-2">
+            <button type="button" onclick="renderTicketReportTable()" class="flex-1 py-2 px-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer text-center">
+              Áp dụng lọc
+            </button>
+            <button type="button" onclick="resetTicketReportFilters()" class="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs transition-colors cursor-pointer" title="Làm mới bộ lọc">
+              <i class="fa-solid fa-arrow-rotate-left"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets Table Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <h3 class="font-extrabold text-sm text-slate-900">Chi tiết vé điện tử phát hành</h3>
+            <span id="ticketCountBadge" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">0 vé</span>
+          </div>
+          <div class="text-xs text-slate-400">Dữ liệu kết nối trực tiếp cổng soát vé 24/7</div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-400 uppercase tracking-wider font-extrabold text-[10px] border-b border-slate-100">
+                <th class="py-3 px-4">Mã Vé E-Ticket</th>
+                <th class="py-3 px-4">Mã Đơn hàng</th>
+                <th class="py-3 px-4">Điểm đến &amp; Gói vé</th>
+                <th class="py-3 px-4">Ngày sử dụng</th>
+                <th class="py-3 px-4">Khách hàng</th>
+                <th class="py-3 px-4">Kênh phân phối</th>
+                <th class="py-3 px-4 text-center">Trạng thái soát vé</th>
+                <th class="py-3 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="ticketReportTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+          <div id="ticketReportPaginationInfo">Hiển thị 1 - 10 trong 24 vé</div>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Cổng QR Gateway: Sẵn sàng
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Xem trước Mã QR Vé (E-Ticket QR Viewer) -->
+  <div id="modalTicketQrPreview" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Vé điện tử E-Ticket</span>
+        <button type="button" onclick="closeTicketQrModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold cursor-pointer">✕</button>
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="qrModalTicketCode" class="text-base font-black font-mono text-brand-600">TKT-2611-BA01</h3>
+        <p id="qrModalServiceTitle" class="text-xs font-bold text-slate-800">Cáp treo Bà Nà Hills + Buffet Việt</p>
+        <p id="qrModalSiteSub" class="text-[11px] text-slate-400">Sun World Ba Na Hills</p>
+      </div>
+
+      <!-- QR Code Image Container -->
+      <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 inline-block shadow-inner">
+        <img id="qrModalImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TKT-2611-BA01-VERIFIED" alt="Mã QR vé" class="w-44 h-44 rounded-xl mx-auto" />
+      </div>
+
+      <div class="text-xs space-y-1 text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Ngày sử dụng:</span>
+          <strong id="qrModalDate">15/11/2026</strong>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Cổng hợp lệ:</span>
+          <strong class="text-emerald-600">Tất cả cổng soát vé tự động</strong>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="closeTicketQrModal()" class="py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer">
+          Đóng
+        </button>
+        <button type="button" onclick="printSingleTicket()" class="py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-xs cursor-pointer">
+          <i class="fa-solid fa-print mr-1"></i> In vé
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    let ticketsDataset = [];
+
+    function generateTicketDataset() {
+      const orders = (typeof TecheraDB !== 'undefined') ? TecheraDB.getOrders() : [];
+      const gates = ['Đã qua cổng', 'Đã qua cổng', 'Chưa sử dụng', 'Chưa sử dụng', 'Đã thu hồi'];
+      const sampleTickets = [];
+
+      orders.slice(0, 30).forEach((ord, oIdx) => {
+        const ticketCount = Math.min(3, ord.tickets || 1);
+        for (let t = 1; t <= ticketCount; t++) {
+          const status = ord.status === 'Đã hoàn tiền' ? 'Đã thu hồi' : (ord.status === 'Đã hủy' ? 'Đã thu hồi' : gates[(oIdx * 3 + t) % gates.length]);
+          sampleTickets.push({
+            ticketCode: `TKT-2611-${ord.corp === 'VinWonders' ? 'VW' : 'SW'}${String(oIdx * 3 + t).padStart(4, '0')}`,
+            orderCode: ord.orderCode,
+            packageName: ord.packageName,
+            site: ord.site,
+            corp: ord.corp,
+            useDate: ord.useDate || '2026-11-15',
+            customerName: ord.customerName || 'Khách hàng',
+            channel: ord.channel || 'Đại lý (TA)',
+            gateStatus: status
+          });
+        }
+      });
+      ticketsDataset = sampleTickets;
+    }
+
+    function renderTicketReportTable() {
+      const q = (document.getElementById('ticketSearchInput')?.value || '').trim().toLowerCase();
+      const corp = document.getElementById('ticketCorpFilter')?.value || 'ALL';
+      const gate = document.getElementById('ticketGateFilter')?.value || 'ALL';
+
+      let filtered = ticketsDataset.filter(item => {
+        if (q) {
+          const hay = `${item.ticketCode} ${item.orderCode} ${item.customerName} ${item.packageName} ${item.site}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        if (corp !== 'ALL' && item.corp !== corp) return false;
+        if (gate !== 'ALL' && item.gateStatus !== gate) return false;
+        return true;
+      });
+
+      // Update counters
+      const total = ticketsDataset.length;
+      const checkedIn = ticketsDataset.filter(t => t.gateStatus === 'Đã qua cổng').length;
+      const pending = ticketsDataset.filter(t => t.gateStatus === 'Chưa sử dụng').length;
+      const revoked = ticketsDataset.filter(t => t.gateStatus === 'Đã thu hồi').length;
+
+      document.getElementById('statTotalTickets').innerText = total;
+      document.getElementById('statCheckedInTickets').innerText = checkedIn;
+      document.getElementById('statPendingTickets').innerText = pending;
+      document.getElementById('statRevokedTickets').innerText = revoked;
+      document.getElementById('ticketCountBadge').innerText = `${filtered.length} vé`;
+      document.getElementById('ticketReportPaginationInfo').innerText = `Hiển thị ${filtered.length} / ${total} vé phát hành`;
+
+      const tbody = document.getElementById('ticketReportTableBody');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-slate-400">
+              <i class="fa-regular fa-ticket text-3xl mb-2 text-slate-300 block"></i>
+              Không tìm thấy vé điện tử nào phù hợp bộ lọc.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        let gateBadge = '';
+        if (t.gateStatus === 'Đã qua cổng') {
+          gateBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Đã qua cổng</span>`;
+        } else if (t.gateStatus === 'Chưa sử dụng') {
+          gateBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Chưa sử dụng</span>`;
+        } else {
+          gateBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Đã thu hồi</span>`;
+        }
+
+        const dateParts = t.useDate.split('-');
+        const dateVn = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : t.useDate;
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-4 font-mono font-black text-slate-900">${t.ticketCode}</td>
+            <td class="py-3 px-4 font-mono font-bold text-blue-600">
+              <a href="orders.html?search=${t.orderCode}" class="hover:underline">${t.orderCode}</a>
+            </td>
+            <td class="py-3 px-4">
+              <span class="font-bold text-slate-900 block truncate max-w-[220px]">${t.packageName}</span>
+              <span class="text-[11px] text-slate-400 italic">${t.site}</span>
+            </td>
+            <td class="py-3 px-4 font-semibold text-slate-700">${dateVn}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${t.customerName}</td>
+            <td class="py-3 px-4 text-slate-500">${t.channel}</td>
+            <td class="py-3 px-4 text-center">${gateBadge}</td>
+            <td class="py-3 px-4 text-right">
+              <div class="inline-flex items-center gap-1.5">
+                <button type="button" onclick="previewTicketQr('${t.ticketCode}', '${t.packageName}', '${t.site}', '${dateVn}')" class="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[11px] transition-colors cursor-pointer" title="Xem mã QR vé">
+                  <i class="fa-solid fa-qrcode mr-1"></i>QR Vé
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function resetTicketReportFilters() {
+      const s = document.getElementById('ticketSearchInput');
+      const c = document.getElementById('ticketCorpFilter');
+      const g = document.getElementById('ticketGateFilter');
+      if (s) s.value = '';
+      if (c) c.value = 'ALL';
+      if (g) g.value = 'ALL';
+      renderTicketReportTable();
+    }
+
+    function previewTicketQr(code, pkg, site, date) {
+      document.getElementById('qrModalTicketCode').innerText = code;
+      document.getElementById('qrModalServiceTitle').innerText = pkg;
+      document.getElementById('qrModalSiteSub').innerText = site;
+      document.getElementById('qrModalDate').innerText = date;
+      document.getElementById('qrModalImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(code + '-VERIFIED')}`;
+
+      const modal = document.getElementById('modalTicketQrPreview');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeTicketQrModal() {
+      const modal = document.getElementById('modalTicketQrPreview');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function printSingleTicket() {
+      showToast('Đang in vé', 'Đang gửi lệnh in e-Ticket tới máy in cổng.');
+      setTimeout(closeTicketQrModal, 800);
+    }
+
+    function exportTicketReportExcel() {
+      showToast('Đang xuất báo cáo', 'File Báo cáo Xuất vé Excel đang được tải xuống.');
+    }
+
+    function syncGateStatusAll() {
+      showToast('Đồng bộ thành công', 'Đã cập nhật trạng thái quét mã QR tại tất cả cổng kiểm soát.');
+      renderTicketReportTable();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'ticket-issuance-report', pageTitle: 'Báo cáo Xuất vé' });
+      generateTicketDataset();
+      renderTicketReportTable();
+    });
+  </script>
+</body>
+</html>

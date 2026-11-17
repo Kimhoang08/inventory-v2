@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo cáo Phân tích - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <div id="viewReportAnalytics" class=" space-y-6 animate-in fade-in duration-200">
+
+      <!-- Page Header + Mục đích -->
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div class="space-y-1">
+          <h1 class="text-[24px] sm:text-[28px] font-extrabold text-slate-900 tracking-tight leading-tight">
+            Báo cáo Phân tích
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 font-medium max-w-3xl">
+            Công cụ phân tích kinh doanh đa chiều chuyên sâu, đánh giá tỷ trọng đóng góp của từng kênh bán hàng, nhân sự kinh doanh, khu du lịch và tập đoàn cung cấp dịch vụ vào tổng doanh thu, lợi nhuận gộp và sản lượng vé.
+          </p>
+        </div>
+        <button type="button"
+                onclick="resetReportFilters('analytics')"
+                class="self-start md:self-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition-all cursor-pointer shrink-0">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-brand-500"></i>
+          <span>Làm mới</span>
+        </button>
+      </div>
+
+      <!-- A. BỘ LỌC ĐA CHIỀU -->
+      <section class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <!-- 1. Kênh bán -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kênh bán</label>
+            <select id="analyticsFilterChannel" onchange="onReportChannelChange('analytics')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả kênh bán</option>
+              <option value="Website">Website</option>
+              <option value="Đại lý (TA)">Đại lý (TA)</option>
+              <option value="Nội bộ">Nội bộ</option>
+            </select>
+          </div>
+
+          <!-- 2. Loại (phụ thuộc Kênh bán) -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Loại (Optional)</label>
+            <select id="analyticsFilterSubType" onchange="onReportSubTypeChange('analytics')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400">
+              <option value="ALL">Tất cả loại</option>
+            </select>
+          </div>
+
+          <!-- 3. Nhân viên phụ trách (Searchable Select) -->
+          <div class="relative" id="analyticsStaffDropdownWrap">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhân viên phụ trách</label>
+            <button type="button" id="analyticsStaffBtn" onclick="toggleSearchableDropdown('analytics', 'staff')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl flex items-center justify-between gap-2 hover:border-slate-300 focus:outline-none focus:border-brand-500 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400">
+              <span id="analyticsStaffLabel" class="truncate">Tất cả nhân viên</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            </button>
+            <div id="analyticsStaffPopover" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-40 p-2 space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="analyticsStaffSearch" oninput="renderSearchableOptions('analytics', 'staff')" placeholder="Tìm tên nhân viên / đại lý / CTV..." class="w-full pl-8 pr-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500">
+              </div>
+              <div id="analyticsStaffList" class="max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 4. Tập đoàn -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tập đoàn</label>
+            <select id="analyticsFilterCorp" onchange="onReportCorpChange('analytics')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả tập đoàn</option>
+              <option value="Sun World">Sun World</option>
+              <option value="VinWonders">VinWonders</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+
+          <!-- 5. Khu du lịch (phụ thuộc Tập đoàn, Searchable Select) -->
+          <div class="relative" id="analyticsSiteDropdownWrap">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khu du lịch (Site)</label>
+            <button type="button" id="analyticsSiteBtn" onclick="toggleSearchableDropdown('analytics', 'site')" class="w-full px-3 py-2 text-xs font-semibold text-slate-800 bg-slate-50/70 border border-slate-200 rounded-xl flex items-center justify-between gap-2 hover:border-slate-300 focus:outline-none focus:border-brand-500 cursor-pointer">
+              <span id="analyticsSiteLabel" class="truncate">Tất cả khu du lịch</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            </button>
+            <div id="analyticsSitePopover" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-40 p-2 space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="analyticsSiteSearch" oninput="renderSearchableOptions('analytics', 'site')" placeholder="Tìm khu du lịch..." class="w-full pl-8 pr-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500">
+              </div>
+              <div id="analyticsSiteList" class="max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thời gian: Tag select + Date picker (tối đa 3 tháng) -->
+        <div class="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Thời gian:</span>
+            <button type="button" data-tag="7d" onclick="selectReportDateTag('analytics', '7d')" class="analytics-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all">7 ngày</button>
+            <button type="button" data-tag="30d" onclick="selectReportDateTag('analytics', '30d')" class="analytics-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-brand-500 bg-brand-50 text-brand-600 cursor-pointer transition-all">30 ngày</button>
+            <button type="button" data-tag="this_month" onclick="selectReportDateTag('analytics', 'this_month')" class="analytics-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all">Tháng này</button>
+            <button type="button" data-tag="custom" onclick="selectReportDateTag('analytics', 'custom')" class="analytics-date-tag px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:border-brand-300 cursor-pointer transition-all inline-flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <span>Tùy chỉnh</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+              <span class="text-[11px] font-semibold text-slate-400">Từ</span>
+              <input type="date" id="analyticsDateStart" onchange="onReportCustomDateChange('analytics')" class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none">
+              <span class="text-slate-300">-</span>
+              <span class="text-[11px] font-semibold text-slate-400">Đến</span>
+              <input type="date" id="analyticsDateEnd" onchange="onReportCustomDateChange('analytics')" class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none">
+            </div>
+            <span class="text-[11px] font-medium text-slate-400">(Tùy chỉnh tối đa 3 tháng)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- B. 3 BIỂU ĐỒ ĐÓNG GÓP (LỢI NHUẬN, DOANH THU, TỶ LỆ SỐ LƯỢNG VÉ) -->
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- 1. Lợi nhuận đóng góp -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-slate-900">Lợi nhuận đóng góp</h2>
+              </div>
+              <div id="analyticsProfitTotal" class="text-2xl sm:text-[26px] font-black text-slate-900 mt-3 tracking-tight">0 đ</div>
+            </div>
+            <button type="button" onclick="openAnalyticsDetailModal('profit')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200/80 font-bold text-[11px] transition-colors cursor-pointer shrink-0">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>Xem chi tiết</span>
+            </button>
+          </div>
+          <div id="analyticsProfitBars" class="space-y-3 pt-2 border-t border-slate-100"></div>
+        </div>
+
+        <!-- 2. Doanh thu đóng góp -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <i data-lucide="wallet" class="w-4 h-4"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-slate-900">Doanh thu đóng góp</h2>
+              </div>
+              <div id="analyticsRevenueTotal" class="text-2xl sm:text-[26px] font-black text-slate-900 mt-3 tracking-tight">0 đ</div>
+            </div>
+            <button type="button" onclick="openAnalyticsDetailModal('revenue')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200/80 font-bold text-[11px] transition-colors cursor-pointer shrink-0">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>Xem chi tiết</span>
+            </button>
+          </div>
+          <div id="analyticsRevenueBars" class="space-y-3 pt-2 border-t border-slate-100"></div>
+        </div>
+
+        <!-- 3. Tỷ lệ số lượng theo vé -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between gap-4">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                  <i data-lucide="ticket" class="w-4 h-4"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-slate-900">Tỷ lệ số lượng theo vé</h2>
+              </div>
+              <div id="analyticsTicketsTotal" class="text-2xl sm:text-[26px] font-black text-slate-900 mt-3 tracking-tight">0 vé</div>
+            </div>
+            <button type="button" onclick="openAnalyticsDetailModal('tickets')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200/80 font-bold text-[11px] transition-colors cursor-pointer shrink-0">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>Xem chi tiết</span>
+            </button>
+          </div>
+          <div id="analyticsTicketsBars" class="space-y-3 pt-2 border-t border-slate-100"></div>
+        </div>
+      </section>
+
+      <!-- B2. BIỂU ĐỒ KHU DU LỊCH (SITE) & TẬP ĐOÀN (TRÒN) -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- 4. Doanh thu theo Khu du lịch (Site) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wide">DOANH THU THEO KHU DU LỊCH (SITE)</h2>
+              <p class="text-xs text-slate-500 font-medium mt-0.5">Đơn vị: Triệu đồng</p>
+            </div>
+          </div>
+          <div class="relative h-64 sm:h-72 w-full">
+            <canvas id="analyticsSiteChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 5. Doanh thu theo Tập đoàn (Biểu đồ tròn) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wide">DOANH THU THEO TẬP ĐOÀN</h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Tỷ trọng đóng góp theo tập đoàn cung cấp</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 items-center gap-4 my-auto pt-3">
+            <div class="relative h-52 w-full">
+              <canvas id="analyticsCorpPieChart"></canvas>
+            </div>
+            <div id="analyticsCorpLegend" class="space-y-2.5 text-xs"></div>
+          </div>
+        </div>
+      </section>
+
+    </div> <!-- /#viewReportAnalytics -->
+
+    <!-- ================= VIEW 0C: BÁO CÁO HIỆU QUẢ KINH DOANH ================= -->
+    </main>
+  </div>
+
+  <div id="modalAnalyticsDetail" class="fixed inset-0 z-[55] bg-black/50 backdrop-blur-[2px] hidden items-end justify-center p-0" onclick="if(event.target === this) closeReportModal('modalAnalyticsDetail')">
+    <div class="bg-white rounded-t-3xl shadow-[0_-12px_40px_rgba(15,23,42,0.22)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[88vh] animate-in fade-in duration-200">
+      <div class="w-11 h-1.5 rounded-full bg-slate-300 mx-auto mt-2.5 mb-1 shrink-0"></div>
+      <div class="px-6 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+        <div>
+          <h3 id="modalAnalyticsDetailTitle" class="font-extrabold text-base text-slate-900">Chi tiết phân tích đóng góp</h3>
+          <p id="modalAnalyticsDetailSubtitle" class="text-xs text-slate-500 mt-0.5">Phân chia theo Kênh bán và Loại</p>
+        </div>
+        <button type="button" onclick="closeReportModal('modalAnalyticsDetail')" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-400 hover:text-slate-700 border border-slate-200 flex items-center justify-center cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Tabs Kênh bán: Website | Đại lý | Nội bộ -->
+      <div id="modalAnalyticsDetailTabs" class="px-6 pt-3 border-b border-slate-100 flex items-center gap-2 overflow-x-auto shrink-0 bg-white"></div>
+
+      <!-- Tab Content -->
+      <div id="modalAnalyticsDetailBody" class="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1 text-xs sm:text-sm"></div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
+        <span id="modalAnalyticsDetailFootNote" class="text-xs text-slate-500 font-medium"></span>
+        <button type="button" onclick="closeReportModal('modalAnalyticsDetail')" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs cursor-pointer transition-colors">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DANH SÁCH TRẠNG THÁI ĐƠN HÀNG ================= -->
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/analytics.js"></script>
+  <script>
+    renderSharedShell({
+      activePage: 'analytics.html',
+      pageTitle: 'Báo cáo Phân tích',
+      showGlobalHeader: true
+    });
+  </script>
+</body>
+</html>

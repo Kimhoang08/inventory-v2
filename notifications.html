@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trung tâm Thông báo Hệ thống - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <span class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200/80 text-brand-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-bell text-lg"></i>
+            </span>
+            Trung tâm Thông báo Hệ thống
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Theo dõi tức thời biến động số dư ví, sự kiện phát hành vé, trạng thái đơn hàng và nhật ký kết nối API 24/7.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="markAllAsReadPage()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-2xs flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-check-double text-emerald-600"></i>
+            <span>Đánh dấu đã đọc tất cả</span>
+          </button>
+          <button type="button" onclick="simulateNewNotification()" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-plus"></i>
+            <span>Giả lập thông báo mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold">Tất cả thông báo</span>
+            <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-inbox"></i>
+            </div>
+          </div>
+          <div id="statTotalNotifs" class="text-xl sm:text-2xl font-black text-slate-900">0</div>
+          <div class="text-[11px] text-slate-400 font-medium">Toàn bộ thông báo trong kỳ</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-emerald-600">
+            <span class="text-xs font-semibold text-slate-600">Biến động số dư ví</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+          </div>
+          <div id="statWalletNotifs" class="text-xl sm:text-2xl font-black text-emerald-600">0</div>
+          <div class="text-[11px] text-slate-400 font-medium">Nạp tiền, trừ ví xuất vé, hoàn tiền</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-blue-600">
+            <span class="text-xs font-semibold text-slate-600">Sự kiện Đơn hàng</span>
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-ticket"></i>
+            </div>
+          </div>
+          <div id="statOrderNotifs" class="text-xl sm:text-2xl font-black text-blue-600">0</div>
+          <div class="text-[11px] text-slate-400 font-medium">Đơn mới, xuất vé thành công, hủy vé</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1">
+          <div class="flex items-center justify-between text-amber-600">
+            <span class="text-xs font-semibold text-slate-600">Chưa đọc</span>
+            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-envelope-open-text"></i>
+            </div>
+          </div>
+          <div id="statUnreadNotifs" class="text-xl sm:text-2xl font-black text-amber-600">0</div>
+          <div class="text-[11px] text-slate-400 font-medium">Cần xử lý hoặc đối chiếu</div>
+        </div>
+      </div>
+
+      <!-- Main Notification Panel -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <!-- Filter Tabs & Controls -->
+        <div class="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50">
+          <!-- Filter Tabs -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none text-xs">
+            <button type="button" id="tabBtn_all" onclick="setNotifPageTab('all')" class="tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-white text-brand-600 shadow-2xs border border-slate-200 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-layer-group mr-1.5"></i>Tất cả
+            </button>
+            <button type="button" id="tabBtn_wallet" onclick="setNotifPageTab('wallet')" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-wallet mr-1.5 text-emerald-600"></i>Biến động số dư ví
+            </button>
+            <button type="button" id="tabBtn_orders" onclick="setNotifPageTab('orders')" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-ticket mr-1.5 text-blue-600"></i>Trạng thái đơn hàng
+            </button>
+            <button type="button" id="tabBtn_system" onclick="setNotifPageTab('system')" class="tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-server mr-1.5 text-purple-600"></i>Hệ thống &amp; API
+            </button>
+          </div>
+
+          <!-- Search & Filter Options -->
+          <div class="flex items-center gap-2">
+            <div class="relative w-full sm:w-64">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="notifSearchInput" oninput="renderNotifPageList()" placeholder="Tìm nội dung, mã đơn, số tiền..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500" />
+            </div>
+            <button type="button" onclick="clearReadNotifications()" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-rose-600 text-xs font-semibold transition-colors shrink-0 cursor-pointer" title="Dọn dẹp các thông báo đã đọc">
+              <i class="fa-regular fa-trash-can mr-1"></i>Dọn dẹp
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification List -->
+        <div id="notifFullListContainer" class="divide-y divide-slate-100 min-h-[300px]">
+          <!-- Dynamic Items Rendered Here -->
+        </div>
+
+        <!-- Pagination / Footer Info -->
+        <div class="p-3.5 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+          <div id="notifCountSummary">Đang hiển thị 0 thông báo</div>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Webhook Real-time Active
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    let activeNotifTab = 'all';
+
+    // Seed mock notifications if empty
+    function ensureInitialNotifications() {
+      if (typeof TecheraDB === 'undefined') return;
+      let list = TecheraDB.getNotifications();
+      if (!list || list.length === 0) {
+        list = [
+          {
+            id: 'notif-seed-1',
+            title: 'Nạp tiền vào ví thành công',
+            desc: '+25.000.000 đ qua VietQR Pro tự động (MB Bank - Ref: VQR883921). Số dư hiện tại: 78.450.000 đ.',
+            type: 'wallet',
+            time: '10 phút trước',
+            timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+            read: false,
+            link: 'wallet.html',
+            linkText: 'Chi tiết ví'
+          },
+          {
+            id: 'notif-seed-2',
+            title: 'Xuất vé Sun World Ba Na Hills thành công',
+            desc: 'Đơn hàng ORD-2611-001 (10 Vé Cáp treo Bà Nà + Buffet Việt) đã được Sun World Gateway cấp QR thành công.',
+            type: 'orders',
+            time: '35 phút trước',
+            timestamp: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
+            read: false,
+            link: 'orders.html',
+            linkText: 'Xem đơn hàng'
+          },
+          {
+            id: 'notif-seed-3',
+            title: 'Trừ tiền thanh toán đơn hàng',
+            desc: '-6.250.000 đ trừ từ ví chính cho đơn hàng ORD-2611-002 (Đại lý Vietnam Travel Mart).',
+            type: 'wallet',
+            time: '1 giờ trước',
+            timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+            read: true,
+            link: 'cashflow.html',
+            linkText: 'Xem dòng tiền'
+          },
+          {
+            id: 'notif-seed-4',
+            title: 'Đồng bộ bảng giá Sun World thành công',
+            desc: 'Sun World Gateway đã cập nhật 24 gói vé mới cho mùa lễ hội 2026. Độ trễ phản hồi API: 42ms.',
+            type: 'system',
+            time: '2 giờ trước',
+            timestamp: new Date(Date.now() - 120 * 60 * 1000).toISOString(),
+            read: true,
+            link: 'product-sync.html',
+            linkText: 'Xem đồng bộ'
+          },
+          {
+            id: 'notif-seed-5',
+            title: 'Yêu cầu hoàn vé mới: ORD-2611-008',
+            desc: 'Khách hàng Trần Thị Mai gửi yêu cầu hủy 2 vé VinWonders Phú Quốc do hoãn chuyến bay. Số tiền hoàn: 1.840.000 đ.',
+            type: 'orders',
+            time: '3 giờ trước',
+            timestamp: new Date(Date.now() - 180 * 60 * 1000).toISOString(),
+            read: false,
+            link: 'refund-requests.html',
+            linkText: 'Duyệt hoàn vé'
+          },
+          {
+            id: 'notif-seed-6',
+            title: 'Cảnh báo chạm ngưỡng tín dụng đại lý',
+            desc: 'Đại lý BenThanh Tourist đã sử dụng 48.500.000 đ / 50.000.000 đ hạn mức công nợ (97%). Đề nghị thanh toán.',
+            type: 'wallet',
+            time: 'Hôm qua',
+            timestamp: new Date(Date.now() - 1440 * 60 * 1000).toISOString(),
+            read: true,
+            link: 'agencies.html',
+            linkText: 'Quản lý đại lý'
+          }
+        ];
+        TecheraDB.saveNotifications(list);
+      }
+    }
+
+    function setNotifPageTab(tab) {
+      activeNotifTab = tab;
+      const tabs = ['all', 'wallet', 'orders', 'system'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn_${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg font-bold bg-white text-brand-600 shadow-2xs border border-slate-200 cursor-pointer whitespace-nowrap';
+          } else {
+            btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 hover:text-slate-900 cursor-pointer whitespace-nowrap';
+          }
+        }
+      });
+      renderNotifPageList();
+    }
+
+    function renderNotifPageList() {
+      if (typeof TecheraDB === 'undefined') return;
+      const list = TecheraDB.getNotifications();
+      const container = document.getElementById('notifFullListContainer');
+      const search = (document.getElementById('notifSearchInput')?.value || '').trim().toLowerCase();
+
+      // Update KPI counters
+      const totalCount = list.length;
+      const walletCount = list.filter(n => n.type === 'wallet' || (n.title && (n.title.includes('ví') || n.title.includes('Nạp tiền') || n.title.includes('Trừ tiền')))).length;
+      const orderCount = list.filter(n => n.type === 'orders' || (n.title && (n.title.includes('vé') || n.title.includes('Đơn') || n.title.includes('hoàn')))).length;
+      const unreadCount = list.filter(n => !n.read).length;
+
+      document.getElementById('statTotalNotifs').innerText = totalCount;
+      document.getElementById('statWalletNotifs').innerText = walletCount;
+      document.getElementById('statOrderNotifs').innerText = orderCount;
+      document.getElementById('statUnreadNotifs').innerText = unreadCount;
+
+      let filtered = list;
+      if (activeNotifTab === 'wallet') {
+        filtered = filtered.filter(n => n.type === 'wallet' || (n.title && (n.title.includes('ví') || n.title.includes('Nạp tiền') || n.title.includes('Trừ tiền'))));
+      } else if (activeNotifTab === 'orders') {
+        filtered = filtered.filter(n => n.type === 'orders' || (n.title && (n.title.includes('vé') || n.title.includes('Đơn') || n.title.includes('hoàn'))));
+      } else if (activeNotifTab === 'system') {
+        filtered = filtered.filter(n => n.type === 'system' || (n.title && (n.title.includes('API') || n.title.includes('Đồng bộ') || n.title.includes('Hệ thống'))));
+      }
+
+      if (search) {
+        filtered = filtered.filter(n =>
+          (n.title && n.title.toLowerCase().includes(search)) ||
+          (n.desc && n.desc.toLowerCase().includes(search))
+        );
+      }
+
+      document.getElementById('notifCountSummary').innerText = `Đang hiển thị ${filtered.length} / ${totalCount} thông báo`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-16 text-center text-slate-400 space-y-2">
+            <i class="fa-regular fa-bell-slash text-3xl text-slate-300"></i>
+            <div class="font-bold text-sm text-slate-600">Không tìm thấy thông báo phù hợp</div>
+            <p class="text-xs text-slate-400">Các thông báo mới sẽ tự động cập nhật ngay khi có biến động giao dịch.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const isWallet = item.type === 'wallet' || (item.title && (item.title.includes('ví') || item.title.includes('Nạp tiền')));
+        const isOrder = item.type === 'orders' || (item.title && (item.title.includes('vé') || item.title.includes('hoàn')));
+        const isSystem = item.type === 'system' || (item.title && item.title.includes('Đồng bộ'));
+
+        let iconBadge = '';
+        if (isWallet) {
+          iconBadge = `<div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200/80"><i class="fa-solid fa-wallet text-sm"></i></div>`;
+        } else if (isOrder) {
+          iconBadge = `<div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/80"><i class="fa-solid fa-ticket text-sm"></i></div>`;
+        } else {
+          iconBadge = `<div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-200/80"><i class="fa-solid fa-server text-sm"></i></div>`;
+        }
+
+        const bgClass = item.read ? 'bg-white hover:bg-slate-50/70' : 'bg-brand-50/30 hover:bg-brand-50/50';
+        const unreadDot = !item.read ? '<span class="w-2.5 h-2.5 rounded-full bg-brand-500 shrink-0"></span>' : '';
+
+        return `
+          <div class="p-4 sm:p-5 ${bgClass} transition-colors flex items-start gap-3.5 group">
+            ${iconBadge}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-extrabold text-sm text-slate-900 group-hover:text-brand-600 transition-colors">${item.title}</h3>
+                  ${unreadDot}
+                </div>
+                <span class="text-[11px] font-semibold text-slate-400 shrink-0 whitespace-nowrap">${item.time || 'Vừa xong'}</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.desc}</p>
+              <div class="mt-2.5 flex items-center gap-3">
+                ${item.link ? `
+                  <a href="${item.link}" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded-md transition-colors">
+                    <span>${item.linkText || 'Xem chi tiết'}</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                  </a>
+                ` : ''}
+                ${!item.read ? `
+                  <button type="button" onclick="markSingleAsRead('${item.id}')" class="text-[11px] font-semibold text-slate-400 hover:text-slate-700 cursor-pointer">
+                    <i class="fa-solid fa-check mr-1"></i>Đánh dấu đã đọc
+                  </button>
+                ` : `
+                  <span class="text-[11px] text-slate-400"><i class="fa-solid fa-check-double mr-1 text-slate-400"></i>Đã đọc</span>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function markSingleAsRead(id) {
+      if (typeof TecheraDB === 'undefined') return;
+      const list = TecheraDB.getNotifications();
+      const item = list.find(n => n.id === id);
+      if (item) {
+        item.read = true;
+        TecheraDB.saveNotifications(list);
+        syncNotificationBadges();
+        renderNotifPageList();
+      }
+    }
+
+    function markAllAsReadPage() {
+      if (typeof TecheraDB === 'undefined') return;
+      const list = TecheraDB.getNotifications().map(n => ({ ...n, read: true }));
+      TecheraDB.saveNotifications(list);
+      syncNotificationBadges();
+      renderNotifPageList();
+      if (typeof showToast === 'function') showToast('Thành công', 'Đã đánh dấu tất cả thông báo là đã đọc');
+    }
+
+    function clearReadNotifications() {
+      if (typeof TecheraDB === 'undefined') return;
+      const list = TecheraDB.getNotifications().filter(n => !n.read);
+      TecheraDB.saveNotifications(list);
+      syncNotificationBadges();
+      renderNotifPageList();
+      if (typeof showToast === 'function') showToast('Đã dọn dẹp', 'Đã xóa các thông báo đã đọc');
+    }
+
+    function simulateNewNotification() {
+      if (typeof TecheraDB === 'undefined') return;
+      const samples = [
+        {
+          title: 'Nạp tiền vào ví thành công',
+          desc: '+10.000.000 đ từ VietQR Pro (Techcombank 1903829101). Số dư mới đã được cộng vào tài khoản.',
+          type: 'wallet',
+          link: 'wallet.html',
+          linkText: 'Xem số dư ví'
+        },
+        {
+          title: 'Đơn hàng mới xuất vé thành công: ORD-2611-099',
+          desc: 'Đã xuất 4 Vé Cáp treo Fansipan Legend khứ hồi + Buffet Hải Cảng cho khách Đoàn Hà Nội.',
+          type: 'orders',
+          link: 'orders.html',
+          linkText: 'Chi tiết đơn hàng'
+        },
+        {
+          title: 'Đồng bộ API VinWonders Nha Trang hoàn tất',
+          desc: 'Hệ thống đã tự động cập nhật lịch hoạt động và số lượng allotment còn lại trong ngày.',
+          type: 'system',
+          link: 'product-sync.html',
+          linkText: 'Xem đồng bộ'
+        }
+      ];
+      const random = samples[Math.floor(Math.random() * samples.length)];
+      TecheraDB.pushNotification(random);
+      syncNotificationBadges();
+      renderNotifPageList();
+      if (typeof showToast === 'function') {
+        showToast(random.title, random.desc);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check query param for tab filter
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam && ['wallet', 'orders', 'system'].includes(tabParam)) {
+        activeNotifTab = tabParam;
+      }
+
+      ensureInitialNotifications();
+      renderSharedShell({ activePage: 'notifications', pageTitle: 'Trung tâm Thông báo Hệ thống' });
+      setNotifPageTab(activeNotifTab);
+    });
+  </script>
+</body>
+</html>

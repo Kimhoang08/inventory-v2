@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ma trận Phân quyền RBAC - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Ma trận Phân quyền RBAC</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Role-Based Access Control: Ma trận phân quyền chi tiết cho từng vai trò trên các phân hệ</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="users-management.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+            <i class="fa-solid fa-users text-xs"></i>
+            <span>Tài khoản người dùng</span>
+          </a>
+          <button type="button" onclick="saveRbacMatrixConfig()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-extrabold shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-floppy-disk text-[11px]"></i>
+            <span>Lưu phân quyền</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mô tả vai trò (Roles Pill Overview) -->
+      <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Admin</span>
+          <strong class="block text-slate-900">Super Admin</strong>
+          <span class="text-[11px] text-slate-400">Toàn quyền hệ thống</span>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Manager</span>
+          <strong class="block text-slate-900">Trưởng phòng KD</strong>
+          <span class="text-[11px] text-slate-400">Quản trị sales &amp; duyệt</span>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Sales</span>
+          <strong class="block text-slate-900">Nhân viên KD</strong>
+          <span class="text-[11px] text-slate-400">Tạo đơn &amp; chăm sóc TA</span>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Finance</span>
+          <strong class="block text-slate-900">Kế toán Vé &amp; VAT</strong>
+          <span class="text-[11px] text-slate-400">Xuất VAT &amp; công nợ</span>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Partner</span>
+          <strong class="block text-slate-900">Đại lý B2B (TA)</strong>
+          <span class="text-[11px] text-slate-400">Đặt vé &amp; nạp ví</span>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs space-y-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Affiliate</span>
+          <strong class="block text-slate-900">Cộng tác viên</strong>
+          <span class="text-[11px] text-slate-400">Bán vé hưởng % hoa hồng</span>
+        </div>
+      </section>
+
+      <!-- Bảng Ma trận Phân quyền Chi tiết (Interactive RBAC Grid) -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="font-extrabold text-sm text-slate-900">Bảng Phân quyền Chi tiết theo Chức năng</div>
+          <span class="text-xs text-slate-400">Đã kích hoạt bảo mật theo vai trò</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3 min-w-[220px]">Phân hệ chức năng</th>
+                <th class="px-4 py-3 text-center">Super Admin</th>
+                <th class="px-4 py-3 text-center">Trưởng phòng KD</th>
+                <th class="px-4 py-3 text-center">Nhân viên KD</th>
+                <th class="px-4 py-3 text-center">Kế toán Vé</th>
+                <th class="px-4 py-3 text-center">Đại lý B2B</th>
+                <th class="px-4 py-3 text-center">CTV B2C</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <!-- Module 1: Kho vé & Đặt đơn -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>1. Tra cứu kho vé &amp; Allotment</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Xem bảng giá, lịch vận hành &amp; tồn chỗ</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+              </tr>
+
+              <!-- Module 2: Đặt đơn & Xuất vé QR -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>2. Đặt vé &amp; Xuất vé QR tức thì</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Tạo đơn đặt vé, xuất QR điện tử cho khách</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+              </tr>
+
+              <!-- Module 3: Duyệt Hoàn/Hủy vé -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>3. Thẩm định &amp; Duyệt Hoàn/Hủy vé</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Phê duyệt hoàn tiền đơn vé và thu hồi QR</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+              </tr>
+
+              <!-- Module 4: Nạp tiền & Quản lý ví -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>4. Nạp tiền &amp; Hạn mức công nợ ví</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Thao tác nạp tiền nhanh VietQR, cấp hạn mức nợ</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+              </tr>
+
+              <!-- Module 5: Xuất Hoá đơn VAT -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>5. Phát hành Hoá đơn VAT điện tử</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Ký số e-Invoice VNPT / Viettel</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+              </tr>
+
+              <!-- Module 6: Báo cáo Doanh thu & Dòng tiền -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>6. Xem Báo cáo Phân tích &amp; Doanh số</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Xem doanh thu, biên lợi nhuận, hiệu quả sales</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+              </tr>
+
+              <!-- Module 7: Quản trị Hệ thống & Audit Log -->
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-800">
+                  <span>7. Quản trị Người dùng &amp; Audit Log</span>
+                  <div class="text-[10.5px] font-normal text-slate-400">Xem nhật ký thao tác và cấu hình vai trò RBAC</div>
+                </td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" class="w-4 h-4 text-blue-600 rounded"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+                <td class="px-4 py-3.5 text-center"><input type="checkbox" disabled class="w-4 h-4 text-blue-600 rounded cursor-not-allowed"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    function saveRbacMatrixConfig() {
+      showToast('Cập nhật phân quyền', 'Ma trận RBAC đã được lưu thành công vào chính sách bảo mật hệ thống.');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'rbac-matrix', pageTitle: 'Ma trận Phân quyền RBAC' });
+    });
+  </script>
+</body>
+</html>

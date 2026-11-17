@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nhật ký Hoạt động - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Nhật ký Hoạt động Hệ thống (Audit Log)</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Truy vết toàn bộ thao tác người dùng, phát hành vé, giao dịch ví và thay đổi cấu hình</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="showToast('Xuất File Excel', 'Đang tạo báo cáo nhật ký audit log tháng 11/2026...')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+            <i class="fa-solid fa-file-excel text-emerald-600 text-xs"></i>
+            <span>Xuất file Excel Audit</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-clock-rotate-left text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Tổng thao tác tuần</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">1.420 sự kiện</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-clock-rotate-left absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-money-bill-transfer text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Giao dịch nạp ví</div>
+              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">98 sự kiện</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-money-bill-transfer absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-qrcode text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Phát hành vé QR</div>
+              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5">120 sự kiện</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-qrcode absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+
+        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-shield-check text-base"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-slate-500">Cảnh báo bất thường</div>
+              <div class="text-xl font-extrabold text-emerald-700 leading-tight mt-0.5">0 rủi ro</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-shield-check absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+        </div>
+      </section>
+
+      <!-- Bộ lọc Audit Log -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div>
+          <input type="text" placeholder="Tìm kiếm theo nhân sự, IP, nội dung..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <select class="w-full px-3 py-2.5 rounded-xl border border-slate-200 font-semibold bg-white focus:outline-none focus:border-blue-500">
+            <option value="ALL">Tất cả phân hệ (Modules)</option>
+            <option value="ORDERS">Đơn hàng &amp; Xuất vé QR</option>
+            <option value="WALLET">Ví điện tử &amp; Nạp tiền</option>
+            <option value="AUTH">Đăng nhập &amp; Bảo mật</option>
+            <option value="SYNC">Đồng bộ sản phẩm API</option>
+          </select>
+        </div>
+        <div>
+          <select class="w-full px-3 py-2.5 rounded-xl border border-slate-200 font-semibold bg-white focus:outline-none focus:border-blue-500">
+            <option value="TODAY">Hôm nay (17/11/2026)</option>
+            <option value="7DAYS">7 ngày qua</option>
+            <option value="MONTH">Tháng 11/2026</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Bảng Audit Log -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="font-extrabold text-sm text-slate-900">Lịch sử Hoạt động Thời gian Thực</div>
+          <span class="text-xs text-slate-400">Ghi nhận tự động từ Audit Gateway</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-3">Thời gian</th>
+                <th class="px-4 py-3">Người thực hiện</th>
+                <th class="px-4 py-3">Địa chỉ IP &amp; Client</th>
+                <th class="px-4 py-3">Phân hệ</th>
+                <th class="px-4 py-3">Hành động &amp; Chi tiết thao tác</th>
+                <th class="px-4 py-3 text-center">Kết quả</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 text-slate-500 font-mono text-[11px]">17/11/2026 14:32:15</td>
+                <td class="px-4 py-3.5">
+                  <strong class="text-slate-800 block">Nguyễn Thị Kim Hoàng</strong>
+                  <span class="text-[11px] text-slate-400">hoang.sale@techera.vn</span>
+                </td>
+                <td class="px-4 py-3.5 font-mono text-[11px] text-slate-600">14.161.22.45 • Chrome Mac</td>
+                <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold text-[10.5px]">Đơn hàng</span></td>
+                <td class="px-4 py-3.5 text-slate-700 font-medium">Xuất vé QR điện tử đơn hàng #ORD-2611-001 (Sun World Ba Na Hills)</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Thành công</span></td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 text-slate-500 font-mono text-[11px]">17/11/2026 13:45:02</td>
+                <td class="px-4 py-3.5">
+                  <strong class="text-slate-800 block">Lê Văn Tuấn</strong>
+                  <span class="text-[11px] text-slate-400">ketoan@techera.vn</span>
+                </td>
+                <td class="px-4 py-3.5 font-mono text-[11px] text-slate-600">118.69.182.10 • Safari Mac</td>
+                <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold text-[10.5px]">Hoàn vé</span></td>
+                <td class="px-4 py-3.5 text-slate-700 font-medium">Phê duyệt hoàn vé yêu cầu #REF-2611-008 (+4.704.000 đ vào ví đại lý)</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Thành công</span></td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 text-slate-500 font-mono text-[11px]">17/11/2026 11:20:44</td>
+                <td class="px-4 py-3.5">
+                  <strong class="text-slate-800 block">Hệ thống Bank Hub Webhook</strong>
+                  <span class="text-[11px] text-slate-400">bankhub-ipn@techera.vn</span>
+                </td>
+                <td class="px-4 py-3.5 font-mono text-[11px] text-slate-600">API Gateway • Vietcombank</td>
+                <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[10.5px]">Ví điện tử</span></td>
+                <td class="px-4 py-3.5 text-slate-700 font-medium">Khớp lệnh tự động nạp tiền VietQR +1.000.000 đ vào ví Đại lý HuyEra</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Thành công</span></td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-4 py-3.5 text-slate-500 font-mono text-[11px]">17/11/2026 09:15:20</td>
+                <td class="px-4 py-3.5">
+                  <strong class="text-slate-800 block">Nguyễn Diệu Linh</strong>
+                  <span class="text-[11px] text-slate-400">admin@techera.vn</span>
+                </td>
+                <td class="px-4 py-3.5 font-mono text-[11px] text-slate-600">14.161.22.45 • Chrome Mac</td>
+                <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-semibold text-[10.5px]">Đồng bộ API</span></td>
+                <td class="px-4 py-3.5 text-slate-700 font-medium">Kích hoạt đồng bộ toàn bộ 38 gói vé từ Sun World &amp; VinWonders</td>
+                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Thành công</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSharedShell({ activePage: 'audit-logs', pageTitle: 'Nhật ký Hoạt động (Audit Log)' });
+    });
+  </script>
+</body>
+</html>

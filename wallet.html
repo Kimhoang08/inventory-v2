@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ví Đại lý & Nạp tiền - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 space-y-6">
+
+      <div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900">Ví Đại lý & Nạp tiền tức thì</h1>
+        <p class="text-xs text-slate-500">Nạp tiền qua VietQR 24/7, chuyển khoản doanh nghiệp hoặc VNPAY để xuất vé tự động</p>
+      </div>
+
+      <!-- Thẻ Số dư Ví -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-gradient-to-br from-slate-900 to-brand-900 rounded-3xl p-6 text-white shadow-lg">
+          <div class="text-xs font-semibold text-orange-200">Số dư khả dụng Ví Đại lý</div>
+          <div class="js-wallet-balance-text text-3xl font-black mt-2">45.000.000 đ</div>
+          <div class="text-[11px] text-slate-300 mt-3">Đại lý Techera Travel • Hạng Diamond B2B</div>
+        </div>
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-slate-500">Công nợ tín dụng hiện tại</div>
+            <div class="js-wallet-debt-text text-2xl font-black text-amber-600 mt-2">0 đ</div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-3 flex items-center justify-between">
+            <span>Hạn mức cấp tối đa: 100.000.000 đ</span>
+            <a href="cashflow.html" class="text-brand-600 font-bold hover:underline">Đối soát dòng tiền →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Khối Nạp tiền -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+          <h2 class="text-base font-extrabold text-slate-900">1. Nhập số tiền cần nạp</h2>
+          <div>
+            <input id="walletTopupAmountInput" type="number" min="100000" step="500000" value="10000000" oninput="syncWalletTopupAmountPreview()" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-lg font-black text-brand-600 focus:outline-none focus:border-brand-500" />
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+              <button type="button" data-amount="5000000" onclick="selectWalletTopupPreset(5000000)" class="wallet-preset-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 cursor-pointer">5.000.000 đ</button>
+              <button type="button" data-amount="10000000" onclick="selectWalletTopupPreset(10000000)" class="wallet-preset-btn py-2.5 px-3 rounded-xl border-2 border-brand-500 bg-orange-50/70 text-xs font-extrabold text-brand-700 cursor-pointer">10.000.000 đ</button>
+              <button type="button" data-amount="20000000" onclick="selectWalletTopupPreset(20000000)" class="wallet-preset-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 cursor-pointer">20.000.000 đ</button>
+              <button type="button" data-amount="50000000" onclick="selectWalletTopupPreset(50000000)" class="wallet-preset-btn py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 cursor-pointer">50.000.000 đ</button>
+            </div>
+          </div>
+
+          <h2 class="text-base font-extrabold text-slate-900 pt-2">2. Chọn phương thức nạp</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button type="button" data-wallet-pm="vietqr" onclick="selectWalletTopupMethod('vietqr')" class="wallet-pm-btn p-3.5 rounded-xl border-2 border-brand-500 bg-orange-50/50 text-left cursor-pointer">
+              <div class="text-xs font-extrabold text-slate-900">VietQR 24/7</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Miễn phí • Tức thì</div>
+            </button>
+            <button type="button" data-wallet-pm="bank" onclick="selectWalletTopupMethod('bank')" class="wallet-pm-btn p-3.5 rounded-xl border border-slate-200 bg-white text-left cursor-pointer">
+              <div class="text-xs font-extrabold text-slate-900">Chuyển khoản B2B</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Ủy nhiệm chi công ty</div>
+            </button>
+            <button type="button" data-wallet-pm="vnpay" onclick="selectWalletTopupMethod('vnpay')" class="wallet-pm-btn p-3.5 rounded-xl border border-slate-200 bg-white text-left cursor-pointer">
+              <div class="text-xs font-extrabold text-slate-900">Cổng VNPAY</div>
+              <div class="text-[11px] text-slate-500 mt-0.5">Thẻ Visa / Master</div>
+            </button>
+          </div>
+
+          <button type="button" onclick="submitWalletTopup()" class="w-full py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-extrabold shadow-md cursor-pointer transition-colors">
+            Xác nhận Nạp tiền vào Ví (<span id="walletTopupQrAmountPreview">10.000.000 đ</span>)
+          </button>
+        </section>
+
+        <!-- Lịch sử nạp ví gần đây -->
+        <section class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-extrabold text-slate-900">Lịch sử nạp tiền gần đây</h2>
+            <a href="cashflow.html" class="text-xs font-bold text-brand-600 hover:underline">Xem dòng tiền</a>
+          </div>
+          <div id="walletTopupHistoryList" class="space-y-2.5 max-h-80 overflow-y-auto custom-scrollbar"></div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/wallet-account.js"></script>
+  <script>
+    renderSharedShell({
+      activePage: 'wallet.html',
+      pageTitle: 'Ví Đại lý & Nạp tiền',
+      showGlobalHeader: true
+    });
+  </script>
+</body>
+</html>

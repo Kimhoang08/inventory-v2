@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đặt vé chi tiết - Techera Portal B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-32 lg:pb-14 space-y-6">
+
+      <!-- 1. Top Header -->
+      <div class="px-1 pt-1 pb-1">
+        <h1 class="text-xl sm:text-2xl font-black text-[#111827] tracking-tight">Chi tiết vé</h1>
+      </div>
+
+      <!-- 2. Card KDL & NCC -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 flex items-center justify-between gap-3 shadow-xs">
+        <div class="min-w-0">
+          <h2 id="detailDestinationName" class="text-base sm:text-lg font-black text-slate-900 truncate">Sun World Ba Na Hills</h2>
+          <div id="detailSupplierSubtitle" class="text-xs sm:text-sm font-semibold text-[#2563EB] mt-0.5 truncate">Tập đoàn Sun World • API Đối tác KDL</div>
+        </div>
+        <button type="button" onclick="openSupplierModal()" title="Chọn Nhà cung cấp" aria-label="Chọn Nhà cung cấp" class="w-11 h-11 rounded-xl bg-[#FFF7ED] border border-orange-200/80 text-[#F25C22] hover:bg-orange-100 flex items-center justify-center shrink-0 cursor-pointer active:scale-95 transition-all shadow-2xs">
+          <i class="fa-solid fa-store text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Grid 2 cột -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Cột Trái -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- 3. Card Chọn ngày sử dụng dịch vụ -->
+          <section id="dateSelectionSection" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-5 space-y-3.5">
+            <!-- Hàng 1: Header Card -->
+            <div class="flex items-center justify-between gap-3 cursor-pointer select-none" onclick="toggleCalendarSection()">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-8 h-8 rounded-lg bg-[#FFF7ED] border border-orange-200/70 text-[#F25C22] flex items-center justify-center text-sm shrink-0">
+                  <i class="fa-solid fa-calendar-days"></i>
+                </span>
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900 truncate">Chọn ngày sử dụng dịch vụ</h3>
+              </div>
+              <button type="button" aria-label="Thu gọn hoặc mở rộng lịch" class="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 flex items-center justify-center cursor-pointer transition-colors shrink-0">
+                <i id="chevronCalendarIcon" class="fa-solid fa-chevron-up text-xs text-slate-500 transition-transform duration-200"></i>
+              </button>
+            </div>
+            <div id="selected_date_summary" class="hidden"></div>
+
+            <!-- Nội dung mở rộng / thu gọn -->
+            <div id="calendar_container" class="space-y-3.5">
+              <!-- Hàng 2: Thanh điều khiển nhanh (Quick presets & Month navigator) -->
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <!-- Nút chọn nhanh Hôm nay / Ngày mai -->
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="setQuickDatePreset('today')" class="px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 hover:bg-orange-50 hover:border-orange-300 hover:text-brand-600 text-xs font-semibold text-slate-700 transition-colors cursor-pointer active:scale-95">
+                    Hôm nay
+                  </button>
+                  <button type="button" onclick="setQuickDatePreset('tomorrow')" class="px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 hover:bg-orange-50 hover:border-orange-300 hover:text-brand-600 text-xs font-semibold text-slate-700 transition-colors cursor-pointer active:scale-95">
+                    Ngày mai
+                  </button>
+                </div>
+
+                <!-- Điều hướng tháng/năm -->
+                <div class="flex items-center gap-1 relative ml-auto">
+                  <button id="btn_prev_month" type="button" onclick="changeCalendarMonth(-1)" aria-label="Tháng trước" class="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 flex items-center justify-center cursor-pointer transition-colors text-sm font-bold active:scale-95">
+                    ‹
+                  </button>
+                  <button type="button" onclick="toggleMonthYearPicker()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-xs font-bold text-slate-800 cursor-pointer transition-colors">
+                    <span id="triggerMonthYearText">Tháng 11 / 2026</span>
+                    <i id="triggerMonthYearChevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
+                  </button>
+                  <button id="btn_next_month" type="button" onclick="changeCalendarMonth(1)" aria-label="Tháng sau" class="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 flex items-center justify-center cursor-pointer transition-colors text-sm font-bold active:scale-95">
+                    ›
+                  </button>
+
+                  <!-- Popover Month/Year Wheel Picker -->
+                  <div id="popover_month_year_picker" class="hidden absolute right-0 top-10 w-72 bg-white rounded-2xl border border-slate-200 shadow-2xl p-4 z-40">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                      <div id="wheelMonthList" class="max-h-44 overflow-y-auto space-y-1 custom-scrollbar"></div>
+                      <div id="wheelYearList" class="max-h-44 overflow-y-auto space-y-1 custom-scrollbar"></div>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                      <button type="button" onclick="toggleMonthYearPicker(false)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-100 cursor-pointer">Đóng</button>
+                      <button type="button" onclick="applyWheelMonthYear()" class="px-3 py-1.5 rounded-lg bg-brand-500 text-white text-xs font-bold cursor-pointer">Chọn</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hàng 3: Lưới lịch chọn ngày (Container viền xám nhạt bo góc) -->
+              <div class="rounded-xl border border-slate-200/80 p-3 bg-white space-y-2">
+                <div class="grid grid-cols-7 text-center text-xs font-bold py-0.5">
+                  <span class="text-slate-600">T2</span>
+                  <span class="text-slate-600">T3</span>
+                  <span class="text-slate-600">T4</span>
+                  <span class="text-slate-600">T5</span>
+                  <span class="text-slate-600">T6</span>
+                  <span class="text-[#F25C22] font-black">T7</span>
+                  <span class="text-[#F25C22] font-black">CN</span>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-1.5"></div>
+              </div>
+
+              <!-- Hàng 4: Khung ghi chú vận hành (Đáy Card Chọn ngày) -->
+              <div class="rounded-xl bg-[#F8FAFC] border border-slate-100 p-3 space-y-1.5 text-xs text-slate-700">
+                <div class="flex items-center gap-2">
+                  <i class="fa-regular fa-clock text-[#F25C22] text-sm shrink-0"></i>
+                  <span>Giờ mở cửa: <strong id="expandedOpenHoursText" class="font-bold text-slate-800">08:00 – 21:00</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-[#16A34A] font-semibold">
+                  <i class="fa-solid fa-shield-halved text-[#16A34A] text-sm shrink-0"></i>
+                  <span>Chính sách hoàn/đổi theo quy định đối tác KDL</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 2: Card Cấu hình Gói dịch vụ (4 tầng & Accordion) -->
+          <section id="bookingPackagesSection" class="hidden bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-5 space-y-3.5">
+            <!-- Tiêu đề Card Chọn gói dịch vụ -->
+            <div class="flex items-center justify-between pb-0.5">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-[#FFF7ED] border border-orange-200/70 text-[#F25C22] flex items-center justify-center text-sm shrink-0">
+                  <i class="fa-solid fa-layer-group"></i>
+                </span>
+                <div>
+                  <h3 class="text-sm sm:text-base font-black text-slate-900 leading-snug">Chọn gói dịch vụ</h3>
+                  <p class="text-[11px] text-slate-500">Lựa chọn phân khúc vé, ẩm thực và khung giờ phục vụ</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1. Thanh tìm kiếm nhanh Real-time -->
+            <div class="relative w-full">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+              </span>
+              <input id="searchTicketInput" type="text" oninput="handleRealtimeSearchInput(this.value)" placeholder="Tìm tên loại vé, dịch vụ cáp treo, buffet..." class="w-full pl-10 pr-9 py-2.5 rounded-xl border border-slate-200/90 bg-slate-50/60 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#F25C22] focus:ring-2 focus:ring-[#F25C22]/15 transition-all" />
+              <button id="btnSearchClear" type="button" onclick="clearRealtimeSearch()" title="Xóa tìm kiếm" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer">
+                <i class="fa-solid fa-circle-xmark text-sm"></i>
+              </button>
+            </div>
+
+            <div id="noPackagesAvailableBanner" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 space-y-1">
+              <div class="font-bold">Nhà cung cấp tạm hết vé cho ngày đã chọn</div>
+              <div id="noPackagesAvailableDesc">Vui lòng đổi ngày khác hoặc chọn nhà cung cấp khác.</div>
+            </div>
+
+            <!-- [#1] NHÓM VÉ -->
+            <div id="tier1ServiceGroupBlock" class="space-y-2 pt-1">
+              <div class="text-[11px] font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-orange-100 text-[#F25C22] text-[10px] font-black">#1</span>
+                <span>NHÓM VÉ</span>
+              </div>
+              <div id="primaryServiceTabs" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- [#2] THỊ TRƯỜNG -->
+            <div id="tier2MarketBlock" class="space-y-2 pt-3 border-t border-slate-100">
+              <div class="text-[11px] font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-orange-100 text-[#F25C22] text-[10px] font-black">#2</span>
+                <span>THỊ TRƯỜNG</span>
+              </div>
+              <div id="secondaryMarketTabs" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- [#3] NHÀ HÀNG & [#4] KHUNG GIỜ + Accordion Chi tiết gói dịch vụ -->
+            <div id="ticketListContainer" class="hidden pt-1 space-y-3"></div>
+          </section>
+
+        </div>
+
+        <!-- Cột Phải (Desktop Sticky Summary Sidebar) -->
+        <div id="orderSidebarWrapper" class="hidden lg:col-span-4 lg:sticky lg:top-24 space-y-4">
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-extrabold text-slate-900">Tóm tắt đơn đặt vé</h3>
+                <span id="sidebarSelectedCountBadge" class="px-2 py-0.5 rounded-full bg-brand-500 text-white text-[10px] font-bold">0</span>
+              </div>
+              <span id="orderSidebarSupplierBadge" class="text-[11px] font-bold text-brand-600"></span>
+            </div>
+
+            <div class="p-4 space-y-4">
+              <div id="orderSidebarLockBanner" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] font-semibold text-amber-800">
+                Vui lòng chọn ngày sử dụng để hoàn tất đơn.
+              </div>
+
+              <div class="text-xs flex items-center justify-between text-slate-600">
+                <span>Ngày sử dụng:</span>
+                <strong id="summaryDateLabel" class="text-slate-900">-</strong>
+              </div>
+              <div class="text-[11px] text-slate-500 bg-slate-50 rounded-lg p-2" id="summaryDatePolicy">Xuất vé điện tử QR tức thì</div>
+
+              <!-- Giảm giá trực tiếp -->
+              <div id="deskDiscountSelectorWrap" class="hidden p-3 rounded-xl bg-orange-50/60 border border-orange-200 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span>Giảm giá trực tiếp (%)</span>
+                  <button id="desk-btnDiscountListed" type="button" onclick="applyListedDiscountPreset('desk')" class="text-[11px] text-brand-600 hover:underline cursor-pointer">Bán đúng niêm yết</button>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="desk-globalDiscountSlider" type="range" min="0" max="100" step="1" value="0" oninput="onGlobalDiscountSliderChange(this.value, 'desk')" class="flex-1 accent-brand-500 cursor-pointer" />
+                  <input id="desk-globalDiscountInput" type="number" min="0" max="100" step="1" value="0" oninput="onGlobalDiscountInputChange(this.value, 'desk')" class="w-16 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold text-right" />
+                </div>
+              </div>
+
+              <!-- Accordion các vé đã chọn -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                  <span>Chi tiết vé đã chọn</span>
+                  <span id="totalTicketsCountBadge">0 vé</span>
+                </div>
+                <div id="orderTicketsAccordionContainer" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+              </div>
+
+              <!-- Chi tiết tài chính -->
+              <div class="pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+                <div class="flex justify-between text-slate-500"><span>Tổng giá niêm yết</span><span id="valTotalListed">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Giá vốn Đại lý (Net)</span><span id="valTotalPartner" class="font-semibold text-slate-700">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Giảm trực tiếp cho khách</span><span id="valDirectDiscount" class="text-amber-600 font-semibold">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Thu hộ khách hàng</span><span id="valTotalCollected" class="font-bold text-slate-900">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Chênh lệch giá bán</span><span id="valPriceDifference">0 đ</span></div>
+                <div class="flex justify-between text-emerald-700 font-bold pt-1 border-t border-dashed border-slate-200"><span>Lợi nhuận Đại lý dự kiến</span><span id="valProfit">0 đ</span></div>
+                <div class="flex justify-between text-slate-500 text-[11px]"><span>Số dư Ví còn lại sau trừ</span><span id="walletRemaining" class="font-bold text-slate-700">0 đ</span></div>
+                <div class="flex justify-between items-baseline pt-2 border-t border-slate-200">
+                  <span class="text-xs font-black text-slate-900">Thanh toán Ví Đại lý:</span>
+                  <span id="valFinalPayable" class="text-base font-black text-brand-600">0 đ</span>
+                </div>
+              </div>
+
+              <!-- Nút hành động -->
+              <div class="space-y-2 pt-2">
+                <button id="btnContinueBooking" type="button" onclick="continueToCheckoutFromBooking()" disabled class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-extrabold shadow-sm cursor-pointer transition-colors">
+                  Tiếp tục Thanh toán
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" onclick="addSelectedPackagesToCart(event)" class="py-2.5 rounded-xl border border-brand-500 text-brand-600 hover:bg-orange-50 text-xs font-bold cursor-pointer transition-colors">
+                    + Thêm giỏ hàng
+                  </button>
+                  <button type="button" onclick="saveBookingAsDraft()" class="py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold cursor-pointer transition-colors">
+                    Lưu đơn nháp
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 5. Sticky Checkout Bar -->
+  <div id="mobileBookingFooterBar" class="hidden lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-4 py-2.5 shadow-[0_-8px_25px_rgba(15,23,42,0.08)] flex items-center justify-between gap-3">
+    <div onclick="openMobilePaymentDrawer()" class="cursor-pointer select-none min-w-0">
+      <div class="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+        <span>Tổng thanh toán</span>
+        <span id="mobileFooterTicketsCount" class="px-2 py-0.5 rounded-full bg-[#FFF7ED] text-[#F25C22] text-[11px] font-bold border border-orange-200/60 leading-none">0 vé</span>
+        <i class="fa-solid fa-chevron-up text-[10px] text-slate-400"></i>
+      </div>
+      <div class="flex items-baseline gap-2 mt-0.5">
+        <span id="mobileFooterFinalPayable" class="text-lg font-black text-[#F25C22] leading-none">0 đ</span>
+        <button type="button" onclick="event.stopPropagation(); openMobilePaymentDrawer()" class="text-xs font-bold text-blue-600 underline hover:text-blue-700 cursor-pointer">Chi tiết đơn</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="btnMobileFooterContinue" type="button" onclick="continueToCheckoutFromBooking()" class="px-5 py-2.5 rounded-full bg-[#F25C22] hover:bg-[#d84814] text-white text-xs sm:text-sm font-extrabold shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer">
+        Tiếp tục Thanh toán
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Payment Detail (Bottom Sheet - che mờ cả thanh footer) -->
+  <div id="drawerMobilePaymentDetail" class="hidden fixed inset-0 z-[60]">
+    <div id="drawerMobilePaymentBackdrop" onclick="closeMobilePaymentDrawer()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs opacity-0 transition-opacity duration-200"></div>
+    <div id="drawerMobilePaymentPanel" class="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl max-h-[90vh] flex flex-col translate-y-full transition-transform duration-300 shadow-2xl overflow-hidden">
+      
+      <!-- 2.1. Phần Đầu cố định (Fixed Drawer Header) -->
+      <div class="p-4 border-b border-slate-100 bg-white space-y-3 shrink-0">
+        <!-- Hàng 1 -->
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#F25C22] shrink-0 ring-4 ring-orange-100"></span>
+            <div class="min-w-0">
+              <h3 class="text-base font-black text-slate-900 truncate leading-snug">Chi tiết đơn thanh toán</h3>
+              <div id="mobileDrawerHeaderBadge" class="text-xs text-slate-500 font-medium truncate mt-0.5">1 gói vé đang chọn • 2 vé</div>
+            </div>
+          </div>
+          <button type="button" onclick="closeMobilePaymentDrawer()" aria-label="Đóng chi tiết đơn" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors shrink-0">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Hàng 2: Thẻ Ngày sử dụng -->
+        <div class="rounded-xl bg-[#FFF7ED] border border-orange-200/80 p-2.5 flex items-center gap-2 text-xs text-slate-700">
+          <i class="fa-regular fa-calendar-days text-[#F25C22] text-sm shrink-0"></i>
+          <span>Ngày sử dụng:</span>
+          <strong id="mobileDrawerUsageDateText" class="font-extrabold text-[#C2410C]">-</strong>
+        </div>
+      </div>
+
+      <!-- 2.2. Phần Thân cuộn nội dung (Scrollable Body) -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-50/40">
+        <!-- Khối A: CHỌN MỨC CHIẾT KHẤU KHÁCH HÀNG -->
+        <div id="mobileDiscountSelectorWrap" class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-2.5">
+          <div class="text-[11px] font-black uppercase tracking-wider text-slate-700 flex items-center justify-between gap-2">
+            <span>CHỌN MỨC CHIẾT KHẤU KHÁCH HÀNG</span>
+            <span class="text-[10px] text-slate-400 font-normal normal-case">(Áp dụng tất cả đối tượng)</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-2.5">
+            <button type="button" id="mob-btnDiscountListed" onclick="applyListedDiscountPreset('mob')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-[#F25C22] text-white shadow-sm shadow-orange-500/25 shrink-0 flex items-center gap-1 cursor-pointer">
+              <span>Áp Niêm Yết</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            </button>
+            <div class="flex-1 flex items-center min-w-0">
+              <input type="range" id="mob-globalDiscountSlider" min="0" max="100" step="1" value="0" oninput="onGlobalDiscountSliderChange(this.value, 'mob')" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#F25C22]" />
+            </div>
+            <div class="relative flex items-center shrink-0 w-16">
+              <input type="number" id="mob-globalDiscountInput" min="0" max="100" step="1" value="0" oninput="onGlobalDiscountInputChange(this.value, 'mob')" class="w-full pl-2 pr-5 py-1 text-center text-xs font-black bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#F25C22]" />
+              <span class="absolute right-2 text-slate-400 text-xs font-bold pointer-events-none">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khối B: Danh sách nhóm vé & Điều chỉnh cấu hình/số lượng -->
+        <div id="mobileDrawerTicketsContainer" class="space-y-3"></div>
+
+        <!-- Khối C: Chi tiết thanh toán & Dòng tiền (Cashflow & Margin Breakdown Card) -->
+        <div id="mobileCashflowBreakdownCard" class="rounded-2xl bg-white border border-slate-200/90 shadow-2xs p-4 space-y-2.5 text-xs">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="text-[11px] font-black text-slate-900 uppercase tracking-wide">CHI TIẾT THANH TOÁN &amp; DÒNG TIỀN</span>
+            <span id="cashflowTotalTicketsBadge" class="text-xs font-black text-[#F25C22]">Tổng 0 vé</span>
+          </div>
+          <div class="space-y-2 pt-1 text-xs">
+            <div class="flex justify-between items-center text-slate-500">
+              <span>Tổng tiền niêm yết</span>
+              <span id="mobileDrawerTotalListed" class="line-through text-slate-400 font-semibold">0 đ</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-700 font-bold">Tổng tiền đối tác (Giá Net)</span>
+              <span id="mobileDrawerTotalPartner" class="font-black text-slate-900">0 đ</span>
+            </div>
+            <div class="bg-blue-50/80 border border-blue-200/80 rounded-xl p-2.5 flex justify-between items-center text-blue-900">
+              <span class="font-bold">Giá bán thực tế (Thu khách)</span>
+              <span id="mobileDrawerTotalCollected" class="text-sm font-black text-blue-700">0 đ</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span>Chênh lệch giá (Chiết khấu Net)</span>
+              <span id="mobileDrawerPriceDiff" class="font-bold text-slate-800">0 đ</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span>Chiết khấu áp dụng cho khách</span>
+              <span id="mobileDrawerDirectDiscount" class="font-bold text-emerald-600">- 0 đ</span>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-200/80 rounded-xl p-2.5 flex justify-between items-center text-emerald-900">
+              <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-coins text-emerald-600"></i><span>Lợi nhuận thu về (Đại lý giữ)</span></span>
+              <span id="mobileDrawerProfit" class="text-sm font-black text-emerald-700">+ 0 đ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3. Phần Đáy cố định (Fixed Drawer Footer) -->
+      <div class="p-4 border-t border-slate-100 bg-white space-y-2.5 shrink-0 shadow-[0_-6px_20px_rgba(15,23,42,0.06)]">
+        <!-- Dòng tóm tắt thanh toán -->
+        <div class="flex items-baseline justify-between">
+          <span class="text-xs font-bold text-slate-700">Cần thanh toán đối tác:</span>
+          <span id="mobileDrawerFinalPayableFooter" class="text-lg font-black text-[#F25C22]">0 đ</span>
+        </div>
+
+        <!-- Nút hành động chính (Full-width Primary CTA) -->
+        <button id="btnMobileDrawerContinue" type="button" onclick="continueToCheckoutFromBooking()" class="w-full py-3 rounded-full bg-[#F25C22] hover:bg-[#d84814] text-white text-xs sm:text-sm font-black active:scale-95 transition-all shadow-md shadow-orange-500/25 cursor-pointer">
+          Tiếp tục Thanh toán →
+        </button>
+
+        <!-- Hàng nút hành động phụ (2 cột ngang 50% : 50%) -->
+        <div class="grid grid-cols-2 gap-2 pt-0.5">
+          <button id="btnDrawerAddToCart" type="button" onclick="handleAddToCartWithFlyAnimation(event)" class="py-2.5 rounded-xl border border-orange-200 bg-[#FFF7ED] hover:bg-orange-100 text-[#F25C22] text-xs font-black flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-95">
+            <i class="fa-solid fa-cart-shopping text-xs"></i>
+            <span>Thêm giỏ hàng</span>
+          </button>
+          <button type="button" onclick="saveBookingAsDraft()" class="py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer active:scale-95">
+            Lưu đơn nháp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer Chọn Nhà cung cấp (Bottom Sheet Drawer trượt từ mép dưới lên) -->
+  <div id="modalSelectSupplier" class="hidden fixed inset-0 z-[70]">
+    <div id="supplierDrawerBackdrop" onclick="closeSupplierModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs opacity-0 transition-opacity duration-300"></div>
+    <div id="supplierDrawerPanel" class="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl max-h-[85vh] sm:max-w-xl sm:mx-auto flex flex-col translate-y-full transition-transform duration-300 shadow-2xl overflow-hidden">
+      <!-- Header Drawer -->
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3 shrink-0 bg-white">
+        <div>
+          <h3 class="text-base font-black text-slate-900">Chọn Nhà cung cấp</h3>
+          <p class="text-xs text-slate-500 font-medium">So sánh nguồn vé, chính sách xuất vé và chiết khấu ưu đãi</p>
+        </div>
+        <button type="button" onclick="closeSupplierModal()" aria-label="Đóng" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center cursor-pointer transition-colors shrink-0">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Body: Danh sách Thẻ Nhà cung cấp -->
+      <div id="supplierModalList" class="p-4 sm:p-5 space-y-3 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/40"></div>
+
+      <!-- Footer Drawer - Đặt sát đáy Drawer (ngăn cách bởi đường kẻ mờ phía trên), căn lề phải gồm 2 nút -->
+      <div class="p-4 border-t border-slate-100 bg-white flex items-center justify-end gap-3 shrink-0 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
+        <button type="button" onclick="closeSupplierModal()" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer active:scale-95">
+          Hủy
+        </button>
+        <button type="button" onclick="confirmSupplierModalSelection()" class="px-6 py-2.5 rounded-xl bg-[#F25C22] hover:bg-[#d84814] text-white text-xs sm:text-sm font-extrabold shadow-md shadow-orange-500/25 transition-all cursor-pointer active:scale-95">
+          Xác nhận
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="database/products.db.js"></script>
+  <script src="database/crm.db.js"></script>
+  <script src="database/orders.db.js"></script>
+  <script src="database/cashflow.db.js"></script>
+  <script src="database/db-store.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/booking.js"></script>
+</body>
+</html>
