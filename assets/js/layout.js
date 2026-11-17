@@ -459,7 +459,7 @@ function renderSharedShell(config = {}) {
           </span>
         </button>
         <div class="flex items-center justify-center h-full relative">
-          <a href="cart.html" aria-label="Giỏ hàng và Vé" style="width:58px;height:58px;border:3px solid #FFFFFF;background-color:#F25C22;box-shadow:0 8px 20px rgba(242,92,34,0.35);" class="-mt-7 rounded-full text-white flex items-center justify-center active:scale-95 transition-transform relative">
+          <a href="index.html" aria-label="Đặt vé - Khám phá Việt Nam" title="Khám phá Việt Nam" style="width:58px;height:58px;border:3px solid #FFFFFF;background-color:#F25C22;box-shadow:0 8px 20px rgba(242,92,34,0.35);" class="-mt-7 rounded-full text-white flex items-center justify-center active:scale-95 transition-transform relative">
             <i class="fa-solid fa-ticket text-xl text-white"></i>
           </a>
         </div>
