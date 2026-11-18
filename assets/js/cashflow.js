@@ -1730,16 +1730,30 @@
         container.classList.remove('hidden');
         container.innerHTML = `
           <div class="space-y-2.5">
-            <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
-              <i class="fa-solid fa-briefcase mr-1 text-amber-600"></i> Chọn Đại lý B2B / Kho hàng liên kết
-            </label>
-            <select id="vchAgencySelect" onchange="onVoucherAgencyChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+            <div class="flex items-center justify-between">
+              <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+                <i class="fa-solid fa-briefcase mr-1 text-amber-600"></i> Chọn Đại lý B2B *
+              </label>
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">Tra cứu nhanh</span>
+            </div>
+
+            <!-- Thanh search tra cứu Đại lý B2B -->
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="vchAgencySearchInput" oninput="onVoucherAgencySearch(this.value)" placeholder="Tìm kiếm theo Tên đại lý, Mã ĐL, MST..." class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-amber-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-amber-500 shadow-2xs">
+            </div>
+
+            <!-- Dropdown danh sách Đại lý B2B -->
+            <select id="vchAgencySelect" onchange="onVoucherAgencyChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500 cursor-pointer">
               <option value="">-- Chọn Đại lý để tự điền nhanh thông tin --</option>
-              <option value="DL-8899">DL-8899 | Cty Cổ phần Du Lịch Việt Nam (Vietravel) - MST: 0312456789</option>
+              <option value="DL-8899">DL-8899 | Công ty Cổ phần Du Lịch Việt Nam (Vietravel) - MST: 0312456789</option>
               <option value="DL-4455">DL-4455 | Cty Du Lịch Saigontourist CN Hà Nội - MST: 0100123456</option>
               <option value="DL-2211">DL-2211 | Đại lý Vé Vui Chơi Miền Trung - MST: 0401889922</option>
               <option value="KHO-MA">KHO-MA | Kho Đại lý Miền An (Bán sỉ OTA) - MST: 0319887766</option>
+              <option value="DL-HANOI">DL-HANOI | Cty TNHH Du Lịch Thủ Đô (Hanoi Travel) - MST: 0109988776</option>
+              <option value="DL-DANANG">DL-DANANG | Cty CP Tour &amp; Vé Bà Nà Express - MST: 0409876543</option>
             </select>
+            <div id="vchAgencySearchResults" class="space-y-1"></div>
           </div>
         `;
       } else if (isRetail) {
@@ -2037,6 +2051,15 @@
       }
     }
 
+    const B2B_AGENCIES_DATA = [
+      { code: 'DL-8899', name: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)', mst: '0312456789', phone: '0903123456', email: 'booking@vietravel.com', bankName: 'Vietcombank (VCB)', bankAcc: '0071001234567', bankOwner: 'CTY CP DU LICH VIETNAM' },
+      { code: 'DL-4455', name: 'Cty Du Lịch Saigontourist CN Hà Nội', mst: '0100123456', phone: '0912345678', email: 'inbound@saigontourist.net', bankName: 'Techcombank (TCB)', bankAcc: '1903445566778', bankOwner: 'CTY DU LICH SAIGONTOURIST' },
+      { code: 'DL-2211', name: 'Đại lý Vé Vui Chơi Miền Trung', mst: '0401889922', phone: '0988776655', email: 'sales@mientrungtour.vn', bankName: 'MB Bank', bankAcc: '090512345688', bankOwner: 'DAI LY VE VUI CHOI MIEN TRUNG' },
+      { code: 'KHO-MA', name: 'Kho Đại lý Miền An (Bán sỉ OTA)', mst: '0319887766', phone: '0938112233', email: 'agency@mienan.vn', bankName: 'ACB', bankAcc: '234567899', bankOwner: 'KHO DAI LY MIEN AN' },
+      { code: 'DL-HANOI', name: 'Cty TNHH Du Lịch Thủ Đô (Hanoi Travel)', mst: '0109988776', phone: '02439998888', email: 'contact@hanoitravel.vn', bankName: 'BIDV', bankAcc: '2151000889900', bankOwner: 'CTY TNHH DU LICH THU DO' },
+      { code: 'DL-DANANG', name: 'Cty CP Tour & Vé Bà Nà Express', mst: '0409876543', phone: '02363889900', email: 'booking@banaexpress.vn', bankName: 'VietinBank', bankAcc: '108877665544', bankOwner: 'CTY CP BANA EXPRESS' }
+    ];
+
     function onVoucherAgencyChange(agCode) {
       if (!agCode) return;
       const nameInput = document.getElementById('vchBeneficiaryName');
@@ -2045,21 +2068,75 @@
       const emailInput = document.getElementById('vchEmail');
       const agCodeInput = document.getElementById('vchAgencyCode');
 
-      const agencyMap = {
-        'DL-8899': { name: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)', mst: '0312456789', phone: '0903123456', email: 'booking@vietravel.com' },
-        'DL-4455': { name: 'Cty Du Lịch Saigontourist CN Hà Nội', mst: '0100123456', phone: '0912345678', email: 'inbound@saigontourist.net' },
-        'DL-2211': { name: 'Đại lý Vé Vui Chơi Miền Trung', mst: '0401889922', phone: '0988776655', email: 'sales@mientrungtour.vn' },
-        'KHO-MA': { name: 'Kho Đại lý Miền An (Bán sỉ OTA)', mst: '0319887766', phone: '0938112233', email: 'agency@mienan.vn' }
-      };
-
-      const info = agencyMap[agCode];
+      const info = B2B_AGENCIES_DATA.find(a => a.code === agCode);
       if (info) {
         if (nameInput) nameInput.value = info.name;
         if (taxInput) taxInput.value = info.mst;
         if (phoneInput) phoneInput.value = info.phone;
         if (emailInput) emailInput.value = info.email;
-        if (agCodeInput) agCodeInput.value = agCode;
+        if (agCodeInput) agCodeInput.value = info.code;
+
+        // Điền trước thông tin tài khoản thụ hưởng nếu thanh toán chuyển khoản
+        const destBank = document.getElementById('vchDestBankName');
+        const destAcc = document.getElementById('vchDestBankAccountNo');
+        const destOwner = document.getElementById('vchDestBankAccountHolder');
+        if (destBank && info.bankName) destBank.value = info.bankName;
+        if (destAcc && info.bankAcc) destAcc.value = info.bankAcc;
+        if (destOwner && info.bankOwner) destOwner.value = info.bankOwner;
+
+        // Điền tài khoản nguồn Techera mặc định
+        const srcAcc = document.getElementById('vchSourceBankAccountNo');
+        const srcOwner = document.getElementById('vchSourceBankAccountHolder');
+        if (srcAcc && !srcAcc.value) srcAcc.value = '0071009876543';
+        if (srcOwner && !srcOwner.value) srcOwner.value = 'CTY TECHERA VIETNAM';
       }
+    }
+
+    function onVoucherAgencySearch(query) {
+      const q = (query || '').toLowerCase().trim();
+      const select = document.getElementById('vchAgencySelect');
+      const resultsDiv = document.getElementById('vchAgencySearchResults');
+      if (!select) return;
+
+      const matched = B2B_AGENCIES_DATA.filter(a => {
+        if (!q) return true;
+        return (
+          a.code.toLowerCase().includes(q) ||
+          a.name.toLowerCase().includes(q) ||
+          a.mst.includes(q) ||
+          (a.phone && a.phone.includes(q))
+        );
+      });
+
+      select.innerHTML = '<option value="">-- Chọn Đại lý để tự điền nhanh thông tin --</option>' +
+        matched.map(a => `<option value="${a.code}">${a.code} | ${a.name} - MST: ${a.mst}</option>`).join('');
+
+      if (q && matched.length > 0) {
+        select.value = matched[0].code;
+        onVoucherAgencyChange(matched[0].code);
+
+        if (resultsDiv) {
+          resultsDiv.innerHTML = matched.slice(0, 3).map(a => `
+            <div onclick="selectB2BAgencyQuick('${a.code}')" class="p-2 bg-white hover:bg-amber-100/70 border border-amber-200 rounded-xl flex items-center justify-between text-xs cursor-pointer shadow-2xs">
+              <div>
+                <span class="font-bold text-slate-800">${a.name}</span>
+                <span class="text-[10px] text-slate-500 font-mono ml-1.5">[${a.code}]</span>
+              </div>
+              <span class="text-[10px] font-bold text-amber-700 font-mono">MST: ${a.mst}</span>
+            </div>
+          `).join('');
+        }
+      } else if (resultsDiv) {
+        resultsDiv.innerHTML = '';
+      }
+    }
+
+    function selectB2BAgencyQuick(agCode) {
+      const select = document.getElementById('vchAgencySelect');
+      if (select) select.value = agCode;
+      onVoucherAgencyChange(agCode);
+      const resultsDiv = document.getElementById('vchAgencySearchResults');
+      if (resultsDiv) resultsDiv.innerHTML = '';
     }
 
     function selectQuickRetail(name, phone, email) {
@@ -2110,6 +2187,12 @@
       if (!bankWrap) return;
       if (method === 'Chuyển khoản') {
         bankWrap.classList.remove('hidden');
+
+        // Điền sẵn tài khoản nguồn mặc định của Techera nếu còn trống
+        const srcBankAcc = document.getElementById('vchSourceBankAccountNo');
+        const srcBankOwner = document.getElementById('vchSourceBankAccountHolder');
+        if (srcBankAcc && !srcBankAcc.value) srcBankAcc.value = '0071009876543';
+        if (srcBankOwner && !srcBankOwner.value) srcBankOwner.value = 'CTY TECHERA VIETNAM';
       } else {
         bankWrap.classList.add('hidden');
       }
@@ -2205,19 +2288,31 @@
         return;
       }
 
-      // BR-VOU-03: Validate Bank Transfer
+      // BR-VOU-03: Validate Bank Transfer (Tài khoản nguồn & Tài khoản thụ hưởng)
       let bankInfo = null;
       if (payMethod === 'Chuyển khoản') {
-        const bankName = document.getElementById('vchBankName')?.value;
-        const bankAcc = document.getElementById('vchBankAccountNo')?.value.trim();
-        const bankOwner = document.getElementById('vchBankAccountHolder')?.value.trim();
-        if (!bankAcc || !bankOwner) {
-          showError('Với hình thức Chuyển khoản: Vui lòng nhập đầy đủ Số tài khoản (STK) và Chủ tài khoản!');
-          if (!bankAcc) document.getElementById('vchBankAccountNo')?.focus();
-          else document.getElementById('vchBankAccountHolder')?.focus();
+        const sourceBankName = document.getElementById('vchSourceBankName')?.value || '';
+        const sourceBankAcc = document.getElementById('vchSourceBankAccountNo')?.value.trim() || '';
+        const sourceBankOwner = document.getElementById('vchSourceBankAccountHolder')?.value.trim() || '';
+
+        const destBankName = document.getElementById('vchDestBankName')?.value || '';
+        const destBankAcc = document.getElementById('vchDestBankAccountNo')?.value.trim() || '';
+        const destBankOwner = document.getElementById('vchDestBankAccountHolder')?.value.trim() || '';
+
+        if (!destBankAcc || !destBankOwner) {
+          showError('Với hình thức Chuyển khoản: Vui lòng nhập đầy đủ Số tài khoản (STK) và Chủ tài khoản thụ hưởng!');
+          if (!destBankAcc) document.getElementById('vchDestBankAccountNo')?.focus();
+          else document.getElementById('vchDestBankAccountHolder')?.focus();
           return;
         }
-        bankInfo = { bankName, bankAcc, bankOwner };
+
+        bankInfo = {
+          source: { bankName: sourceBankName, bankAcc: sourceBankAcc, bankOwner: sourceBankOwner },
+          dest: { bankName: destBankName, bankAcc: destBankAcc, bankOwner: destBankOwner },
+          bankName: destBankName,
+          bankAcc: destBankAcc,
+          bankOwner: destBankOwner
+        };
       }
 
       // BR-VOU-05: Ràng buộc kiểm tra ngày sát hạch: Nếu nhập cả Ngày chứng từ và Ngày sát hạch, hệ thống kiểm tra điều kiện Ngày sát hạch > Ngày chứng từ
@@ -2576,6 +2671,8 @@ window.quickEditInvoiceFromList = quickEditInvoiceFromList;
 window.onVoucherQuickSearch = onVoucherQuickSearch;
 window.selectQuickVoucherOrder = selectQuickVoucherOrder;
 window.clearVoucherQuickSearch = clearVoucherQuickSearch;
+window.onVoucherAgencySearch = onVoucherAgencySearch;
+window.selectB2BAgencyQuick = selectB2BAgencyQuick;
 window.initCashFlowDateRangePicker = initCashFlowDateRangePicker;
 
 // Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM

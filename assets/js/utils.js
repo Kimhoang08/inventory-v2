@@ -788,6 +788,21 @@ function createStandardDateRangePicker(config = {}) {
       updatePresetPillsUI();
       renderCalendarGrid();
       popover.classList.remove('hidden');
+
+      // Tự động căn chỉnh thông minh ngay bên dưới ô input kích hoạt để không bị tràn viền màn hình
+      const trigger = document.getElementById(`${prefix}_btnDateTrigger`);
+      if (trigger && typeof window !== 'undefined') {
+        const rect = trigger.getBoundingClientRect();
+        const popoverWidth = popover.offsetWidth || 340;
+        const windowWidth = window.innerWidth;
+        if (rect.left + popoverWidth > windowWidth - 10) {
+          popover.classList.remove('left-0');
+          popover.classList.add('right-0');
+        } else {
+          popover.classList.add('left-0');
+          popover.classList.remove('right-0');
+        }
+      }
     } else {
       popover.classList.add('hidden');
     }
