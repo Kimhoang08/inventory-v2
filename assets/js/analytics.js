@@ -312,6 +312,9 @@ window.reportOrdersDataset = reportOrdersDataset;
         dateStart: '2026-11-01',
         dateEnd: '2026-11-18'
       };
+      if (reportKey === 'analytics' && analyticsRangePickerInstance) {
+        analyticsRangePickerInstance.setRange('2026-11-01', '2026-11-18', 'this_month');
+      }
       const staffSearch = document.getElementById(`${reportKey}StaffSearch`);
       const siteSearch = document.getElementById(`${reportKey}SiteSearch`);
       if (staffSearch) staffSearch.value = '';
@@ -383,6 +386,9 @@ window.reportOrdersDataset = reportOrdersDataset;
     }
 
     function renderAnalyticsReport() {
+      if (!analyticsRangePickerInstance && typeof initAnalyticsDateRangePicker === 'function') {
+        initAnalyticsDateRangePicker();
+      }
       const st = reportStates.analytics;
       syncReportFilterControls('analytics');
 
@@ -757,14 +763,37 @@ window.reportOrdersDataset = reportOrdersDataset;
 
 
 
+let analyticsRangePickerInstance = null;
+
+function initAnalyticsDateRangePicker() {
+  if (typeof createStandardDateRangePicker === 'function' && document.getElementById('analytics_btnDateTrigger')) {
+    if (!analyticsRangePickerInstance) {
+      analyticsRangePickerInstance = createStandardDateRangePicker({
+        prefix: 'analytics',
+        defaultStart: reportStates.analytics.dateStart || '2026-11-01',
+        defaultEnd: reportStates.analytics.dateEnd || '2026-11-18',
+        defaultPreset: 'this_month',
+        onApply: (start, end, preset) => {
+          reportStates.analytics.dateStart = start;
+          reportStates.analytics.dateEnd = end;
+          reportStates.analytics.dateTag = preset;
+          renderAnalyticsReport();
+        }
+      });
+    }
+  }
+}
+
 // Tự động khởi chạy khi load trang analytics
 window.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('viewReportAnalytics') || document.getElementById('analyticsSiteChart') || document.getElementById('analyticsCorpPieChart')) {
+  initAnalyticsDateRangePicker();
+  if (document.getElementById('viewReportAnalytics') || document.getElementById('analyticsSiteChart') || document.getElementById('analyticsCorpPieChart') || document.getElementById('analytics_btnDateTrigger')) {
     renderAnalyticsReport();
   }
 });
 
 // Xuất các hàm ra phạm vi toàn cục cho inline event handlers
+window.initAnalyticsDateRangePicker = initAnalyticsDateRangePicker;
 window.resetReportFilters = resetReportFilters;
 window.onReportChannelChange = onReportChannelChange;
 window.onReportSubTypeChange = onReportSubTypeChange;
