@@ -238,7 +238,7 @@
 
       <!-- 4. Danh sách Lịch sử dòng tiền (2 Góc nhìn / Tabs: Danh sách chi tiết & Danh sách gộp theo Đơn hàng) -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        <!-- Tab Navigation 2 Góc nhìn + Nút tùy chỉnh cột -->
+        <!-- Tab Navigation 2 Góc nhìn + Tìm kiếm đa năng + Nút tùy chỉnh cột -->
         <div class="p-3 sm:px-4 sm:py-3 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70">
           <div class="flex items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl">
             <button type="button" id="btnViewTabDetail" onclick="switchCashFlowViewTab('DETAIL')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-2xs cursor-pointer">
@@ -251,6 +251,12 @@
               <span>Danh sách gộp theo Đơn hàng</span>
               <span id="badgeCountOrderTab" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700 font-extrabold">0</span>
             </button>
+          </div>
+
+          <!-- Tìm kiếm đa năng trên tất cả các cột -->
+          <div class="relative flex-1 max-w-sm">
+            <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="cfUniversalSearch" oninput="applyCashFlowFilters()" placeholder="Tìm kiếm đa năng (Mã đơn, đối tượng, mã ĐL, số tiền...)" class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-2xs">
           </div>
 
           <div class="flex items-center gap-3 text-xs text-slate-500 font-medium">
@@ -658,27 +664,15 @@
                   <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Phân loại nghiệp vụ &amp; Đối tượng</h4>
                 </div>
 
-                <!-- Nhóm phiếu: Thu / Chi (Bắt buộc) -->
+                <!-- Nhóm phiếu: Thu / Chi (Dropdown Bắt buộc) -->
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                     Nhóm phiếu <span class="text-rose-500">*</span>
                   </label>
-                  <div class="grid grid-cols-2 gap-2.5">
-                    <label class="relative flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 cursor-pointer transition-all has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50" id="lblVoucherGroupThu">
-                      <input type="radio" name="voucherGroup" value="Thu" checked onchange="onVoucherGroupChange('Thu')" class="accent-emerald-600">
-                      <span class="text-xs font-extrabold text-emerald-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-down-long text-emerald-600"></i>
-                        Phiếu Thu (Tiền vào)
-                      </span>
-                    </label>
-                    <label class="relative flex items-center justify-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer transition-all has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50/50" id="lblVoucherGroupChi">
-                      <input type="radio" name="voucherGroup" value="Chi" onchange="onVoucherGroupChange('Chi')" class="accent-rose-600">
-                      <span class="text-xs font-extrabold text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-up-long text-rose-500"></i>
-                        Phiếu Chi (Tiền ra)
-                      </span>
-                    </label>
-                  </div>
+                  <select id="vchGroupSelect" onchange="onVoucherGroupChange(this.value)" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-extrabold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+                    <option value="Thu">Thu (Tiền vào)</option>
+                    <option value="Chi">Chi (Tiền ra)</option>
+                  </select>
                 </div>
 
                 <!-- Loại Thu / Chi: Dropdown tự động lọc danh sách Active + Nút shortcut + Cấu hình loại -->
@@ -903,19 +897,13 @@
       <div class="p-5 sm:p-6 overflow-y-auto space-y-4">
         <input type="hidden" id="catEditId" value="">
         
-        <!-- Chọn Nhóm -->
+        <!-- Chọn Nhóm: Thu hoặc Chi -->
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhóm hạch toán *</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50">
-              <input type="radio" name="catGroup" value="Thu" checked onchange="updateCategoryIdentifierPreview()" class="accent-emerald-600">
-              <span class="text-xs font-extrabold text-slate-700">Nhóm Thu</span>
-            </label>
-            <label class="flex items-center justify-center gap-2 p-2 rounded-xl border border-slate-200 cursor-pointer has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50">
-              <input type="radio" name="catGroup" value="Chi" onchange="updateCategoryIdentifierPreview()" class="accent-rose-600">
-              <span class="text-xs font-extrabold text-slate-700">Nhóm Chi</span>
-            </label>
-          </div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Chọn Nhóm hạch toán *</label>
+          <select id="catSelectGroup" onchange="updateCategoryIdentifierPreview()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <option value="Thu">Thu</option>
+            <option value="Chi">Chi</option>
+          </select>
         </div>
 
         <!-- Mã Thu/Chi (Viết hoa không dấu, không khoảng trắng, duy nhất theo nhóm) -->

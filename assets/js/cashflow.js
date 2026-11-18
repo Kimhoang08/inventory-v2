@@ -628,6 +628,7 @@
     }
 
     function applyCashFlowFilters() {
+      const universalSearchEl = document.getElementById('cfUniversalSearch');
       const searchEl = document.getElementById('cfFilterSearch');
       const groupEl = document.getElementById('cfFilterGroup');
       const typeEl = document.getElementById('cfFilterType');
@@ -638,7 +639,7 @@
       const fromEl = document.getElementById('cfCustomDateFrom');
       const toEl = document.getElementById('cfCustomDateTo');
 
-      const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
+      const q = (universalSearchEl?.value || searchEl?.value || '').toLowerCase().trim();
       const group = groupEl ? groupEl.value : 'ALL';
       const type = typeEl ? typeEl.value : 'ALL';
       const channel = channelEl ? channelEl.value : 'ALL';
@@ -692,9 +693,9 @@
           if (customTo && dtStr > customTo) return false;
         }
 
-        // Search query
+        // Search query đa năng trên tất cả các cột
         if (q) {
-          const hay = `${tx.txCode} ${tx.orderCode} ${tx.beneficiaryName} ${tx.agencyCode} ${tx.type} ${tx.paymentMethod} ${tx.channel}`.toLowerCase();
+          const hay = `${tx.txCode} ${tx.orderCode} ${tx.beneficiaryName} ${tx.agencyCode} ${tx.type} ${tx.paymentMethod} ${tx.channel} ${tx.subType} ${tx.amount} ${tx.group} ${tx.status}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
 
@@ -1557,7 +1558,8 @@
       }
 
       switchVoucherWorkspaceTab(initialTab);
-      onVoucherGroupChange(document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu');
+      const currentGroup = document.getElementById('vchGroupSelect')?.value || 'Thu';
+      onVoucherGroupChange(currentGroup);
     }
 
     function closeCreateVoucherWorkspaceModal() {
@@ -1597,10 +1599,11 @@
     }
 
     function onVoucherGroupChange(group) {
+      const groupVal = group || document.getElementById('vchGroupSelect')?.value || 'Thu';
       const select = document.getElementById('vchCategorySelect');
       if (!select) return;
 
-      const activeCats = cashFlowCategories.filter(c => c.group === group && c.status === 'ACTIVE');
+      const activeCats = cashFlowCategories.filter(c => c.group === groupVal && c.status === 'ACTIVE');
       if (activeCats.length === 0) {
         select.innerHTML = `<option value="">(Chưa có loại nào hoạt động)</option>`;
       } else {
@@ -1680,7 +1683,12 @@
             <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
               <i class="fa-solid fa-user mr-1 text-amber-600"></i> Tra cứu / Chọn nhanh Khách hàng lẻ
             </label>
-            <div class="flex flex-wrap gap-1.5">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="vchRetailSearchInput" oninput="onVoucherRetailSearch(this.value)" placeholder="Tìm kiếm Tên hoặc Email khách lẻ..." class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-amber-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div id="vchRetailSearchResults" class="space-y-1"></div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
               <button type="button" onclick="selectQuickRetail('Nguyễn Văn An', '0901234567', 'an.nguyen@gmail.com')" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-[11px] font-bold text-slate-700 hover:bg-amber-100/50 cursor-pointer">
                 + Nguyễn Văn An (0901234567)
               </button>
@@ -1728,6 +1736,40 @@
       } else {
         container.classList.add('hidden');
       }
+    }
+
+    function onVoucherRetailSearch(query) {
+      const resultsContainer = document.getElementById('vchRetailSearchResults');
+      if (!resultsContainer) return;
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const matches = [];
+      const haySet = new Set();
+      Object.values(cashFlowOrdersMap).forEach(o => {
+        if ((o.customerName && o.customerName.toLowerCase().includes(q)) || (o.customerPhone && o.customerPhone.includes(q))) {
+          const key = `${o.customerName}_${o.customerPhone}`;
+          if (!haySet.has(key)) {
+            haySet.add(key);
+            matches.push({ name: o.customerName, phone: o.customerPhone || '', email: `${(o.customerPhone || 'khach')}@gmail.com` });
+          }
+        }
+      });
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `<div class="text-[11px] text-slate-400 italic py-1">Không tìm thấy khách hàng phù hợp</div>`;
+        return;
+      }
+
+      resultsContainer.innerHTML = matches.slice(0, 3).map(m => `
+        <div onclick="selectQuickRetail('${m.name}', '${m.phone}', '${m.email}')" class="p-1.5 px-2.5 rounded-lg bg-white border border-amber-200 hover:bg-amber-100/60 cursor-pointer flex items-center justify-between text-xs transition-colors">
+          <span class="font-bold text-slate-800">${m.name}</span>
+          <span class="text-slate-500 font-mono text-[11px]">${m.phone}</span>
+        </div>
+      `).join('');
     }
 
     function onVoucherCorpChange(corp) {
@@ -1929,7 +1971,7 @@
       const errorNotice = document.getElementById('vchSubmitErrorNotice');
       if (errorNotice) errorNotice.classList.add('hidden');
 
-      const group = document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu';
+      const group = document.getElementById('vchGroupSelect')?.value || document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu';
       const catCode = document.getElementById('vchCategorySelect')?.value;
       const benName = document.getElementById('vchBeneficiaryName')?.value.trim();
       const phone = document.getElementById('vchPhone')?.value.trim();
@@ -1982,10 +2024,12 @@
         bankInfo = { bankName, bankAcc, bankOwner };
       }
 
-      // BR-VOU-05: Date validation rule
+      // BR-VOU-05: Ràng buộc kiểm tra ngày sát hạch: Nếu nhập cả Ngày chứng từ và Ngày sát hạch, hệ thống kiểm tra điều kiện Ngày sát hạch > Ngày chứng từ
       if (docDate && auditDate) {
         if (auditDate <= docDate) {
+          alert(`Lỗi ràng buộc chứng từ (BR-VOU-05):\nNgày sát hạch (${auditDate}) bắt buộc phải lớn hơn Ngày chứng từ (${docDate})!\nVui lòng kiểm tra và chọn lại.`);
           showError(`Ngày sát hạch (${auditDate}) bắt buộc phải lớn hơn Ngày chứng từ (${docDate})! Vui lòng chọn lại.`);
+          document.getElementById('vchAuditDate')?.focus();
           return;
         }
       }
@@ -2087,6 +2131,7 @@
       const modal = document.getElementById('modalAddEditCategory');
       const title = document.getElementById('modalCatTitle');
       const idHidden = document.getElementById('catEditId');
+      const groupSelect = document.getElementById('catSelectGroup');
       const codeInput = document.getElementById('catInputCode');
       const nameInput = document.getElementById('catInputName');
       const descInput = document.getElementById('catInputDesc');
@@ -2100,21 +2145,31 @@
         if (!existing) return;
         if (title) title.innerText = 'Chỉnh Sửa Loại Thu / Chi';
         if (idHidden) idHidden.value = existing.id;
-        const groupRadio = document.querySelector(`input[name="catGroup"][value="${existing.group}"]`);
-        if (groupRadio) groupRadio.checked = true;
-        if (codeInput) {
-          codeInput.value = existing.code;
-          codeInput.disabled = true;
+        if (groupSelect) groupSelect.value = existing.group;
+
+        // BR-CAT-02: Khóa chỉnh sửa nếu loại phiếu này đã phát sinh giao dịch trong hệ thống
+        const isUsedInTransactions = cashFlowTransactions.some(tx => tx.subType === existing.code || tx.type === existing.name);
+        if (isUsedInTransactions) {
+          if (codeInput) {
+            codeInput.value = existing.code;
+            codeInput.disabled = true;
+          }
+          if (codeLockNote) codeLockNote.classList.remove('hidden');
+        } else {
+          if (codeInput) {
+            codeInput.value = existing.code;
+            codeInput.disabled = false;
+          }
+          if (codeLockNote) codeLockNote.classList.add('hidden');
         }
-        if (codeLockNote) codeLockNote.classList.remove('hidden');
+
         if (nameInput) nameInput.value = existing.name;
         if (descInput) descInput.value = existing.description || '';
         if (statusSelect) statusSelect.value = existing.status || 'ACTIVE';
       } else {
         if (title) title.innerText = 'Thêm Loại Thu / Chi Mới';
         if (idHidden) idHidden.value = '';
-        const groupRadio = document.querySelector('input[name="catGroup"][value="Thu"]');
-        if (groupRadio) groupRadio.checked = true;
+        if (groupSelect) groupSelect.value = 'Thu';
         if (codeInput) {
           codeInput.value = '';
           codeInput.disabled = false;
@@ -2155,7 +2210,7 @@
 
     function saveCategoryConfig() {
       const idHidden = document.getElementById('catEditId')?.value;
-      const group = document.querySelector('input[name="catGroup"]:checked')?.value || 'Thu';
+      const group = document.getElementById('catSelectGroup')?.value || 'Thu';
       const code = (document.getElementById('catInputCode')?.value || '').trim().toUpperCase();
       const name = (document.getElementById('catInputName')?.value || '').trim();
       const desc = (document.getElementById('catInputDesc')?.value || '').trim();
@@ -2173,16 +2228,22 @@
 
       if (!code) {
         showError('Vui lòng nhập Mã Thu / Chi!');
+        document.getElementById('catInputCode')?.focus();
         return;
       }
       if (!name) {
         showError('Vui lòng nhập Tên loại phiếu!');
+        document.getElementById('catInputName')?.focus();
         return;
       }
 
+      // BR-CAT-02: Trùng mã trong cùng nhóm -> Báo lỗi đúng chuẩn
       const duplicate = cashFlowCategories.find(c => c.group === group && c.code === code && c.id !== idHidden);
       if (duplicate) {
-        showError(`Mã "${code}" đã tồn tại trong nhóm ${group}! Vui lòng đặt mã khác.`);
+        const dupMsg = "Mã loại phiếu đã tồn tại trong nhóm này, vui lòng nhập mã khác!";
+        alert(dupMsg);
+        showError(dupMsg);
+        document.getElementById('catInputCode')?.focus();
         return;
       }
 
@@ -2215,7 +2276,7 @@
 
       renderCategoryConfigTable();
       onCashFlowGroupFilterChange();
-      onVoucherGroupChange(document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu');
+      onVoucherGroupChange(document.getElementById('vchGroupSelect')?.value || 'Thu');
       closeAddEditCategoryModal();
     }
 
@@ -2261,6 +2322,7 @@ window.onVoucherCorpChange = onVoucherCorpChange;
 window.onVoucherSiteSelected = onVoucherSiteSelected;
 window.onVoucherAgencyChange = onVoucherAgencyChange;
 window.selectQuickRetail = selectQuickRetail;
+window.onVoucherRetailSearch = onVoucherRetailSearch;
 window.onVoucherKolChange = onVoucherKolChange;
 window.onVoucherCodeChange = onVoucherCodeChange;
 window.onVoucherPaymentMethodChange = onVoucherPaymentMethodChange;
