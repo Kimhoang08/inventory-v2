@@ -27,58 +27,104 @@
           </h1>
         </div>
 
-        <!-- Filter Bar -->
+        <!-- Filter Bar: Standard Date Range Picker -->
         <div class="relative flex items-center gap-2 w-full md:w-auto">
-          <!-- Date Range Picker Button -->
-          <button type="button"
-                  id="btnDashboardDatePicker"
-                  onclick="toggleDashboardDatePopover()"
-                  class="flex-1 md:flex-initial inline-flex items-center justify-between md:justify-start gap-2.5 px-3.5 py-2 rounded-xl border border-sky-200 bg-white hover:bg-sky-50/50 text-slate-700 font-semibold text-xs sm:text-sm shadow-2xs transition-colors cursor-pointer focus:outline-none">
+          <!-- 1. Trigger Button -->
+          <button
+            id="dash_btnDateTrigger"
+            type="button"
+            onclick="dash_toggleDatePopover(event)"
+            class="flex-1 md:flex-initial inline-flex items-center justify-between md:justify-start gap-2.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm shadow-2xs transition-colors cursor-pointer focus:outline-none"
+          >
             <span class="inline-flex items-center gap-2">
-              <i data-lucide="calendar" class="w-4 h-4 text-sky-600 shrink-0"></i>
-              <span id="dashboardDateRangeLabel">01/11/2026 - 10/11/2026</span>
+              <i class="fa-regular fa-calendar text-brand-500 shrink-0"></i>
+              <span id="dash_dateDisplayText">01/11/2026 - 18/11/2026</span>
             </span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
           </button>
 
-          <!-- Mobile Clear Filter Button -->
-          <button type="button"
-                  onclick="resetDashboardDateFilter()"
-                  class="flex md:hidden items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0 focus:outline-none">
-            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-            <span>Xóa bộ lọc</span>
-          </button>
+          <!-- 2. Standard Popover Dropdown -->
+          <div
+            id="dash_popoverDateRange"
+            onclick="event.stopPropagation()"
+            class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 w-[340px] sm:w-[360px] md:w-[380px] bg-white border border-slate-200/90 rounded-2xl shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 z-50 text-left"
+          >
+            <!-- 1. Header -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+              <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
+              <span class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="dash_activeTagLabel" class="font-bold text-blue-600">Tháng này</span></span>
+            </div>
 
-          <!-- Date Range Picker Popover -->
-          <div id="dashboardDatePopover" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-40 space-y-3">
-            <div class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Chọn khoảng thời gian</div>
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="applyDashboardDatePreset('01/11/2026 - 10/11/2026', 'nov_1_10')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors cursor-pointer text-left">
-                01/11 - 10/11/2026
-              </button>
-              <button type="button" onclick="applyDashboardDatePreset('01/10/2026 - 31/10/2026', 'oct_full')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
-                Tháng 10/2026
-              </button>
-              <button type="button" onclick="applyDashboardDatePreset('04/11/2026 - 10/11/2026', 'last_7')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
-                7 ngày gần nhất
-              </button>
-              <button type="button" onclick="applyDashboardDatePreset('01/11/2026 - 30/11/2026', 'nov_full')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-left">
-                Cả tháng 11/2026
-              </button>
-            </div>
-            <div class="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Từ ngày</label>
-                <input type="date" id="dashStartDate" value="2026-11-01" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-sky-400">
+            <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
+                <span id="dash_displayStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
               </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Đến ngày</label>
-                <input type="date" id="dashEndDate" value="2026-11-10" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-sky-400">
+              <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
+                <span id="dash_displayEndDate" class="font-black text-slate-800 text-xs tracking-tight">18/11/2026</span>
               </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-1">
-              <button type="button" onclick="resetDashboardDateFilter()" class="px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">Đặt lại</button>
-              <button type="button" onclick="applyCustomDashboardDateRange()" class="px-3.5 py-1.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors cursor-pointer">Áp dụng</button>
+
+            <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+              <button type="button" id="dash_btnPreset_7days" onclick="dash_selectPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                7 ngày
+              </button>
+              <button type="button" id="dash_btnPreset_30days" onclick="dash_selectPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                30 ngày
+              </button>
+              <button type="button" id="dash_btnPreset_this_month" onclick="dash_selectPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+                Tháng này
+              </button>
+              <button type="button" id="dash_btnPreset_quarter" onclick="dash_selectPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                Quý
+              </button>
+              <button type="button" id="dash_btnPreset_custom" onclick="dash_selectPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+                <span>Tùy chỉnh</span>
+                <span id="dash_customDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
+              </button>
+            </div>
+
+            <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+              <!-- Điều hướng tháng -->
+              <div class="flex items-center justify-between px-1">
+                <button type="button" onclick="dash_navigateMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span id="dash_calendarMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
+                <button type="button" onclick="dash_navigateMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <!-- Thứ trong tuần -->
+              <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
+                <span>T2</span>
+                <span>T3</span>
+                <span>T4</span>
+                <span>T5</span>
+                <span>T6</span>
+                <span>T7</span>
+                <span>CN</span>
+              </div>
+
+              <!-- Lưới ngày -->
+              <div id="dash_calendarGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
+                <!-- Dynamically rendered days -->
+              </div>
+            </div>
+
+            <!-- 6. Chân Dropdown (Footer Actions) -->
+            <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
+              <button type="button" onclick="dash_cancel(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+                Hủy
+              </button>
+              <button type="button" onclick="dash_apply(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+                Áp dụng
+              </button>
             </div>
           </div>
         </div>
@@ -324,9 +370,9 @@
   <script src="database/orders.db.js"></script>
   <script src="database/cashflow.db.js"></script>
   <script src="database/db-store.js"></script>
-  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/utils.js?v=2.5.0"></script>
   <script src="assets/js/layout.js?v=2.5.0"></script>
-  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/dashboard.js?v=2.5.0"></script>
   <script>
     renderSharedShell({
       activePage: 'dashboard.html',

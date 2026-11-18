@@ -117,6 +117,9 @@
                 <button type="button" id="btnPresetTag_this_month" onclick="selectDateRangeTagPreset(event, 'this_month')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
                   Tháng này
                 </button>
+                <button type="button" id="btnPresetTag_quarter" onclick="selectDateRangeTagPreset(event, 'quarter')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                  Quý
+                </button>
                 <button type="button" id="btnPresetTag_custom" onclick="selectDateRangeTagPreset(event, 'custom')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
                   <span>Tùy chỉnh</span>
                   <span id="customPresetDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
@@ -604,8 +607,8 @@
   <script src="database/orders.db.js"></script>
   <script src="database/cashflow.db.js"></script>
   <script src="database/db-store.js"></script>
-  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/utils.js?v=2.5.0"></script>
   <script src="assets/js/layout.js?v=2.5.0"></script>
-  <script src="assets/js/orders.js"></script>
+  <script src="assets/js/orders.js?v=2.5.0"></script>
 </body>
 </html>

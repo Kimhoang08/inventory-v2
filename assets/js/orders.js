@@ -142,6 +142,7 @@ function updateDateRangePresetPills() {
     { id: 'btnPresetTag_7days', key: '7_days', label: '7 ngày' },
     { id: 'btnPresetTag_30days', key: '30_days', label: '30 ngày' },
     { id: 'btnPresetTag_this_month', key: 'this_month', label: 'Tháng này' },
+    { id: 'btnPresetTag_quarter', key: 'quarter', label: 'Quý' },
     { id: 'btnPresetTag_custom', key: 'custom', label: 'Tùy chỉnh' }
   ];
 
@@ -213,6 +214,10 @@ function selectDateRangeTagPreset(event, preset) {
     calendarSelectPhase = 'completed';
   } else if (preset === 'this_month') {
     tempRangeStart = '2026-11-01';
+    tempRangeEnd = '2026-11-17';
+    calendarSelectPhase = 'completed';
+  } else if (preset === 'quarter') {
+    tempRangeStart = '2026-10-01';
     tempRangeEnd = '2026-11-17';
     calendarSelectPhase = 'completed';
   } else if (preset === 'custom') {

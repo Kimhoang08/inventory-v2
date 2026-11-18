@@ -508,10 +508,34 @@ window.reportOrdersDataset = reportOrdersDataset;
       applyDashboardDatePreset('01/11/2026 - 10/11/2026', 'nov_1_10');
     }
 
+    let dashboardRangePickerInstance = null;
+
     function initDashboardOverview() {
       if (typeof syncDashboardPresetsAndChannelsFromOrders === 'function') {
         syncDashboardPresetsAndChannelsFromOrders();
       }
+
+      if (typeof createStandardDateRangePicker === 'function' && document.getElementById('dash_btnDateTrigger')) {
+        if (!dashboardRangePickerInstance) {
+          dashboardRangePickerInstance = createStandardDateRangePicker({
+            prefix: 'dash',
+            defaultStart: '2026-11-01',
+            defaultEnd: '2026-11-18',
+            defaultPreset: 'this_month',
+            onApply: (start, end, preset) => {
+              const fmt = (iso) => {
+                if (!iso) return '';
+                const parts = String(iso).split('-');
+                return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : iso;
+              };
+              const rangeLabel = start === end ? fmt(start) : `${fmt(start)} - ${fmt(end)}`;
+              const presetKey = preset === '30_days' ? 'oct_full' : (preset === '7_days' ? 'last_7' : 'nov_1_10');
+              applyDashboardDatePreset(rangeLabel, presetKey);
+            }
+          });
+        }
+      }
+
       const initialPreset = dashboardPresets.nov_1_10;
       updateDashboardKpis(initialPreset.kpis);
       initDashboardChart(initialPreset.chart);

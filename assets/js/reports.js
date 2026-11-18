@@ -1712,12 +1712,40 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // 2. Analytics Report
   if (document.getElementById("viewReportAnalytics") || document.getElementById("anTopSitesBars")) {
+    if (typeof createStandardDateRangePicker === 'function' && document.getElementById('analytics_btnDateTrigger')) {
+      createStandardDateRangePicker({
+        prefix: 'analytics',
+        defaultStart: reportStates.analytics.dateStart || '2026-11-01',
+        defaultEnd: reportStates.analytics.dateEnd || '2026-11-18',
+        defaultPreset: 'this_month',
+        onApply: (start, end, preset) => {
+          reportStates.analytics.dateStart = start;
+          reportStates.analytics.dateEnd = end;
+          reportStates.analytics.dateTag = preset;
+          renderAnalyticsReport();
+        }
+      });
+    }
     syncReportFilterControls("analytics");
     renderAnalyticsReport();
   }
 
   // 3. Business Report
   if (document.getElementById("viewReportBusiness") || document.getElementById("bizOrdersTbody")) {
+    if (typeof createStandardDateRangePicker === 'function' && document.getElementById('biz_btnDateTrigger')) {
+      createStandardDateRangePicker({
+        prefix: 'biz',
+        defaultStart: reportStates.business.dateStart || '2026-11-01',
+        defaultEnd: reportStates.business.dateEnd || '2026-11-18',
+        defaultPreset: 'this_month',
+        onApply: (start, end, preset) => {
+          reportStates.business.dateStart = start;
+          reportStates.business.dateEnd = end;
+          reportStates.business.dateTag = preset;
+          renderBusinessReport();
+        }
+      });
+    }
     syncReportFilterControls("business");
     renderBusinessReport();
   }

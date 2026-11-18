@@ -543,3 +543,528 @@ function goBackPage(fallbackUrl = 'index.html') {
 }
 
 window.goBackPage = goBackPage;
+
+// ============================================================================
+// STANDARDIZED DATE RANGE PICKER COMPONENT FACTORY
+// Presets: 7 ngày, 30 ngày, Tháng này, Quý, Tùy chỉnh + Two-step Selection Mode
+// ============================================================================
+
+function createStandardDateRangePicker(config = {}) {
+  const prefix = config.prefix || 'datePicker';
+  const baseDate = config.baseDate || '2026-11-18';
+  let appliedStart = config.defaultStart || '2026-11-01';
+  let appliedEnd = config.defaultEnd || '2026-11-18';
+  let appliedPreset = config.defaultPreset || 'this_month';
+  const onApplyCallback = config.onApply || function() {};
+  const onCancelCallback = config.onCancel || function() {};
+
+  let tempRangeStart = appliedStart;
+  let tempRangeEnd = appliedEnd;
+  let tempPreset = appliedPreset;
+  let calendarSelectPhase = 'completed'; // 'start', 'end', 'completed'
+
+  let calendarYear = 2026;
+  let calendarMonth = 10; // 0-based: 10 = Tháng 11
+
+  const syncYearMonth = (targetIso) => {
+    const t = targetIso || tempRangeEnd || tempRangeStart || baseDate;
+    const parts = String(t).split('-');
+    if (parts.length === 3) {
+      calendarYear = parseInt(parts[0], 10);
+      calendarMonth = parseInt(parts[1], 10) - 1;
+    }
+  };
+  syncYearMonth(tempRangeEnd);
+
+  function formatVnDate(isoDate) {
+    if (!isoDate) return '';
+    const parts = String(isoDate).split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return isoDate;
+  }
+
+  function getPresetsMap() {
+    const [y, m, d] = baseDate.split('-').map(Number);
+    const base = new Date(y, m - 1, d);
+
+    // 7 ngày gần nhất
+    const d7 = new Date(base);
+    d7.setDate(d7.getDate() - 6);
+
+    // 30 ngày gần nhất
+    const d30 = new Date(base);
+    d30.setDate(d30.getDate() - 29);
+
+    // Tháng này (từ ngày 01 đến ngày hiện tại)
+    const dMonthStart = new Date(y, m - 1, 1);
+
+    // Quý này (Quý 4: 01/10 đến nay)
+    const qMonthStart = Math.floor((m - 1) / 3) * 3;
+    const dQuarterStart = new Date(y, qMonthStart, 1);
+
+    const fmt = dt => {
+      const yr = dt.getFullYear();
+      const mo = String(dt.getMonth() + 1).padStart(2, '0');
+      const da = String(dt.getDate()).padStart(2, '0');
+      return `${yr}-${mo}-${da}`;
+    };
+
+    return {
+      '7_days': { start: fmt(d7), end: baseDate, label: '7 ngày' },
+      '30_days': { start: fmt(d30), end: baseDate, label: '30 ngày' },
+      'this_month': { start: fmt(dMonthStart), end: baseDate, label: 'Tháng này' },
+      'quarter': { start: fmt(dQuarterStart), end: baseDate, label: 'Quý' },
+      'custom': { label: 'Tùy chỉnh' }
+    };
+  }
+
+  function updatePresetPillsUI() {
+    const pills = [
+      { id: `${prefix}_btnPreset_7days`, key: '7_days', label: '7 ngày' },
+      { id: `${prefix}_btnPreset_30days`, key: '30_days', label: '30 ngày' },
+      { id: `${prefix}_btnPreset_this_month`, key: 'this_month', label: 'Tháng này' },
+      { id: `${prefix}_btnPreset_quarter`, key: 'quarter', label: 'Quý' },
+      { id: `${prefix}_btnPreset_custom`, key: 'custom', label: 'Tùy chỉnh' }
+    ];
+
+    pills.forEach(p => {
+      const el = document.getElementById(p.id);
+      if (!el) return;
+      if (tempPreset === p.key) {
+        el.className = 'preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5';
+      } else {
+        el.className = 'preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5';
+      }
+    });
+
+    const dot = document.getElementById(`${prefix}_customDot`);
+    if (dot) {
+      if (tempPreset === 'custom') {
+        dot.classList.remove('hidden');
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-white shrink-0';
+      } else {
+        dot.classList.add('hidden');
+      }
+    }
+
+    const labelEl = document.getElementById(`${prefix}_activeTagLabel`);
+    if (labelEl) {
+      const activeObj = pills.find(p => p.key === tempPreset);
+      labelEl.innerText = activeObj ? activeObj.label : 'Tùy chỉnh';
+    }
+
+    const startCard = document.getElementById(`${prefix}_displayStartDate`);
+    const endCard = document.getElementById(`${prefix}_displayEndDate`);
+    if (startCard) {
+      if (tempRangeStart) {
+        startCard.innerText = formatVnDate(tempRangeStart);
+        startCard.className = 'font-black text-slate-800 text-xs tracking-tight';
+      } else {
+        startCard.innerText = '--/--/----';
+        startCard.className = 'font-bold text-slate-400 text-xs tracking-tight italic';
+      }
+    }
+    if (endCard) {
+      if (tempRangeEnd) {
+        endCard.innerText = formatVnDate(tempRangeEnd);
+        endCard.className = 'font-black text-slate-800 text-xs tracking-tight';
+      } else if (calendarSelectPhase === 'end') {
+        endCard.innerText = 'Chọn ngày kết thúc';
+        endCard.className = 'font-bold text-blue-600 text-xs tracking-tight animate-pulse';
+      } else {
+        endCard.innerText = '--/--/----';
+        endCard.className = 'font-bold text-slate-400 text-xs tracking-tight italic';
+      }
+    }
+  }
+
+  function renderCalendarGrid() {
+    const titleEl = document.getElementById(`${prefix}_calendarMonthTitle`);
+    if (titleEl) {
+      titleEl.innerText = `Tháng ${calendarMonth + 1}, ${calendarYear}`;
+    }
+
+    const gridEl = document.getElementById(`${prefix}_calendarGrid`);
+    if (!gridEl) return;
+
+    const firstDayObj = new Date(calendarYear, calendarMonth, 1);
+    const jsDay = firstDayObj.getDay();
+    const startDayOffset = jsDay === 0 ? 6 : jsDay - 1;
+
+    const totalDays = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const prevMonthTotalDays = new Date(calendarYear, calendarMonth, 0).getDate();
+
+    let html = '';
+
+    for (let i = startDayOffset - 1; i >= 0; i--) {
+      const prevDay = prevMonthTotalDays - i;
+      html += `<div class="h-8 flex items-center justify-center text-slate-300 text-[11px] pointer-events-none select-none">${prevDay}</div>`;
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      const dayStr = String(day).padStart(2, '0');
+      const mStr = String(calendarMonth + 1).padStart(2, '0');
+      const isoDate = `${calendarYear}-${mStr}-${dayStr}`;
+
+      const isStart = tempRangeStart && isoDate === tempRangeStart;
+      const isEnd = tempRangeEnd && isoDate === tempRangeEnd;
+      const isSingleDayRange = isStart && isEnd;
+      const isInRange = tempRangeStart && tempRangeEnd && (isoDate > tempRangeStart && isoDate < tempRangeEnd);
+      const isOnlyStartPicked = isStart && !tempRangeEnd;
+
+      if (isSingleDayRange) {
+        html += `
+          <div class="h-8 flex items-center justify-center relative">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-transform z-10">
+              ${day}
+            </button>
+          </div>
+        `;
+      } else if (isOnlyStartPicked) {
+        html += `
+          <div class="h-8 flex items-center justify-center relative">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-md ring-4 ring-blue-100 cursor-pointer active:scale-95 transition-transform z-10">
+              ${day}
+            </button>
+          </div>
+        `;
+      } else if (isStart) {
+        html += `
+          <div class="h-8 flex items-center justify-center relative bg-gradient-to-r from-transparent to-blue-50/90 rounded-l-full">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-transform z-10">
+              ${day}
+            </button>
+          </div>
+        `;
+      } else if (isEnd) {
+        html += `
+          <div class="h-8 flex items-center justify-center relative bg-gradient-to-l from-transparent to-blue-50/90 rounded-r-full">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-7 h-7 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-transform z-10">
+              ${day}
+            </button>
+          </div>
+        `;
+      } else if (isInRange) {
+        html += `
+          <div class="h-8 flex items-center justify-center bg-blue-50/90">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-full h-full text-blue-900 font-bold text-xs flex items-center justify-center cursor-pointer hover:bg-blue-100/70 transition-colors">
+              ${day}
+            </button>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="h-8 flex items-center justify-center">
+            <button type="button" onclick="${prefix}_onDayClick(event, '${isoDate}')" class="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-700 font-semibold text-xs flex items-center justify-center transition-colors cursor-pointer">
+              ${day}
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    const totalRendered = startDayOffset + totalDays;
+    const trailingCount = (7 - (totalRendered % 7)) % 7;
+    for (let i = 1; i <= trailingCount; i++) {
+      html += `<div class="h-8 flex items-center justify-center text-slate-300 text-[11px] pointer-events-none select-none">${i}</div>`;
+    }
+
+    gridEl.innerHTML = html;
+  }
+
+  function toggleDatePopover(event) {
+    if (event) event.stopPropagation();
+    const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    if (!popover) return;
+
+    const isOpening = popover.classList.contains('hidden');
+    if (isOpening) {
+      tempRangeStart = appliedStart;
+      tempRangeEnd = appliedEnd;
+      tempPreset = appliedPreset;
+      calendarSelectPhase = 'completed';
+
+      syncYearMonth(tempRangeEnd || tempRangeStart);
+      updatePresetPillsUI();
+      renderCalendarGrid();
+      popover.classList.remove('hidden');
+    } else {
+      popover.classList.add('hidden');
+    }
+  }
+
+  function selectPreset(event, presetKey) {
+    if (event) event.stopPropagation();
+    tempPreset = presetKey;
+    const presets = getPresetsMap();
+
+    if (presetKey === 'custom') {
+      tempRangeStart = null;
+      tempRangeEnd = null;
+      calendarSelectPhase = 'start';
+    } else if (presets[presetKey]) {
+      tempRangeStart = presets[presetKey].start;
+      tempRangeEnd = presets[presetKey].end;
+      calendarSelectPhase = 'completed';
+    }
+
+    syncYearMonth(tempRangeEnd || tempRangeStart);
+    updatePresetPillsUI();
+    renderCalendarGrid();
+  }
+
+  function onDayClick(event, isoDate) {
+    if (event) event.stopPropagation();
+
+    if (calendarSelectPhase === 'start' || calendarSelectPhase === 'completed' || !tempRangeStart) {
+      tempRangeStart = isoDate;
+      tempRangeEnd = null;
+      calendarSelectPhase = 'end';
+      tempPreset = 'custom';
+    } else if (calendarSelectPhase === 'end') {
+      if (isoDate < tempRangeStart) {
+        tempRangeStart = isoDate;
+        tempRangeEnd = null;
+        calendarSelectPhase = 'end';
+        tempPreset = 'custom';
+      } else {
+        tempRangeEnd = isoDate;
+        calendarSelectPhase = 'completed';
+        tempPreset = 'custom';
+      }
+    }
+
+    updatePresetPillsUI();
+    renderCalendarGrid();
+  }
+
+  function navigateMonth(event, delta) {
+    if (event) event.stopPropagation();
+    calendarMonth += delta;
+    if (calendarMonth < 0) {
+      calendarMonth = 11;
+      calendarYear--;
+    } else if (calendarMonth > 11) {
+      calendarMonth = 0;
+      calendarYear++;
+    }
+    renderCalendarGrid();
+  }
+
+  function cancel(event) {
+    if (event) event.stopPropagation();
+    tempRangeStart = appliedStart;
+    tempRangeEnd = appliedEnd;
+    tempPreset = appliedPreset;
+    calendarSelectPhase = 'completed';
+    const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    if (popover) popover.classList.add('hidden');
+    onCancelCallback();
+  }
+
+  function apply(event) {
+    if (event) event.stopPropagation();
+
+    if (tempRangeStart && !tempRangeEnd) {
+      tempRangeEnd = tempRangeStart;
+    }
+    if (!tempRangeStart && !tempRangeEnd) {
+      const presets = getPresetsMap();
+      tempRangeStart = presets.this_month.start;
+      tempRangeEnd = presets.this_month.end;
+      tempPreset = 'this_month';
+    }
+
+    appliedStart = tempRangeStart;
+    appliedEnd = tempRangeEnd;
+    appliedPreset = tempPreset;
+
+    const displayEl = document.getElementById(`${prefix}_dateDisplayText`);
+    if (displayEl) {
+      if (appliedStart === appliedEnd) {
+        displayEl.innerText = formatVnDate(appliedStart);
+      } else {
+        displayEl.innerText = `${formatVnDate(appliedStart)} - ${formatVnDate(appliedEnd)}`;
+      }
+    }
+
+    const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    if (popover) popover.classList.add('hidden');
+
+    onApplyCallback(appliedStart, appliedEnd, appliedPreset);
+  }
+
+  function setRange(startDate, endDate, presetKey = 'custom') {
+    appliedStart = startDate;
+    appliedEnd = endDate;
+    appliedPreset = presetKey;
+    tempRangeStart = startDate;
+    tempRangeEnd = endDate;
+    tempPreset = presetKey;
+    calendarSelectPhase = 'completed';
+
+    const displayEl = document.getElementById(`${prefix}_dateDisplayText`);
+    if (displayEl) {
+      if (appliedStart === appliedEnd) {
+        displayEl.innerText = formatVnDate(appliedStart);
+      } else {
+        displayEl.innerText = `${formatVnDate(appliedStart)} - ${formatVnDate(appliedEnd)}`;
+      }
+    }
+    syncYearMonth(appliedEnd);
+    updatePresetPillsUI();
+    renderCalendarGrid();
+  }
+
+  // Click outside to cancel & close
+  document.addEventListener('click', (e) => {
+    const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    const trigger = document.getElementById(`${prefix}_btnDateTrigger`);
+    if (!popover || popover.classList.contains('hidden')) return;
+
+    const path = (typeof e.composedPath === 'function') ? e.composedPath() : [];
+    if (path.includes(popover) || path.includes(trigger)) return;
+    if (trigger && trigger.contains(e.target)) return;
+    if (popover && popover.contains(e.target)) return;
+
+    cancel(e);
+  });
+
+  // Export functions globally
+  window[`${prefix}_toggleDatePopover`] = toggleDatePopover;
+  window[`${prefix}_selectPreset`] = selectPreset;
+  window[`${prefix}_onDayClick`] = onDayClick;
+  window[`${prefix}_navigateMonth`] = navigateMonth;
+  window[`${prefix}_cancel`] = cancel;
+  window[`${prefix}_apply`] = apply;
+
+  // Initial render
+  updatePresetPillsUI();
+  renderCalendarGrid();
+  const initDisplay = document.getElementById(`${prefix}_dateDisplayText`);
+  if (initDisplay) {
+    if (appliedStart === appliedEnd) {
+      initDisplay.innerText = formatVnDate(appliedStart);
+    } else {
+      initDisplay.innerText = `${formatVnDate(appliedStart)} - ${formatVnDate(appliedEnd)}`;
+    }
+  }
+
+  return {
+    getStartDate: () => appliedStart,
+    getEndDate: () => appliedEnd,
+    getPreset: () => appliedPreset,
+    setRange
+  };
+}
+
+window.createStandardDateRangePicker = createStandardDateRangePicker;
+
+function renderStandardDateRangePickerHTML(prefix, options = {}) {
+  const alignClass = options.align === 'left' ? 'left-0 sm:right-auto' : 'left-0 md:left-auto md:right-0';
+  const label = options.defaultLabel || '01/11/2026 - 18/11/2026';
+  return `
+    <div class="relative date-range-picker-wrap">
+      <!-- 1. Trigger Button -->
+      <button
+        id="${prefix}_btnDateTrigger"
+        type="button"
+        onclick="${prefix}_toggleDatePopover(event)"
+        class="w-full sm:w-auto min-w-[210px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-white text-slate-800 flex items-center justify-between gap-2.5 cursor-pointer hover:border-slate-300 transition-colors text-left shadow-2xs"
+      >
+        <span class="inline-flex items-center gap-2 truncate">
+          <i class="fa-regular fa-calendar text-slate-400 text-xs shrink-0"></i>
+          <span id="${prefix}_dateDisplayText">${label}</span>
+        </span>
+        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
+      </button>
+
+      <!-- 2. Dropdown Popover -->
+      <div
+        id="${prefix}_popoverDateRange"
+        onclick="event.stopPropagation()"
+        class="hidden absolute top-full ${alignClass} w-[340px] sm:w-[360px] md:w-[380px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 transition-all text-left"
+      >
+        <!-- 1. Header -->
+        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+          <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
+          <span class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="${prefix}_activeTagLabel" class="font-bold text-blue-600">Tháng này</span></span>
+        </div>
+
+        <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
+            <span id="${prefix}_displayStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
+            <span id="${prefix}_displayEndDate" class="font-black text-slate-800 text-xs tracking-tight">18/11/2026</span>
+          </div>
+        </div>
+
+        <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+          <button type="button" id="${prefix}_btnPreset_7days" onclick="${prefix}_selectPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+            7 ngày
+          </button>
+          <button type="button" id="${prefix}_btnPreset_30days" onclick="${prefix}_selectPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+            30 ngày
+          </button>
+          <button type="button" id="${prefix}_btnPreset_this_month" onclick="${prefix}_selectPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+            Tháng này
+          </button>
+          <button type="button" id="${prefix}_btnPreset_quarter" onclick="${prefix}_selectPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+            Quý
+          </button>
+          <button type="button" id="${prefix}_btnPreset_custom" onclick="${prefix}_selectPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+            <span>Tùy chỉnh</span>
+            <span id="${prefix}_customDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
+          </button>
+        </div>
+
+        <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
+        <div class="pt-2 border-t border-slate-100 space-y-2">
+          <!-- Điều hướng tháng -->
+          <div class="flex items-center justify-between px-1">
+            <button type="button" onclick="${prefix}_navigateMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span id="${prefix}_calendarMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
+            <button type="button" onclick="${prefix}_navigateMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Thứ trong tuần -->
+          <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
+            <span>T2</span>
+            <span>T3</span>
+            <span>T4</span>
+            <span>T5</span>
+            <span>T6</span>
+            <span>T7</span>
+            <span>CN</span>
+          </div>
+
+          <!-- Lưới ngày -->
+          <div id="${prefix}_calendarGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
+            <!-- Dynamically rendered days -->
+          </div>
+        </div>
+
+        <!-- 6. Chân Dropdown (Footer Actions) -->
+        <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
+          <button type="button" onclick="${prefix}_cancel(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+            Hủy
+          </button>
+          <button type="button" onclick="${prefix}_apply(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+            Áp dụng
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+window.renderStandardDateRangePickerHTML = renderStandardDateRangePickerHTML;
