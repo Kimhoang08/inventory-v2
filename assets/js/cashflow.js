@@ -1610,13 +1610,21 @@
     }
 
     // =========================================================================
-    // WORKSPACE: TẠO PHIẾU THU / CHI & QUẢN LÝ DANH MỤC CẤU HÌNH LOẠI
+    // WORKSPACE NEXTPAGE: TẠO PHIẾU THU / CHI & QUẢN LÝ DANH MỤC CẤU HÌNH LOẠI
     // =========================================================================
-    function openCreateVoucherWorkspaceModal(initialTab = 'CREATE') {
-      const modal = document.getElementById('modalCreateVoucherWorkspace');
-      if (!modal) return;
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+    function openCreateVoucherWorkspacePage(initialTab = 'CREATE') {
+      const historyView = document.getElementById('viewCashFlowHistory');
+      const workspaceView = document.getElementById('viewCreateVoucherWorkspace');
+      if (historyView && workspaceView) {
+        historyView.classList.add('hidden');
+        workspaceView.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+          if (window.location.hash !== '#create-voucher') {
+            history.pushState({ view: 'create-voucher' }, '', '#create-voucher');
+          }
+        } catch (e) {}
+      }
 
       // Set default doc date
       const docDate = document.getElementById('vchDocDate');
@@ -1629,13 +1637,25 @@
       onVoucherGroupChange(currentGroup);
     }
 
-    function closeCreateVoucherWorkspaceModal() {
-      const modal = document.getElementById('modalCreateVoucherWorkspace');
-      if (modal) {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
+    function closeCreateVoucherWorkspacePage() {
+      const historyView = document.getElementById('viewCashFlowHistory');
+      const workspaceView = document.getElementById('viewCreateVoucherWorkspace');
+      if (historyView && workspaceView) {
+        workspaceView.classList.add('hidden');
+        historyView.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+          if (window.location.hash === '#create-voucher') {
+            history.pushState(null, '', window.location.pathname + window.location.search);
+          }
+        } catch (e) {}
       }
+      applyCashFlowFilters();
     }
+
+    // Backward-compatibility aliases
+    const openCreateVoucherWorkspaceModal = openCreateVoucherWorkspacePage;
+    const closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspacePage;
 
     function switchVoucherWorkspaceTab(tab) {
       const tabCreate = document.getElementById('tabWsCreate');
@@ -2175,7 +2195,7 @@
       }
 
       applyCashFlowFilters();
-      closeCreateVoucherWorkspaceModal();
+      closeCreateVoucherWorkspacePage();
 
       alert(`✓ Đã tạo thành công ${group === 'Thu' ? 'Phiếu Thu' : 'Phiếu Chi'}: [${vchCode}] - ${formatMoney(amount)} đ!${walletNotice}`);
     }
@@ -2387,8 +2407,10 @@
 // =========================================================================
 // XUẤT CÁC HÀM RA PHẠM VI TOÀN CỤC CHO INLINE EVENT HANDLERS TRONG CASHFLOW.HTML
 // =========================================================================
-window.openCreateVoucherWorkspaceModal = openCreateVoucherWorkspaceModal;
-window.closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspaceModal;
+window.openCreateVoucherWorkspacePage = openCreateVoucherWorkspacePage;
+window.closeCreateVoucherWorkspacePage = closeCreateVoucherWorkspacePage;
+window.openCreateVoucherWorkspaceModal = openCreateVoucherWorkspacePage;
+window.closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspacePage;
 window.switchVoucherWorkspaceTab = switchVoucherWorkspaceTab;
 window.switchCashFlowViewTab = switchCashFlowViewTab;
 window.onVoucherGroupChange = onVoucherGroupChange;
@@ -2437,10 +2459,32 @@ function bootCashFlowEngine() {
   try {
     if (document.getElementById("viewCashFlowHistory") || document.getElementById("cfTableBody")) {
       initCashFlowEngine();
+
+      // Tự động chuyển tới Nextpage Tạo phiếu nếu URL chứa hash #create-voucher hoặc param view=create
+      if (window.location.hash === '#create-voucher' || new URLSearchParams(window.location.search).get('view') === 'create') {
+        openCreateVoucherWorkspacePage();
+      }
     }
   } catch (err) {
     console.error("Lỗi khi khởi chạy CashFlow Engine:", err);
   }
+}
+
+// Lắng nghe sự kiện Browser Back / Forward
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('popstate', function() {
+    if (window.location.hash === '#create-voucher') {
+      openCreateVoucherWorkspacePage();
+    } else {
+      const historyView = document.getElementById('viewCashFlowHistory');
+      const workspaceView = document.getElementById('viewCreateVoucherWorkspace');
+      if (historyView && workspaceView && !workspaceView.classList.contains('hidden')) {
+        workspaceView.classList.add('hidden');
+        historyView.classList.remove('hidden');
+        applyCashFlowFilters();
+      }
+    }
+  });
 }
 
 if (document.readyState === 'loading') {
