@@ -19,9 +19,9 @@ window.reportOrdersDataset = reportOrdersDataset;
         staff: 'ALL',
         corp: 'ALL',
         site: 'ALL',
-        dateTag: '30d',
-        dateStart: '2026-10-12',
-        dateEnd: '2026-11-10'
+        dateTag: 'this_month',
+        dateStart: '2026-11-01',
+        dateEnd: '2026-11-18'
       },
       business: {
         channel: 'ALL',
@@ -29,9 +29,9 @@ window.reportOrdersDataset = reportOrdersDataset;
         staff: 'ALL',
         corp: 'ALL',
         site: 'ALL',
-        dateTag: '30d',
-        dateStart: '2026-10-12',
-        dateEnd: '2026-11-10'
+        dateTag: 'this_month',
+        dateStart: '2026-11-01',
+        dateEnd: '2026-11-18'
       }
     };
 
@@ -254,14 +254,17 @@ window.reportOrdersDataset = reportOrdersDataset;
       const st = reportStates[reportKey];
       st.dateTag = tag;
       if (tag === '7d') {
-        st.dateStart = '2026-11-04';
-        st.dateEnd = '2026-11-10';
+        st.dateStart = '2026-11-12';
+        st.dateEnd = '2026-11-18';
       } else if (tag === '30d') {
-        st.dateStart = '2026-10-12';
-        st.dateEnd = '2026-11-10';
+        st.dateStart = '2026-10-20';
+        st.dateEnd = '2026-11-18';
       } else if (tag === 'this_month') {
         st.dateStart = '2026-11-01';
-        st.dateEnd = '2026-11-30';
+        st.dateEnd = '2026-11-18';
+      } else if (tag === 'quarter') {
+        st.dateStart = '2026-10-01';
+        st.dateEnd = '2026-11-18';
       }
       syncReportFilterControls(reportKey);
       renderReportView(reportKey);
@@ -305,9 +308,9 @@ window.reportOrdersDataset = reportOrdersDataset;
         staff: 'ALL',
         corp: 'ALL',
         site: 'ALL',
-        dateTag: '30d',
-        dateStart: '2026-10-12',
-        dateEnd: '2026-11-10'
+        dateTag: 'this_month',
+        dateStart: '2026-11-01',
+        dateEnd: '2026-11-18'
       };
       const staffSearch = document.getElementById(`${reportKey}StaffSearch`);
       const siteSearch = document.getElementById(`${reportKey}SiteSearch`);

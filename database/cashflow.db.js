@@ -92,7 +92,7 @@ function buildCashFlowRecordsFromOrders(ordersList, invoiceOverrides = {}) {
       subType = 'Nhân viên kinh doanh';
     }
 
-    const dateStr = o.createdDate || '2026-11-10';
+    const dateStr = o.createdDate || '2026-11-18';
     const createdDate = `${dateStr} ${String(8 + (oIdx % 10)).padStart(2, '0')}:${String(10 + (oIdx % 45)).padStart(2, '0')}`;
     const updatedDate = `${dateStr} ${String(14 + (oIdx % 8)).padStart(2, '0')}:${String(15 + (oIdx % 40)).padStart(2, '0')}`;
 

@@ -364,6 +364,11 @@ function renderSharedShell(config = {}) {
           <span id="globalHeaderPageTitle" class="font-black text-slate-900 text-base sm:text-lg tracking-tight truncate">${pageTitle}</span>
         </div>
         <div class="flex items-center gap-2 shrink-0">
+          <!-- Real-time Live Clock indicator -->
+          <div id="headerRealTimeClock" class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 hover:border-slate-300 text-xs font-bold text-slate-700 shadow-2xs transition-colors">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="headerRealTimeClockValue" class="font-mono text-[11px] sm:text-xs">Thứ Tư, 18/11/2026 • 09:18:00</span>
+          </div>
           <a href="wallet.html" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-brand-400 text-xs font-bold text-slate-700 shadow-2xs transition-colors">
             <i class="fa-solid fa-wallet text-brand-500"></i>
             <span id="headerBalanceDisplay">đ 1.000.000</span>
@@ -631,7 +636,7 @@ function renderSharedShell(config = {}) {
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 text-xs">
           <div class="flex items-center justify-between">
             <span class="text-slate-600 font-medium">Lần đồng bộ gần nhất:</span>
-            <strong class="text-slate-800">17/11/2026 14:15 • Hôm nay</strong>
+            <strong class="text-slate-800">18/11/2026 09:18 • Hôm nay</strong>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-slate-600 font-medium">Quy mô danh mục:</span>
@@ -1103,21 +1108,21 @@ function renderSharedShell(config = {}) {
           <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
             <div class="flex items-center justify-between text-[11px]">
               <span class="font-bold text-slate-900">Xuất vé QR đơn hàng #ORD-2611-001</span>
-              <span class="text-slate-400">17/11/2026 14:32</span>
+              <span class="text-slate-400">18/11/2026 09:16</span>
             </div>
             <div class="text-slate-600 text-[11px]">Người thực hiện: <strong>Nguyễn Thị Kim Hoàng</strong> • IP: 14.161.22.45</div>
           </div>
           <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
             <div class="flex items-center justify-between text-[11px]">
               <span class="font-bold text-slate-900">Hoàn tiền vé đơn hàng #ORD-2611-008</span>
-              <span class="text-slate-400">17/11/2026 13:45</span>
+              <span class="text-slate-400">18/11/2026 09:10</span>
             </div>
             <div class="text-slate-600 text-[11px]">Người thực hiện: <strong>Lê Văn Tuấn</strong> • Hoàn 4.704.000 đ về Ví B2B</div>
           </div>
           <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
             <div class="flex items-center justify-between text-[11px]">
               <span class="font-bold text-slate-900">Nạp tiền vào ví đại lý +1.000.000 đ</span>
-              <span class="text-slate-400">17/11/2026 11:20</span>
+              <span class="text-slate-400">18/11/2026 08:45</span>
             </div>
             <div class="text-slate-600 text-[11px]">Hệ thống: <strong>Bank Hub VietQR Webhook</strong> • Khớp lệnh tự động</div>
           </div>
@@ -1144,7 +1149,29 @@ function renderSharedShell(config = {}) {
   syncNotificationBadges();
   renderNotificationsCenterList();
   initDraggableFloatingCart();
+  initRealTimeHeaderClock();
   if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function initRealTimeHeaderClock() {
+  const clockEl = document.getElementById('headerRealTimeClockValue');
+  if (!clockEl) return;
+  const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+
+  function update() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const dow = dayNames[now.getDay()];
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    clockEl.innerText = `${dow}, ${day}/${month}/${year} • ${hours}:${minutes}:${seconds}`;
+  }
+  update();
+  if (window.__headerClockInterval) clearInterval(window.__headerClockInterval);
+  window.__headerClockInterval = setInterval(update, 1000);
 }
 
 function initDraggableFloatingCart() {
@@ -1851,3 +1878,4 @@ window.closeRbacModal = closeRbacModal;
 window.switchRbacTab = switchRbacTab;
 window.setNotificationsFilter = setNotificationsFilter;
 window.openNotificationsCenterFiltered = openNotificationsCenterFiltered;
+window.initRealTimeHeaderClock = initRealTimeHeaderClock;

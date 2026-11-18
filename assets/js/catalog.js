@@ -60,8 +60,8 @@ const trendingHashtagsList = [
 let isTrendingExtraExpanded = false;
 
 // 2. NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (MẶC ĐỊNH THEO ĐẶC TẢ)
-// Mặc định: 'Thứ Năm, 19/11/2026' và '2 Người lớn, 0 Trẻ em'
-let catalogSelectedDate = { day: 19, month: 11, year: 2026, dayName: 'Thứ Năm' };
+// Mặc định: 'Thứ Tư, 18/11/2026' và '2 Người lớn, 0 Trẻ em'
+let catalogSelectedDate = { day: 18, month: 11, year: 2026, dayName: 'Thứ Tư' };
 let catalogDatePickerView = { month: 11, year: 2026 };
 let catalogQuickDateSelected = true;
 let catalogQuickPax = { adult: 2, child: 0, senior: 0 };

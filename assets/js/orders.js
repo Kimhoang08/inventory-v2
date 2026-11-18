@@ -11,7 +11,7 @@ let ordersListFilterState = {
   paymentStatus: 'ALL',
   datePreset: 'this_month',
   startDate: '2026-11-01',
-  endDate: '2026-11-17',
+  endDate: '2026-11-18',
   channel: 'ALL',
   corp: 'ALL',
   region: 'ALL',
@@ -205,20 +205,20 @@ function selectDateRangeTagPreset(event, preset) {
   }
   tempPreset = preset;
   if (preset === '7_days') {
-    tempRangeStart = '2026-11-11';
-    tempRangeEnd = '2026-11-17';
+    tempRangeStart = '2026-11-12';
+    tempRangeEnd = '2026-11-18';
     calendarSelectPhase = 'completed';
   } else if (preset === '30_days') {
-    tempRangeStart = '2026-10-19';
-    tempRangeEnd = '2026-11-17';
+    tempRangeStart = '2026-10-20';
+    tempRangeEnd = '2026-11-18';
     calendarSelectPhase = 'completed';
   } else if (preset === 'this_month') {
     tempRangeStart = '2026-11-01';
-    tempRangeEnd = '2026-11-17';
+    tempRangeEnd = '2026-11-18';
     calendarSelectPhase = 'completed';
   } else if (preset === 'quarter') {
     tempRangeStart = '2026-10-01';
-    tempRangeEnd = '2026-11-17';
+    tempRangeEnd = '2026-11-18';
     calendarSelectPhase = 'completed';
   } else if (preset === 'custom') {
     // Bước 1 – Kích hoạt chế độ Tùy chỉnh:
@@ -230,7 +230,7 @@ function selectDateRangeTagPreset(event, preset) {
   }
 
   // Sync calendar view month
-  const targetDate = tempRangeEnd || tempRangeStart || '2026-11-17';
+  const targetDate = tempRangeEnd || tempRangeStart || '2026-11-18';
   const parts = targetDate.split('-');
   if (parts.length === 3) {
     calendarYear = parseInt(parts[0], 10);
@@ -437,7 +437,7 @@ function cancelDateRangePicker(event) {
     event.stopPropagation();
   }
   tempRangeStart = ordersListFilterState.startDate || '2026-11-01';
-  tempRangeEnd = ordersListFilterState.endDate || '2026-11-17';
+  tempRangeEnd = ordersListFilterState.endDate || '2026-11-18';
   tempPreset = ordersListFilterState.datePreset || 'this_month';
   calendarSelectPhase = 'completed';
   closeDateRangePickerPopover();
@@ -454,7 +454,7 @@ function applyDateRangePickerSelection(event) {
   }
   if (!tempRangeStart && !tempRangeEnd) {
     tempRangeStart = '2026-11-01';
-    tempRangeEnd = '2026-11-17';
+    tempRangeEnd = '2026-11-18';
     tempPreset = 'this_month';
   }
 
@@ -544,9 +544,9 @@ function resetOrdersListFilters() {
   };
 
   const txtEl = document.getElementById('dateRangePickerDisplayText');
-  if (txtEl) txtEl.innerText = '01/11/2026 - 17/11/2026';
+  if (txtEl) txtEl.innerText = '01/11/2026 - 18/11/2026';
   tempRangeStart = '2026-11-01';
-  tempRangeEnd = '2026-11-17';
+  tempRangeEnd = '2026-11-18';
   tempPreset = 'this_month';
   updateDateRangePresetPills();
 

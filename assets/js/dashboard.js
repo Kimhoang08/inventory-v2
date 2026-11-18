@@ -15,7 +15,7 @@ window.reportOrdersDataset = reportOrdersDataset;
 
     const dashboardPresets = {
       nov_1_10: {
-        rangeLabel: '01/11/2026 - 10/11/2026',
+        rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
           revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
@@ -24,7 +24,7 @@ window.reportOrdersDataset = reportOrdersDataset;
           completion: { value: '25.00%', dir: 'up', pct: '8.33%' }
         },
         chart: {
-          labels: ['01/11', '02/11', '03/11', '04/11', '05/11', '06/11', '07/11', '08/11', '09/11', '10/11'],
+          labels: ['01/11', '03/11', '05/11', '07/11', '09/11', '11/11', '13/11', '15/11', '17/11', '18/11'],
           agency:  [1.2, 1.8, 1.1, 2.4, 3.1, 2.0, 3.6, 2.9, 4.1, 3.3],
           kol:     [0.4, 0.7, 0.5, 0.9, 1.2, 0.8, 1.4, 1.1, 1.6, 1.2],
           booking: [0.3, 0.5, 0.4, 0.6, 0.8, 0.7, 0.9, 0.8, 1.1, 0.9],
@@ -51,7 +51,7 @@ window.reportOrdersDataset = reportOrdersDataset;
         }
       },
       last_7: {
-        rangeLabel: '04/11/2026 - 10/11/2026',
+        rangeLabel: '12/11/2026 - 18/11/2026',
         kpis: {
           revenue: { value: '5.1M', dir: 'down', pct: '12.40%' },
           tickets: { value: '8', dir: 'down', pct: '11.11%' },
@@ -60,7 +60,7 @@ window.reportOrdersDataset = reportOrdersDataset;
           completion: { value: '28.50%', dir: 'up', pct: '10.12%' }
         },
         chart: {
-          labels: ['04/11', '05/11', '06/11', '07/11', '08/11', '09/11', '10/11'],
+          labels: ['12/11', '13/11', '14/11', '15/11', '16/11', '17/11', '18/11'],
           agency:  [2.4, 3.1, 2.0, 3.6, 2.9, 4.1, 3.3],
           kol:     [0.9, 1.2, 0.8, 1.4, 1.1, 1.6, 1.2],
           booking: [0.6, 0.8, 0.7, 0.9, 0.8, 1.1, 0.9],
@@ -69,7 +69,7 @@ window.reportOrdersDataset = reportOrdersDataset;
         }
       },
       nov_full: {
-        rangeLabel: '01/11/2026 - 30/11/2026',
+        rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
           revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
@@ -78,7 +78,7 @@ window.reportOrdersDataset = reportOrdersDataset;
           completion: { value: '25.00%', dir: 'up', pct: '8.33%' }
         },
         chart: {
-          labels: ['01/11', '02/11', '03/11', '04/11', '05/11', '06/11', '07/11', '08/11', '09/11', '10/11'],
+          labels: ['01/11', '03/11', '05/11', '07/11', '09/11', '11/11', '13/11', '15/11', '17/11', '18/11'],
           agency:  [1.2, 1.8, 1.1, 2.4, 3.1, 2.0, 3.6, 2.9, 4.1, 3.3],
           kol:     [0.4, 0.7, 0.5, 0.9, 1.2, 0.8, 1.4, 1.1, 1.6, 1.2],
           booking: [0.3, 0.5, 0.4, 0.6, 0.8, 0.7, 0.9, 0.8, 1.1, 0.9],
@@ -504,8 +504,8 @@ window.reportOrdersDataset = reportOrdersDataset;
       const startEl = document.getElementById('dashStartDate');
       const endEl = document.getElementById('dashEndDate');
       if (startEl) startEl.value = '2026-11-01';
-      if (endEl) endEl.value = '2026-11-10';
-      applyDashboardDatePreset('01/11/2026 - 10/11/2026', 'nov_1_10');
+      if (endEl) endEl.value = '2026-11-18';
+      applyDashboardDatePreset('01/11/2026 - 18/11/2026', 'nov_1_10');
     }
 
     let dashboardRangePickerInstance = null;
@@ -602,15 +602,15 @@ window.reportOrdersDataset = reportOrdersDataset;
 
     function syncDashboardPresetsAndChannelsFromOrders() {
       if (typeof dashboardPresets === 'object' && dashboardPresets) {
-        dashboardPresets.nov_1_10 = buildDashboardDataFromOrders('2026-10-12', '2026-11-10', '12/10/2026 - 10/11/2026');
+        dashboardPresets.nov_1_10 = buildDashboardDataFromOrders('2026-11-01', '2026-11-18', '01/11/2026 - 18/11/2026');
         dashboardPresets.oct_full = buildDashboardDataFromOrders('2026-10-01', '2026-10-31', '01/10/2026 - 31/10/2026');
-        dashboardPresets.last_7 = buildDashboardDataFromOrders('2026-11-04', '2026-11-10', '04/11/2026 - 10/11/2026');
-        dashboardPresets.nov_full = buildDashboardDataFromOrders('2026-11-01', '2026-11-30', '01/11/2026 - 30/11/2026');
+        dashboardPresets.last_7 = buildDashboardDataFromOrders('2026-11-12', '2026-11-18', '12/11/2026 - 18/11/2026');
+        dashboardPresets.nov_full = buildDashboardDataFromOrders('2026-11-01', '2026-11-18', '01/11/2026 - 18/11/2026');
       }
       if (typeof channelRevenueData !== 'undefined' && Array.isArray(channelRevenueData)) {
         const agg = {};
         reportOrdersDataset.forEach(o => {
-          if (o.createdDate < '2026-10-12' || o.createdDate > '2026-11-10') return;
+          if (o.createdDate < '2026-10-12' || o.createdDate > '2026-11-18') return;
           if (o.status === 'Đã hủy' || o.status === 'Hoàn tiền') return;
           const key = (o.staff && o.staff !== '-') ? o.staff : `Website (${o.subType})`;
           const role = o.channel === 'Đại lý (TA)' ? 'ĐẠI LÝ' : (o.subType === 'CTV' ? 'CTV / KOL' : 'NỘI BỘ');

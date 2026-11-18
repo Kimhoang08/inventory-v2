@@ -126,7 +126,7 @@
           id: 'TOPUP-88210',
           method: 'VietQR 24/7',
           amount: 10000000,
-          timeLabel: '10:15 • Hôm nay',
+          timeLabel: '09:15 • Hôm nay',
           note: 'Nạp tiền qua VietQR 24/7'
         }
       ]

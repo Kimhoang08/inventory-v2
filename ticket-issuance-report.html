@@ -301,7 +301,7 @@
       <div class="text-xs space-y-1 text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
         <div class="flex items-center justify-between">
           <span class="text-slate-400">Ngày sử dụng:</span>
-          <strong id="qrModalDate">15/11/2026</strong>
+          <strong id="qrModalDate">18/11/2026</strong>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-400">Cổng hợp lệ:</span>
@@ -325,8 +325,8 @@
   <script src="database/orders.db.js"></script>
   <script src="database/cashflow.db.js"></script>
   <script src="database/db-store.js"></script>
-  <script src="assets/js/utils.js?v=2.5.0"></script>
-  <script src="assets/js/layout.js?v=2.5.0"></script>
+  <script src="assets/js/utils.js?v=2.6.0"></script>
+  <script src="assets/js/layout.js?v=2.6.0"></script>
   <script>
     let ticketsDataset = [];
     let ticketReportStartDate = '2026-11-01';
@@ -348,7 +348,7 @@
             packageName: ord.packageName,
             site: ord.site,
             corp: ord.corp,
-            useDate: ord.useDate || '2026-11-15',
+            useDate: ord.useDate || '2026-11-18',
             customerName: ord.customerName || 'Khách hàng',
             channel: ord.channel || 'Đại lý (TA)',
             gateStatus: status
