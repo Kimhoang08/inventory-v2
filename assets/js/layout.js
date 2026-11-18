@@ -46,7 +46,7 @@ function renderSharedShell(config = {}) {
 
   isSidebarExpanded = (typeof TecheraDB !== 'undefined') ? TecheraDB.isSidebarExpanded() : true;
 
-  const isProductsGroupActive = ['booking', 'orders', 'refund-requests', 'product-sync'].includes(activePage);
+  const isProductsGroupActive = ['catalog', 'index', 'booking', 'orders', 'refund-requests', 'product-sync'].includes(activePage);
   const isPaymentGroupActive = ['wallet'].includes(activePage);
   const isRbacGroupActive = ['users-management', 'rbac-matrix', 'audit-logs'].includes(activePage);
   const isNotifGroupActive = ['notifications'].includes(activePage);
@@ -80,17 +80,8 @@ function renderSharedShell(config = {}) {
       </div>
 
       <div class="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1 scrollbar-none">
-        <div class="nav-group-label pt-1 pb-1.5 px-3 text-[11px] font-extrabold uppercase tracking-wider text-[#94A3B8]">TRANG CHỦ &amp; DASHBOARD</div>
+        <div class="nav-group-label pt-1 pb-1.5 px-3 text-[11px] font-extrabold uppercase tracking-wider text-[#94A3B8]">DASHBOARD &amp; TỔNG QUAN</div>
         <div class="space-y-1">
-          <div class="nav-group-item relative group">
-            <a href="index.html" class="${buildSidebarLinkClasses(activePage === 'catalog' || activePage === 'index')}">
-              <div class="w-6 h-6 flex items-center justify-center shrink-0 ${activePage === 'catalog' || activePage === 'index' ? 'text-brand-500' : 'text-slate-500 group-hover:text-brand-500'} transition-colors">
-                <i class="fa-solid fa-house text-sm"></i>
-              </div>
-              <span class="nav-text-content truncate ml-2.5">Trang chủ (Khám phá)</span>
-            </a>
-            <div class="nav-tooltip absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap opacity-0 pointer-events-none z-50">Trang chủ (Khám phá)</div>
-          </div>
           <div class="nav-group-item relative group">
             <a href="dashboard.html" class="${buildSidebarLinkClasses(activePage === 'dashboard')}">
               <div class="w-6 h-6 flex items-center justify-center shrink-0 ${activePage === 'dashboard' ? 'text-brand-500' : 'text-slate-500 group-hover:text-brand-500'} transition-colors">
@@ -156,7 +147,7 @@ function renderSharedShell(config = {}) {
               <i id="chevron-productsOrders" class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-brand-500 transition-transform duration-200 nav-text-content ${isProductsGroupActive ? 'rotate-180' : ''}"></i>
             </button>
             <div id="submenu-productsOrders" class="submenu-accordion ${isProductsGroupActive ? '' : 'hidden'} pl-8 pr-2 py-1 space-y-1 text-xs">
-              <a href="booking.html" class="${buildSubLinkClasses(activePage === 'booking')}">Đặt vé chi tiết</a>
+              <a href="index.html" class="${buildSubLinkClasses(activePage === 'catalog' || activePage === 'index' || activePage === 'booking')}">Đặt vé</a>
               <a href="orders.html" class="${buildSubLinkClasses(activePage === 'orders')}">Danh sách Đơn hàng</a>
               <a href="refund-requests.html" class="${buildSubLinkClasses(activePage === 'refund-requests')}">Yêu cầu Hoàn/Hủy</a>
               <a href="product-sync.html" class="${buildSubLinkClasses(activePage === 'product-sync')}">Đồng bộ sản phẩm</a>
@@ -166,7 +157,7 @@ function renderSharedShell(config = {}) {
                 <i class="fa-solid fa-boxes-stacked text-brand-500 text-xs"></i>
                 <span>Sản phẩm và Đơn hàng</span>
               </div>
-              <a href="booking.html" class="block px-3 py-1.5 text-xs text-slate-600 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors">Đặt vé chi tiết</a>
+              <a href="index.html" class="block px-3 py-1.5 text-xs text-slate-600 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors">Đặt vé</a>
               <a href="orders.html" class="block px-3 py-1.5 text-xs text-slate-600 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors">Danh sách Đơn hàng</a>
               <a href="refund-requests.html" class="block px-3 py-1.5 text-xs text-slate-600 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors">Yêu cầu Hoàn/Hủy</a>
               <a href="product-sync.html" class="block px-3 py-1.5 text-xs text-slate-600 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors">Đồng bộ sản phẩm</a>
