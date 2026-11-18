@@ -206,11 +206,12 @@ function renderBookingCartPage() {
         return `
           <div class="space-y-1.5 ${idx > 0 ? 'pt-2 border-t border-slate-200/60' : ''}" data-cart-pax-item="${item.cartItemId}">
             <div class="flex items-baseline justify-between gap-2">
-              <div class="text-xs font-black text-slate-900 truncate">
+              <!-- Đối tượng (không in đậm, bỏ thông tin phụ điều kiện chiều cao) -->
+              <div class="text-xs font-normal text-slate-700 truncate">
                 <span>${item.tierLabel}</span>
-                ${item.tierCondition ? `<span class="text-slate-400 font-medium text-[11px] ml-1">(${item.tierCondition})</span>` : ''}
               </div>
-              <div class="text-xs font-black text-slate-900 whitespace-nowrap">
+              <!-- Giá /vé (không in đậm) -->
+              <div class="text-xs font-normal text-slate-500 whitespace-nowrap">
                 ${formatMoney(item.sellingPrice)} đ/vé
               </div>
             </div>
@@ -273,11 +274,11 @@ function renderBookingCartPage() {
                   </span>
                 </div>` : ''}
 
-              <!-- Hàng 4: Bộ chọn nhanh Ngày sử dụng -->
+              <!-- Hàng 4: Bộ chọn nhanh Ngày sử dụng (không in đậm) -->
               <div class="pt-0.5">
-                <button type="button" onclick="openCartPackageDatePicker('${pkg.pkgGroupKey}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#F1F5F9] hover:bg-orange-50 hover:border-orange-200 border border-slate-200/90 text-xs font-semibold text-slate-700 transition-colors cursor-pointer shadow-2xs">
+                <button type="button" onclick="openCartPackageDatePicker('${pkg.pkgGroupKey}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#F1F5F9] hover:bg-orange-50 hover:border-orange-200 border border-slate-200/90 text-xs font-normal text-slate-600 transition-colors cursor-pointer shadow-2xs">
                   <i class="fa-regular fa-calendar text-[#F25C22] text-xs"></i>
-                  <span>Ngày: <strong class="text-slate-900 font-extrabold">${dateStr}</strong></span>
+                  <span>Ngày: <span class="text-slate-700 font-normal">${dateStr}</span></span>
                   <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 ml-0.5"></i>
                 </button>
               </div>
