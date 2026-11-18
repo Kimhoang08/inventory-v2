@@ -18,9 +18,9 @@
         { id: 'status', label: 'Trạng thái', defaultVisible: true },
         { id: 'createdDate', label: 'Thời gian tạo', defaultVisible: true },
         { id: 'updatedDate', label: 'Cập nhật', defaultVisible: true },
+        { id: 'amount', label: 'Tổng thanh toán', defaultVisible: true },
         { id: 'channel', label: 'Kênh bán', defaultVisible: false },
         { id: 'subType', label: 'Loại theo kênh', defaultVisible: false },
-        { id: 'amount', label: 'Tổng thanh toán', defaultVisible: false },
         { id: 'listedPrice', label: 'Tổng giá niêm yết', defaultVisible: false },
         { id: 'discountAmount', label: 'Tổng giá giảm (Voucher)', defaultVisible: false },
         { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
@@ -29,10 +29,49 @@
       ];
     }
 
+    if (typeof window.CASH_FLOW_ORDER_COLUMNS_CONFIG === 'undefined' && typeof CASH_FLOW_ORDER_COLUMNS_CONFIG === 'undefined') {
+      window.CASH_FLOW_ORDER_COLUMNS_CONFIG = [
+        { id: 'orderCode', label: 'Mã đơn hàng', defaultVisible: true },
+        { id: 'beneficiary', label: 'Người thụ hưởng & Mã ĐL', defaultVisible: true },
+        { id: 'expectedRevenue', label: 'Dự kiến thu', defaultVisible: true },
+        { id: 'expectedCost', label: 'Dự kiến chi', defaultVisible: true },
+        { id: 'actualRevenue', label: 'Tổng thu thực tế', defaultVisible: true },
+        { id: 'actualCost', label: 'Tổng chi thực tế', defaultVisible: true },
+        { id: 'createdDate', label: 'Thời gian tạo đơn', defaultVisible: true },
+        { id: 'updatedDate', label: 'Cập nhật', defaultVisible: true },
+        { id: 'listedPrice', label: 'Tổng giá niêm yết', defaultVisible: false },
+        { id: 'discountAmount', label: 'Tổng giá giảm', defaultVisible: false },
+        { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
+        { id: 'costAmount', label: 'Tổng giá nhập', defaultVisible: false },
+        { id: 'netProfit', label: 'Lợi nhuận thuần', defaultVisible: false }
+      ];
+    }
+
+    let cashFlowActiveViewTab = 'DETAIL'; // 'DETAIL' (17 cột) hoặc 'ORDER' (13 cột)
+
     let cashFlowVisibleColumns = {};
-    CASH_FLOW_COLUMNS_CONFIG.forEach(c => {
+    (window.CASH_FLOW_COLUMNS_CONFIG || CASH_FLOW_COLUMNS_CONFIG).forEach(c => {
       cashFlowVisibleColumns[c.id] = c.defaultVisible;
     });
+
+    let cashFlowOrderVisibleColumns = {};
+    (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || CASH_FLOW_ORDER_COLUMNS_CONFIG).forEach(c => {
+      cashFlowOrderVisibleColumns[c.id] = c.defaultVisible;
+    });
+
+    // Danh mục phân loại Loại Thu / Chi (Lưu trữ và đồng bộ localStorage)
+    let cashFlowCategories = [];
+    try {
+      const savedCats = localStorage.getItem('techera_cashflow_categories');
+      if (savedCats) {
+        cashFlowCategories = JSON.parse(savedCats);
+      }
+    } catch (e) {}
+    if (!cashFlowCategories || cashFlowCategories.length === 0) {
+      cashFlowCategories = (typeof DEFAULT_CASH_FLOW_CATEGORIES !== 'undefined')
+        ? JSON.parse(JSON.stringify(DEFAULT_CASH_FLOW_CATEGORIES))
+        : [];
+    }
 
     const cashFlowFilterState = {
       search: '',
@@ -463,31 +502,31 @@
       const prevVal = typeEl.value;
 
       let optionsHtml = `<option value="ALL">Tất cả loại phiếu</option>`;
+      const activeCats = (cashFlowCategories || []).filter(c => c.status === 'ACTIVE');
+
       if (group === 'Thu') {
-        optionsHtml += `
-          <option value="Thu bán vé">Thu bán vé</option>
-          <option value="Thu tiền cọc">Thu tiền cọc</option>
-        `;
+        const thuCats = activeCats.filter(c => c.group === 'Thu');
+        thuCats.forEach(c => {
+          optionsHtml += `<option value="${c.name}">${c.name}</option>`;
+        });
       } else if (group === 'Chi') {
-        optionsHtml += `
-          <option value="Chi giá vốn nhập vé">Chi giá vốn nhập vé</option>
-          <option value="Chi hoa hồng đại lý">Chi hoa hồng đại lý</option>
-          <option value="Chi phí cổng thanh toán">Chi phí cổng thanh toán</option>
-          <option value="Chi hoàn vé">Chi hoàn vé</option>
-        `;
+        const chiCats = activeCats.filter(c => c.group === 'Chi');
+        chiCats.forEach(c => {
+          optionsHtml += `<option value="${c.name}">${c.name}</option>`;
+        });
       } else {
-        optionsHtml += `
-          <optgroup label="Nhóm Thu">
-            <option value="Thu bán vé">Thu bán vé</option>
-            <option value="Thu tiền cọc">Thu tiền cọc</option>
-          </optgroup>
-          <optgroup label="Nhóm Chi">
-            <option value="Chi giá vốn nhập vé">Chi giá vốn nhập vé</option>
-            <option value="Chi hoa hồng đại lý">Chi hoa hồng đại lý</option>
-            <option value="Chi phí cổng thanh toán">Chi phí cổng thanh toán</option>
-            <option value="Chi hoàn vé">Chi hoàn vé</option>
-          </optgroup>
-        `;
+        const thuCats = activeCats.filter(c => c.group === 'Thu');
+        const chiCats = activeCats.filter(c => c.group === 'Chi');
+        if (thuCats.length > 0) {
+          optionsHtml += `<optgroup label="Nhóm Thu">`;
+          thuCats.forEach(c => { optionsHtml += `<option value="${c.name}">${c.name}</option>`; });
+          optionsHtml += `</optgroup>`;
+        }
+        if (chiCats.length > 0) {
+          optionsHtml += `<optgroup label="Nhóm Chi">`;
+          chiCats.forEach(c => { optionsHtml += `<option value="${c.name}">${c.name}</option>`; });
+          optionsHtml += `</optgroup>`;
+        }
       }
 
       typeEl.innerHTML = optionsHtml;
@@ -745,9 +784,48 @@
     }
 
     function syncCashFlowVisibleColumnCount() {
-      const activeCount = CASH_FLOW_COLUMNS_CONFIG.filter(c => cashFlowVisibleColumns[c.id]).length;
+      const isDetail = cashFlowActiveViewTab === 'DETAIL';
+      const cfg = isDetail ? CASH_FLOW_COLUMNS_CONFIG : CASH_FLOW_ORDER_COLUMNS_CONFIG;
+      const vis = isDetail ? cashFlowVisibleColumns : cashFlowOrderVisibleColumns;
+      const activeCount = cfg.filter(c => vis[c.id]).length;
       const countEl = document.getElementById('cfVisibleColumnsCount');
+      const totalEl = document.getElementById('cfTotalColumnsCount');
       if (countEl) countEl.innerText = activeCount;
+      if (totalEl) totalEl.innerText = isDetail ? '17' : '13';
+    }
+
+    function switchCashFlowViewTab(tab) {
+      cashFlowActiveViewTab = tab;
+      const btnDetail = document.getElementById('btnViewTabDetail');
+      const btnOrder = document.getElementById('btnViewTabOrder');
+
+      if (tab === 'DETAIL') {
+        if (btnDetail) {
+          btnDetail.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-2xs cursor-pointer';
+          const icon = btnDetail.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-list-ul text-brand-500';
+        }
+        if (btnOrder) {
+          btnOrder.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+          const icon = btnOrder.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-layer-group text-slate-400';
+        }
+      } else {
+        if (btnDetail) {
+          btnDetail.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+          const icon = btnDetail.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-list-ul text-slate-400';
+        }
+        if (btnOrder) {
+          btnOrder.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-2xs cursor-pointer';
+          const icon = btnOrder.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-layer-group text-brand-500';
+        }
+      }
+
+      syncCashFlowVisibleColumnCount();
+      cashFlowCurrentPage = 1;
+      renderCashFlowTable();
     }
 
     function renderCashFlowTable() {
@@ -755,19 +833,80 @@
       const bodyEl = document.getElementById('cfTableBody');
       const countEl = document.getElementById('cfTableRecordCount');
       const footerEl = document.getElementById('cfTablePaginationFooter');
+      const badgeDetail = document.getElementById('badgeCountDetailTab');
+      const badgeOrder = document.getElementById('badgeCountOrderTab');
 
-      if (countEl) {
-        countEl.innerText = `${formatMoney(cashFlowFilteredDataset.length)} giao dịch`;
+      // Cập nhật số lượng trên Tab 1: Danh sách chi tiết
+      if (badgeDetail) {
+        badgeDetail.innerText = formatMoney(cashFlowFilteredDataset.length);
       }
 
-      // Render thead dựa trên CASH_FLOW_COLUMNS_CONFIG & cashFlowVisibleColumns
+      // Tính toán danh sách gộp theo đơn hàng (Tab 2: Danh sách gộp theo Đơn hàng)
+      const orderGroups = {};
+      cashFlowFilteredDataset.forEach(tx => {
+        const code = tx.orderCode || 'UNKNOWN';
+        if (!orderGroups[code]) {
+          const orderMaster = cashFlowOrdersMap[code] || {};
+          orderGroups[code] = {
+            orderCode: code,
+            beneficiaryName: tx.beneficiaryName || orderMaster.customerName || 'Khách hàng',
+            agencyCode: tx.agencyCode || orderMaster.agencyCode || '-',
+            expectedRevenue: 0,
+            expectedCost: 0,
+            actualRevenue: 0,
+            actualCost: 0,
+            createdDate: orderMaster.createdDate || tx.createdDate,
+            updatedDate: orderMaster.updatedDate || tx.updatedDate,
+            listedPrice: orderMaster.listedPrice || Math.abs(tx.amount || 0),
+            discountAmount: orderMaster.discountAmount || 0,
+            commissionAmount: orderMaster.commissionAmount || 0,
+            costAmount: orderMaster.costAmount || Math.round(Math.abs(tx.amount || 0) * 0.85),
+            netProfit: 0,
+            channel: tx.channel || orderMaster.channel,
+            subType: tx.subType || orderMaster.subType
+          };
+        }
+        const amt = Number(tx.amount) || 0;
+        if (tx.group === 'Thu') {
+          if (tx.status === 'Thành công') orderGroups[code].actualRevenue += amt;
+          else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedRevenue += amt;
+        } else if (tx.group === 'Chi') {
+          if (tx.status === 'Thành công') orderGroups[code].actualCost += Math.abs(amt);
+          else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedCost += Math.abs(amt);
+        }
+      });
+
+      const aggregatedOrders = Object.values(orderGroups);
+      aggregatedOrders.forEach(o => {
+        o.netProfit = o.actualRevenue - o.actualCost;
+      });
+
+      // Cập nhật số lượng trên Tab 2: Danh sách gộp theo Đơn hàng
+      if (badgeOrder) {
+        badgeOrder.innerText = formatMoney(aggregatedOrders.length);
+      }
+
+      const isDetail = cashFlowActiveViewTab === 'DETAIL';
+      const dataset = isDetail ? cashFlowFilteredDataset : aggregatedOrders;
+      const totalRecords = dataset.length;
+
+      if (countEl) {
+        countEl.innerText = isDetail
+          ? `${formatMoney(totalRecords)} giao dịch`
+          : `${formatMoney(totalRecords)} đơn hàng`;
+      }
+
+      // Render thead dựa trên active view tab
+      const cfg = isDetail ? CASH_FLOW_COLUMNS_CONFIG : CASH_FLOW_ORDER_COLUMNS_CONFIG;
+      const vis = isDetail ? cashFlowVisibleColumns : cashFlowOrderVisibleColumns;
+      const activeCols = cfg.filter(c => vis[c.id]);
+
       if (headerEl) {
-        const activeCols = CASH_FLOW_COLUMNS_CONFIG.filter(c => cashFlowVisibleColumns[c.id]);
         headerEl.innerHTML = `
           <tr>
             ${activeCols.map(c => {
               let alignClass = 'text-left';
-              if (['amount', 'listedPrice', 'discountAmount', 'commissionAmount', 'costAmount', 'netProfit'].includes(c.id)) {
+              if (['amount', 'listedPrice', 'discountAmount', 'commissionAmount', 'costAmount', 'netProfit', 'expectedRevenue', 'expectedCost', 'actualRevenue', 'actualCost'].includes(c.id)) {
                 alignClass = 'text-right';
               } else if (['group', 'status'].includes(c.id)) {
                 alignClass = 'text-center';
@@ -780,41 +919,49 @@
       }
 
       // Pagination
-      const totalRecords = cashFlowFilteredDataset.length;
       const totalPages = Math.max(1, Math.ceil(totalRecords / CASH_FLOW_PAGE_SIZE));
       cashFlowCurrentPage = Math.min(Math.max(1, cashFlowCurrentPage), totalPages);
       const startIdx = (cashFlowCurrentPage - 1) * CASH_FLOW_PAGE_SIZE;
       const endIdx = Math.min(startIdx + CASH_FLOW_PAGE_SIZE, totalRecords);
-      const pageSlice = cashFlowFilteredDataset.slice(startIdx, endIdx);
+      const pageSlice = dataset.slice(startIdx, endIdx);
 
       if (bodyEl) {
         if (pageSlice.length === 0) {
-          const colSpan = CASH_FLOW_COLUMNS_CONFIG.filter(c => cashFlowVisibleColumns[c.id]).length + 1;
+          const colSpan = activeCols.length + 1;
           bodyEl.innerHTML = `
             <tr>
               <td colspan="${colSpan}" class="py-12 text-center text-slate-400 font-semibold">
                 <i class="fa-solid fa-receipt text-3xl mb-2 block text-slate-300"></i>
-                Không tìm thấy giao dịch dòng tiền phù hợp với bộ lọc hiện tại.
+                Không tìm thấy dữ liệu ${isDetail ? 'giao dịch' : 'đơn hàng'} phù hợp với bộ lọc hiện tại.
               </td>
             </tr>
           `;
         } else {
-          bodyEl.innerHTML = pageSlice.map(tx => {
-            const activeCols = CASH_FLOW_COLUMNS_CONFIG.filter(c => cashFlowVisibleColumns[c.id]);
-            return `
+          if (isDetail) {
+            bodyEl.innerHTML = pageSlice.map(tx => `
               <tr class="hover:bg-slate-50/80 transition-colors">
-                ${activeCols.map(c => {
-                  return renderCashFlowCell(c.id, tx);
-                }).join('')}
+                ${activeCols.map(c => renderCashFlowCell(c.id, tx)).join('')}
                 <!-- Cột thao tác: Icon con mắt 👁 -->
                 <td class="py-2.5 px-3.5 text-center whitespace-nowrap sticky right-0 bg-white/95 backdrop-blur-xs shadow-[-6px_0_12px_rgba(0,0,0,0.03)] z-10">
-                  <button type="button" onclick="openCashFlowDetailModal('${tx.orderCode}', '${tx.txCode}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 flex items-center justify-center transition-all cursor-pointer mx-auto shadow-2xs" title="Xem chi tiết đơn hàng (Icon con mắt)">
+                  <button type="button" onclick="openCashFlowDetailModal('${tx.orderCode}', '${tx.txCode}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 flex items-center justify-center transition-all cursor-pointer mx-auto shadow-2xs" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
                     <i class="fa-solid fa-eye text-xs"></i>
                   </button>
                 </td>
               </tr>
-            `;
-          }).join('');
+            `).join('');
+          } else {
+            bodyEl.innerHTML = pageSlice.map(ord => `
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                ${activeCols.map(c => renderCashFlowOrderCell(c.id, ord)).join('')}
+                <!-- Cột thao tác: Icon con mắt 👁 -->
+                <td class="py-2.5 px-3.5 text-center whitespace-nowrap sticky right-0 bg-white/95 backdrop-blur-xs shadow-[-6px_0_12px_rgba(0,0,0,0.03)] z-10">
+                  <button type="button" onclick="openCashFlowDetailModal('${ord.orderCode}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 flex items-center justify-center transition-all cursor-pointer mx-auto shadow-2xs" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
+                    <i class="fa-solid fa-eye text-xs"></i>
+                  </button>
+                </td>
+              </tr>
+            `).join('');
+          }
         }
       }
 
@@ -822,7 +969,7 @@
       if (footerEl) {
         footerEl.innerHTML = `
           <div class="text-xs text-slate-500 font-medium">
-            Đang hiển thị <strong class="text-slate-800">${totalRecords > 0 ? startIdx + 1 : 0}</strong> - <strong class="text-slate-800">${endIdx}</strong> trong tổng số <strong class="text-slate-900">${formatMoney(totalRecords)}</strong> giao dịch
+            Đang hiển thị <strong class="text-slate-800">${totalRecords > 0 ? startIdx + 1 : 0}</strong> - <strong class="text-slate-800">${endIdx}</strong> trong tổng số <strong class="text-slate-900">${formatMoney(totalRecords)}</strong> ${isDetail ? 'giao dịch' : 'đơn hàng'}
           </div>
           <div class="flex items-center gap-1.5">
             <button type="button" onclick="changeCashFlowPage(${cashFlowCurrentPage - 1})" ${cashFlowCurrentPage <= 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none text-xs font-bold text-slate-700 cursor-pointer shadow-2xs">
@@ -901,6 +1048,47 @@
           </td>`;
         default:
           return `<td class="py-2.5 px-3.5 text-xs">-</td>`;
+      }
+    }
+
+    function renderCashFlowOrderCell(colId, ord) {
+      switch (colId) {
+        case 'orderCode':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap font-mono">
+            <button type="button" onclick="openCashFlowDetailModal('${ord.orderCode}')" class="font-extrabold text-brand-600 hover:text-brand-700 hover:underline cursor-pointer text-xs">
+              ${ord.orderCode}
+            </button>
+          </td>`;
+        case 'beneficiary':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap">
+            <div class="font-bold text-slate-900 text-xs">${ord.beneficiaryName}</div>
+            <div class="text-[10px] text-slate-400 font-medium">${ord.agencyCode || '-'}</div>
+          </td>`;
+        case 'expectedRevenue':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-extrabold text-blue-700 text-xs">${formatMoney(ord.expectedRevenue)} đ</td>`;
+        case 'expectedCost':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-extrabold text-amber-700 text-xs">${formatMoney(ord.expectedCost)} đ</td>`;
+        case 'actualRevenue':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-black text-emerald-700 text-xs">${formatMoney(ord.actualRevenue)} đ</td>`;
+        case 'actualCost':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-black text-rose-700 text-xs">${formatMoney(ord.actualCost)} đ</td>`;
+        case 'createdDate':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-slate-500 text-xs">${ord.createdDate}</td>`;
+        case 'updatedDate':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-slate-500 text-xs">${ord.updatedDate}</td>`;
+        case 'listedPrice':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-bold text-slate-700 text-xs">${formatMoney(ord.listedPrice)} đ</td>`;
+        case 'discountAmount':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-bold text-rose-600 text-xs">-${formatMoney(ord.discountAmount)} đ</td>`;
+        case 'commissionAmount':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-bold text-amber-700 text-xs">-${formatMoney(ord.commissionAmount)} đ</td>`;
+        case 'costAmount':
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-bold text-slate-700 text-xs">${formatMoney(ord.costAmount)} đ</td>`;
+        case 'netProfit':
+          const isProf = ord.netProfit >= 0;
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-right font-black text-xs ${isProf ? 'text-emerald-700' : 'text-rose-700'}">${formatMoney(ord.netProfit)} đ</td>`;
+        default:
+          return `<td class="py-2.5 px-3.5 whitespace-nowrap text-slate-700 text-xs">${ord[colId] || '-'}</td>`;
       }
     }
 
@@ -1231,7 +1419,7 @@
     }
 
     // =========================================================================
-    // MODAL TÙY CHỈNH 17 CỘT DỮ LIỆU
+    // MODAL TÙY CHỈNH CỘT DỮ LIỆU (17 CỘT CHI TIẾT / 13 CỘT ĐƠN HÀNG)
     // =========================================================================
     function openColumnCustomizerModal() {
       const modal = document.getElementById('modalCashFlowColumns');
@@ -1239,13 +1427,22 @@
       const customWrap = document.getElementById('cfColsCustomList');
       if (!modal) return;
 
-      const defaultCols = CASH_FLOW_COLUMNS_CONFIG.slice(0, 9);
-      const customCols = CASH_FLOW_COLUMNS_CONFIG.slice(9);
+      const isOrderView = cashFlowActiveViewTab === 'ORDER';
+      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const colMap = isOrderView ? cashFlowOrderVisibleColumns : cashFlowVisibleColumns;
+
+      const defaultCols = config.filter(c => c.defaultVisible);
+      const customCols = config.filter(c => !c.defaultVisible);
+
+      const titleEl = modal.querySelector('h3');
+      if (titleEl) {
+        titleEl.innerText = isOrderView ? 'Tùy chỉnh Cột (Danh sách gộp Đơn hàng - 13 cột)' : 'Tùy chỉnh 17 Cột Dữ liệu Dòng tiền';
+      }
 
       if (defaultWrap) {
         defaultWrap.innerHTML = defaultCols.map(c => `
           <label class="flex items-center gap-2 p-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition-colors cursor-pointer select-none">
-            <input type="checkbox" id="chkCol_${c.id}" ${cashFlowVisibleColumns[c.id] ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 border-slate-300 focus:ring-brand-500 cursor-pointer">
+            <input type="checkbox" id="chkCol_${c.id}" ${colMap[c.id] ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 border-slate-300 focus:ring-brand-500 cursor-pointer">
             <span class="text-xs font-bold text-slate-700">${c.label}</span>
           </label>
         `).join('');
@@ -1254,7 +1451,7 @@
       if (customWrap) {
         customWrap.innerHTML = customCols.map(c => `
           <label class="flex items-center gap-2 p-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition-colors cursor-pointer select-none">
-            <input type="checkbox" id="chkCol_${c.id}" ${cashFlowVisibleColumns[c.id] ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 border-slate-300 focus:ring-brand-500 cursor-pointer">
+            <input type="checkbox" id="chkCol_${c.id}" ${colMap[c.id] ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 border-slate-300 focus:ring-brand-500 cursor-pointer">
             <span class="text-xs font-semibold text-slate-700">${c.label}</span>
           </label>
         `).join('');
@@ -1273,33 +1470,47 @@
     }
 
     function selectAllCashFlowColumns(selectAll = true) {
-      CASH_FLOW_COLUMNS_CONFIG.forEach(c => {
+      const isOrderView = cashFlowActiveViewTab === 'ORDER';
+      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      config.forEach(c => {
         const chk = document.getElementById(`chkCol_${c.id}`);
         if (chk) chk.checked = selectAll;
       });
     }
 
     function resetCashFlowColumnsToDefault() {
-      CASH_FLOW_COLUMNS_CONFIG.forEach(c => {
+      const isOrderView = cashFlowActiveViewTab === 'ORDER';
+      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      config.forEach(c => {
         const chk = document.getElementById(`chkCol_${c.id}`);
         if (chk) chk.checked = c.defaultVisible;
       });
     }
 
     function saveColumnCustomizerSelection() {
-      CASH_FLOW_COLUMNS_CONFIG.forEach(c => {
+      const isOrderView = cashFlowActiveViewTab === 'ORDER';
+      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const colMap = isOrderView ? cashFlowOrderVisibleColumns : cashFlowVisibleColumns;
+      const storageKey = isOrderView ? 'TECHERA_CF_ORDER_COLS' : 'TECHERA_CF_VISIBLE_COLS';
+
+      config.forEach(c => {
         const chk = document.getElementById(`chkCol_${c.id}`);
         if (chk) {
-          cashFlowVisibleColumns[c.id] = chk.checked;
+          colMap[c.id] = chk.checked;
         }
       });
+
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(colMap));
+      } catch(e) {}
+
       syncCashFlowVisibleColumnCount();
       renderCashFlowTable();
       closeColumnCustomizerModal();
     }
 
     // =========================================================================
-    // XUẤT FILE DỮ LIỆU DÒNG TIỀN (EXCEL / CSV)
+    // XUẤT FILE DỮ LIỆU DÒNG TIỀN (EXCEL / CSV) TÁCH CHI TIẾT TỪNG DÒNG
     // =========================================================================
     function exportCashFlowDataCsv() {
       if (!cashFlowFilteredDataset || cashFlowFilteredDataset.length === 0) {
@@ -1319,7 +1530,7 @@
         }).join(',');
       });
 
-      const csvContent = '﻿' + [headerRow, ...dataRows].join('\n');
+      const csvContent = '\uFEFF' + [headerRow, ...dataRows].join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -1328,6 +1539,684 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+
+    // =========================================================================
+    // WORKSPACE: TẠO PHIẾU THU / CHI & QUẢN LÝ DANH MỤC CẤU HÌNH LOẠI
+    // =========================================================================
+    function openCreateVoucherWorkspaceModal(initialTab = 'CREATE') {
+      const modal = document.getElementById('modalCreateVoucherWorkspace');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // Set default doc date
+      const docDate = document.getElementById('vchDocDate');
+      if (docDate && !docDate.value) {
+        docDate.value = '2026-11-18';
+      }
+
+      switchVoucherWorkspaceTab(initialTab);
+      onVoucherGroupChange(document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu');
+    }
+
+    function closeCreateVoucherWorkspaceModal() {
+      const modal = document.getElementById('modalCreateVoucherWorkspace');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function switchVoucherWorkspaceTab(tab) {
+      const tabCreate = document.getElementById('tabWsCreate');
+      const tabCat = document.getElementById('tabWsCategory');
+      const contentCreate = document.getElementById('contentWsCreateVoucher');
+      const contentCat = document.getElementById('contentWsCategoryConfig');
+
+      if (tab === 'CREATE' || tab === 'TAB_CREATE') {
+        if (tabCreate) {
+          tabCreate.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all bg-white text-brand-600 shadow-2xs cursor-pointer';
+        }
+        if (tabCat) {
+          tabCat.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+        }
+        if (contentCreate) contentCreate.classList.remove('hidden');
+        if (contentCat) contentCat.classList.add('hidden');
+      } else {
+        if (tabCat) {
+          tabCat.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all bg-white text-brand-600 shadow-2xs cursor-pointer';
+        }
+        if (tabCreate) {
+          tabCreate.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+        }
+        if (contentCreate) contentCreate.classList.add('hidden');
+        if (contentCat) contentCat.classList.remove('hidden');
+        renderCategoryConfigTable();
+      }
+    }
+
+    function onVoucherGroupChange(group) {
+      const select = document.getElementById('vchCategorySelect');
+      if (!select) return;
+
+      const activeCats = cashFlowCategories.filter(c => c.group === group && c.status === 'ACTIVE');
+      if (activeCats.length === 0) {
+        select.innerHTML = `<option value="">(Chưa có loại nào hoạt động)</option>`;
+      } else {
+        select.innerHTML = activeCats.map(c => `
+          <option value="${c.code}">${c.name} (${c.code})</option>
+        `).join('');
+      }
+
+      onVoucherTypeChange(select.value);
+    }
+
+    function onVoucherTypeChange(catCode) {
+      const container = document.getElementById('cfVoucherDynamicFields');
+      if (!container) return;
+
+      const catObj = cashFlowCategories.find(c => c.code === catCode);
+      const catName = catObj ? catObj.name : '';
+
+      const isCorp = catCode === 'TOPUP_CORP' || catCode === 'THU_TAP_DOAN' || catName.includes('Tập đoàn');
+      const isAgent = catCode === 'TOPUP_DL' || catCode === 'CHI_HOAN_DL' || catCode === 'THU_CONG_NO' || catName.includes('Đại lý') || catName.includes('công nợ');
+      const isRetail = catCode === 'THU_KH_LE' || catCode === 'CHI_KH_LE' || catName.includes('Khách lẻ');
+      const isKol = catCode === 'CHI_KOL_CTV' || catName.includes('KOL') || catName.includes('CTV');
+      const isVoucher = catCode === 'CHI_VOUCHER' || catName.includes('Voucher');
+
+      if (isCorp) {
+        container.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+                <i class="fa-solid fa-hotel mr-1 text-amber-600"></i> Hạch toán theo Tập đoàn du lịch *
+              </label>
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">Phân tầng site / cụm</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Tập đoàn đối tác *</label>
+                <select id="vchCorpSelect" onchange="onVoucherCorpChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+                  <option value="SUN">Sun World (Sun Group)</option>
+                  <option value="VIN">VinWonders (Vingroup)</option>
+                  <option value="NOVA">Nova Dreams (Nova Group)</option>
+                </select>
+              </div>
+              <div id="vchSubSiteWrap">
+                <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Khu vui chơi / Chi nhánh *</label>
+                <select id="vchSubSiteSelect" onchange="onVoucherSiteSelected(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+                  <option value="Sun World Ba Na Hills">Sun World Bà Nà Hills (Đà Nẵng)</option>
+                  <option value="Sun World Fansipan Legend">Sun World Fansipan Legend (Sa Pa)</option>
+                  <option value="Sun World Ha Long">Sun World Hạ Long (Quảng Ninh)</option>
+                  <option value="Sun World Hon Thom">Sun World Hòn Thơm Nature Park (Phú Quốc)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        `;
+        onVoucherCorpChange('SUN');
+      } else if (isAgent) {
+        container.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="space-y-2.5">
+            <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+              <i class="fa-solid fa-briefcase mr-1 text-amber-600"></i> Chọn Đại lý B2B / Kho hàng liên kết
+            </label>
+            <select id="vchAgencySelect" onchange="onVoucherAgencyChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+              <option value="">-- Chọn Đại lý để tự điền nhanh thông tin --</option>
+              <option value="DL-8899">DL-8899 | Cty Cổ phần Du Lịch Việt Nam (Vietravel) - MST: 0312456789</option>
+              <option value="DL-4455">DL-4455 | Cty Du Lịch Saigontourist CN Hà Nội - MST: 0100123456</option>
+              <option value="DL-2211">DL-2211 | Đại lý Vé Vui Chơi Miền Trung - MST: 0401889922</option>
+              <option value="KHO-MA">KHO-MA | Kho Đại lý Miền An (Bán sỉ OTA) - MST: 0319887766</option>
+            </select>
+          </div>
+        `;
+      } else if (isRetail) {
+        container.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="space-y-2">
+            <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+              <i class="fa-solid fa-user mr-1 text-amber-600"></i> Tra cứu / Chọn nhanh Khách hàng lẻ
+            </label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="selectQuickRetail('Nguyễn Văn An', '0901234567', 'an.nguyen@gmail.com')" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-[11px] font-bold text-slate-700 hover:bg-amber-100/50 cursor-pointer">
+                + Nguyễn Văn An (0901234567)
+              </button>
+              <button type="button" onclick="selectQuickRetail('Trần Thị Bé', '0918765432', 'betran@outlook.com')" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-[11px] font-bold text-slate-700 hover:bg-amber-100/50 cursor-pointer">
+                + Trần Thị Bé (0918765432)
+              </button>
+              <button type="button" onclick="selectQuickRetail('Lê Hoàng Khang', '0988112233', 'khangle@gmail.com')" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-[11px] font-bold text-slate-700 hover:bg-amber-100/50 cursor-pointer">
+                + Lê Hoàng Khang (0988112233)
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (isKol) {
+        container.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="space-y-2.5">
+            <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+              <i class="fa-solid fa-camera mr-1 text-amber-600"></i> Chọn KOL / Cộng tác viên (CTV) liên kết
+            </label>
+            <select id="vchKolSelect" onchange="onVoucherKolChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+              <option value="">-- Chọn đối tác KOLs / CTV --</option>
+              <option value="KOL-01">KOL-01 | Khoai Lang Thang (Đinh Võ Hoài Phương - SĐT: 0908123888)</option>
+              <option value="KOL-02">KOL-02 | Chan La Cà (Hoàng Minh Tuấn - SĐT: 0909456777)</option>
+              <option value="KOL-03">KOL-03 | Lý Thành Cơ (SĐT: 0903554433)</option>
+              <option value="CTV-99">CTV-99 | Nguyễn Văn Bình (CTV Miền Bắc - SĐT: 0977889900)</option>
+            </select>
+          </div>
+        `;
+      } else if (isVoucher) {
+        container.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="space-y-2.5">
+            <label class="block text-[11px] font-extrabold text-amber-900 uppercase tracking-wider">
+              <i class="fa-solid fa-ticket mr-1 text-amber-600"></i> Chọn Mã Voucher / Chiến dịch khuyến mại
+            </label>
+            <select id="vchCodeSelect" onchange="onVoucherCodeChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+              <option value="">-- Chọn mã Voucher áp dụng --</option>
+              <option value="TECHERA100K">TECHERA100K - Giảm 100K đơn hàng từ 1.000.000đ</option>
+              <option value="SUMMER2026">SUMMER2026 - Voucher kích cầu mùa hè giảm 15%</option>
+              <option value="VVIPDISCOUNT">VVIPDISCOUNT - Chiết khấu đặc quyền đối tác VVIP</option>
+              <option value="NOVALIGHT50">NOVALIGHT50 - Tài trợ trải nghiệm Nova Dreams</option>
+            </select>
+          </div>
+        `;
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
+    function onVoucherCorpChange(corp) {
+      const wrap = document.getElementById('vchSubSiteWrap');
+      if (!wrap) return;
+
+      if (corp === 'VIN') {
+        wrap.innerHTML = `
+          <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Site VinWonders cụ thể *</label>
+          <select id="vchSubSiteSelect" onchange="onVoucherSiteSelected(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+            <option value="VinWonders Phú Quốc">VinWonders Phú Quốc (Kiên Giang)</option>
+            <option value="VinWonders Nha Trang">VinWonders Nha Trang (Khánh Hòa)</option>
+            <option value="VinWonders Nam Hội An">VinWonders Nam Hội An (Quảng Nam)</option>
+          </select>
+        `;
+        onVoucherSiteSelected('VinWonders Phú Quốc');
+      } else if (corp === 'NOVA') {
+        wrap.innerHTML = `
+          <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Cụm dự án / Đại đô thị du lịch Nova Dreams *</label>
+          <select id="vchSubSiteSelect" onchange="onVoucherSiteSelected(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+            <option value="NovaWorld Phan Thiết">NovaWorld Phan Thiết (Wonderland Water Park, Wonder Hill, Dino Park, Circus Land...)</option>
+            <option value="NovaWorld Hồ Tràm">NovaWorld Hồ Tràm</option>
+            <option value="NovaWorld Cầu Đất - Đà Lạt (NovaDreams Royal Garden)">NovaWorld Cầu Đất - Đà Lạt (NovaDreams Royal Garden)</option>
+            <option value="Các trung tâm dịch vụ / chuỗi khu vui chơi khác (Nova Dreams Cafe tại TP.HCM)">Các trung tâm dịch vụ / chuỗi khu vui chơi khác (Nova Dreams Cafe tại TP.HCM)</option>
+          </select>
+        `;
+        onVoucherSiteSelected('NovaWorld Phan Thiết');
+      } else {
+        // SUN
+        wrap.innerHTML = `
+          <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Khu vui chơi Sun World *</label>
+          <select id="vchSubSiteSelect" onchange="onVoucherSiteSelected(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500">
+            <option value="Sun World Bà Nà Hills">Sun World Bà Nà Hills (Đà Nẵng)</option>
+            <option value="Sun World Fansipan Legend">Sun World Fansipan Legend (Sa Pa)</option>
+            <option value="Sun World Hạ Long">Sun World Hạ Long (Quảng Ninh)</option>
+            <option value="Sun World Hòn Thơm Nature Park">Sun World Hòn Thơm Nature Park (Phú Quốc)</option>
+          </select>
+        `;
+        onVoucherSiteSelected('Sun World Bà Nà Hills');
+      }
+    }
+
+    function onVoucherSiteSelected(site) {
+      const corp = document.getElementById('vchCorpSelect')?.value || 'SUN';
+      const nameInput = document.getElementById('vchBeneficiaryName');
+      const taxInput = document.getElementById('vchTaxId');
+      const phoneInput = document.getElementById('vchPhone');
+      const agencyInput = document.getElementById('vchAgencyCode');
+      const noteInput = document.getElementById('vchNote');
+
+      if (corp === 'NOVA') {
+        if (nameInput) nameInput.value = `Công ty CP Nova Dreams (${site})`;
+        if (taxInput) taxInput.value = '0315887799';
+        if (phoneInput) phoneInput.value = '19006066';
+        if (agencyInput) agencyInput.value = 'NOVA-GROUP';
+        if (noteInput && !noteInput.value) noteInput.value = `Hạch toán quỹ dòng tiền dự án ${site}`;
+      } else if (corp === 'VIN') {
+        if (nameInput) nameInput.value = `Công ty CP Vinpearl - Chi nhánh ${site}`;
+        if (taxInput) taxInput.value = '0101244488';
+        if (phoneInput) phoneInput.value = '1900232389';
+        if (agencyInput) agencyInput.value = 'VIN-CORP';
+        if (noteInput && !noteInput.value) noteInput.value = `Hạch toán dòng tiền ${site}`;
+      } else {
+        if (nameInput) nameInput.value = `Tập đoàn Sun World - ${site}`;
+        if (taxInput) taxInput.value = '0400123456';
+        if (phoneInput) phoneInput.value = '18001000';
+        if (agencyInput) agencyInput.value = 'SUN-CORP';
+        if (noteInput && !noteInput.value) noteInput.value = `Hạch toán dòng tiền ${site}`;
+      }
+    }
+
+    function onVoucherAgencyChange(agCode) {
+      if (!agCode) return;
+      const nameInput = document.getElementById('vchBeneficiaryName');
+      const taxInput = document.getElementById('vchTaxId');
+      const phoneInput = document.getElementById('vchPhone');
+      const emailInput = document.getElementById('vchEmail');
+      const agCodeInput = document.getElementById('vchAgencyCode');
+
+      const agencyMap = {
+        'DL-8899': { name: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)', mst: '0312456789', phone: '0903123456', email: 'booking@vietravel.com' },
+        'DL-4455': { name: 'Cty Du Lịch Saigontourist CN Hà Nội', mst: '0100123456', phone: '0912345678', email: 'inbound@saigontourist.net' },
+        'DL-2211': { name: 'Đại lý Vé Vui Chơi Miền Trung', mst: '0401889922', phone: '0988776655', email: 'sales@mientrungtour.vn' },
+        'KHO-MA': { name: 'Kho Đại lý Miền An (Bán sỉ OTA)', mst: '0319887766', phone: '0938112233', email: 'agency@mienan.vn' }
+      };
+
+      const info = agencyMap[agCode];
+      if (info) {
+        if (nameInput) nameInput.value = info.name;
+        if (taxInput) taxInput.value = info.mst;
+        if (phoneInput) phoneInput.value = info.phone;
+        if (emailInput) emailInput.value = info.email;
+        if (agCodeInput) agCodeInput.value = agCode;
+      }
+    }
+
+    function selectQuickRetail(name, phone, email) {
+      const nameInput = document.getElementById('vchBeneficiaryName');
+      const phoneInput = document.getElementById('vchPhone');
+      const emailInput = document.getElementById('vchEmail');
+      const agCodeInput = document.getElementById('vchAgencyCode');
+
+      if (nameInput) nameInput.value = name;
+      if (phoneInput) phoneInput.value = phone;
+      if (emailInput) emailInput.value = email;
+      if (agCodeInput) agCodeInput.value = 'RETAIL';
+    }
+
+    function onVoucherKolChange(kolCode) {
+      if (!kolCode) return;
+      const kolMap = {
+        'KOL-01': { name: 'Khoai Lang Thang (Đinh Võ Hoài Phương)', phone: '0908123888', tax: '8490213890', code: 'KOL-01' },
+        'KOL-02': { name: 'Chan La Cà (Hoàng Minh Tuấn)', phone: '0909456777', tax: '8591234501', code: 'KOL-02' },
+        'KOL-03': { name: 'Lý Thành Cơ', phone: '0903554433', tax: '8411223344', code: 'KOL-03' },
+        'CTV-99': { name: 'Nguyễn Văn Bình (CTV Miền Bắc)', phone: '0977889900', tax: '8100234567', code: 'CTV-99' }
+      };
+      const info = kolMap[kolCode];
+      if (info) {
+        const nameInput = document.getElementById('vchBeneficiaryName');
+        const phoneInput = document.getElementById('vchPhone');
+        const taxInput = document.getElementById('vchTaxId');
+        const agCodeInput = document.getElementById('vchAgencyCode');
+        if (nameInput) nameInput.value = info.name;
+        if (phoneInput) phoneInput.value = info.phone;
+        if (taxInput) taxInput.value = info.tax;
+        if (agCodeInput) agCodeInput.value = info.code;
+      }
+    }
+
+    function onVoucherCodeChange(vCode) {
+      if (!vCode) return;
+      const nameInput = document.getElementById('vchBeneficiaryName');
+      const agCodeInput = document.getElementById('vchAgencyCode');
+      const noteInput = document.getElementById('vchNote');
+      if (nameInput) nameInput.value = `Ngân sách tài trợ Voucher [${vCode}]`;
+      if (agCodeInput) agCodeInput.value = vCode;
+      if (noteInput && !noteInput.value) noteInput.value = `Chiết khấu tài trợ chiến dịch Voucher ${vCode}`;
+    }
+
+    function onVoucherPaymentMethodChange(method) {
+      const bankWrap = document.getElementById('vchBankTransferFieldsWrap');
+      if (!bankWrap) return;
+      if (method === 'Chuyển khoản') {
+        bankWrap.classList.remove('hidden');
+      } else {
+        bankWrap.classList.add('hidden');
+      }
+    }
+
+    function onVoucherAmountInput(input) {
+      const rawDigits = input.value.replace(/[^0-9]/g, '');
+      const num = parseInt(rawDigits, 10) || 0;
+      input.value = num > 0 ? num.toLocaleString('vi-VN') : '';
+      const rawHidden = document.getElementById('vchAmountRaw');
+      if (rawHidden) rawHidden.value = num;
+
+      const wordsEl = document.getElementById('vchAmountWords');
+      if (wordsEl) {
+        wordsEl.innerText = num > 0 ? `Bằng chữ: ${numberToVietnameseWords(num)} đồng` : '';
+      }
+    }
+
+    function numberToVietnameseWords(num) {
+      if (num === 0) return 'Không';
+      if (num >= 1000000000) {
+        const ty = (num / 1000000000).toFixed(1).replace('.0', '');
+        return `${ty} tỷ`;
+      }
+      if (num >= 1000000) {
+        const tr = (num / 1000000).toFixed(1).replace('.0', '');
+        return `${tr} triệu`;
+      }
+      if (num >= 1000) {
+        const ng = (num / 1000).toFixed(0);
+        return `${ng} nghìn`;
+      }
+      return num.toLocaleString('vi-VN');
+    }
+
+    function validateVoucherDates() {
+      const docDate = document.getElementById('vchDocDate')?.value;
+      const auditDate = document.getElementById('vchAuditDate')?.value;
+      const warning = document.getElementById('vchDateValidationWarning');
+
+      if (docDate && auditDate) {
+        if (auditDate <= docDate) {
+          if (warning) {
+            warning.classList.remove('hidden');
+            warning.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>Lỗi: Ngày sát hạch (${auditDate}) bắt buộc phải lớn hơn Ngày chứng từ (${docDate})!</span>`;
+          }
+          return false;
+        }
+      }
+      if (warning) warning.classList.add('hidden');
+      return true;
+    }
+
+    function validateAndSubmitVoucher() {
+      const errorNotice = document.getElementById('vchSubmitErrorNotice');
+      if (errorNotice) errorNotice.classList.add('hidden');
+
+      const group = document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu';
+      const catCode = document.getElementById('vchCategorySelect')?.value;
+      const benName = document.getElementById('vchBeneficiaryName')?.value.trim();
+      const phone = document.getElementById('vchPhone')?.value.trim();
+      const email = document.getElementById('vchEmail')?.value.trim();
+      const taxId = document.getElementById('vchTaxId')?.value.trim();
+      const agencyCode = document.getElementById('vchAgencyCode')?.value.trim();
+      const amountStr = document.getElementById('vchAmountRaw')?.value || '0';
+      const amount = parseFloat(amountStr) || 0;
+      const docDate = document.getElementById('vchDocDate')?.value;
+      const auditDate = document.getElementById('vchAuditDate')?.value;
+      const payMethod = document.getElementById('vchPaymentMethod')?.value;
+      const note = document.getElementById('vchNote')?.value.trim();
+
+      const showError = (msg) => {
+        if (errorNotice) {
+          errorNotice.innerText = msg;
+          errorNotice.classList.remove('hidden');
+        } else {
+          alert(msg);
+        }
+      };
+
+      if (!catCode) {
+        showError('Vui lòng chọn Loại Thu / Chi!');
+        return;
+      }
+      if (!benName) {
+        showError('Vui lòng nhập Tên người nhận / Người nộp!');
+        document.getElementById('vchBeneficiaryName')?.focus();
+        return;
+      }
+      if (amount <= 0) {
+        showError('Số tiền giao dịch bắt buộc phải lớn hơn 0 VNĐ!');
+        document.getElementById('vchAmountDisplay')?.focus();
+        return;
+      }
+
+      // BR-VOU-03: Validate Bank Transfer
+      let bankInfo = null;
+      if (payMethod === 'Chuyển khoản') {
+        const bankName = document.getElementById('vchBankName')?.value;
+        const bankAcc = document.getElementById('vchBankAccountNo')?.value.trim();
+        const bankOwner = document.getElementById('vchBankAccountHolder')?.value.trim();
+        if (!bankAcc || !bankOwner) {
+          showError('Với hình thức Chuyển khoản: Vui lòng nhập đầy đủ Số tài khoản (STK) và Chủ tài khoản!');
+          if (!bankAcc) document.getElementById('vchBankAccountNo')?.focus();
+          else document.getElementById('vchBankAccountHolder')?.focus();
+          return;
+        }
+        bankInfo = { bankName, bankAcc, bankOwner };
+      }
+
+      // BR-VOU-05: Date validation rule
+      if (docDate && auditDate) {
+        if (auditDate <= docDate) {
+          showError(`Ngày sát hạch (${auditDate}) bắt buộc phải lớn hơn Ngày chứng từ (${docDate})! Vui lòng chọn lại.`);
+          return;
+        }
+      }
+
+      const catObj = cashFlowCategories.find(c => c.code === catCode) || { name: catCode };
+      const todayStr = '20261118';
+      const randSeq = Math.floor(1000 + Math.random() * 9000);
+      const vchCode = (group === 'Thu' ? 'REC-' : 'PAY-') + todayStr + '-' + randSeq;
+
+      const newTx = {
+        txCode: vchCode,
+        orderCode: agencyCode ? `ORD-${randSeq}` : 'N/A',
+        beneficiaryName: benName,
+        agencyCode: agencyCode || 'VOUCHER',
+        group: group,
+        type: catObj.name,
+        paymentMethod: payMethod,
+        status: 'Thành công',
+        createdDate: docDate ? `${docDate} 09:18` : '2026-11-18 09:18',
+        updatedDate: auditDate ? `${auditDate} 09:18` : '2026-11-18 09:18',
+        amount: amount,
+        channel: agencyCode ? 'B2B' : 'B2C',
+        subType: catCode,
+        listedPrice: amount,
+        discountAmount: 0,
+        commissionAmount: 0,
+        costAmount: group === 'Chi' ? amount : 0,
+        netProfit: group === 'Thu' ? amount : -amount,
+        note: note,
+        bankInfo: bankInfo,
+        customerPhone: phone,
+        customerEmail: email,
+        taxId: taxId
+      };
+
+      cashFlowTransactions.unshift(newTx);
+
+      let walletNotice = '';
+      if (payMethod === 'Ví điện tử') {
+        walletNotice = `\nĐã đồng bộ cập nhật số dư Ví điện tử thời gian thực (${group === 'Thu' ? '+' : '-'}${formatMoney(amount)} đ).`;
+      }
+
+      initCashFlowEngine();
+      closeCreateVoucherWorkspaceModal();
+
+      alert(`✓ Đã tạo thành công ${group === 'Thu' ? 'Phiếu Thu' : 'Phiếu Chi'}: [${vchCode}] - ${formatMoney(amount)} đ!${walletNotice}`);
+    }
+
+    // =========================================================================
+    // CẤU HÌNH LOẠI THU / CHI (TAB 2 WORKSPACE)
+    // =========================================================================
+    function renderCategoryConfigTable() {
+      const tbody = document.getElementById('cfCategoryTableBody');
+      if (!tbody) return;
+
+      if (cashFlowCategories.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-400 font-semibold">
+              Chưa có danh mục phân loại nào.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = cashFlowCategories.map(c => {
+        const isThu = c.group === 'Thu';
+        const isActive = c.status === 'ACTIVE';
+        const identifier = `[${c.name}] + [${c.code}]`;
+
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-2.5 px-3.5 text-center">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${isThu ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}">
+                ${isThu ? 'Thu' : 'Chi'}
+              </span>
+            </td>
+            <td class="py-2.5 px-3.5 font-mono font-bold text-slate-900">${c.code}</td>
+            <td class="py-2.5 px-3.5 font-bold text-slate-800">${c.name}</td>
+            <td class="py-2.5 px-3.5 font-mono text-[11px] font-extrabold text-brand-600 bg-slate-50/70 rounded-md">${identifier}</td>
+            <td class="py-2.5 px-3.5 text-slate-600">${c.description || '-'}</td>
+            <td class="py-2.5 px-3.5 text-center">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}">
+                ${isActive ? 'Hoạt động' : 'Tạm khóa'}
+              </span>
+            </td>
+            <td class="py-2.5 px-3.5 text-center">
+              <button type="button" onclick="openAddEditCategoryModal('${c.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-brand-500 hover:text-brand-600 text-slate-700 font-bold text-xs shadow-2xs transition-colors cursor-pointer">
+                <i class="fa-solid fa-pen-to-square mr-1"></i>Sửa
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddEditCategoryModal(catId = null) {
+      const modal = document.getElementById('modalAddEditCategory');
+      const title = document.getElementById('modalCatTitle');
+      const idHidden = document.getElementById('catEditId');
+      const codeInput = document.getElementById('catInputCode');
+      const nameInput = document.getElementById('catInputName');
+      const descInput = document.getElementById('catInputDesc');
+      const statusSelect = document.getElementById('catSelectStatus');
+      const codeLockNote = document.getElementById('catCodeLockNote');
+      const errNotice = document.getElementById('catModalErrorNotice');
+      if (errNotice) errNotice.classList.add('hidden');
+
+      if (catId) {
+        const existing = cashFlowCategories.find(c => c.id === catId);
+        if (!existing) return;
+        if (title) title.innerText = 'Chỉnh Sửa Loại Thu / Chi';
+        if (idHidden) idHidden.value = existing.id;
+        const groupRadio = document.querySelector(`input[name="catGroup"][value="${existing.group}"]`);
+        if (groupRadio) groupRadio.checked = true;
+        if (codeInput) {
+          codeInput.value = existing.code;
+          codeInput.disabled = true;
+        }
+        if (codeLockNote) codeLockNote.classList.remove('hidden');
+        if (nameInput) nameInput.value = existing.name;
+        if (descInput) descInput.value = existing.description || '';
+        if (statusSelect) statusSelect.value = existing.status || 'ACTIVE';
+      } else {
+        if (title) title.innerText = 'Thêm Loại Thu / Chi Mới';
+        if (idHidden) idHidden.value = '';
+        const groupRadio = document.querySelector('input[name="catGroup"][value="Thu"]');
+        if (groupRadio) groupRadio.checked = true;
+        if (codeInput) {
+          codeInput.value = '';
+          codeInput.disabled = false;
+        }
+        if (codeLockNote) codeLockNote.classList.add('hidden');
+        if (nameInput) nameInput.value = '';
+        if (descInput) descInput.value = '';
+        if (statusSelect) statusSelect.value = 'ACTIVE';
+      }
+
+      updateCategoryIdentifierPreview();
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeAddEditCategoryModal() {
+      const modal = document.getElementById('modalAddEditCategory');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function updateCategoryIdentifierPreview() {
+      const code = (document.getElementById('catInputCode')?.value || '').trim();
+      const name = (document.getElementById('catInputName')?.value || '').trim();
+      const preview = document.getElementById('catIdentifierPreview');
+      if (preview) {
+        if (code || name) {
+          preview.innerText = `[${name || 'Tên loại'}] + [${code || 'MÃ'}]`;
+        } else {
+          preview.innerText = '[Chưa thiết lập]';
+        }
+      }
+    }
+
+    function saveCategoryConfig() {
+      const idHidden = document.getElementById('catEditId')?.value;
+      const group = document.querySelector('input[name="catGroup"]:checked')?.value || 'Thu';
+      const code = (document.getElementById('catInputCode')?.value || '').trim().toUpperCase();
+      const name = (document.getElementById('catInputName')?.value || '').trim();
+      const desc = (document.getElementById('catInputDesc')?.value || '').trim();
+      const status = document.getElementById('catSelectStatus')?.value || 'ACTIVE';
+      const errNotice = document.getElementById('catModalErrorNotice');
+
+      const showError = (msg) => {
+        if (errNotice) {
+          errNotice.innerText = msg;
+          errNotice.classList.remove('hidden');
+        } else {
+          alert(msg);
+        }
+      };
+
+      if (!code) {
+        showError('Vui lòng nhập Mã Thu / Chi!');
+        return;
+      }
+      if (!name) {
+        showError('Vui lòng nhập Tên loại phiếu!');
+        return;
+      }
+
+      const duplicate = cashFlowCategories.find(c => c.group === group && c.code === code && c.id !== idHidden);
+      if (duplicate) {
+        showError(`Mã "${code}" đã tồn tại trong nhóm ${group}! Vui lòng đặt mã khác.`);
+        return;
+      }
+
+      if (idHidden) {
+        const idx = cashFlowCategories.findIndex(c => c.id === idHidden);
+        if (idx !== -1) {
+          cashFlowCategories[idx] = {
+            ...cashFlowCategories[idx],
+            group: group,
+            name: name,
+            description: desc,
+            status: status
+          };
+        }
+      } else {
+        const newCat = {
+          id: 'CAT-' + (group === 'Thu' ? 'THU' : 'CHI') + '-' + Date.now(),
+          group: group,
+          code: code,
+          name: name,
+          description: desc,
+          status: status
+        };
+        cashFlowCategories.push(newCat);
+      }
+
+      try {
+        localStorage.setItem('TECHERA_CF_CATEGORIES', JSON.stringify(cashFlowCategories));
+      } catch(e) {}
+
+      renderCategoryConfigTable();
+      onCashFlowGroupFilterChange();
+      onVoucherGroupChange(document.querySelector('input[name="voucherGroup"]:checked')?.value || 'Thu');
+      closeAddEditCategoryModal();
     }
 
 
@@ -1360,3 +2249,26 @@ window.saveColumnCustomizerSelection = saveColumnCustomizerSelection;
 window.changeCashFlowPage = changeCashFlowPage;
 window.openCashFlowDetailModal = openCashFlowDetailModal;
 window.quickEditInvoiceFromList = quickEditInvoiceFromList;
+window.switchCashFlowViewTab = switchCashFlowViewTab;
+
+// Workspace & Category Exports
+window.openCreateVoucherWorkspaceModal = openCreateVoucherWorkspaceModal;
+window.closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspaceModal;
+window.switchVoucherWorkspaceTab = switchVoucherWorkspaceTab;
+window.onVoucherGroupChange = onVoucherGroupChange;
+window.onVoucherTypeChange = onVoucherTypeChange;
+window.onVoucherCorpChange = onVoucherCorpChange;
+window.onVoucherSiteSelected = onVoucherSiteSelected;
+window.onVoucherAgencyChange = onVoucherAgencyChange;
+window.selectQuickRetail = selectQuickRetail;
+window.onVoucherKolChange = onVoucherKolChange;
+window.onVoucherCodeChange = onVoucherCodeChange;
+window.onVoucherPaymentMethodChange = onVoucherPaymentMethodChange;
+window.onVoucherAmountInput = onVoucherAmountInput;
+window.validateVoucherDates = validateVoucherDates;
+window.validateAndSubmitVoucher = validateAndSubmitVoucher;
+window.renderCategoryConfigTable = renderCategoryConfigTable;
+window.openAddEditCategoryModal = openAddEditCategoryModal;
+window.closeAddEditCategoryModal = closeAddEditCategoryModal;
+window.updateCategoryIdentifierPreview = updateCategoryIdentifierPreview;
+window.saveCategoryConfig = saveCategoryConfig;

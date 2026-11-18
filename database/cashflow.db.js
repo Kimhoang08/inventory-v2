@@ -12,14 +12,51 @@ const CASH_FLOW_COLUMNS_CONFIG = [
   { id: 'status', label: 'Trạng thái', defaultVisible: true },
   { id: 'createdDate', label: 'Thời gian tạo', defaultVisible: true },
   { id: 'updatedDate', label: 'Cập nhật', defaultVisible: true },
+  { id: 'amount', label: 'Tổng thanh toán', defaultVisible: true },
   { id: 'channel', label: 'Kênh bán', defaultVisible: false },
   { id: 'subType', label: 'Loại theo kênh', defaultVisible: false },
-  { id: 'amount', label: 'Tổng thanh toán', defaultVisible: false },
   { id: 'listedPrice', label: 'Tổng giá niêm yết', defaultVisible: false },
   { id: 'discountAmount', label: 'Tổng giá giảm (Voucher)', defaultVisible: false },
   { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
   { id: 'costAmount', label: 'Tổng giá nhập', defaultVisible: false },
   { id: 'netProfit', label: 'Lợi nhuận thuần', defaultVisible: false }
+];
+
+const CASH_FLOW_ORDER_COLUMNS_CONFIG = [
+  { id: 'orderCode', label: 'Mã đơn hàng', defaultVisible: true },
+  { id: 'beneficiary', label: 'Người thụ hưởng & Mã ĐL', defaultVisible: true },
+  { id: 'expectedRevenue', label: 'Dự kiến thu', defaultVisible: true },
+  { id: 'expectedCost', label: 'Dự kiến chi', defaultVisible: true },
+  { id: 'actualRevenue', label: 'Tổng thu thực tế', defaultVisible: true },
+  { id: 'actualCost', label: 'Tổng chi thực tế', defaultVisible: true },
+  { id: 'createdDate', label: 'Thời gian tạo đơn', defaultVisible: true },
+  { id: 'updatedDate', label: 'Cập nhật', defaultVisible: true },
+  { id: 'listedPrice', label: 'Tổng giá niêm yết', defaultVisible: false },
+  { id: 'discountAmount', label: 'Tổng giá giảm', defaultVisible: false },
+  { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
+  { id: 'costAmount', label: 'Tổng giá nhập', defaultVisible: false },
+  { id: 'netProfit', label: 'Lợi nhuận thuần', defaultVisible: false }
+];
+
+const DEFAULT_CASH_FLOW_CATEGORIES = [
+  // Thu
+  { id: 'CAT-THU-01', group: 'Thu', code: 'TOPUP_DL', name: 'Thu TOPUP Đại lý', description: 'Nạp tiền vào ví điện tử đại lý B2B', status: 'ACTIVE' },
+  { id: 'CAT-THU-02', group: 'Thu', code: 'THU_BAN_VE', name: 'Thu bán vé', description: 'Doanh thu bán vé trực tiếp hoặc qua đại lý', status: 'ACTIVE' },
+  { id: 'CAT-THU-03', group: 'Thu', code: 'THU_COC', name: 'Thu tiền cọc', description: 'Đặt cọc giữ chỗ combo/dịch vụ đoàn', status: 'ACTIVE' },
+  { id: 'CAT-THU-04', group: 'Thu', code: 'THU_TAP_DOAN', name: 'Thu từ Tập đoàn', description: 'Thưởng doanh số, chiết khấu hoàn từ Sun/Vin/Nova', status: 'ACTIVE' },
+  { id: 'CAT-THU-05', group: 'Thu', code: 'THU_KH_LE', name: 'Thu Khách lẻ', description: 'Thu tiền bán lẻ trực tuyến hoặc tại quầy', status: 'ACTIVE' },
+  { id: 'CAT-THU-06', group: 'Thu', code: 'THU_CONG_NO', name: 'Thanh toán công nợ', description: 'Đại lý thanh toán công nợ định kỳ theo hợp đồng', status: 'ACTIVE' },
+
+  // Chi
+  { id: 'CAT-CHI-01', group: 'Chi', code: 'TOPUP_CORP', name: 'Chi TOPUP Tập đoàn', description: 'Ký quỹ / Topup tài khoản Sun, Vin, Nova', status: 'ACTIVE' },
+  { id: 'CAT-CHI-02', group: 'Chi', code: 'CHI_VON_VE', name: 'Chi giá vốn nhập vé', description: 'Thanh toán chi phí nhập vé cho nhà cung cấp/tập đoàn', status: 'ACTIVE' },
+  { id: 'CAT-CHI-03', group: 'Chi', code: 'CHI_HOAN_DL', name: 'Chi hoàn Đại lý', description: 'Hoàn tiền vé hoặc rút số dư ví đại lý', status: 'ACTIVE' },
+  { id: 'CAT-CHI-04', group: 'Chi', code: 'CHI_HOAN_VE', name: 'Chi hoàn vé', description: 'Hoàn tiền cho khách hàng khi hủy vé', status: 'ACTIVE' },
+  { id: 'CAT-CHI-05', group: 'Chi', code: 'CHI_HOA_HONG', name: 'Chi hoa hồng đại lý', description: 'Thanh toán hoa hồng cho đại lý cấp 1, cấp 2, OTA', status: 'ACTIVE' },
+  { id: 'CAT-CHI-06', group: 'Chi', code: 'CHI_KOL_CTV', name: 'Chi KOLs / CTV', description: 'Chi phí tiếp thị liên kết, hoa hồng cho KOLs, CTV', status: 'ACTIVE' },
+  { id: 'CAT-CHI-07', group: 'Chi', code: 'CHI_VOUCHER', name: 'Chi Voucher', description: 'Chi phí tài trợ khuyến mãi, Voucher giảm giá', status: 'ACTIVE' },
+  { id: 'CAT-CHI-08', group: 'Chi', code: 'CHI_CONG_TT', name: 'Chi phí cổng thanh toán', description: 'Phí dịch vụ cổng thanh toán VNPAY, VietQR', status: 'ACTIVE' },
+  { id: 'CAT-CHI-09', group: 'Chi', code: 'CHI_KH_LE', name: 'Chi Khách lẻ', description: 'Chi bồi hoàn hoặc hỗ trợ phát sinh cho khách lẻ', status: 'ACTIVE' }
 ];
 
 const EXTRA_HISTORICAL_CASHFLOW_ORDERS = [
