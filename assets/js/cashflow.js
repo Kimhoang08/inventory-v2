@@ -107,16 +107,64 @@
       cashFlowOrdersMap = {};
       let txSeq = 1001;
 
-      // Lấy từ dataset orders hoặc mock orders (TecheraDB hoặc reportOrdersDataset)
-      const baseOrders = (typeof TecheraDB !== 'undefined' && TecheraDB.getOrders)
-        ? TecheraDB.getOrders()
-        : ((typeof reportOrdersDataset !== 'undefined' && Array.isArray(reportOrdersDataset) && reportOrdersDataset.length > 0)
-          ? reportOrdersDataset
-          : []);
+      // Lấy từ dataset orders hoặc mock orders (TecheraDB, reportOrdersDataset, generateMockOrdersDataset hoặc fallback seeds)
+      let baseOrders = [];
+      if (typeof TecheraDB !== 'undefined' && typeof TecheraDB.getOrders === 'function') {
+        try {
+          baseOrders = TecheraDB.getOrders() || [];
+        } catch (e) {
+          console.warn('TecheraDB getOrders error:', e);
+        }
+      }
+      if ((!baseOrders || baseOrders.length === 0) && typeof reportOrdersDataset !== 'undefined' && Array.isArray(reportOrdersDataset) && reportOrdersDataset.length > 0) {
+        baseOrders = reportOrdersDataset;
+      }
+      if ((!baseOrders || baseOrders.length === 0) && typeof generateMockOrdersDataset === 'function') {
+        try {
+          baseOrders = generateMockOrdersDataset();
+        } catch (e) {
+          console.warn('generateMockOrdersDataset error:', e);
+        }
+      }
+      if ((!baseOrders || baseOrders.length === 0) && typeof DEFAULT_CASH_FLOW_ORDERS_SEED !== 'undefined' && Array.isArray(DEFAULT_CASH_FLOW_ORDERS_SEED)) {
+        baseOrders = DEFAULT_CASH_FLOW_ORDERS_SEED;
+      }
+      if ((!baseOrders || baseOrders.length === 0) && typeof EXTRA_HISTORICAL_CASHFLOW_ORDERS !== 'undefined' && Array.isArray(EXTRA_HISTORICAL_CASHFLOW_ORDERS)) {
+        baseOrders = EXTRA_HISTORICAL_CASHFLOW_ORDERS;
+      }
 
       // Mở rộng thêm dữ liệu lịch sử các năm 2022 - 2026 và các quý để kiểm thử đầy đủ bộ lọc thời gian
       const extendedOrders = [...baseOrders];
       const extraHistoricalDates = [
+        // Dữ liệu Tháng 11/2026 (Bao gồm hôm nay 18/11/2026)
+        { d: '2026-11-18', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 48500000, profit: 5820000, stat: 'Đã xuất vé' },
+        { d: '2026-11-18', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 7200000, profit: 950000, stat: 'Đã xuất vé' },
+        { d: '2026-11-18', c: 'Đại lý', st: 'OTA', s: 'NovaWorld Phan Thiết', rev: 22400000, profit: 2680000, stat: 'Đã xuất vé' },
+        { d: '2026-11-18', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'Sun World Fansipan', rev: 14500000, profit: 1740000, stat: 'Đang xử lý' },
+        { d: '2026-11-17', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'VinWonders Nha Trang', rev: 26800000, profit: 3210000, stat: 'Đã xuất vé' },
+        { d: '2026-11-17', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Sun World Hon Thom', rev: 5600000, profit: 780000, stat: 'Đã xuất vé' },
+        { d: '2026-11-17', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'VinWonders Nam Hội An', rev: 33400000, profit: 4000000, stat: 'Đã xuất vé' },
+        { d: '2026-11-16', c: 'Đại lý', st: 'OTA', s: 'Sun World Bà Đen Mountain', rev: 18200000, profit: 2180000, stat: 'Đã xuất vé' },
+        { d: '2026-11-16', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'Sun World Ba Na Hills', rev: 12000000, profit: 1440000, stat: 'Đang xử lý' },
+        { d: '2026-11-15', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Hạ Long', rev: 31500000, profit: 3780000, stat: 'Đã xuất vé' },
+        { d: '2026-11-15', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Công viên Nước Đầm Sen', rev: 3400000, profit: 510000, stat: 'Đã xuất vé' },
+        { d: '2026-11-14', c: 'Đại lý', st: 'OTA', s: 'VinWonders Phú Quốc', rev: 45000000, profit: 5400000, stat: 'Đã xuất vé' },
+        { d: '2026-11-14', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Fansipan', rev: 19800000, profit: 2370000, stat: 'Hoàn tiền' },
+        { d: '2026-11-13', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 58000000, profit: 6960000, stat: 'Đã xuất vé' },
+        { d: '2026-11-12', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 8400000, profit: 1100000, stat: 'Đã xuất vé' },
+        { d: '2026-11-11', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'NovaWorld Phan Thiết', rev: 16500000, profit: 1980000, stat: 'Đã xuất vé' },
+        { d: '2026-11-10', c: 'Đại lý', st: 'OTA', s: 'Sun World Hon Thom', rev: 32000000, profit: 3840000, stat: 'Đã xuất vé' },
+        { d: '2026-11-09', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'VinWonders Nam Hội An', rev: 39500000, profit: 4740000, stat: 'Đã xuất vé' },
+        { d: '2026-11-08', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Khu du lịch Suối Tiên', rev: 4200000, profit: 630000, stat: 'Đã xuất vé' },
+        { d: '2026-11-07', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Bà Đen Mountain', rev: 21500000, profit: 2580000, stat: 'Đã xuất vé' },
+        { d: '2026-11-06', c: 'Đại lý', st: 'OTA', s: 'Sun World Ba Na Hills', rev: 52000000, profit: 6240000, stat: 'Đã xuất vé' },
+        { d: '2026-11-05', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'VinWonders Phú Quốc', rev: 13500000, profit: 1620000, stat: 'Đang xử lý' },
+        { d: '2026-11-04', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Fansipan', rev: 36000000, profit: 4320000, stat: 'Đã xuất vé' },
+        { d: '2026-11-03', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 7100000, profit: 920000, stat: 'Đã xuất vé' },
+        { d: '2026-11-02', c: 'Đại lý', st: 'OTA', s: 'NovaWorld Phan Thiết', rev: 24800000, profit: 2970000, stat: 'Đã xuất vé' },
+        { d: '2026-11-01', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 66000000, profit: 7920000, stat: 'Đã xuất vé' },
+
+        // Các quý và các năm trước
         { d: '2026-02-14', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 45000000, profit: 5400000, stat: 'Đã xuất vé', q: 'Q1' },
         { d: '2026-03-20', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 6800000, profit: 880000, stat: 'Đã xuất vé', q: 'Q1' },
         { d: '2026-05-18', c: 'Đại lý', st: 'OTA', s: 'Sun World Fansipan', rev: 28500000, profit: 3400000, stat: 'Đã xuất vé', q: 'Q2' },
@@ -595,7 +643,7 @@
           const fromInput = document.getElementById('cfCustomDateFrom');
           const toInput = document.getElementById('cfCustomDateTo');
           if (fromInput && !fromInput.value) fromInput.value = '2026-11-01';
-          if (toInput && !toInput.value) toInput.value = '2026-11-10';
+          if (toInput && !toInput.value) toInput.value = '2026-11-18';
         } else {
           customWrap.classList.add('hidden');
           customWrap.classList.remove('flex');
@@ -670,9 +718,9 @@
         if (period === 'THIS_MONTH') {
           if (!dtStr.startsWith('2026-11')) return false;
         } else if (period === '7_DAYS') {
-          if (dtStr < '2026-11-04' || dtStr > '2026-11-10') return false;
+          if (dtStr < '2026-11-12' || dtStr > '2026-11-18') return false;
         } else if (period === '30_DAYS') {
-          if (dtStr < '2026-10-12' || dtStr > '2026-11-10') return false;
+          if (dtStr < '2026-10-19' || dtStr > '2026-11-18') return false;
         } else if (period === 'Q1') {
           const m = dtStr.slice(5, 7);
           if (!dtStr.startsWith('2026') || !['01', '02', '03'].includes(m)) return false;
@@ -847,40 +895,59 @@
       cashFlowFilteredDataset.forEach(tx => {
         const code = tx.orderCode || 'UNKNOWN';
         if (!orderGroups[code]) {
-          const orderMaster = cashFlowOrdersMap[code] || {};
-          orderGroups[code] = {
-            orderCode: code,
-            beneficiaryName: tx.beneficiaryName || orderMaster.customerName || 'Khách hàng',
-            agencyCode: tx.agencyCode || orderMaster.agencyCode || '-',
-            expectedRevenue: 0,
-            expectedCost: 0,
-            actualRevenue: 0,
-            actualCost: 0,
-            createdDate: orderMaster.createdDate || tx.createdDate,
-            updatedDate: orderMaster.updatedDate || tx.updatedDate,
-            listedPrice: orderMaster.listedPrice || Math.abs(tx.amount || 0),
-            discountAmount: orderMaster.discountAmount || 0,
-            commissionAmount: orderMaster.commissionAmount || 0,
-            costAmount: orderMaster.costAmount || Math.round(Math.abs(tx.amount || 0) * 0.85),
-            netProfit: 0,
-            channel: tx.channel || orderMaster.channel,
-            subType: tx.subType || orderMaster.subType
-          };
-        }
-        const amt = Number(tx.amount) || 0;
-        if (tx.group === 'Thu') {
-          if (tx.status === 'Thành công') orderGroups[code].actualRevenue += amt;
-          else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedRevenue += amt;
-        } else if (tx.group === 'Chi') {
-          if (tx.status === 'Thành công') orderGroups[code].actualCost += Math.abs(amt);
-          else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedCost += Math.abs(amt);
+          const orderMaster = cashFlowOrdersMap[code];
+          if (orderMaster) {
+            orderGroups[code] = {
+              orderCode: code,
+              beneficiaryName: orderMaster.customerName || tx.beneficiaryName || 'Khách hàng',
+              agencyCode: orderMaster.agencyCode || tx.agencyCode || '-',
+              expectedRevenue: Number(orderMaster.expectedRevenue) || 0,
+              expectedCost: Number(orderMaster.expectedCost) || 0,
+              actualRevenue: Number(orderMaster.actualRevenue) || 0,
+              actualCost: Number(orderMaster.actualCost) || 0,
+              createdDate: orderMaster.createdDate || tx.createdDate,
+              updatedDate: orderMaster.updatedDate || tx.updatedDate,
+              listedPrice: Number(orderMaster.listedPrice) || Math.abs(tx.amount || 0),
+              discountAmount: Number(orderMaster.discountAmount) || 0,
+              commissionAmount: Number(orderMaster.commissionAmount) || 0,
+              costAmount: Number(orderMaster.costAmount) || 0,
+              netProfit: Number(orderMaster.netProfit) || 0,
+              channel: orderMaster.channel || tx.channel,
+              subType: orderMaster.subType || tx.subType
+            };
+          } else {
+            orderGroups[code] = {
+              orderCode: code,
+              beneficiaryName: tx.beneficiaryName || 'Khách hàng',
+              agencyCode: tx.agencyCode || '-',
+              expectedRevenue: 0,
+              expectedCost: 0,
+              actualRevenue: 0,
+              actualCost: 0,
+              createdDate: tx.createdDate,
+              updatedDate: tx.updatedDate,
+              listedPrice: Math.abs(tx.amount || 0),
+              discountAmount: 0,
+              commissionAmount: 0,
+              costAmount: Math.round(Math.abs(tx.amount || 0) * 0.85),
+              netProfit: 0,
+              channel: tx.channel || 'Khác',
+              subType: tx.subType || '-'
+            };
+            const amt = Number(tx.amount) || 0;
+            if (tx.group === 'Thu') {
+              if (tx.status === 'Thành công') orderGroups[code].actualRevenue += amt;
+              else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedRevenue += amt;
+            } else if (tx.group === 'Chi') {
+              if (tx.status === 'Thành công') orderGroups[code].actualCost += Math.abs(amt);
+              else if (tx.status === 'Chờ xử lý') orderGroups[code].expectedCost += Math.abs(amt);
+            }
+            orderGroups[code].netProfit = orderGroups[code].actualRevenue - orderGroups[code].actualCost;
+          }
         }
       });
 
       const aggregatedOrders = Object.values(orderGroups);
-      aggregatedOrders.forEach(o => {
-        o.netProfit = o.actualRevenue - o.actualCost;
-      });
 
       // Cập nhật số lượng trên Tab 2: Danh sách gộp theo Đơn hàng
       if (badgeOrder) {
@@ -2050,14 +2117,14 @@
         status: 'Thành công',
         createdDate: docDate ? `${docDate} 09:18` : '2026-11-18 09:18',
         updatedDate: auditDate ? `${auditDate} 09:18` : '2026-11-18 09:18',
-        amount: amount,
-        channel: agencyCode ? 'B2B' : 'B2C',
+        amount: group === 'Chi' ? -Math.abs(amount) : Math.abs(amount),
+        channel: agencyCode ? 'Đại lý' : 'Khác',
         subType: catCode,
-        listedPrice: amount,
+        listedPrice: Math.abs(amount),
         discountAmount: 0,
         commissionAmount: 0,
-        costAmount: group === 'Chi' ? amount : 0,
-        netProfit: group === 'Thu' ? amount : -amount,
+        costAmount: group === 'Chi' ? Math.abs(amount) : 0,
+        netProfit: group === 'Thu' ? Math.abs(amount) : -Math.abs(amount),
         note: note,
         bankInfo: bankInfo,
         customerPhone: phone,
@@ -2065,14 +2132,49 @@
         taxId: taxId
       };
 
-      cashFlowTransactions.unshift(newTx);
+      cashFlowMasterDataset.unshift(newTx);
+
+      // Nếu có mã đơn phát sinh, đồng bộ vào cashFlowOrdersMap
+      if (newTx.orderCode && newTx.orderCode !== 'N/A') {
+        if (!cashFlowOrdersMap[newTx.orderCode]) {
+          cashFlowOrdersMap[newTx.orderCode] = {
+            orderCode: newTx.orderCode,
+            source: agencyCode ? 'Đại lý B2B' : 'Nghiệp vụ Kế toán',
+            orderType: newTx.type,
+            customerName: benName,
+            customerEmail: email || 'accountant@techera.vn',
+            customerPhone: phone || '0901 234 567',
+            channel: newTx.channel,
+            subType: newTx.subType,
+            expectedRevenue: 0,
+            expectedCost: 0,
+            actualRevenue: group === 'Thu' ? Math.abs(amount) : 0,
+            actualCost: group === 'Chi' ? Math.abs(amount) : 0,
+            createdDate: newTx.createdDate,
+            updatedDate: newTx.updatedDate,
+            orderStatus: 'Đã hoàn thành',
+            invoiceStatus: 'Chưa xuất',
+            invoiceCode: '',
+            invoiceDate: '',
+            listedPrice: Math.abs(amount),
+            discountAmount: 0,
+            commissionAmount: 0,
+            costAmount: group === 'Chi' ? Math.abs(amount) : 0,
+            netProfit: group === 'Thu' ? Math.abs(amount) : -Math.abs(amount),
+            paymentMethod: payMethod,
+            agencyCode: agencyCode || 'VOUCHER',
+            site: 'Techera HQ',
+            corp: 'Nội bộ'
+          };
+        }
+      }
 
       let walletNotice = '';
       if (payMethod === 'Ví điện tử') {
         walletNotice = `\nĐã đồng bộ cập nhật số dư Ví điện tử thời gian thực (${group === 'Thu' ? '+' : '-'}${formatMoney(amount)} đ).`;
       }
 
-      initCashFlowEngine();
+      applyCashFlowFilters();
       closeCreateVoucherWorkspaceModal();
 
       alert(`✓ Đã tạo thành công ${group === 'Thu' ? 'Phiếu Thu' : 'Phiếu Chi'}: [${vchCode}] - ${formatMoney(amount)} đ!${walletNotice}`);
@@ -2148,7 +2250,7 @@
         if (groupSelect) groupSelect.value = existing.group;
 
         // BR-CAT-02: Khóa chỉnh sửa nếu loại phiếu này đã phát sinh giao dịch trong hệ thống
-        const isUsedInTransactions = cashFlowTransactions.some(tx => tx.subType === existing.code || tx.type === existing.name);
+        const isUsedInTransactions = cashFlowMasterDataset.some(tx => tx.subType === existing.code || tx.type === existing.name);
         if (isUsedInTransactions) {
           if (codeInput) {
             codeInput.value = existing.code;
@@ -2272,6 +2374,7 @@
 
       try {
         localStorage.setItem('TECHERA_CF_CATEGORIES', JSON.stringify(cashFlowCategories));
+        localStorage.setItem('techera_cashflow_categories', JSON.stringify(cashFlowCategories));
       } catch(e) {}
 
       renderCategoryConfigTable();
@@ -2281,12 +2384,18 @@
     }
 
 
-// Tự động khởi tạo giao diện theo trang cashflow
-window.addEventListener("DOMContentLoaded", () => {
+// Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM
+function bootCashFlowEngine() {
   if (document.getElementById("viewCashFlowHistory") || document.getElementById("cfTableBody")) {
     initCashFlowEngine();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", bootCashFlowEngine);
+} else {
+  bootCashFlowEngine();
+}
 
 // Xuất các hàm ra phạm vi toàn cục cho inline event handlers trong cashflow.html
 window.openColumnCustomizerModal = openColumnCustomizerModal;

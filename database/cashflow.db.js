@@ -60,17 +60,46 @@ const DEFAULT_CASH_FLOW_CATEGORIES = [
 ];
 
 const EXTRA_HISTORICAL_CASHFLOW_ORDERS = [
-  { d: '2026-02-14', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 45000000, profit: 5400000, stat: 'Đã xuất vé' },
-  { d: '2026-03-20', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 6800000, profit: 880000, stat: 'Đã xuất vé' },
-  { d: '2026-05-18', c: 'Đại lý', st: 'OTA', s: 'Sun World Fansipan', rev: 28500000, profit: 3400000, stat: 'Đã xuất vé' },
-  { d: '2026-06-25', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'VinWonders Nha Trang', rev: 14200000, profit: 1700000, stat: 'Đã xuất vé' },
-  { d: '2026-08-15', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Hạ Long', rev: 19600000, profit: 2350000, stat: 'Đã xuất vé' },
-  { d: '2026-09-02', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Công viên Nước Đầm Sen', rev: 3200000, profit: 450000, stat: 'Đã xuất vé' },
-  { d: '2025-11-15', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 52000000, profit: 6240000, stat: 'Đã xuất vé' },
-  { d: '2025-07-20', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 8900000, profit: 1100000, stat: 'Đã xuất vé' },
-  { d: '2024-08-10', c: 'Đại lý', st: 'OTA', s: 'Sun World Fansipan', rev: 41000000, profit: 4920000, stat: 'Đã xuất vé' },
-  { d: '2023-10-05', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 5600000, profit: 720000, stat: 'Đã xuất vé' },
-  { d: '2022-12-18', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 38000000, profit: 4560000, stat: 'Đã xuất vé' }
+  // Tháng 11/2026 (Ngày hiện tại 18/11/2026 & các ngày trong tháng)
+  { d: '2026-11-18', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 48500000, profit: 5820000, stat: 'Đã xuất vé' },
+  { d: '2026-11-18', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 7200000, profit: 950000, stat: 'Đã xuất vé' },
+  { d: '2026-11-18', c: 'Đại lý', st: 'OTA', s: 'NovaWorld Phan Thiết', rev: 22400000, profit: 2680000, stat: 'Đã xuất vé' },
+  { d: '2026-11-18', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'Sun World Fansipan', rev: 14500000, profit: 1740000, stat: 'Đang xử lý' },
+  { d: '2026-11-17', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'VinWonders Nha Trang', rev: 26800000, profit: 3210000, stat: 'Đã xuất vé' },
+  { d: '2026-11-17', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Sun World Hon Thom', rev: 5600000, profit: 780000, stat: 'Đã xuất vé' },
+  { d: '2026-11-17', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'VinWonders Nam Hội An', rev: 33400000, profit: 4000000, stat: 'Đã xuất vé' },
+  { d: '2026-11-16', c: 'Đại lý', st: 'OTA', s: 'Sun World Bà Đen Mountain', rev: 18200000, profit: 2180000, stat: 'Đã xuất vé' },
+  { d: '2026-11-16', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'Sun World Ba Na Hills', rev: 12000000, profit: 1440000, stat: 'Đang xử lý' },
+  { d: '2026-11-15', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Hạ Long', rev: 31500000, profit: 3780000, stat: 'Đã xuất vé' },
+  { d: '2026-11-15', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Công viên Nước Đầm Sen', rev: 3400000, profit: 510000, stat: 'Đã xuất vé' },
+  { d: '2026-11-14', c: 'Đại lý', st: 'OTA', s: 'VinWonders Phú Quốc', rev: 45000000, profit: 5400000, stat: 'Đã xuất vé' },
+  { d: '2026-11-14', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Fansipan', rev: 19800000, profit: 2370000, stat: 'Hoàn tiền' },
+  { d: '2026-11-13', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 58000000, profit: 6960000, stat: 'Đã xuất vé' },
+  { d: '2026-11-12', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 8400000, profit: 1100000, stat: 'Đã xuất vé' },
+  { d: '2026-11-11', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'NovaWorld Phan Thiết', rev: 16500000, profit: 1980000, stat: 'Đã xuất vé' },
+  { d: '2026-11-10', c: 'Đại lý', st: 'OTA', s: 'Sun World Hon Thom', rev: 32000000, profit: 3840000, stat: 'Đã xuất vé' },
+  { d: '2026-11-09', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'VinWonders Nam Hội An', rev: 39500000, profit: 4740000, stat: 'Đã xuất vé' },
+  { d: '2026-11-08', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Khu du lịch Suối Tiên', rev: 4200000, profit: 630000, stat: 'Đã xuất vé' },
+  { d: '2026-11-07', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Bà Đen Mountain', rev: 21500000, profit: 2580000, stat: 'Đã xuất vé' },
+  { d: '2026-11-06', c: 'Đại lý', st: 'OTA', s: 'Sun World Ba Na Hills', rev: 52000000, profit: 6240000, stat: 'Đã xuất vé' },
+  { d: '2026-11-05', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'VinWonders Phú Quốc', rev: 13500000, profit: 1620000, stat: 'Đang xử lý' },
+  { d: '2026-11-04', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Fansipan', rev: 36000000, profit: 4320000, stat: 'Đã xuất vé' },
+  { d: '2026-11-03', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 7100000, profit: 920000, stat: 'Đã xuất vé' },
+  { d: '2026-11-02', c: 'Đại lý', st: 'OTA', s: 'NovaWorld Phan Thiết', rev: 24800000, profit: 2970000, stat: 'Đã xuất vé' },
+  { d: '2026-11-01', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 66000000, profit: 7920000, stat: 'Đã xuất vé' },
+
+  // Dữ liệu kiểm thử lịch sử các quý và các năm trước
+  { d: '2026-02-14', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 45000000, profit: 5400000, stat: 'Đã xuất vé', q: 'Q1' },
+  { d: '2026-03-20', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 6800000, profit: 880000, stat: 'Đã xuất vé', q: 'Q1' },
+  { d: '2026-05-18', c: 'Đại lý', st: 'OTA', s: 'Sun World Fansipan', rev: 28500000, profit: 3400000, stat: 'Đã xuất vé', q: 'Q2' },
+  { d: '2026-06-25', c: 'Nội bộ', st: 'Nhân viên kinh doanh', s: 'VinWonders Nha Trang', rev: 14200000, profit: 1700000, stat: 'Đã xuất vé', q: 'Q2' },
+  { d: '2026-08-15', c: 'Đại lý', st: 'Đại lý cấp 2', s: 'Sun World Hạ Long', rev: 19600000, profit: 2350000, stat: 'Đã xuất vé', q: 'Q3' },
+  { d: '2026-09-02', c: 'Website', st: 'Khách lẻ (B2C)', s: 'Công viên Nước Đầm Sen', rev: 3200000, profit: 450000, stat: 'Đã xuất vé', q: 'Q3' },
+  { d: '2025-11-15', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 52000000, profit: 6240000, stat: 'Đã xuất vé', y: '2025' },
+  { d: '2025-07-20', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Phú Quốc', rev: 8900000, profit: 1100000, stat: 'Đã xuất vé', y: '2025' },
+  { d: '2024-08-10', c: 'Đại lý', st: 'OTA', s: 'Sun World Fansipan', rev: 41000000, profit: 4920000, stat: 'Đã xuất vé', y: '2024' },
+  { d: '2023-10-05', c: 'Website', st: 'Khách lẻ (B2C)', s: 'VinWonders Nha Trang', rev: 5600000, profit: 720000, stat: 'Đã xuất vé', y: '2023' },
+  { d: '2022-12-18', c: 'Đại lý', st: 'Đại lý cấp 1', s: 'Sun World Ba Na Hills', rev: 38000000, profit: 4560000, stat: 'Đã xuất vé', y: '2022' }
 ];
 
 function buildCashFlowRecordsFromOrders(ordersList, invoiceOverrides = {}) {
@@ -321,4 +350,14 @@ function buildCashFlowRecordsFromOrders(ordersList, invoiceOverrides = {}) {
   });
 
   return { dataset, ordersMap };
+}
+
+// Xuất ra window cho các module và trang sử dụng độc lập
+if (typeof window !== 'undefined') {
+  window.CASH_FLOW_COLUMNS_CONFIG = CASH_FLOW_COLUMNS_CONFIG;
+  window.CASH_FLOW_ORDER_COLUMNS_CONFIG = CASH_FLOW_ORDER_COLUMNS_CONFIG;
+  window.DEFAULT_CASH_FLOW_CATEGORIES = DEFAULT_CASH_FLOW_CATEGORIES;
+  window.EXTRA_HISTORICAL_CASHFLOW_ORDERS = EXTRA_HISTORICAL_CASHFLOW_ORDERS;
+  window.DEFAULT_CASH_FLOW_ORDERS_SEED = EXTRA_HISTORICAL_CASHFLOW_ORDERS;
+  window.buildCashFlowRecordsFromOrders = buildCashFlowRecordsFromOrders;
 }

@@ -248,3 +248,17 @@ function generateMockOrdersDataset(customersList) {
 
   return orders;
 }
+
+// Xuất các hằng số và hàm sinh dữ liệu ra phạm vi toàn cục
+if (typeof window !== 'undefined') {
+  window.REPORT_TODAY = REPORT_TODAY;
+  window.REPORT_CHANNEL_SUBTYPES = REPORT_CHANNEL_SUBTYPES;
+  window.REPORT_STAFF_DIRECTORY = REPORT_STAFF_DIRECTORY;
+  window.SALES_ASSIGNMENTS_DIRECTORY = SALES_ASSIGNMENTS_DIRECTORY;
+  window.generateMockOrdersDataset = generateMockOrdersDataset;
+  if (!window.reportOrdersDataset) {
+    try {
+      window.reportOrdersDataset = generateMockOrdersDataset();
+    } catch (e) {}
+  }
+}
