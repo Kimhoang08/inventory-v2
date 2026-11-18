@@ -93,13 +93,38 @@
     let currentCashFlowDetailOrderCode = null;
     let currentInvoiceListTab = 'ALL';
 
+    // Biến lưu trạng thái bộ lọc thời gian chuẩn
+    let cashFlowPickerInstance = null;
+    let cashFlowStartDate = '2026-11-01';
+    let cashFlowEndDate = '2026-11-18';
+    let cashFlowDatePreset = 'this_month';
+
     function initCashFlowEngine() {
       if (cashFlowMasterDataset.length === 0) {
         buildCashFlowDataFromOrders();
       }
+      initCashFlowDateRangePicker();
       populateCashFlowFilterDropdowns();
       syncCashFlowVisibleColumnCount();
       applyCashFlowFilters();
+    }
+
+    function initCashFlowDateRangePicker() {
+      if (typeof createStandardDateRangePicker === 'function' && document.getElementById('cashflow_btnDateTrigger')) {
+        cashFlowPickerInstance = createStandardDateRangePicker({
+          prefix: 'cashflow',
+          baseDate: '2026-11-18',
+          defaultStart: cashFlowStartDate,
+          defaultEnd: cashFlowEndDate,
+          defaultPreset: cashFlowDatePreset,
+          onApply: (start, end, preset) => {
+            cashFlowStartDate = start;
+            cashFlowEndDate = end;
+            cashFlowDatePreset = preset;
+            applyCashFlowFilters();
+          }
+        });
+      }
     }
 
     function buildCashFlowDataFromOrders() {
@@ -578,7 +603,7 @@
       }
 
       typeEl.innerHTML = optionsHtml;
-      if (Array.from(typeEl.options).some(o => o.value === prevVal)) {
+      if (Array.from(typeEl.options || []).some(o => o.value === prevVal)) {
         typeEl.value = prevVal;
       } else {
         typeEl.value = 'ALL';
@@ -622,7 +647,7 @@
       }
 
       subTypeEl.innerHTML = opts;
-      if (Array.from(subTypeEl.options).some(o => o.value === prevVal)) {
+      if (Array.from(subTypeEl.options || []).some(o => o.value === prevVal)) {
         subTypeEl.value = prevVal;
       } else {
         subTypeEl.value = 'ALL';
@@ -631,24 +656,6 @@
     }
 
     function onCashFlowPeriodChange() {
-      const periodEl = document.getElementById('cfFilterPeriod');
-      const customWrap = document.getElementById('cfCustomDateWrap');
-      if (!periodEl) return;
-
-      const period = periodEl.value;
-      if (customWrap) {
-        if (period === 'CUSTOM') {
-          customWrap.classList.remove('hidden');
-          customWrap.classList.add('flex');
-          const fromInput = document.getElementById('cfCustomDateFrom');
-          const toInput = document.getElementById('cfCustomDateTo');
-          if (fromInput && !fromInput.value) fromInput.value = '2026-11-01';
-          if (toInput && !toInput.value) toInput.value = '2026-11-18';
-        } else {
-          customWrap.classList.add('hidden');
-          customWrap.classList.remove('flex');
-        }
-      }
       applyCashFlowFilters();
     }
 
@@ -657,17 +664,18 @@
       const groupEl = document.getElementById('cfFilterGroup');
       const channelEl = document.getElementById('cfFilterChannel');
       const statusEl = document.getElementById('cfFilterStatus');
-      const periodEl = document.getElementById('cfFilterPeriod');
-      const customWrap = document.getElementById('cfCustomDateWrap');
 
       if (searchEl) searchEl.value = '';
       if (groupEl) groupEl.value = 'ALL';
       if (channelEl) channelEl.value = 'ALL';
       if (statusEl) statusEl.value = 'ALL';
-      if (periodEl) periodEl.value = 'THIS_MONTH';
-      if (customWrap) {
-        customWrap.classList.add('hidden');
-        customWrap.classList.remove('flex');
+
+      // Đặt lại bộ lọc thời gian về mặc định: Tháng này (01/11/2026 - 18/11/2026)
+      cashFlowStartDate = '2026-11-01';
+      cashFlowEndDate = '2026-11-18';
+      cashFlowDatePreset = 'this_month';
+      if (cashFlowPickerInstance && typeof cashFlowPickerInstance.setRange === 'function') {
+        cashFlowPickerInstance.setRange(cashFlowStartDate, cashFlowEndDate, cashFlowDatePreset);
       }
 
       populateCashFlowFilterDropdowns();
@@ -683,9 +691,6 @@
       const channelEl = document.getElementById('cfFilterChannel');
       const subTypeEl = document.getElementById('cfFilterSubType');
       const statusEl = document.getElementById('cfFilterStatus');
-      const periodEl = document.getElementById('cfFilterPeriod');
-      const fromEl = document.getElementById('cfCustomDateFrom');
-      const toEl = document.getElementById('cfCustomDateTo');
 
       const q = (universalSearchEl?.value || searchEl?.value || '').toLowerCase().trim();
       const group = groupEl ? groupEl.value : 'ALL';
@@ -693,9 +698,6 @@
       const channel = channelEl ? channelEl.value : 'ALL';
       const subType = subTypeEl ? subTypeEl.value : 'ALL';
       const status = statusEl ? statusEl.value : 'ALL';
-      const period = periodEl ? periodEl.value : 'THIS_MONTH';
-      const customFrom = fromEl ? fromEl.value : '';
-      const customTo = toEl ? toEl.value : '';
 
       cashFlowFilteredDataset = cashFlowMasterDataset.filter(tx => {
         // 1. Nhóm
@@ -713,33 +715,10 @@
         // 5. Trạng thái
         if (status !== 'ALL' && tx.status !== status) return false;
 
-        // 6. Thời gian
+        // 6. Thời gian (Start Date - End Date từ Bộ lọc Thời gian chuẩn)
         const dtStr = (tx.createdDate || '').slice(0, 10);
-        if (period === 'THIS_MONTH') {
-          if (!dtStr.startsWith('2026-11')) return false;
-        } else if (period === '7_DAYS') {
-          if (dtStr < '2026-11-12' || dtStr > '2026-11-18') return false;
-        } else if (period === '30_DAYS') {
-          if (dtStr < '2026-10-19' || dtStr > '2026-11-18') return false;
-        } else if (period === 'Q1') {
-          const m = dtStr.slice(5, 7);
-          if (!dtStr.startsWith('2026') || !['01', '02', '03'].includes(m)) return false;
-        } else if (period === 'Q2') {
-          const m = dtStr.slice(5, 7);
-          if (!dtStr.startsWith('2026') || !['04', '05', '06'].includes(m)) return false;
-        } else if (period === 'Q3') {
-          const m = dtStr.slice(5, 7);
-          if (!dtStr.startsWith('2026') || !['07', '08', '09'].includes(m)) return false;
-        } else if (period === 'Q4') {
-          const m = dtStr.slice(5, 7);
-          if (!dtStr.startsWith('2026') || !['10', '11', '12'].includes(m)) return false;
-        } else if (period.startsWith('YEAR_')) {
-          const y = period.replace('YEAR_', '');
-          if (!dtStr.startsWith(y)) return false;
-        } else if (period === 'CUSTOM') {
-          if (customFrom && dtStr < customFrom) return false;
-          if (customTo && dtStr > customTo) return false;
-        }
+        if (cashFlowStartDate && dtStr < cashFlowStartDate) return false;
+        if (cashFlowEndDate && dtStr > cashFlowEndDate) return false;
 
         // Search query đa năng trên tất cả các cột
         if (q) {
@@ -2453,6 +2432,7 @@ window.saveColumnCustomizerSelection = saveColumnCustomizerSelection;
 window.changeCashFlowPage = changeCashFlowPage;
 window.openCashFlowDetailModal = openCashFlowDetailModal;
 window.quickEditInvoiceFromList = quickEditInvoiceFromList;
+window.initCashFlowDateRangePicker = initCashFlowDateRangePicker;
 
 // Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM
 function bootCashFlowEngine() {

@@ -27,6 +27,11 @@
     window.openCreateVoucherWorkspaceModal = window.openCreateVoucherWorkspacePage;
     window.closeCreateVoucherWorkspaceModal = window.closeCreateVoucherWorkspacePage;
     window.switchCashFlowViewTab = window.switchCashFlowViewTab || function(tab) {};
+    window.cashflow_toggleDatePopover = window.cashflow_toggleDatePopover || function(e) { if(e) e.stopPropagation(); const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.toggle('hidden'); };
+    window.cashflow_selectPreset = window.cashflow_selectPreset || function() {};
+    window.cashflow_navigateMonth = window.cashflow_navigateMonth || function() {};
+    window.cashflow_cancel = window.cashflow_cancel || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); };
+    window.cashflow_apply = window.cashflow_apply || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); };
   </script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -215,31 +220,107 @@
               </select>
             </div>
 
-            <!-- (6) Thời gian (7 ngày, 30 ngày, Quý 1-4, Năm trong 5 năm gần nhất, Tháng này [Mặc định], Tùy chỉnh Date picker) -->
+            <!-- (6) Bộ lọc Thời gian chuẩn (Dropdown Popover đồng bộ hệ thống) -->
             <div class="flex items-center gap-2">
               <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thời gian:</span>
-              <select id="cfFilterPeriod" onchange="onCashFlowPeriodChange()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-                <option value="THIS_MONTH" selected>Tháng này (Mặc định)</option>
-                <option value="7_DAYS">7 ngày gần nhất</option>
-                <option value="30_DAYS">30 ngày gần nhất</option>
-                <option value="Q1">Quý 1</option>
-                <option value="Q2">Quý 2</option>
-                <option value="Q3">Quý 3</option>
-                <option value="Q4">Quý 4</option>
-                <option value="YEAR_2026">Năm 2026</option>
-                <option value="YEAR_2025">Năm 2025</option>
-                <option value="YEAR_2024">Năm 2024</option>
-                <option value="YEAR_2023">Năm 2023</option>
-                <option value="YEAR_2022">Năm 2022</option>
-                <option value="CUSTOM">Tùy chỉnh Date picker...</option>
-              </select>
-            </div>
+              <div class="relative date-range-picker-wrap">
+                <!-- Trigger Button -->
+                <button
+                  id="cashflow_btnDateTrigger"
+                  type="button"
+                  onclick="cashflow_toggleDatePopover(event)"
+                  class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors shadow-2xs focus:outline-none"
+                >
+                  <i class="fa-regular fa-calendar text-brand-500 text-xs shrink-0"></i>
+                  <span id="cashflow_dateDisplayText">01/11/2026 - 18/11/2026</span>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
+                </button>
 
-            <!-- Tùy chỉnh Date picker (Hiện khi chọn CUSTOM) -->
-            <div id="cfCustomDateWrap" class="hidden items-center gap-1.5">
-              <input type="date" id="cfCustomDateFrom" onchange="applyCashFlowFilters()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70">
-              <span class="text-xs text-slate-400 font-semibold">đến</span>
-              <input type="date" id="cfCustomDateTo" onchange="applyCashFlowFilters()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70">
+                <!-- Popover Dropdown -->
+                <div
+                  id="cashflow_popoverDateRange"
+                  onclick="event.stopPropagation()"
+                  class="hidden absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-[340px] sm:w-[360px] md:w-[380px] bg-white border border-slate-200/90 rounded-2xl shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 z-50 text-left"
+                >
+                  <!-- 1. Header -->
+                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
+                    <span class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="cashflow_activeTagLabel" class="font-bold text-blue-600">Tháng này</span></span>
+                  </div>
+
+                  <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
+                      <span id="cashflow_displayStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
+                      <span id="cashflow_displayEndDate" class="font-black text-slate-800 text-xs tracking-tight">18/11/2026</span>
+                    </div>
+                  </div>
+
+                  <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
+                  <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+                    <button type="button" id="cashflow_btnPreset_7days" onclick="cashflow_selectPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      7 ngày
+                    </button>
+                    <button type="button" id="cashflow_btnPreset_30days" onclick="cashflow_selectPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      30 ngày
+                    </button>
+                    <button type="button" id="cashflow_btnPreset_this_month" onclick="cashflow_selectPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+                      Tháng này
+                    </button>
+                    <button type="button" id="cashflow_btnPreset_quarter" onclick="cashflow_selectPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      Quý
+                    </button>
+                    <button type="button" id="cashflow_btnPreset_custom" onclick="cashflow_selectPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+                      <span>Tùy chỉnh</span>
+                      <span id="cashflow_customDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
+                    </button>
+                  </div>
+
+                  <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
+                  <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <!-- Điều hướng tháng -->
+                    <div class="flex items-center justify-between px-1">
+                      <button type="button" onclick="cashflow_navigateMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
+                        <i class="fa-solid fa-chevron-left"></i>
+                      </button>
+                      <span id="cashflow_calendarMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
+                      <button type="button" onclick="cashflow_navigateMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </div>
+
+                    <!-- Thứ trong tuần -->
+                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
+                      <span>T2</span>
+                      <span>T3</span>
+                      <span>T4</span>
+                      <span>T5</span>
+                      <span>T6</span>
+                      <span>T7</span>
+                      <span>CN</span>
+                    </div>
+
+                    <!-- Lưới ngày -->
+                    <div id="cashflow_calendarGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
+                      <!-- Dynamically rendered days -->
+                    </div>
+                  </div>
+
+                  <!-- 6. Chân Dropdown (Footer Actions) -->
+                  <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
+                    <button type="button" onclick="cashflow_cancel(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+                      Hủy
+                    </button>
+                    <button type="button" onclick="cashflow_apply(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+                      Áp dụng
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
