@@ -27,11 +27,11 @@
     window.openCreateVoucherWorkspaceModal = window.openCreateVoucherWorkspacePage;
     window.closeCreateVoucherWorkspaceModal = window.closeCreateVoucherWorkspacePage;
     window.switchCashFlowViewTab = window.switchCashFlowViewTab || function(tab) {};
-    window.cashflow_toggleDatePopover = window.cashflow_toggleDatePopover || function(e) { if(e) e.stopPropagation(); const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.toggle('hidden'); };
+    window.cashflow_toggleDatePopover = window.cashflow_toggleDatePopover || function(e) { if(e) e.stopPropagation(); const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.toggle('hidden'); const b = document.getElementById('cashflow_datePopoverBackdrop'); if(b) b.classList.toggle('hidden'); };
     window.cashflow_selectPreset = window.cashflow_selectPreset || function() {};
     window.cashflow_navigateMonth = window.cashflow_navigateMonth || function() {};
-    window.cashflow_cancel = window.cashflow_cancel || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); };
-    window.cashflow_apply = window.cashflow_apply || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); };
+    window.cashflow_cancel = window.cashflow_cancel || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('cashflow_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
+    window.cashflow_apply = window.cashflow_apply || function() { const p = document.getElementById('cashflow_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('cashflow_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
   </script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -43,9 +43,6 @@
         <div>
           <div class="flex items-center gap-2.5">
             <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Lịch sử Dòng tiền</h1>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-50 text-brand-700 border border-brand-200">
-              Đối soát &amp; Quản trị
-            </span>
           </div>
           <p class="text-xs text-slate-500 font-medium mt-0.5">Phục vụ đối soát chi tiết từng khoản thu/chi phát sinh và quản trị tổng hợp theo thời gian thực</p>
         </div>
@@ -152,10 +149,10 @@
 
       <!-- 3. Bộ lọc Danh sách chi tiết (6 bộ lọc + Ô tìm kiếm - Thiết kế chuẩn đồng bộ) -->
       <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3.5">
-        <!-- Hàng 1: Tìm kiếm & 4 Bộ lọc cơ sở -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
-          <!-- Ô tìm kiếm (span 3) -->
-          <div class="lg:col-span-3">
+        <!-- Hàng 1: Tìm kiếm & 4 Bộ lọc cơ sở (Mobile: Tìm kiếm 1 hàng, Nhóm & Loại 1 hàng, Kênh & Phân loại 1 hàng) -->
+        <div class="grid grid-cols-2 lg:grid-cols-12 gap-3">
+          <!-- Ô tìm kiếm (Mobile: col-span-2, Desktop: lg:col-span-3) -->
+          <div class="col-span-2 lg:col-span-3">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm giao dịch</label>
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
@@ -163,8 +160,8 @@
             </div>
           </div>
 
-          <!-- (1) Nhóm (Thu / Chi) (span 2) -->
-          <div class="lg:col-span-2">
+          <!-- (1) Nhóm (Thu / Chi) (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhóm dòng tiền</label>
             <select id="cfFilterGroup" onchange="onCashFlowGroupFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
@@ -173,16 +170,16 @@
             </select>
           </div>
 
-          <!-- (2) Loại phiếu (thuộc Thu hoặc Chi) (span 2) -->
-          <div class="lg:col-span-2">
+          <!-- (2) Loại phiếu (thuộc Thu hoặc Chi) (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Loại phiếu thu/chi</label>
             <select id="cfFilterType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
             </select>
           </div>
 
-          <!-- (3) Kênh bán (Website / Đại lý / Nội bộ) (span 2) -->
-          <div class="lg:col-span-2">
+          <!-- (3) Kênh bán (Website / Đại lý / Nội bộ) (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kênh bán</label>
             <select id="cfFilterChannel" onchange="onCashFlowChannelFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
@@ -192,8 +189,8 @@
             </select>
           </div>
 
-          <!-- (4) Loại thuộc Kênh bán (span 3) -->
-          <div class="lg:col-span-3">
+          <!-- (4) Loại thuộc Kênh bán (Mobile: col-span-1, Desktop: lg:col-span-3) -->
+          <div class="col-span-1 lg:col-span-3">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phân loại kênh</label>
             <select id="cfFilterSubType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
@@ -206,13 +203,13 @@
           </div>
         </div>
 
-        <!-- Hàng 2: (5) Trạng thái, (6) Thời gian, Tùy chọn Date range và nút Đặt lại -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
-          <div class="flex flex-wrap items-center gap-3">
-            <!-- (5) Trạng thái (Thành công / Chờ xử lý / Thất bại) -->
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Trạng thái:</span>
-              <select id="cfFilterStatus" onchange="applyCashFlowFilters()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+        <!-- Hàng 2: (5) Trạng thái, (6) Thời gian, và nút Đặt lại (Mobile: Trạng thái & Thời gian cùng 1 dòng thẳng hàng) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-4 w-full sm:w-auto">
+            <!-- (5) Trạng thái -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Trạng thái:</span>
+              <select id="cfFilterStatus" onchange="applyCashFlowFilters()" class="w-full sm:w-auto px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer h-[34px]">
                 <option value="ALL">Tất cả</option>
                 <option value="Thành công">Thành công</option>
                 <option value="Chờ xử lý">Chờ xử lý</option>
@@ -221,26 +218,29 @@
             </div>
 
             <!-- (6) Bộ lọc Thời gian chuẩn (Dropdown Popover đồng bộ hệ thống) -->
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thời gian:</span>
-              <div class="relative date-range-picker-wrap">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Thời gian:</span>
+              <div class="relative date-range-picker-wrap w-full sm:w-auto">
                 <!-- Trigger Button -->
                 <button
                   id="cashflow_btnDateTrigger"
                   type="button"
                   onclick="cashflow_toggleDatePopover(event)"
-                  class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors shadow-2xs focus:outline-none"
+                  class="w-full sm:w-auto px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2 cursor-pointer transition-colors shadow-2xs focus:outline-none h-[34px]"
                 >
                   <i class="fa-regular fa-calendar text-brand-500 text-xs shrink-0"></i>
-                  <span id="cashflow_dateDisplayText">01/11/2026 - 18/11/2026</span>
+                  <span id="cashflow_dateDisplayText" class="truncate text-xs font-bold">01/11/2026 - 18/11/2026</span>
                   <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
                 </button>
+
+                <!-- Backdrop che mờ nền trên mobile để chống đè rối loạn với bảng dữ liệu -->
+                <div id="cashflow_datePopoverBackdrop" class="fixed inset-0 bg-slate-900/25 backdrop-blur-2xs z-40 hidden sm:hidden" onclick="cashflow_cancel(event)"></div>
 
                 <!-- Popover Dropdown (Hiển thị bung mở ngay bên dưới ô input kích hoạt Thời gian) -->
                 <div
                   id="cashflow_popoverDateRange"
                   onclick="event.stopPropagation()"
-                  class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-1.5 w-[330px] sm:w-[360px] md:w-[380px] max-w-[calc(100vw-2.5rem)] bg-white border border-slate-200/90 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.18)] p-4 space-y-3.5 z-50 text-left animate-in fade-in zoom-in-95 duration-150"
+                  class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-1.5 w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3 z-50 text-left animate-in fade-in zoom-in-95 duration-150 ring-1 ring-slate-900/5"
                 >
                   <!-- 1. Header -->
                   <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
@@ -340,13 +340,11 @@
           <div class="flex items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl">
             <button type="button" id="btnViewTabDetail" onclick="switchCashFlowViewTab('DETAIL')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-2xs cursor-pointer">
               <i class="fa-solid fa-list-ul text-brand-500"></i>
-              <span>Danh sách chi tiết</span>
-              <span id="badgeCountDetailTab" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700 font-extrabold">0</span>
+              <span>Chi tiết</span>
             </button>
             <button type="button" id="btnViewTabOrder" onclick="switchCashFlowViewTab('ORDER')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 cursor-pointer">
               <i class="fa-solid fa-layer-group text-slate-400"></i>
-              <span>Danh sách gộp theo Đơn hàng</span>
-              <span id="badgeCountOrderTab" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700 font-extrabold">0</span>
+              <span>Gộp theo đơn</span>
             </button>
           </div>
 
@@ -357,9 +355,8 @@
           </div>
 
           <div class="flex items-center gap-3 text-xs text-slate-500 font-medium">
-            <span id="cfTableRecordCount" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-200/80 text-slate-700">0 giao dịch</span>
-            <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
-            <span id="cfVisibleColumnsInfo">Hiển thị <span id="cfVisibleColumnsCount" class="font-bold text-slate-800">10</span>/<span id="cfTotalColumnsCount">17</span> cột</span>
+            <span id="cfTableRecordCount" class="hidden"></span>
+            <span id="cfVisibleColumnsInfo" class="hidden"><span id="cfVisibleColumnsCount"></span><span id="cfTotalColumnsCount"></span></span>
             <button type="button" onclick="openColumnCustomizerModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-brand-500 hover:text-brand-600 text-slate-700 font-bold shadow-2xs transition-all cursor-pointer">
               <i class="fa-solid fa-table-columns text-slate-400"></i>
               <span>Tùy chỉnh cột</span>

@@ -775,6 +775,7 @@ function createStandardDateRangePicker(config = {}) {
   function toggleDatePopover(event) {
     if (event) event.stopPropagation();
     const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    const backdrop = document.getElementById(`${prefix}_datePopoverBackdrop`);
     if (!popover) return;
 
     const isOpening = popover.classList.contains('hidden');
@@ -788,23 +789,41 @@ function createStandardDateRangePicker(config = {}) {
       updatePresetPillsUI();
       renderCalendarGrid();
       popover.classList.remove('hidden');
+      if (backdrop) backdrop.classList.remove('hidden');
 
       // Tự động căn chỉnh thông minh ngay bên dưới ô input kích hoạt để không bị tràn viền màn hình
       const trigger = document.getElementById(`${prefix}_btnDateTrigger`);
       if (trigger && typeof window !== 'undefined') {
-        const rect = trigger.getBoundingClientRect();
-        const popoverWidth = popover.offsetWidth || 340;
         const windowWidth = window.innerWidth;
-        if (rect.left + popoverWidth > windowWidth - 10) {
-          popover.classList.remove('left-0');
-          popover.classList.add('right-0');
+        if (windowWidth < 640) {
+          // Trên mobile: căn chuẩn 12px từ cả 2 lề màn hình, luôn nằm trọn vẹn trong màn hình
+          const parentRect = popover.parentElement.getBoundingClientRect();
+          const popoverWidth = Math.min(windowWidth - 24, 360);
+          const relativeLeft = 12 - parentRect.left;
+          popover.style.position = 'absolute';
+          popover.style.left = `${relativeLeft}px`;
+          popover.style.right = 'auto';
+          popover.style.width = `${popoverWidth}px`;
+          popover.style.maxWidth = `${windowWidth - 24}px`;
         } else {
-          popover.classList.add('left-0');
-          popover.classList.remove('right-0');
+          // Trên desktop: căn trái hoặc phải theo mép màn hình
+          popover.style.position = '';
+          popover.style.left = '';
+          popover.style.right = '';
+          popover.style.width = '';
+          popover.style.maxWidth = '';
+          const rect = trigger.getBoundingClientRect();
+          if (rect.left + 360 > windowWidth - 16) {
+            popover.classList.remove('left-0');
+            popover.classList.add('right-0');
+          } else {
+            popover.classList.add('left-0');
+            popover.classList.remove('right-0');
+          }
         }
       }
     } else {
-      popover.classList.add('hidden');
+      cancel(event);
     }
   }
 
@@ -873,7 +892,15 @@ function createStandardDateRangePicker(config = {}) {
     tempPreset = appliedPreset;
     calendarSelectPhase = 'completed';
     const popover = document.getElementById(`${prefix}_popoverDateRange`);
-    if (popover) popover.classList.add('hidden');
+    const backdrop = document.getElementById(`${prefix}_datePopoverBackdrop`);
+    if (popover) {
+      popover.classList.add('hidden');
+      popover.style.left = '';
+      popover.style.right = '';
+      popover.style.width = '';
+      popover.style.maxWidth = '';
+    }
+    if (backdrop) backdrop.classList.add('hidden');
     onCancelCallback();
   }
 
@@ -904,7 +931,15 @@ function createStandardDateRangePicker(config = {}) {
     }
 
     const popover = document.getElementById(`${prefix}_popoverDateRange`);
-    if (popover) popover.classList.add('hidden');
+    const backdrop = document.getElementById(`${prefix}_datePopoverBackdrop`);
+    if (popover) {
+      popover.classList.add('hidden');
+      popover.style.left = '';
+      popover.style.right = '';
+      popover.style.width = '';
+      popover.style.maxWidth = '';
+    }
+    if (backdrop) backdrop.classList.add('hidden');
 
     onApplyCallback(appliedStart, appliedEnd, appliedPreset);
   }
@@ -995,10 +1030,11 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
       </button>
 
       <!-- 2. Dropdown Popover -->
+      <div id="${prefix}_datePopoverBackdrop" class="fixed inset-0 bg-slate-900/25 backdrop-blur-2xs z-40 hidden sm:hidden" onclick="${prefix}_cancel(event)"></div>
       <div
         id="${prefix}_popoverDateRange"
         onclick="event.stopPropagation()"
-        class="hidden absolute top-full ${alignClass} w-[340px] sm:w-[360px] md:w-[380px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 transition-all text-left"
+        class="hidden absolute top-full ${alignClass} w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3.5 transition-all text-left ring-1 ring-slate-900/5"
       >
         <!-- 1. Header -->
         <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
