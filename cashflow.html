@@ -565,29 +565,51 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     <!-- KHỐI 1: TÀI KHOẢN NGUỒN (CHUYỂN ĐI) -->
                     <div class="p-3 bg-white rounded-xl border border-blue-200/70 space-y-2.5">
-                      <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-slate-700">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                        <span>Tài khoản nguồn</span>
+                      <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-slate-700">
+                          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                          <span>Tài khoản nguồn</span>
+                        </div>
+                        <!-- Nút + Tài khoản nguồn ở góc phải tiêu đề -->
+                        <button type="button" onclick="openAddSourceAccountDrawer()" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-bold text-blue-700 bg-blue-100/80 hover:bg-blue-200 border border-blue-200/80 transition-colors shadow-2xs cursor-pointer">
+                          <i class="fa-solid fa-plus text-[9px]"></i>
+                          <span>Tài khoản nguồn</span>
+                        </button>
+                      </div>
+
+                      <!-- Bộ lọc dropdown tìm kiếm thông minh tài khoản nguồn -->
+                      <div class="relative" id="vchSourceAccountDropdownContainer">
+                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">
+                          <i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Chọn nhanh tài khoản nguồn *
+                        </label>
+                        <button type="button" id="vchSourceAccountTrigger" onclick="toggleSourceAccountDropdown()" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-blue-500 transition-all text-left cursor-pointer">
+                          <span id="vchSourceAccountTriggerLabel" class="truncate font-semibold text-slate-700">-- Chọn tài khoản nguồn --</span>
+                          <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] ml-1.5 shrink-0 transition-transform duration-200" id="vchSourceAccountDropdownIcon"></i>
+                        </button>
+
+                        <!-- Menu xổ xuống chứa thanh Search ở trên cùng và danh sách bên dưới -->
+                        <div id="vchSourceAccountDropdownMenu" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-2 space-y-2">
+                          <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="vchSourceAccountSearchInput" oninput="onSourceAccountSearch(this.value)" placeholder="Tìm STK hoặc tên ngân hàng..." class="w-full pl-7 pr-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500 shadow-2xs">
+                          </div>
+                          <div id="vchSourceAccountListItems" class="max-h-44 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                            <!-- Danh sách theo chuẩn [Số tài khoản] - [Tên ngân hàng] (kèm chủ TK) -->
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Tên ngân hàng</label>
+                        <input type="text" id="vchSourceBankName" readonly placeholder="Tên ngân hàng" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-100/80 cursor-not-allowed select-none focus:outline-none">
                       </div>
                       <div>
-                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Tên ngân hàng *</label>
-                        <select id="vchSourceBankName" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/50 focus:outline-none focus:border-blue-500">
-                          <option value="Vietcombank (VCB)">Vietcombank (VCB) - TMCP Ngoại Thương</option>
-                          <option value="Techcombank (TCB)">Techcombank - Kỹ Thương VN</option>
-                          <option value="MB Bank">MB Bank - Ngân hàng Quân Đội</option>
-                          <option value="ACB">ACB - Ngân hàng Á Châu</option>
-                          <option value="BIDV">BIDV - Đầu tư và Phát triển VN</option>
-                          <option value="VietinBank">VietinBank - Công Thương VN</option>
-                          <option value="VPBank">VPBank - Việt Nam Thịnh Vượng</option>
-                        </select>
+                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Số tài khoản (STK)</label>
+                        <input type="text" id="vchSourceBankAccountNo" readonly placeholder="Số tài khoản" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-100/80 cursor-not-allowed select-none focus:outline-none font-mono">
                       </div>
                       <div>
-                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Số tài khoản (STK) *</label>
-                        <input type="text" id="vchSourceBankAccountNo" placeholder="VD: 0071009876543" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/50 focus:outline-none focus:border-blue-500 font-mono">
-                      </div>
-                      <div>
-                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Chủ tài khoản *</label>
-                        <input type="text" id="vchSourceBankAccountHolder" placeholder="VD: CTY TECHERA VIETNAM" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/50 focus:outline-none focus:border-blue-500 uppercase">
+                        <label class="block text-[10.5px] font-bold text-slate-500 mb-1">Chủ tài khoản</label>
+                        <input type="text" id="vchSourceBankAccountHolder" readonly placeholder="Chủ tài khoản" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-100/80 cursor-not-allowed select-none focus:outline-none uppercase">
                       </div>
                     </div>
 
@@ -1092,6 +1114,88 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- DRAWER: THÊM MỚI TÀI KHOẢN NGUỒN (SLIDE-UP BOTTOM SHEET) -->
+  <div id="drawerAddSourceAccountBackdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden transition-opacity duration-300 opacity-0" onclick="closeAddSourceAccountDrawer()"></div>
+
+  <div id="drawerAddSourceAccount" class="fixed inset-x-0 bottom-0 max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl z-50 transform translate-y-full transition-transform duration-300 ease-out border-t border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+    <!-- Drag Handle Indicator -->
+    <div class="pt-3 pb-1 flex justify-center cursor-pointer" onclick="closeAddSourceAccountDrawer()">
+      <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-800">Thêm mới Tài khoản nguồn</h3>
+          <p class="text-[11px] text-slate-500 font-medium">Lưu vào danh sách tài khoản chi của doanh nghiệp</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeAddSourceAccountDrawer()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Form Body -->
+    <form id="formAddNewSourceAccount" onsubmit="event.preventDefault(); saveNewSourceAccount();" class="p-6 space-y-4 overflow-y-auto">
+      <!-- Tên ngân hàng -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+          Tên ngân hàng <span class="text-rose-500">*</span>
+        </label>
+        <select id="drawerNewBankName" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 cursor-pointer">
+          <option value="">-- Chọn ngân hàng --</option>
+          <option value="Vietcombank (VCB)">Vietcombank (VCB) - TMCP Ngoại Thương</option>
+          <option value="Techcombank (TCB)">Techcombank (TCB) - Kỹ Thương VN</option>
+          <option value="MB Bank">MB Bank - Ngân hàng Quân Đội</option>
+          <option value="ACB">ACB - Ngân hàng Á Châu</option>
+          <option value="BIDV">BIDV - Đầu tư và Phát triển VN</option>
+          <option value="VietinBank">VietinBank - Công Thương VN</option>
+          <option value="VPBank">VPBank - Việt Nam Thịnh Vượng</option>
+          <option value="TPBank">TPBank - Tiên Phong</option>
+          <option value="Agribank">Agribank - Nông nghiệp &amp; PT Nông thôn</option>
+          <option value="Sacombank">Sacombank - Sài Gòn Thương Tín</option>
+          <option value="MSB">MSB - Hàng Hải VN</option>
+          <option value="HDBank">HDBank - Phát triển TP.HCM</option>
+          <option value="OCB">OCB - Phương Đông</option>
+          <option value="VIB">VIB - Quốc Tế</option>
+          <option value="SHB">SHB - Sài Gòn - Hà Nội</option>
+        </select>
+      </div>
+
+      <!-- Số tài khoản -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+          Số tài khoản (STK) <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" id="drawerNewAccountNo" required placeholder="VD: 0071009876543" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 font-mono">
+      </div>
+
+      <!-- Chủ tài khoản -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+          Chủ tài khoản <span class="text-rose-500">*</span>
+        </label>
+        <input type="text" id="drawerNewAccountHolder" required value="CTY TECHERA VIETNAM" placeholder="VD: CTY TECHERA VIETNAM" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 uppercase">
+        <span class="text-[10.5px] text-slate-400 mt-1 block">Mặc định gợi ý sẵn tên công ty Techera</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button type="button" onclick="closeAddSourceAccountDrawer()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+          Hủy bỏ
+        </button>
+        <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Lưu tài khoản</span>
+        </button>
+      </div>
+    </form>
   </div>
 
   <!-- Scripts -->

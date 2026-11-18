@@ -1737,25 +1737,28 @@
               <span class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">Tra cứu nhanh</span>
             </div>
 
-            <!-- Thanh search tra cứu Đại lý B2B -->
-            <div class="relative">
-              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input type="text" id="vchAgencySearchInput" oninput="onVoucherAgencySearch(this.value)" placeholder="Tìm kiếm theo Tên đại lý, Mã ĐL, MST..." class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-amber-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-amber-500 shadow-2xs">
-            </div>
+            <!-- Custom Dropdown Chọn Đại lý B2B có Thanh search bên trong -->
+            <div class="relative" id="vchAgencyDropdownContainer">
+              <button type="button" id="vchAgencyDropdownTrigger" onclick="toggleVoucherAgencyDropdown()" class="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all text-left cursor-pointer shadow-2xs">
+                <span id="vchAgencyDropdownLabel" class="truncate font-semibold text-slate-600">-- Chọn Đại lý để tự điền nhanh thông tin --</span>
+                <i class="fa-solid fa-chevron-down text-slate-400 text-[11px] ml-2 shrink-0 transition-transform duration-200" id="vchAgencyDropdownIcon"></i>
+              </button>
+              <input type="hidden" id="vchAgencySelect" value="">
 
-            <!-- Dropdown danh sách Đại lý B2B -->
-            <select id="vchAgencySelect" onchange="onVoucherAgencyChange(this.value)" class="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-amber-500 cursor-pointer">
-              <option value="">-- Chọn Đại lý để tự điền nhanh thông tin --</option>
-              <option value="DL-8899">DL-8899 | Công ty Cổ phần Du Lịch Việt Nam (Vietravel) - MST: 0312456789</option>
-              <option value="DL-4455">DL-4455 | Cty Du Lịch Saigontourist CN Hà Nội - MST: 0100123456</option>
-              <option value="DL-2211">DL-2211 | Đại lý Vé Vui Chơi Miền Trung - MST: 0401889922</option>
-              <option value="KHO-MA">KHO-MA | Kho Đại lý Miền An (Bán sỉ OTA) - MST: 0319887766</option>
-              <option value="DL-HANOI">DL-HANOI | Cty TNHH Du Lịch Thủ Đô (Hanoi Travel) - MST: 0109988776</option>
-              <option value="DL-DANANG">DL-DANANG | Cty CP Tour &amp; Vé Bà Nà Express - MST: 0409876543</option>
-            </select>
-            <div id="vchAgencySearchResults" class="space-y-1"></div>
+              <!-- Menu xổ xuống chứa thanh Search ở trên cùng và danh sách bên dưới -->
+              <div id="vchAgencyDropdownMenu" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-30 p-2 space-y-2">
+                <div class="relative">
+                  <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input type="text" id="vchAgencySearchInput" oninput="onVoucherAgencySearch(this.value)" placeholder="Tìm kiếm theo Tên đại lý, Mã ĐL, MST..." class="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:outline-none focus:border-amber-500 shadow-2xs">
+                </div>
+                <div id="vchAgencyListItems" class="max-h-52 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
           </div>
         `;
+        renderVoucherAgencyList('');
       } else if (isRetail) {
         container.classList.remove('hidden');
         container.innerHTML = `
@@ -2060,6 +2063,91 @@
       { code: 'DL-DANANG', name: 'Cty CP Tour & Vé Bà Nà Express', mst: '0409876543', phone: '02363889900', email: 'booking@banaexpress.vn', bankName: 'VietinBank', bankAcc: '108877665544', bankOwner: 'CTY CP BANA EXPRESS' }
     ];
 
+    // --- B2B Agency Searchable Dropdown ---
+    function toggleVoucherAgencyDropdown() {
+      const menu = document.getElementById('vchAgencyDropdownMenu');
+      const icon = document.getElementById('vchAgencyDropdownIcon');
+      if (!menu) return;
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+        renderVoucherAgencyList('');
+        const searchInput = document.getElementById('vchAgencySearchInput');
+        if (searchInput) {
+          searchInput.value = '';
+          setTimeout(() => searchInput.focus(), 60);
+        }
+      } else {
+        closeVoucherAgencyDropdown();
+      }
+    }
+
+    function closeVoucherAgencyDropdown() {
+      const menu = document.getElementById('vchAgencyDropdownMenu');
+      const icon = document.getElementById('vchAgencyDropdownIcon');
+      if (menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
+      }
+    }
+
+    function renderVoucherAgencyList(query = '') {
+      const container = document.getElementById('vchAgencyListItems');
+      if (!container) return;
+      const q = (query || '').toLowerCase().trim();
+      const matched = B2B_AGENCIES_DATA.filter(a => {
+        if (!q) return true;
+        return (
+          a.code.toLowerCase().includes(q) ||
+          a.name.toLowerCase().includes(q) ||
+          a.mst.includes(q) ||
+          (a.phone && a.phone.includes(q))
+        );
+      });
+
+      if (matched.length === 0) {
+        container.innerHTML = `
+          <div class="p-3 text-center text-xs text-slate-400">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Không tìm thấy đại lý phù hợp
+          </div>
+        `;
+        return;
+      }
+
+      const currentVal = document.getElementById('vchAgencySelect')?.value || '';
+      container.innerHTML = matched.map(a => {
+        const isSelected = currentVal === a.code;
+        return `
+          <div onclick="selectB2BAgencyQuick('${a.code}')" class="p-2.5 rounded-xl hover:bg-amber-50 cursor-pointer border border-transparent hover:border-amber-200 transition-colors ${isSelected ? 'bg-amber-50/90 border-amber-300 font-bold' : ''}">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-extrabold text-amber-900 font-mono">${a.code}</span>
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded font-mono">MST: ${a.mst}</span>
+            </div>
+            <div class="text-xs text-slate-800 font-semibold truncate mt-1">${a.name}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function onVoucherAgencySearch(query) {
+      renderVoucherAgencyList(query);
+    }
+
+    function selectB2BAgencyQuick(agCode) {
+      const hiddenInput = document.getElementById('vchAgencySelect');
+      if (hiddenInput) hiddenInput.value = agCode;
+
+      const a = B2B_AGENCIES_DATA.find(x => x.code === agCode);
+      const label = document.getElementById('vchAgencyDropdownLabel');
+      if (label && a) {
+        label.innerHTML = `<span class="font-mono font-bold text-amber-900">${a.code}</span> | <span class="font-semibold text-slate-800">${a.name}</span>`;
+      }
+
+      closeVoucherAgencyDropdown();
+      onVoucherAgencyChange(agCode);
+    }
+
     function onVoucherAgencyChange(agCode) {
       if (!agCode) return;
       const nameInput = document.getElementById('vchBeneficiaryName');
@@ -2084,59 +2172,218 @@
         if (destAcc && info.bankAcc) destAcc.value = info.bankAcc;
         if (destOwner && info.bankOwner) destOwner.value = info.bankOwner;
 
-        // Điền tài khoản nguồn Techera mặc định
+        // Tự động chọn tài khoản nguồn mặc định nếu chưa chọn
         const srcAcc = document.getElementById('vchSourceBankAccountNo');
-        const srcOwner = document.getElementById('vchSourceBankAccountHolder');
-        if (srcAcc && !srcAcc.value) srcAcc.value = '0071009876543';
-        if (srcOwner && !srcOwner.value) srcOwner.value = 'CTY TECHERA VIETNAM';
+        if (srcAcc && !srcAcc.value) {
+          const accounts = getSourceAccounts();
+          if (accounts && accounts.length > 0) {
+            selectSourceAccount(accounts[0].id);
+          }
+        }
       }
     }
 
-    function onVoucherAgencySearch(query) {
-      const q = (query || '').toLowerCase().trim();
-      const select = document.getElementById('vchAgencySelect');
-      const resultsDiv = document.getElementById('vchAgencySearchResults');
-      if (!select) return;
+    // =========================================================================
+    // QUẢN LÝ TÀI KHOẢN NGUỒN (SOURCE ACCOUNTS MANAGEMENT)
+    // =========================================================================
+    const DEFAULT_SOURCE_ACCOUNTS = [
+      { id: 'SRC-01', bankName: 'Vietcombank (VCB)', accountNo: '0071009876543', accountHolder: 'CTY TECHERA VIETNAM' },
+      { id: 'SRC-02', bankName: 'Techcombank (TCB)', accountNo: '1903889900112', accountHolder: 'CTY TECHERA VIETNAM' },
+      { id: 'SRC-03', bankName: 'MB Bank', accountNo: '0888999888', accountHolder: 'CTY TECHERA VIETNAM' },
+      { id: 'SRC-04', bankName: 'ACB', accountNo: '2468101214', accountHolder: 'CTY TECHERA VIETNAM' },
+      { id: 'SRC-05', bankName: 'BIDV', accountNo: '2151000998877', accountHolder: 'CTY TECHERA VIETNAM' }
+    ];
 
-      const matched = B2B_AGENCIES_DATA.filter(a => {
+    function getSourceAccounts() {
+      try {
+        const saved = localStorage.getItem('TECHERA_SOURCE_ACCOUNTS');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return [...DEFAULT_SOURCE_ACCOUNTS];
+    }
+
+    function saveSourceAccountsList(list) {
+      try {
+        localStorage.setItem('TECHERA_SOURCE_ACCOUNTS', JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    window.selectedSourceAccountId = 'SRC-01';
+
+    function toggleSourceAccountDropdown() {
+      const menu = document.getElementById('vchSourceAccountDropdownMenu');
+      const icon = document.getElementById('vchSourceAccountDropdownIcon');
+      if (!menu) return;
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+        renderSourceAccountsList('', window.selectedSourceAccountId);
+        const searchInput = document.getElementById('vchSourceAccountSearchInput');
+        if (searchInput) {
+          searchInput.value = '';
+          setTimeout(() => searchInput.focus(), 60);
+        }
+      } else {
+        closeSourceAccountDropdown();
+      }
+    }
+
+    function closeSourceAccountDropdown() {
+      const menu = document.getElementById('vchSourceAccountDropdownMenu');
+      const icon = document.getElementById('vchSourceAccountDropdownIcon');
+      if (menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
+      }
+    }
+
+    function renderSourceAccountsList(filterQuery = '', selectedId = null) {
+      const container = document.getElementById('vchSourceAccountListItems');
+      if (!container) return;
+      const accounts = getSourceAccounts();
+      const q = (filterQuery || '').toLowerCase().trim();
+
+      const filtered = accounts.filter(acc => {
         if (!q) return true;
         return (
-          a.code.toLowerCase().includes(q) ||
-          a.name.toLowerCase().includes(q) ||
-          a.mst.includes(q) ||
-          (a.phone && a.phone.includes(q))
+          acc.accountNo.toLowerCase().includes(q) ||
+          acc.bankName.toLowerCase().includes(q) ||
+          acc.accountHolder.toLowerCase().includes(q)
         );
       });
 
-      select.innerHTML = '<option value="">-- Chọn Đại lý để tự điền nhanh thông tin --</option>' +
-        matched.map(a => `<option value="${a.code}">${a.code} | ${a.name} - MST: ${a.mst}</option>`).join('');
-
-      if (q && matched.length > 0) {
-        select.value = matched[0].code;
-        onVoucherAgencyChange(matched[0].code);
-
-        if (resultsDiv) {
-          resultsDiv.innerHTML = matched.slice(0, 3).map(a => `
-            <div onclick="selectB2BAgencyQuick('${a.code}')" class="p-2 bg-white hover:bg-amber-100/70 border border-amber-200 rounded-xl flex items-center justify-between text-xs cursor-pointer shadow-2xs">
-              <div>
-                <span class="font-bold text-slate-800">${a.name}</span>
-                <span class="text-[10px] text-slate-500 font-mono ml-1.5">[${a.code}]</span>
-              </div>
-              <span class="text-[10px] font-bold text-amber-700 font-mono">MST: ${a.mst}</span>
-            </div>
-          `).join('');
-        }
-      } else if (resultsDiv) {
-        resultsDiv.innerHTML = '';
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-3 text-center text-xs text-slate-400">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Không tìm thấy tài khoản phù hợp
+          </div>
+        `;
+        return;
       }
+
+      container.innerHTML = filtered.map(acc => {
+        const isSelected = (selectedId || window.selectedSourceAccountId) === acc.id;
+        return `
+          <div onclick="selectSourceAccount('${acc.id}')" class="p-2.5 rounded-lg hover:bg-blue-50 cursor-pointer flex items-center justify-between border border-transparent hover:border-blue-200 transition-colors ${isSelected ? 'bg-blue-50/90 border-blue-300 font-bold' : ''}">
+            <div class="flex items-center gap-2 min-w-0">
+              <i class="fa-solid fa-building-columns text-blue-600 text-xs shrink-0"></i>
+              <div class="truncate">
+                <span class="font-mono text-xs font-extrabold text-slate-800">${acc.accountNo}</span>
+                <span class="text-xs text-slate-400 mx-1">-</span>
+                <span class="text-xs font-semibold text-slate-700">${acc.bankName}</span>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 font-normal truncate max-w-[130px] ml-2 text-right uppercase shrink-0">${acc.accountHolder}</span>
+          </div>
+        `;
+      }).join('');
     }
 
-    function selectB2BAgencyQuick(agCode) {
-      const select = document.getElementById('vchAgencySelect');
-      if (select) select.value = agCode;
-      onVoucherAgencyChange(agCode);
-      const resultsDiv = document.getElementById('vchAgencySearchResults');
-      if (resultsDiv) resultsDiv.innerHTML = '';
+    function onSourceAccountSearch(query) {
+      renderSourceAccountsList(query, window.selectedSourceAccountId);
+    }
+
+    function selectSourceAccount(accId) {
+      const accounts = getSourceAccounts();
+      const acc = accounts.find(a => a.id === accId);
+      if (!acc) return;
+
+      window.selectedSourceAccountId = acc.id;
+
+      const triggerLabel = document.getElementById('vchSourceAccountTriggerLabel');
+      if (triggerLabel) {
+        triggerLabel.innerHTML = `<span class="font-mono font-bold text-slate-800">${acc.accountNo}</span> - <span class="text-slate-700 font-semibold">${acc.bankName}</span>`;
+      }
+
+      const bankNameInput = document.getElementById('vchSourceBankName');
+      const bankAccInput = document.getElementById('vchSourceBankAccountNo');
+      const bankHolderInput = document.getElementById('vchSourceBankAccountHolder');
+
+      if (bankNameInput) bankNameInput.value = acc.bankName;
+      if (bankAccInput) bankAccInput.value = acc.accountNo;
+      if (bankHolderInput) bankHolderInput.value = acc.accountHolder;
+
+      closeSourceAccountDropdown();
+    }
+
+    function openAddSourceAccountDrawer() {
+      closeSourceAccountDropdown();
+      const backdrop = document.getElementById('drawerAddSourceAccountBackdrop');
+      const drawer = document.getElementById('drawerAddSourceAccount');
+      if (!drawer || !backdrop) return;
+
+      const bankSelect = document.getElementById('drawerNewBankName');
+      const accNoInput = document.getElementById('drawerNewAccountNo');
+      const holderInput = document.getElementById('drawerNewAccountHolder');
+      if (bankSelect) bankSelect.value = '';
+      if (accNoInput) accNoInput.value = '';
+      if (holderInput) holderInput.value = 'CTY TECHERA VIETNAM';
+
+      backdrop.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        drawer.classList.remove('translate-y-full');
+        drawer.classList.add('translate-y-0');
+      });
+    }
+
+    function closeAddSourceAccountDrawer() {
+      const backdrop = document.getElementById('drawerAddSourceAccountBackdrop');
+      const drawer = document.getElementById('drawerAddSourceAccount');
+      if (!drawer || !backdrop) return;
+
+      drawer.classList.remove('translate-y-0');
+      drawer.classList.add('translate-y-full');
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+      }, 300);
+    }
+
+    function saveNewSourceAccount() {
+      const bankName = document.getElementById('drawerNewBankName')?.value.trim();
+      const accountNo = document.getElementById('drawerNewAccountNo')?.value.trim();
+      const accountHolder = document.getElementById('drawerNewAccountHolder')?.value.trim().toUpperCase();
+
+      if (!bankName) {
+        alert('Vui lòng chọn Tên ngân hàng!');
+        document.getElementById('drawerNewBankName')?.focus();
+        return;
+      }
+      if (!accountNo) {
+        alert('Vui lòng nhập Số tài khoản (STK)!');
+        document.getElementById('drawerNewAccountNo')?.focus();
+        return;
+      }
+      if (!accountHolder) {
+        alert('Vui lòng nhập Chủ tài khoản!');
+        document.getElementById('drawerNewAccountHolder')?.focus();
+        return;
+      }
+
+      const accounts = getSourceAccounts();
+      const newId = 'SRC-' + Date.now();
+      const newAccount = {
+        id: newId,
+        bankName: bankName,
+        accountNo: accountNo,
+        accountHolder: accountHolder
+      };
+
+      accounts.unshift(newAccount);
+      saveSourceAccountsList(accounts);
+
+      // Tự động chọn tài khoản vừa thêm lên ô hiển thị chính & điền 3 trường readonly
+      selectSourceAccount(newId);
+
+      // Đóng drawer
+      closeAddSourceAccountDrawer();
     }
 
     function selectQuickRetail(name, phone, email) {
@@ -2190,9 +2437,12 @@
 
         // Điền sẵn tài khoản nguồn mặc định của Techera nếu còn trống
         const srcBankAcc = document.getElementById('vchSourceBankAccountNo');
-        const srcBankOwner = document.getElementById('vchSourceBankAccountHolder');
-        if (srcBankAcc && !srcBankAcc.value) srcBankAcc.value = '0071009876543';
-        if (srcBankOwner && !srcBankOwner.value) srcBankOwner.value = 'CTY TECHERA VIETNAM';
+        if (srcBankAcc && !srcBankAcc.value) {
+          const accounts = getSourceAccounts();
+          if (accounts && accounts.length > 0) {
+            selectSourceAccount(accounts[0].id);
+          }
+        }
       } else {
         bankWrap.classList.add('hidden');
       }
@@ -2298,6 +2548,12 @@
         const destBankName = document.getElementById('vchDestBankName')?.value || '';
         const destBankAcc = document.getElementById('vchDestBankAccountNo')?.value.trim() || '';
         const destBankOwner = document.getElementById('vchDestBankAccountHolder')?.value.trim() || '';
+
+        if (!sourceBankAcc || !sourceBankName) {
+          showError('Với hình thức Chuyển khoản: Vui lòng chọn Tài khoản nguồn!');
+          toggleSourceAccountDropdown();
+          return;
+        }
 
         if (!destBankAcc || !destBankOwner) {
           showError('Với hình thức Chuyển khoản: Vui lòng nhập đầy đủ Số tài khoản (STK) và Chủ tài khoản thụ hưởng!');
@@ -2673,7 +2929,34 @@ window.selectQuickVoucherOrder = selectQuickVoucherOrder;
 window.clearVoucherQuickSearch = clearVoucherQuickSearch;
 window.onVoucherAgencySearch = onVoucherAgencySearch;
 window.selectB2BAgencyQuick = selectB2BAgencyQuick;
+window.toggleVoucherAgencyDropdown = toggleVoucherAgencyDropdown;
+window.closeVoucherAgencyDropdown = closeVoucherAgencyDropdown;
+window.renderVoucherAgencyList = renderVoucherAgencyList;
+
+window.toggleSourceAccountDropdown = toggleSourceAccountDropdown;
+window.closeSourceAccountDropdown = closeSourceAccountDropdown;
+window.renderSourceAccountsList = renderSourceAccountsList;
+window.onSourceAccountSearch = onSourceAccountSearch;
+window.selectSourceAccount = selectSourceAccount;
+window.openAddSourceAccountDrawer = openAddSourceAccountDrawer;
+window.closeAddSourceAccountDrawer = closeAddSourceAccountDrawer;
+window.saveNewSourceAccount = saveNewSourceAccount;
+
 window.initCashFlowDateRangePicker = initCashFlowDateRangePicker;
+
+// Lắng nghe click bên ngoài để đóng các dropdown custom
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', function(e) {
+    const agContainer = document.getElementById('vchAgencyDropdownContainer');
+    if (agContainer && !agContainer.contains(e.target)) {
+      closeVoucherAgencyDropdown();
+    }
+    const srcContainer = document.getElementById('vchSourceAccountDropdownContainer');
+    if (srcContainer && !srcContainer.contains(e.target)) {
+      closeSourceAccountDropdown();
+    }
+  });
+}
 
 // Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM
 function bootCashFlowEngine() {
