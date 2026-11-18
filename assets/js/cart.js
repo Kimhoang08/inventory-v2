@@ -204,7 +204,7 @@ function renderBookingCartPage() {
       const paxRowsHtml = pkg.paxItems.map((item, idx) => {
         const itemLineTotal = (item.qty || 0) * (item.sellingPrice || 0);
         return `
-          <div class="space-y-1.5 ${idx > 0 ? 'pt-2.5 border-t border-slate-200/60' : ''}" data-cart-pax-item="${item.cartItemId}">
+          <div class="space-y-1.5 ${idx > 0 ? 'pt-2 border-t border-slate-200/60' : ''}" data-cart-pax-item="${item.cartItemId}">
             <div class="flex items-baseline justify-between gap-2">
               <div class="text-xs font-black text-slate-900 truncate">
                 <span>${item.tierLabel}</span>
@@ -215,11 +215,11 @@ function renderBookingCartPage() {
               </div>
             </div>
             <div class="flex items-center justify-between gap-2">
-              <!-- Bộ điều chỉnh số lượng [ - N + ] dạng viên thuốc -->
+              <!-- Bộ điều chỉnh số lượng [ - N + ] dạng viên thuốc nhỏ gọn -->
               <div class="inline-flex items-center gap-1 bg-white border border-slate-200 rounded-full p-0.5 shadow-2xs">
-                <button type="button" onclick="updateCartItemQty('${item.cartItemId}', -1)" title="Giảm số lượng" aria-label="Giảm số lượng ${item.tierLabel}" class="w-6 h-6 rounded-full bg-white hover:bg-slate-100 text-[#334155] font-black text-xs flex items-center justify-center border border-slate-200 cursor-pointer active:scale-95 transition-all">-</button>
-                <span class="w-8 text-center text-xs font-black text-slate-900">${item.qty}</span>
-                <button type="button" onclick="updateCartItemQty('${item.cartItemId}', 1)" title="Tăng số lượng" aria-label="Tăng số lượng ${item.tierLabel}" class="w-6 h-6 rounded-full bg-[#F25C22] hover:bg-[#d84814] text-white font-black text-xs flex items-center justify-center shadow-2xs cursor-pointer active:scale-95 transition-all">+</button>
+                <button type="button" onclick="updateCartItemQty('${item.cartItemId}', -1)" title="Giảm số lượng" aria-label="Giảm số lượng ${item.tierLabel}" class="w-5 h-5 rounded-full bg-white hover:bg-slate-100 text-[#334155] font-black text-[11px] flex items-center justify-center border border-slate-200 cursor-pointer active:scale-95 transition-all">-</button>
+                <span class="w-6 text-center text-xs font-black text-slate-900">${item.qty}</span>
+                <button type="button" onclick="updateCartItemQty('${item.cartItemId}', 1)" title="Tăng số lượng" aria-label="Tăng số lượng ${item.tierLabel}" class="w-5 h-5 rounded-full bg-[#F25C22] hover:bg-[#d84814] text-white font-black text-[11px] flex items-center justify-center shadow-2xs cursor-pointer active:scale-95 transition-all">+</button>
               </div>
               <!-- Thành tiền của riêng đối tượng -->
               <div class="text-xs sm:text-sm font-black text-[#F25C22] whitespace-nowrap">
@@ -232,7 +232,7 @@ function renderBookingCartPage() {
       return `
         <!-- Thẻ Chi tiết Gói dịch vụ (Package Item Card) -->
         <div class="p-3.5 sm:p-4.5 space-y-3.5 ${pkg.allChecked ? 'bg-white' : 'bg-slate-50/40'} transition-colors border-t border-slate-100" data-pkg-group-key="${pkg.pkgGroupKey}">
-          <!-- Phần đầu gói: Checkbox, Thumbnail, Tên vé, Badges và Bộ chọn ngày -->
+          <!-- Phần thân gói: Cột trái (Checkbox + Ảnh) & Cột phải (Toàn bộ thông tin thẳng hàng) -->
           <div class="flex items-start gap-3">
             <!-- Cột ngoài cùng bên trái: Checkbox & Ảnh đại diện -->
             <div class="pt-0.5 shrink-0 flex items-start gap-2.5">
@@ -240,8 +240,8 @@ function renderBookingCartPage() {
               <img src="${pkg.destImage || defaultImg}" alt="${displayTitle}" class="w-16 h-16 sm:w-20 sm:h-20 aspect-square object-cover rounded-xl border border-slate-200 shrink-0 bg-slate-100 shadow-2xs">
             </div>
 
-            <!-- Cột thông tin gói bên phải ảnh -->
-            <div class="min-w-0 flex-1 space-y-1.5">
+            <!-- Cột thông tin gói bên phải: Tên vé, Thị trường, Nhà hàng, Ngày, và Bảng Đối tượng thẳng hàng -->
+            <div class="min-w-0 flex-1 space-y-2">
               <!-- Hàng 1: Tên vé & Cụm icon thao tác -->
               <div class="flex items-start justify-between gap-2">
                 <div class="text-xs sm:text-sm font-black text-slate-900 leading-snug tracking-tight">
@@ -257,13 +257,11 @@ function renderBookingCartPage() {
                 </div>
               </div>
 
-              <!-- Hàng 2: Badge Thị trường áp dụng -->
+              <!-- Hàng 2: Thị trường áp dụng (rút gọn, nổi bật nhẹ, không viền bo) -->
               ${pkg.marketLabel ? `
-                <div>
-                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-orange-200/90 bg-white text-[11px] font-bold text-[#F25C22] shadow-2xs leading-snug">
-                    <i class="fa-solid fa-globe text-blue-500 text-[10px]"></i>
-                    <span>Áp dụng cho khách ${pkg.marketLabel}</span>
-                  </span>
+                <div class="flex items-center gap-1.5 text-[11.5px] font-bold text-amber-700">
+                  <i class="fa-solid fa-earth-asia text-amber-600 text-[10px]"></i>
+                  <span>Khách ${pkg.marketLabel}</span>
                 </div>` : ''}
 
               <!-- Hàng 3: Badge Nhà hàng & Khung giờ (Chỉ hiển thị với gói có ẩm thực) -->
@@ -283,18 +281,18 @@ function renderBookingCartPage() {
                   <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 ml-0.5"></i>
                 </button>
               </div>
+
+              <!-- Khu vực 3: Bảng chi tiết Đối tượng & Số lượng (Pax Breakdown Box) thẳng hàng từ trên xuống -->
+              <div class="rounded-xl bg-[#F8FAFC] border border-slate-200/80 p-2.5 sm:p-3 space-y-2 mt-1">
+                ${paxRowsHtml}
+              </div>
+
+              <!-- Khu vực 4: Tổng kết Gói dịch vụ (Package Subtotal) -->
+              <div class="flex items-baseline justify-between pt-1 border-t border-slate-100">
+                <span class="text-xs font-black text-slate-700">Tổng gói (${pkg.totalTickets} vé):</span>
+                <span class="text-sm sm:text-base font-black text-slate-900 tracking-tight">${formatMoney(pkg.totalAmount)} đ</span>
+              </div>
             </div>
-          </div>
-
-          <!-- Khu vực 3: Bảng chi tiết Đối tượng & Số lượng (Pax Breakdown Box) -->
-          <div class="rounded-2xl bg-[#F8FAFC] border border-slate-200/80 p-3 sm:p-3.5 space-y-2.5">
-            ${paxRowsHtml}
-          </div>
-
-          <!-- Khu vực 4: Tổng kết Gói dịch vụ (Package Subtotal Footer) -->
-          <div class="flex items-baseline justify-between pt-1">
-            <span class="text-xs font-black text-slate-700">Tổng gói (${pkg.totalTickets} vé):</span>
-            <span class="text-sm sm:text-base font-black text-slate-900 tracking-tight">${formatMoney(pkg.totalAmount)} đ</span>
           </div>
         </div>`;
     }).join('');

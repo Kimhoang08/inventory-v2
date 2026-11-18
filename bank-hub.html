@@ -128,6 +128,46 @@
         </div>
       </section>
 
+      <!-- Bộ lọc Sao kê Ngân hàng (Thiết kế chuẩn đồng bộ) -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm giao dịch</label>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              <input type="text" placeholder="Mã GD, số tài khoản, nội dung..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ngân hàng thụ hưởng</label>
+            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả ngân hàng (All)</option>
+              <option value="VCB">Vietcombank (Hội sở chính)</option>
+              <option value="MB">MB Bank (Quân đội)</option>
+              <option value="TCB">Techcombank</option>
+              <option value="ACB">ACB Á Châu</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái đối soát</label>
+            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="MATCHED">Khớp lệnh tự động 100%</option>
+              <option value="MANUAL">Đã khớp thủ công</option>
+              <option value="PENDING">Chờ đối soát IPN</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khoảng thời gian</label>
+            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="TODAY">Hôm nay (18/11/2026)</option>
+              <option value="7DAYS">7 ngày gần nhất</option>
+              <option value="MONTH">Tháng 11/2026</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
       <!-- Bảng sao kê giao dịch ngân hàng thời gian thực -->
       <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div class="p-4 border-b border-slate-100 flex items-center justify-between">

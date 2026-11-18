@@ -89,31 +89,41 @@
         </div>
       </section>
 
-      <!-- Bộ lọc -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div>
-          <input type="text" id="refundSearchInput" placeholder="Tìm mã yêu cầu, mã đơn, khách..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rose-500" />
-        </div>
-        <div>
-          <select id="refundStatusFilter" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white focus:outline-none focus:border-rose-500">
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="PENDING">Chờ phê duyệt</option>
-            <option value="APPROVED">Đã hoàn tiền</option>
-            <option value="REJECTED">Đã từ chối</option>
-          </select>
-        </div>
-        <div>
-          <select id="refundSiteFilter" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white focus:outline-none focus:border-rose-500">
-            <option value="ALL">Tất cả khu vui chơi</option>
-            <option value="BANA">Sun World Ba Na Hills</option>
-            <option value="PHUQUOC">VinWonders Phú Quốc</option>
-            <option value="FANSIPAN">Sun World Fansipan</option>
-          </select>
-        </div>
-        <div>
-          <button type="button" onclick="showToast('Áp dụng bộ lọc', 'Đã cập nhật danh sách yêu cầu hoàn vé.')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer">
-            Lọc kết quả
-          </button>
+      <!-- Bộ lọc (Thiết kế chuẩn đồng bộ) -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm yêu cầu</label>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              <input type="text" id="refundSearchInput" placeholder="Mã hoàn, mã đơn, khách..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 placeholder:text-slate-400" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái duyệt</label>
+            <select id="refundStatusFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer">
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="PENDING">Chờ phê duyệt</option>
+              <option value="APPROVED">Đã hoàn tiền</option>
+              <option value="REJECTED">Đã từ chối</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khu du lịch</label>
+            <select id="refundSiteFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer">
+              <option value="ALL">Tất cả khu vui chơi</option>
+              <option value="BANA">Sun World Ba Na Hills</option>
+              <option value="PHUQUOC">VinWonders Phú Quốc</option>
+              <option value="FANSIPAN">Sun World Fansipan</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Hành động</label>
+            <button type="button" onclick="showToast('Áp dụng bộ lọc', 'Đã cập nhật danh sách yêu cầu hoàn vé.')" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-filter text-[11px]"></i>
+              <span>Lọc kết quả</span>
+            </button>
+          </div>
         </div>
       </section>
 

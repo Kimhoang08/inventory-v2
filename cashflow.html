@@ -29,13 +29,9 @@
           <p class="text-xs text-slate-500 font-medium mt-0.5">Phục vụ đối soát chi tiết từng khoản thu/chi phát sinh và quản trị tổng hợp theo thời gian thực</p>
         </div>
         <div class="flex items-center gap-2.5 self-start sm:self-auto">
-          <button type="button" onclick="openColumnCustomizerModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 text-slate-700 hover:text-brand-600 font-bold text-xs shadow-2xs transition-all cursor-pointer">
-            <i class="fa-solid fa-table-columns text-slate-500"></i>
-            <span>Tùy chỉnh 17 cột</span>
-          </button>
           <button type="button" onclick="exportCashFlowDataCsv()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-700 font-bold text-xs shadow-2xs transition-all cursor-pointer">
             <i class="fa-solid fa-file-excel text-emerald-600"></i>
-            <span>Xuất dữ liệu Excel</span>
+            <span>Xuất Excel</span>
           </button>
         </div>
       </div>
@@ -129,19 +125,23 @@
         </div>
       </div>
 
-      <!-- 3. Bộ lọc Danh sách chi tiết (6 bộ lọc + Ô tìm kiếm) -->
-      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-4 space-y-3">
+      <!-- 3. Bộ lọc Danh sách chi tiết (6 bộ lọc + Ô tìm kiếm - Thiết kế chuẩn đồng bộ) -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3.5">
         <!-- Hàng 1: Tìm kiếm & 4 Bộ lọc cơ sở -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
           <!-- Ô tìm kiếm (span 3) -->
-          <div class="lg:col-span-3 relative">
-            <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="cfFilterSearch" oninput="applyCashFlowFilters()" placeholder="Mã đơn, mã GD, người thụ hưởng, đại lý..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-brand-500 placeholder:text-slate-400">
+          <div class="lg:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm giao dịch</label>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="cfFilterSearch" oninput="applyCashFlowFilters()" placeholder="Mã đơn, mã GD, đối tác..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400">
+            </div>
           </div>
 
           <!-- (1) Nhóm (Thu / Chi) (span 2) -->
           <div class="lg:col-span-2">
-            <select id="cfFilterGroup" onchange="onCashFlowGroupFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhóm dòng tiền</label>
+            <select id="cfFilterGroup" onchange="onCashFlowGroupFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả Nhóm (Thu &amp; Chi)</option>
               <option value="Thu">Nhóm Thu</option>
               <option value="Chi">Nhóm Chi</option>
@@ -150,14 +150,16 @@
 
           <!-- (2) Loại phiếu (thuộc Thu hoặc Chi) (span 2) -->
           <div class="lg:col-span-2">
-            <select id="cfFilterType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Loại phiếu thu/chi</label>
+            <select id="cfFilterType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả loại phiếu</option>
             </select>
           </div>
 
           <!-- (3) Kênh bán (Website / Đại lý / Nội bộ) (span 2) -->
           <div class="lg:col-span-2">
-            <select id="cfFilterChannel" onchange="onCashFlowChannelFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kênh bán</label>
+            <select id="cfFilterChannel" onchange="onCashFlowChannelFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả Kênh bán</option>
               <option value="Website">Website</option>
               <option value="Đại lý">Đại lý</option>
@@ -167,7 +169,8 @@
 
           <!-- (4) Loại thuộc Kênh bán (span 3) -->
           <div class="lg:col-span-3">
-            <select id="cfFilterSubType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phân loại kênh</label>
+            <select id="cfFilterSubType" onchange="applyCashFlowFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả Loại thuộc kênh</option>
               <option value="Khách lẻ (B2C)">Khách lẻ (B2C)</option>
               <option value="Đại lý cấp 1">Đại lý cấp 1</option>
@@ -179,12 +182,12 @@
         </div>
 
         <!-- Hàng 2: (5) Trạng thái, (6) Thời gian, Tùy chọn Date range và nút Đặt lại -->
-        <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
-          <div class="flex flex-wrap items-center gap-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div class="flex flex-wrap items-center gap-3">
             <!-- (5) Trạng thái (Thành công / Chờ xử lý / Thất bại) -->
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-bold text-slate-500">Trạng thái:</span>
-              <select id="cfFilterStatus" onchange="applyCashFlowFilters()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Trạng thái:</span>
+              <select id="cfFilterStatus" onchange="applyCashFlowFilters()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
                 <option value="ALL">Tất cả</option>
                 <option value="Thành công">Thành công</option>
                 <option value="Chờ xử lý">Chờ xử lý</option>
@@ -193,9 +196,9 @@
             </div>
 
             <!-- (6) Thời gian (7 ngày, 30 ngày, Quý 1-4, Năm trong 5 năm gần nhất, Tháng này [Mặc định], Tùy chỉnh Date picker) -->
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-bold text-slate-500">Thời gian:</span>
-              <select id="cfFilterPeriod" onchange="onCashFlowPeriodChange()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thời gian:</span>
+              <select id="cfFilterPeriod" onchange="onCashFlowPeriodChange()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
                 <option value="THIS_MONTH" selected>Tháng này (Mặc định)</option>
                 <option value="7_DAYS">7 ngày gần nhất</option>
                 <option value="30_DAYS">30 ngày gần nhất</option>
@@ -214,14 +217,14 @@
 
             <!-- Tùy chỉnh Date picker (Hiện khi chọn CUSTOM) -->
             <div id="cfCustomDateWrap" class="hidden items-center gap-1.5">
-              <input type="date" id="cfCustomDateFrom" onchange="applyCashFlowFilters()" class="px-2 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700">
-              <span class="text-xs text-slate-400">đến</span>
-              <input type="date" id="cfCustomDateTo" onchange="applyCashFlowFilters()" class="px-2 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700">
+              <input type="date" id="cfCustomDateFrom" onchange="applyCashFlowFilters()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70">
+              <span class="text-xs text-slate-400 font-semibold">đến</span>
+              <input type="date" id="cfCustomDateTo" onchange="applyCashFlowFilters()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70">
             </div>
           </div>
 
           <div class="flex items-center gap-2">
-            <button type="button" onclick="resetCashFlowFilters()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 hover:text-rose-600 hover:bg-rose-50 text-xs font-bold transition-colors cursor-pointer">
+            <button type="button" onclick="resetCashFlowFilters()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-rose-600 font-bold text-xs shadow-2xs transition-all cursor-pointer">
               <i class="fa-solid fa-rotate-right text-[11px]"></i>
               <span>Đặt lại bộ lọc</span>
             </button>
