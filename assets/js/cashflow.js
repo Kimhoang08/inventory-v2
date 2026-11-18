@@ -7,8 +7,8 @@
     // 11. CASH FLOW HISTORY & RECONCILIATION ENGINE (LỊCH SỬ DÒNG TIỀN)
     // =========================================================================
     // Cấu hình 17 cột được nạp từ database/cashflow.db.js; thiết lập fallback nếu chưa có
-    if (typeof window.CASH_FLOW_COLUMNS_CONFIG === 'undefined' && typeof CASH_FLOW_COLUMNS_CONFIG === 'undefined') {
-      window.CASH_FLOW_COLUMNS_CONFIG = [
+    if (!window.CASH_FLOW_COLUMNS_CONFIG) {
+      window.CASH_FLOW_COLUMNS_CONFIG = (typeof CASH_FLOW_COLUMNS_CONFIG !== 'undefined' ? CASH_FLOW_COLUMNS_CONFIG : [
         { id: 'orderCode', label: 'Mã đơn hàng', defaultVisible: true },
         { id: 'txCode', label: 'Mã giao dịch', defaultVisible: true },
         { id: 'beneficiary', label: 'Người thụ hưởng & Mã ĐL', defaultVisible: true },
@@ -26,11 +26,11 @@
         { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
         { id: 'costAmount', label: 'Tổng giá nhập', defaultVisible: false },
         { id: 'netProfit', label: 'Lợi nhuận thuần', defaultVisible: false }
-      ];
+      ]);
     }
 
-    if (typeof window.CASH_FLOW_ORDER_COLUMNS_CONFIG === 'undefined' && typeof CASH_FLOW_ORDER_COLUMNS_CONFIG === 'undefined') {
-      window.CASH_FLOW_ORDER_COLUMNS_CONFIG = [
+    if (!window.CASH_FLOW_ORDER_COLUMNS_CONFIG) {
+      window.CASH_FLOW_ORDER_COLUMNS_CONFIG = (typeof CASH_FLOW_ORDER_COLUMNS_CONFIG !== 'undefined' ? CASH_FLOW_ORDER_COLUMNS_CONFIG : [
         { id: 'orderCode', label: 'Mã đơn hàng', defaultVisible: true },
         { id: 'beneficiary', label: 'Người thụ hưởng & Mã ĐL', defaultVisible: true },
         { id: 'expectedRevenue', label: 'Dự kiến thu', defaultVisible: true },
@@ -44,18 +44,18 @@
         { id: 'commissionAmount', label: 'Tổng hoa hồng', defaultVisible: false },
         { id: 'costAmount', label: 'Tổng giá nhập', defaultVisible: false },
         { id: 'netProfit', label: 'Lợi nhuận thuần', defaultVisible: false }
-      ];
+      ]);
     }
 
     let cashFlowActiveViewTab = 'DETAIL'; // 'DETAIL' (17 cột) hoặc 'ORDER' (13 cột)
 
     let cashFlowVisibleColumns = {};
-    (window.CASH_FLOW_COLUMNS_CONFIG || CASH_FLOW_COLUMNS_CONFIG).forEach(c => {
+    (window.CASH_FLOW_COLUMNS_CONFIG || []).forEach(c => {
       cashFlowVisibleColumns[c.id] = c.defaultVisible;
     });
 
     let cashFlowOrderVisibleColumns = {};
-    (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || CASH_FLOW_ORDER_COLUMNS_CONFIG).forEach(c => {
+    (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []).forEach(c => {
       cashFlowOrderVisibleColumns[c.id] = c.defaultVisible;
     });
 
@@ -834,7 +834,7 @@
 
     function syncCashFlowVisibleColumnCount() {
       const isDetail = cashFlowActiveViewTab === 'DETAIL';
-      const cfg = isDetail ? CASH_FLOW_COLUMNS_CONFIG : CASH_FLOW_ORDER_COLUMNS_CONFIG;
+      const cfg = isDetail ? (window.CASH_FLOW_COLUMNS_CONFIG || []) : (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []);
       const vis = isDetail ? cashFlowVisibleColumns : cashFlowOrderVisibleColumns;
       const activeCount = cfg.filter(c => vis[c.id]).length;
       const countEl = document.getElementById('cfVisibleColumnsCount');
@@ -965,7 +965,7 @@
       }
 
       // Render thead dựa trên active view tab
-      const cfg = isDetail ? CASH_FLOW_COLUMNS_CONFIG : CASH_FLOW_ORDER_COLUMNS_CONFIG;
+      const cfg = isDetail ? (window.CASH_FLOW_COLUMNS_CONFIG || []) : (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []);
       const vis = isDetail ? cashFlowVisibleColumns : cashFlowOrderVisibleColumns;
       const activeCols = cfg.filter(c => vis[c.id]);
 
@@ -1496,7 +1496,7 @@
       if (!modal) return;
 
       const isOrderView = cashFlowActiveViewTab === 'ORDER';
-      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const config = isOrderView ? (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []) : (window.CASH_FLOW_COLUMNS_CONFIG || []);
       const colMap = isOrderView ? cashFlowOrderVisibleColumns : cashFlowVisibleColumns;
 
       const defaultCols = config.filter(c => c.defaultVisible);
@@ -1539,7 +1539,7 @@
 
     function selectAllCashFlowColumns(selectAll = true) {
       const isOrderView = cashFlowActiveViewTab === 'ORDER';
-      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const config = isOrderView ? (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []) : (window.CASH_FLOW_COLUMNS_CONFIG || []);
       config.forEach(c => {
         const chk = document.getElementById(`chkCol_${c.id}`);
         if (chk) chk.checked = selectAll;
@@ -1548,7 +1548,7 @@
 
     function resetCashFlowColumnsToDefault() {
       const isOrderView = cashFlowActiveViewTab === 'ORDER';
-      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const config = isOrderView ? (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []) : (window.CASH_FLOW_COLUMNS_CONFIG || []);
       config.forEach(c => {
         const chk = document.getElementById(`chkCol_${c.id}`);
         if (chk) chk.checked = c.defaultVisible;
@@ -1557,7 +1557,7 @@
 
     function saveColumnCustomizerSelection() {
       const isOrderView = cashFlowActiveViewTab === 'ORDER';
-      const config = isOrderView ? CASH_FLOW_ORDER_COLUMNS_CONFIG : CASH_FLOW_COLUMNS_CONFIG;
+      const config = isOrderView ? (window.CASH_FLOW_ORDER_COLUMNS_CONFIG || []) : (window.CASH_FLOW_COLUMNS_CONFIG || []);
       const colMap = isOrderView ? cashFlowOrderVisibleColumns : cashFlowVisibleColumns;
       const storageKey = isOrderView ? 'TECHERA_CF_ORDER_COLS' : 'TECHERA_CF_VISIBLE_COLS';
 
@@ -1586,7 +1586,7 @@
         return;
       }
 
-      const activeCols = CASH_FLOW_COLUMNS_CONFIG.filter(c => cashFlowVisibleColumns[c.id]);
+      const activeCols = (window.CASH_FLOW_COLUMNS_CONFIG || []).filter(c => cashFlowVisibleColumns[c.id]);
       const headerRow = activeCols.map(c => `"${c.label}"`).join(',');
 
       const dataRows = cashFlowFilteredDataset.map(tx => {
@@ -2384,20 +2384,32 @@
     }
 
 
-// Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM
-function bootCashFlowEngine() {
-  if (document.getElementById("viewCashFlowHistory") || document.getElementById("cfTableBody")) {
-    initCashFlowEngine();
-  }
-}
+// =========================================================================
+// XUẤT CÁC HÀM RA PHẠM VI TOÀN CỤC CHO INLINE EVENT HANDLERS TRONG CASHFLOW.HTML
+// =========================================================================
+window.openCreateVoucherWorkspaceModal = openCreateVoucherWorkspaceModal;
+window.closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspaceModal;
+window.switchVoucherWorkspaceTab = switchVoucherWorkspaceTab;
+window.switchCashFlowViewTab = switchCashFlowViewTab;
+window.onVoucherGroupChange = onVoucherGroupChange;
+window.onVoucherTypeChange = onVoucherTypeChange;
+window.onVoucherCorpChange = onVoucherCorpChange;
+window.onVoucherSiteSelected = onVoucherSiteSelected;
+window.onVoucherAgencyChange = onVoucherAgencyChange;
+window.selectQuickRetail = selectQuickRetail;
+window.onVoucherRetailSearch = onVoucherRetailSearch;
+window.onVoucherKolChange = onVoucherKolChange;
+window.onVoucherCodeChange = onVoucherCodeChange;
+window.onVoucherPaymentMethodChange = onVoucherPaymentMethodChange;
+window.onVoucherAmountInput = onVoucherAmountInput;
+window.validateVoucherDates = validateVoucherDates;
+window.validateAndSubmitVoucher = validateAndSubmitVoucher;
+window.renderCategoryConfigTable = renderCategoryConfigTable;
+window.openAddEditCategoryModal = openAddEditCategoryModal;
+window.closeAddEditCategoryModal = closeAddEditCategoryModal;
+window.updateCategoryIdentifierPreview = updateCategoryIdentifierPreview;
+window.saveCategoryConfig = saveCategoryConfig;
 
-if (document.readyState === 'loading') {
-  document.addEventListener("DOMContentLoaded", bootCashFlowEngine);
-} else {
-  bootCashFlowEngine();
-}
-
-// Xuất các hàm ra phạm vi toàn cục cho inline event handlers trong cashflow.html
 window.openColumnCustomizerModal = openColumnCustomizerModal;
 window.closeColumnCustomizerModal = closeColumnCustomizerModal;
 window.exportCashFlowDataCsv = exportCashFlowDataCsv;
@@ -2419,27 +2431,20 @@ window.saveColumnCustomizerSelection = saveColumnCustomizerSelection;
 window.changeCashFlowPage = changeCashFlowPage;
 window.openCashFlowDetailModal = openCashFlowDetailModal;
 window.quickEditInvoiceFromList = quickEditInvoiceFromList;
-window.switchCashFlowViewTab = switchCashFlowViewTab;
 
-// Workspace & Category Exports
-window.openCreateVoucherWorkspaceModal = openCreateVoucherWorkspaceModal;
-window.closeCreateVoucherWorkspaceModal = closeCreateVoucherWorkspaceModal;
-window.switchVoucherWorkspaceTab = switchVoucherWorkspaceTab;
-window.onVoucherGroupChange = onVoucherGroupChange;
-window.onVoucherTypeChange = onVoucherTypeChange;
-window.onVoucherCorpChange = onVoucherCorpChange;
-window.onVoucherSiteSelected = onVoucherSiteSelected;
-window.onVoucherAgencyChange = onVoucherAgencyChange;
-window.selectQuickRetail = selectQuickRetail;
-window.onVoucherRetailSearch = onVoucherRetailSearch;
-window.onVoucherKolChange = onVoucherKolChange;
-window.onVoucherCodeChange = onVoucherCodeChange;
-window.onVoucherPaymentMethodChange = onVoucherPaymentMethodChange;
-window.onVoucherAmountInput = onVoucherAmountInput;
-window.validateVoucherDates = validateVoucherDates;
-window.validateAndSubmitVoucher = validateAndSubmitVoucher;
-window.renderCategoryConfigTable = renderCategoryConfigTable;
-window.openAddEditCategoryModal = openAddEditCategoryModal;
-window.closeAddEditCategoryModal = closeAddEditCategoryModal;
-window.updateCategoryIdentifierPreview = updateCategoryIdentifierPreview;
-window.saveCategoryConfig = saveCategoryConfig;
+// Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM
+function bootCashFlowEngine() {
+  try {
+    if (document.getElementById("viewCashFlowHistory") || document.getElementById("cfTableBody")) {
+      initCashFlowEngine();
+    }
+  } catch (err) {
+    console.error("Lỗi khi khởi chạy CashFlow Engine:", err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", bootCashFlowEngine);
+} else {
+  bootCashFlowEngine();
+}
