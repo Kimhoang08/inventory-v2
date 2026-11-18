@@ -1674,7 +1674,7 @@
         select.innerHTML = `<option value="">(Chưa có loại nào hoạt động)</option>`;
       } else {
         select.innerHTML = activeCats.map(c => `
-          <option value="${c.code}">${c.name} (${c.code})</option>
+          <option value="${c.code}">${c.name}</option>
         `).join('');
       }
 
@@ -1836,6 +1836,136 @@
           <span class="text-slate-500 font-mono text-[11px]">${m.phone}</span>
         </div>
       `).join('');
+    }
+
+    // =========================================================================
+    // TÌM KIẾM NHANH ĐƠN HÀNG / ĐỐI TÁC TRÊN TAB TẠO PHIẾU THU / CHI
+    // =========================================================================
+    function onVoucherQuickSearch(query) {
+      const resultsContainer = document.getElementById('vchQuickSearchResults');
+      const clearBtn = document.getElementById('vchQuickSearchClearBtn');
+      if (!resultsContainer) return;
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        resultsContainer.innerHTML = '';
+        if (clearBtn) clearBtn.classList.add('hidden');
+        return;
+      }
+      if (clearBtn) clearBtn.classList.remove('hidden');
+
+      const matches = [];
+      const matchedCodes = new Set();
+
+      // 1. Tìm trong Danh sách Đơn hàng
+      Object.values(cashFlowOrdersMap).forEach(o => {
+        if (matches.length >= 6) return;
+        const matchStr = `${o.orderCode || ''} ${o.customerName || ''} ${o.customerPhone || ''} ${o.agencyCode || ''}`.toLowerCase();
+        if (matchStr.includes(q) && !matchedCodes.has(o.orderCode)) {
+          matchedCodes.add(o.orderCode);
+          matches.push({
+            type: 'ORDER',
+            code: o.orderCode,
+            name: o.customerName || o.agencyCode || 'Khách hàng',
+            phone: o.customerPhone || '',
+            amount: o.totalAmount || 0,
+            agencyCode: o.agencyCode || '',
+            channel: o.channel || 'Khách lẻ',
+            desc: `Đơn ${o.orderCode} - ${o.customerName || ''}`
+          });
+        }
+      });
+
+      // 2. Tìm trong Lịch sử Giao dịch
+      cashFlowMasterDataset.forEach(tx => {
+        if (matches.length >= 6) return;
+        const matchStr = `${tx.txCode || ''} ${tx.orderCode || ''} ${tx.beneficiaryName || ''} ${tx.agencyCode || ''}`.toLowerCase();
+        if (matchStr.includes(q) && !matchedCodes.has(tx.txCode)) {
+          matchedCodes.add(tx.txCode);
+          matches.push({
+            type: 'TX',
+            code: tx.txCode,
+            name: tx.beneficiaryName || 'Đối tác',
+            phone: '',
+            amount: tx.amount || 0,
+            agencyCode: tx.agencyCode || '',
+            channel: tx.channel || '',
+            desc: `Giao dịch ${tx.txCode} - ${tx.beneficiaryName || ''}`
+          });
+        }
+      });
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="p-2 text-xs text-slate-400 bg-white rounded-xl border border-slate-200 italic">
+            Không tìm thấy đơn hàng hoặc đối tác phù hợp với "${q}".
+          </div>
+        `;
+        return;
+      }
+
+      resultsContainer.innerHTML = matches.map(m => `
+        <div onclick="selectQuickVoucherOrder('${m.code}', '${encodeURIComponent(m.name)}', '${m.phone}', ${m.amount}, '${encodeURIComponent(m.agencyCode)}', '${m.type}')" class="p-2.5 bg-white hover:bg-brand-50/70 border border-slate-200/90 hover:border-brand-300 rounded-xl flex items-center justify-between gap-2 cursor-pointer transition-all shadow-2xs">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg ${m.type === 'ORDER' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center text-[10px] font-bold">
+              ${m.type === 'ORDER' ? 'ĐH' : 'GD'}
+            </span>
+            <div>
+              <div class="text-xs font-bold text-slate-800">${m.code} - <span class="font-normal text-slate-600">${m.name}</span></div>
+              <div class="text-[10.5px] text-slate-400">${m.phone ? 'SĐT: ' + m.phone : ''} ${m.agencyCode ? ' | Mã ĐL: ' + m.agencyCode : ''}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-black text-brand-600">${formatMoney(m.amount)} đ</div>
+            <span class="text-[10px] font-bold text-slate-400">Chọn ➔</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectQuickVoucherOrder(code, encodedName, phone, amount, encodedAgencyCode, type) {
+      const name = decodeURIComponent(encodedName || '');
+      const agencyCode = decodeURIComponent(encodedAgencyCode || '');
+
+      const nameInput = document.getElementById('vchBeneficiaryName');
+      if (nameInput) nameInput.value = name;
+
+      const phoneInput = document.getElementById('vchPhone');
+      if (phoneInput && phone) phoneInput.value = phone;
+
+      const agencyInput = document.getElementById('vchAgencyCode');
+      if (agencyInput && agencyCode) agencyInput.value = agencyCode;
+
+      if (amount > 0) {
+        const rawInput = document.getElementById('vchAmountRaw');
+        const dispInput = document.getElementById('vchAmountDisplay');
+        if (rawInput) rawInput.value = amount;
+        if (dispInput) {
+          dispInput.value = formatMoney(amount);
+          onVoucherAmountInput(dispInput);
+        }
+      }
+
+      const descInput = document.getElementById('vchDesc');
+      if (descInput) {
+        descInput.value = `Thanh toán chứng từ cho ${type === 'ORDER' ? 'đơn hàng' : 'giao dịch'} [${code}] - ${name}`;
+      }
+
+      const resultsContainer = document.getElementById('vchQuickSearchResults');
+      if (resultsContainer) resultsContainer.innerHTML = '';
+
+      const searchInput = document.getElementById('vchQuickSearchInput');
+      if (searchInput) searchInput.value = code + ' - ' + name;
+      const clearBtn = document.getElementById('vchQuickSearchClearBtn');
+      if (clearBtn) clearBtn.classList.remove('hidden');
+    }
+
+    function clearVoucherQuickSearch() {
+      const searchInput = document.getElementById('vchQuickSearchInput');
+      if (searchInput) searchInput.value = '';
+      const resultsContainer = document.getElementById('vchQuickSearchResults');
+      if (resultsContainer) resultsContainer.innerHTML = '';
+      const clearBtn = document.getElementById('vchQuickSearchClearBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
     }
 
     function onVoucherCorpChange(corp) {
@@ -2186,18 +2316,29 @@
       const tbody = document.getElementById('cfCategoryTableBody');
       if (!tbody) return;
 
-      if (cashFlowCategories.length === 0) {
+      const q = (document.getElementById('catSearchInput')?.value || '').toLowerCase().trim();
+      const filtered = cashFlowCategories.filter(c => {
+        if (!q) return true;
+        return (
+          (c.name || '').toLowerCase().includes(q) ||
+          (c.code || '').toLowerCase().includes(q) ||
+          (c.group || '').toLowerCase().includes(q) ||
+          (c.description || '').toLowerCase().includes(q)
+        );
+      });
+
+      if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="py-8 text-center text-slate-400 font-semibold">
-              Chưa có danh mục phân loại nào.
+              ${q ? `Không tìm thấy loại thu / chi phù hợp với từ khóa "${q}".` : 'Chưa có danh mục phân loại nào.'}
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = cashFlowCategories.map(c => {
+      tbody.innerHTML = filtered.map(c => {
         const isThu = c.group === 'Thu';
         const isActive = c.status === 'ACTIVE';
         const identifier = `[${c.name}] + [${c.code}]`;
@@ -2432,6 +2573,9 @@ window.saveColumnCustomizerSelection = saveColumnCustomizerSelection;
 window.changeCashFlowPage = changeCashFlowPage;
 window.openCashFlowDetailModal = openCashFlowDetailModal;
 window.quickEditInvoiceFromList = quickEditInvoiceFromList;
+window.onVoucherQuickSearch = onVoucherQuickSearch;
+window.selectQuickVoucherOrder = selectQuickVoucherOrder;
+window.clearVoucherQuickSearch = clearVoucherQuickSearch;
 window.initCashFlowDateRangePicker = initCashFlowDateRangePicker;
 
 // Tự động khởi tạo giao diện theo trang cashflow an toàn theo trạng thái DOM

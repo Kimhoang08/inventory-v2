@@ -168,8 +168,8 @@
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nhóm dòng tiền</label>
             <select id="cfFilterGroup" onchange="onCashFlowGroupFilterChange()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
-              <option value="Thu">Nhóm Thu</option>
-              <option value="Chi">Nhóm Chi</option>
+              <option value="Thu">Thu</option>
+              <option value="Chi">Chi</option>
             </select>
           </div>
 
@@ -236,11 +236,11 @@
                   <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
                 </button>
 
-                <!-- Popover Dropdown -->
+                <!-- Popover Dropdown (Tối ưu responsive hoàn hảo cho Mobile tránh tràn viền) -->
                 <div
                   id="cashflow_popoverDateRange"
                   onclick="event.stopPropagation()"
-                  class="hidden absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-[340px] sm:w-[360px] md:w-[380px] bg-white border border-slate-200/90 rounded-2xl shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 z-50 text-left"
+                  class="hidden fixed sm:absolute inset-x-3 sm:inset-x-auto sm:left-auto sm:right-0 top-20 sm:top-full mt-0 sm:mt-2 w-auto sm:w-[360px] md:w-[380px] max-w-[calc(100vw-1.5rem)] sm:max-w-none bg-white border border-slate-200/90 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.18)] p-4 space-y-3.5 z-[70] text-left animate-in fade-in zoom-in-95 duration-150"
                 >
                   <!-- 1. Header -->
                   <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
@@ -389,27 +389,20 @@
     <!-- ================= VIEW 2: NEXTPAGE WORKSPACE TẠO PHIẾU THU / CHI & CẤU HÌNH LOẠI ================= -->
     <div id="viewCreateVoucherWorkspace" class="hidden space-y-6 animate-in fade-in duration-200 pb-20 lg:pb-8">
       
-      <!-- 1. Nextpage Header: Breadcrumb, Nút Quay lại & Tabs Workspace -->
+      <!-- 1. Nextpage Header: Nút Quay lại & Tabs Workspace -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
           <button type="button" onclick="closeCreateVoucherWorkspacePage()" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-brand-500 hover:bg-brand-50 text-slate-600 hover:text-brand-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs group shrink-0" title="Quay lại Lịch sử Dòng tiền">
             <i class="fa-solid fa-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
           </button>
           <div>
-            <nav class="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-0.5">
-              <a href="javascript:void(0)" onclick="closeCreateVoucherWorkspacePage()" class="hover:text-brand-600 hover:underline flex items-center gap-1">
-                <i class="fa-solid fa-receipt text-[11px] text-slate-400"></i>
-                <span>Lịch sử Dòng tiền</span>
-              </a>
-              <i class="fa-solid fa-angle-right text-[10px] text-slate-300"></i>
-              <span class="text-slate-700 font-bold">Workspace Nghiệp vụ Dòng tiền</span>
-            </nav>
             <div class="flex items-center gap-2.5">
               <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Tạo Phiếu Thu / Chi</h1>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-50 text-brand-700 border border-brand-200">
                 Kế toán &amp; Đối soát
               </span>
             </div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Lập chứng từ thu chi và quản trị danh mục định danh dòng tiền</p>
           </div>
         </div>
 
@@ -425,11 +418,6 @@
               <span>Cấu hình Loại Thu / Chi</span>
             </button>
           </div>
-
-          <button type="button" onclick="closeCreateVoucherWorkspacePage()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs transition-all cursor-pointer">
-            <i class="fa-solid fa-arrow-left text-[11px]"></i>
-            <span>Quay lại</span>
-          </button>
         </div>
       </div>
 
@@ -438,41 +426,62 @@
         
         <!-- ==================== TAB 1: TẠO PHIẾU THU / CHI ==================== -->
         <div id="contentWsCreateVoucher" class="space-y-6">
+          <!-- Thanh tìm kiếm nhanh Đơn hàng / Đối tác liên kết để điền phiếu tự động -->
+          <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-magnifying-glass text-brand-500"></i>
+                <span>Tìm kiếm nhanh Đơn hàng / Khách hàng / Đối tác</span>
+              </label>
+              <span class="text-[10px] text-slate-400 font-medium">Hỗ trợ tra cứu mã đơn để tự động điền nhanh</span>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="vchQuickSearchInput" oninput="onVoucherQuickSearch(this.value)" placeholder="Nhập mã đơn (VD: DH-8899, DH-1001), tên khách hàng hoặc đối tác..." class="w-full pl-8 pr-8 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-2xs">
+              <button type="button" id="vchQuickSearchClearBtn" onclick="clearVoucherQuickSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
+            </div>
+            <div id="vchQuickSearchResults" class="space-y-1 max-h-48 overflow-y-auto"></div>
+          </div>
+
           <form id="formCreateVoucher" onsubmit="event.preventDefault(); validateAndSubmitVoucher();">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
               
               <!-- CỘT TRÁI: Phân loại nghiệp vụ & Đối tượng liên kết -->
               <div class="space-y-5">
-                <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                  <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">1</span>
+                <div class="pb-2.5 border-b border-slate-100">
                   <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Phân loại nghiệp vụ &amp; Đối tượng</h4>
                 </div>
 
-                <!-- Nhóm phiếu: Thu / Chi (Dropdown Bắt buộc) -->
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                    Nhóm phiếu <span class="text-rose-500">*</span>
-                  </label>
-                  <select id="vchGroupSelect" onchange="onVoucherGroupChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-extrabold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-                    <option value="Thu">Thu (Tiền vào)</option>
-                    <option value="Chi">Chi (Tiền ra)</option>
-                  </select>
-                </div>
-
-                <!-- Loại Thu / Chi: Dropdown tự động lọc danh sách Active + Nút shortcut + Cấu hình loại -->
-                <div>
-                  <div class="flex items-center justify-between mb-1.5">
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                      Loại Thu / Chi <span class="text-rose-500">*</span>
+                <!-- Nhóm phiếu & Loại Thu / Chi chung 1 dòng -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <!-- Nhóm phiếu: Thu / Chi (Dropdown Bắt buộc) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      Nhóm phiếu <span class="text-rose-500">*</span>
                     </label>
-                    <button type="button" onclick="switchVoucherWorkspaceTab('CATEGORY')" class="text-xs font-bold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 cursor-pointer">
-                      <i class="fa-solid fa-plus text-[10px]"></i>
-                      <span>Cấu hình loại</span>
-                    </button>
+                    <select id="vchGroupSelect" onchange="onVoucherGroupChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-extrabold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+                      <option value="Thu">Thu</option>
+                      <option value="Chi">Chi</option>
+                    </select>
                   </div>
-                  <select id="vchCategorySelect" onchange="onVoucherTypeChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-                    <!-- Rendered dynamically according to selected group -->
-                  </select>
+
+                  <!-- Loại Thu / Chi: Dropdown tự động lọc danh sách Active + Nút shortcut + Cấu hình loại -->
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        Loại Thu / Chi <span class="text-rose-500">*</span>
+                      </label>
+                      <button type="button" onclick="switchVoucherWorkspaceTab('CATEGORY')" class="text-xs font-bold text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>Cấu hình loại</span>
+                      </button>
+                    </div>
+                    <select id="vchCategorySelect" onchange="onVoucherTypeChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+                      <!-- Rendered dynamically according to selected group -->
+                    </select>
+                  </div>
                 </div>
 
                 <!-- KHU VỰC TRƯỜNG ĐỘNG (Dynamic Fields Container) -->
@@ -516,8 +525,7 @@
 
               <!-- CỘT PHẢI: Giá trị giao dịch, Thanh toán & Chứng từ -->
               <div class="space-y-5">
-                <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                  <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">2</span>
+                <div class="pb-2.5 border-b border-slate-100">
                   <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Giá trị giao dịch, Thanh toán &amp; Chứng từ</h4>
                 </div>
 
@@ -623,15 +631,21 @@
 
         <!-- ==================== TAB 2: CẤU HÌNH LOẠI THU / CHI ==================== -->
         <div id="contentWsCategoryConfig" class="hidden space-y-5">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/80">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/80">
             <div>
               <h4 class="text-sm font-extrabold text-slate-900">Danh mục Phân loại Dòng tiền (Thu / Chi)</h4>
               <p class="text-xs text-slate-500 font-medium mt-0.5">Quản lý mã nghiệp vụ, định danh hạch toán tự động và kích hoạt trạng thái sử dụng</p>
             </div>
-            <button type="button" onclick="openAddEditCategoryModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-2xs transition-all cursor-pointer shrink-0">
-              <i class="fa-solid fa-plus text-[11px]"></i>
-              <span>Thêm Loại Thu / Chi</span>
-            </button>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="catSearchInput" oninput="renderCategoryConfigTable()" placeholder="Tìm kiếm loại thu / chi, mã..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-2xs">
+              </div>
+              <button type="button" onclick="openAddEditCategoryModal()" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-2xs transition-all cursor-pointer shrink-0">
+                <i class="fa-solid fa-plus text-[11px]"></i>
+                <span>Thêm Loại Thu / Chi</span>
+              </button>
+            </div>
           </div>
 
           <!-- Bảng danh mục Loại phiếu -->
