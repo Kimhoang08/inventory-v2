@@ -293,17 +293,17 @@
         <!-- 3. Tabs Trạng thái & Bảng Danh sách -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
           
-          <!-- Hàng Tabs 4 Trạng thái chuẩn nghiệp vụ (Tinh gọn không icon, không badge con số, không tổng số) -->
-          <div class="p-2.5 sm:px-4 sm:py-2.5 border-b border-slate-100 flex items-center bg-slate-50/70">
+          <!-- Hàng Tabs 3 Trạng thái chuẩn nghiệp vụ (Tinh gọn không icon, không badge con số, không tổng số) -->
+          <div class="p-2.5 sm:px-4 sm:py-2.5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
             <div class="flex flex-wrap items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl">
-              <!-- Tab 1: Chờ xử lý -->
+              <!-- Tab 1: Đợi tiếp nhận -->
               <button
                 type="button"
-                id="tabBtn_CHO_XU_LY"
-                onclick="switchRefundTab('CHO_XU_LY')"
+                id="tabBtn_DOI_TIEP_NHAN"
+                onclick="switchRefundTab('DOI_TIEP_NHAN')"
                 class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-black transition-all bg-white text-rose-600 shadow-2xs cursor-pointer border border-rose-200/60"
               >
-                <span>Chờ xử lý</span>
+                <span>Đợi tiếp nhận</span>
               </button>
 
               <!-- Tab 2: Đang xử lý -->
@@ -316,17 +316,7 @@
                 <span>Đang xử lý</span>
               </button>
 
-              <!-- Tab 3: Đang hoàn tiền -->
-              <button
-                type="button"
-                id="tabBtn_DANG_HOAN_TIEN"
-                onclick="switchRefundTab('DANG_HOAN_TIEN')"
-                class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 cursor-pointer border border-transparent"
-              >
-                <span>Đang hoàn tiền</span>
-              </button>
-
-              <!-- Tab 4: Đã xử lý -->
+              <!-- Tab 3: Đã xử lý -->
               <button
                 type="button"
                 id="tabBtn_DA_XU_LY"
@@ -336,14 +326,31 @@
                 <span>Đã xử lý</span>
               </button>
             </div>
+
+            <!-- Dropdown Bộ lọc Trạng thái con tại Tab Đã xử lý (Thành công / Từ chối) -->
+            <div id="refundProcessedStatusFilterWrapper" class="hidden items-center gap-2 self-start sm:self-auto">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">
+                Kết quả:
+              </span>
+              <select
+                id="refundProcessedStatusFilter"
+                onchange="onProcessedStatusFilterChange(this.value)"
+                class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 shadow-2xs focus:outline-none focus:border-rose-500 cursor-pointer h-[34px]"
+              >
+                <option value="ALL">Tất cả kết quả</option>
+                <option value="THANH_CONG">Thành công</option>
+                <option value="TU_CHOI">Từ chối</option>
+              </select>
+            </div>
           </div>
 
-          <!-- Bảng dữ liệu chuẩn 11 Cột theo yêu cầu (Cột cuối: Thống nhất Nút Xem chi tiết) -->
+          <!-- Bảng dữ liệu chuẩn theo yêu cầu (Cột cuối: Nút Xem chi tiết) -->
           <div class="overflow-x-auto min-h-[320px]">
             <table class="w-full text-left border-collapse text-xs">
               <thead class="bg-slate-50/90 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider sticky top-0 z-10">
-                <tr>
+                <tr id="refundTableHeadRow">
                   <th class="px-3.5 py-3 whitespace-nowrap">Mã yêu cầu</th>
+                  <th id="thStatusColumn" class="hidden px-3.5 py-3 whitespace-nowrap">Trạng thái</th>
                   <th class="px-3.5 py-3 whitespace-nowrap">Mã đơn hoàn</th>
                   <th class="px-3.5 py-3 whitespace-nowrap">Mã đơn gốc</th>
                   <th class="px-3.5 py-3 whitespace-nowrap">Ngày sử dụng (T)</th>
@@ -427,6 +434,37 @@
           </div>
 
           
+        </div>
+
+        <!-- KHỐI LÝ DO TỪ CHỐI (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ CÓ TRẠNG THÁI TỪ CHỐI) -->
+        <div id="dtRejectNoticeBlock" class="hidden bg-rose-50/90 border border-rose-200/90 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-3.5 animate-in fade-in duration-200">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-rose-200/60">
+            <div class="flex items-center gap-2 text-rose-700 font-extrabold text-sm">
+              <div class="w-6 h-6 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-circle-xmark text-sm"></i>
+              </div>
+              <span>Lý do từ chối</span>
+            </div>
+            <div id="dtRejectAuditInfo" class="text-[11px] text-rose-600 font-medium">
+              <!-- Nạp động: Từ chối bởi ... lúc ... -->
+            </div>
+          </div>
+
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3 bg-white rounded-xl border border-rose-200 text-slate-800 leading-relaxed break-words whitespace-normal font-medium shadow-2xs" id="dtRejectReasonContent">
+              <!-- Nội dung lý do từ chối -->
+            </div>
+
+            <!-- Tệp giải trình đính kèm lúc từ chối nếu có -->
+            <div id="dtRejectFilesWrapper" class="hidden space-y-1.5 pt-1">
+              <span class="text-[11px] font-bold text-rose-800 uppercase tracking-wider block">
+                Tài liệu / Tệp giải trình đính kèm lúc từ chối:
+              </span>
+              <div id="dtRejectFilesList" class="space-y-1.5">
+                <!-- Nạp động danh sách tệp đính kèm -->
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 1. KHỐI THÔNG TIN YÊU CẦU (RÚT GỌN, PHẲNG VÀ DỄ ĐỌC) -->

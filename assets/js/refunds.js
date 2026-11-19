@@ -153,9 +153,12 @@
   ];
 
 
-  // 3. MOCK DATA YÊU CẦU HOÀN/HỦY VÉ
+  // 3. MOCK DATA YÊU CẦU HOÀN/HỦY VÉ THEO 3 TAB CHUẨN NGHIỆP VỤ
   let refundDataset = [
-    // --- TAB: CHỜ XỬ LÝ (CHO_XU_LY) ---
+    // ========================================================================
+    // TAB 1: ĐỢI TIẾP NHẬN (DOI_TIEP_NHAN)
+    // Gồm: Đơn từ người gửi tạo (chờ mình tiếp nhận) & Đơn do mình tạo (chờ cấp trên tiếp nhận)
+    // ========================================================================
     {
       requestCode: 'RQRF2611190001',
       refundOrderCode: 'RFD-2611-001',
@@ -170,22 +173,23 @@
       requesterEmail: 'an.nguyen@vietravel.com',
       requesterPhone: '0903123456',
       taxId: '0312456789',
-      status: 'CHO_XU_LY',
+      status: 'DOI_TIEP_NHAN',
       subStatus: 'CHO_TIEP_NHAN',
       createdDate: '2026-11-19 08:30',
       assignedTo: null,
-      isMyCreated: true, // Phiếu do chính mình tạo -> Kiểm tra nút Thu hồi
+      isMyCreated: true, // Đơn do chính mình tạo gửi lên cấp trên (Chờ cấp trên tiếp nhận)
       totalOriginalAmount: 3800000,
       chargeRate: 10,
       chargeAmount: 380000,
+      groupRefundAmount: 3420000,
       totalRefundAmount: 3420000,
       reason: 'Khách bị delay chuyến bay từ Hà Nội vào Đà Nẵng, có giấy xác nhận của Vietnam Airlines.',
       documents: ['Giay-xac-nhan-delay-VN128.pdf', 'Yeu-cau-hoan-ve-vietravel.jpg'],
       tickets: [
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880192', price: 950000, charge: 95000, refund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880193', price: 950000, charge: 95000, refund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880194', price: 950000, charge: 95000, refund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880195', price: 950000, charge: 95000, refund: 855000 }
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880192', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880193', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880194', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880195', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 }
       ]
     },
     {
@@ -202,20 +206,21 @@
       requesterEmail: 'ha.tran@saigontourist.net',
       requesterPhone: '0912345678',
       taxId: '0100123456',
-      status: 'CHO_XU_LY',
+      status: 'DOI_TIEP_NHAN',
       subStatus: 'CHO_TIEP_NHAN',
       createdDate: '2026-11-19 09:15',
       assignedTo: null,
-      isMyCreated: false,
+      isMyCreated: false, // Đơn do Đại lý gửi lên cho mình xử lý
       totalOriginalAmount: 2500000,
       chargeRate: 15,
       chargeAmount: 375000,
+      groupRefundAmount: 2125000,
       totalRefundAmount: 2125000,
       reason: 'Khách hàng có người nhà ốm đột xuất phải hủy lịch trình Phú Quốc.',
       documents: ['Giay-xac-nhan-y-te.pdf'],
       tickets: [
-        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110291', price: 1250000, charge: 187500, refund: 1062500 },
-        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110292', price: 1250000, charge: 187500, refund: 1062500 }
+        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110291', price: 1250000, refundFromGroup: 1062500, groupPenalty: 187500, finalRefund: 1062500 },
+        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110292', price: 1250000, refundFromGroup: 1062500, groupPenalty: 187500, finalRefund: 1062500 }
       ]
     },
     {
@@ -232,28 +237,32 @@
       requesterEmail: 'tuan.le@mienan.vn',
       requesterPhone: '0938112233',
       taxId: '0319887766',
-      status: 'CHO_XU_LY',
+      status: 'DOI_TIEP_NHAN',
       subStatus: 'CHO_TIEP_NHAN',
       createdDate: '2026-11-19 10:00',
       assignedTo: null,
-      isMyCreated: false,
+      isMyCreated: false, // Đơn do Đại lý gửi lên cho mình xử lý
       totalOriginalAmount: 5100000,
       chargeRate: 10,
       chargeAmount: 510000,
+      groupRefundAmount: 4590000,
       totalRefundAmount: 4590000,
       reason: 'Đoàn tour 6 khách chuyển hướng sang tour Mộc Châu, xin hủy hoàn vé Fansipan.',
       documents: ['Bien-ban-chuyen-tour.pdf'],
       tickets: [
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44011', price: 850000, charge: 85000, refund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44012', price: 850000, charge: 85000, refund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44013', price: 850000, charge: 85000, refund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44014', price: 850000, charge: 85000, refund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44015', price: 850000, charge: 85000, refund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44016', price: 850000, charge: 85000, refund: 765000 }
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44011', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44012', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44013', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44014', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44015', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44016', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 }
       ]
     },
 
-    // --- TAB: ĐANG XỬ LÝ (DANG_XU_LY) ---
+    // ========================================================================
+    // TAB 2: ĐANG XỬ LÝ (DANG_XU_LY)
+    // Gồm: Đơn đại lý gửi đã được mình tiếp nhận & Đơn do mình tạo đã được cấp trên tiếp nhận
+    // ========================================================================
     {
       requestCode: 'RQRF2611180004',
       refundOrderCode: 'RFD-2611-004',
@@ -272,17 +281,18 @@
       subStatus: 'DANG_THAM_DINH',
       createdDate: '2026-11-18 14:20',
       assignedTo: 'Trần Thị Mai (Booking CSKH)',
-      isMyCreated: false,
+      isMyCreated: false, // Đơn đại lý gửi lên, mình đã tiếp nhận, đang nhập tiền hoàn & đối soát
       totalOriginalAmount: 2160000,
       chargeRate: 15,
       chargeAmount: 324000,
+      groupRefundAmount: 1836000,
       totalRefundAmount: 1836000,
       reason: 'Thời tiết Quảng Ninh mưa to gió lớn cấp 6, cáp treo Nữ Hoàng tạm dừng vận hành.',
       documents: ['Thong-bao-dung-van-hanh-ha-long.png'],
       tickets: [
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99201', price: 720000, charge: 108000, refund: 612000 },
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99202', price: 720000, charge: 108000, refund: 612000 },
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99203', price: 720000, charge: 108000, refund: 612000 }
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99201', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 },
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99202', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 },
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99203', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 }
       ]
     },
     {
@@ -303,23 +313,58 @@
       subStatus: 'DANG_THAM_DINH',
       createdDate: '2026-11-18 16:45',
       assignedTo: 'Nguyễn Văn An (Booking CSKH)',
-      isMyCreated: false,
+      isMyCreated: false, // Đơn đại lý gửi lên, mình đã tiếp nhận, đang xử lý
       totalOriginalAmount: 2250000,
       chargeRate: 10,
       chargeAmount: 225000,
+      groupRefundAmount: 2025000,
       totalRefundAmount: 2025000,
       reason: 'Khách đặt nhầm ngày sử dụng trước 1 tuần, xin hủy đơn để đặt lại đúng ngày.',
       documents: ['Yeu-cau-doi-ve.pdf'],
       tickets: [
-        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-771', price: 450000, charge: 45000, refund: 405000 },
-        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-772', price: 450000, charge: 45000, refund: 405000 },
-        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-773', price: 450000, charge: 45000, refund: 405000 },
-        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-774', price: 450000, charge: 45000, refund: 405000 },
-        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-775', price: 450000, charge: 45000, refund: 405000 }
+        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-771', price: 450000, refundFromGroup: 405000, groupPenalty: 45000, finalRefund: 405000 },
+        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-772', price: 450000, refundFromGroup: 405000, groupPenalty: 45000, finalRefund: 405000 },
+        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-773', price: 450000, refundFromGroup: 405000, groupPenalty: 45000, finalRefund: 405000 },
+        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-774', price: 450000, refundFromGroup: 405000, groupPenalty: 45000, finalRefund: 405000 },
+        { type: 'Vé Công Viên Nước Wonderland Water Park', qrCode: 'QR-NW-775', price: 450000, refundFromGroup: 405000, groupPenalty: 45000, finalRefund: 405000 }
+      ]
+    },
+    {
+      requestCode: 'RQRF2611180010',
+      refundOrderCode: 'RFD-2611-010',
+      originalOrderCode: 'ORD-2611-088',
+      serviceDate: '2026-11-25',
+      ticketCount: 2,
+      corp: 'Sun World',
+      site: 'Sun World Ba Na Hills',
+      agency: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)',
+      agencyCode: 'DL-8899',
+      requesterName: 'Nguyễn Văn An',
+      requesterEmail: 'an.nguyen@vietravel.com',
+      requesterPhone: '0903123456',
+      taxId: '0312456789',
+      status: 'DANG_XU_LY',
+      subStatus: 'DANG_THAM_DINH',
+      createdDate: '2026-11-18 11:00',
+      assignedTo: 'Hoàng Minh Thắng (Trưởng phòng Vé)',
+      isMyCreated: true, // Đơn do mình tạo, cấp trên đã tiếp nhận và đang thẩm định đối soát
+      totalOriginalAmount: 1900000,
+      chargeRate: 10,
+      chargeAmount: 190000,
+      groupRefundAmount: 1710000,
+      totalRefundAmount: 1710000,
+      reason: 'Khách hàng có lịch công tác đột xuất, xin hủy hoàn cặp vé cáp treo khứ hồi.',
+      documents: ['Giay-xac-nhan-lich-cong-tac.pdf'],
+      tickets: [
+        { type: 'Vé Cáp treo Ba Na Hills khứ hồi', qrCode: 'BND-2611-00101', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
+        { type: 'Vé Cáp treo Ba Na Hills khứ hồi', qrCode: 'BND-2611-00102', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 }
       ]
     },
 
-    // --- TAB: ĐANG HOÀN TIỀN (DANG_HOAN_TIEN) ---
+    // ========================================================================
+    // TAB 3: ĐÃ XỬ LÝ (DA_XU_LY)
+    // Gồm tất cả đơn hoàn tất: Thành công (duyệt hoàn tiền về) hoặc Từ chối
+    // ========================================================================
     {
       requestCode: 'RQRF2611180006',
       refundOrderCode: 'RFD-2611-006',
@@ -334,20 +379,22 @@
       requesterEmail: 'thao.bui@banaexpress.vn',
       requesterPhone: '02363889900',
       taxId: '0409876543',
-      status: 'DANG_HOAN_TIEN',
-      subStatus: 'CHO_GIAI_NGAN',
+      status: 'DA_XU_LY',
+      subStatus: 'THANH_CONG', // Đã duyệt hoàn tiền thành công
       createdDate: '2026-11-18 10:15',
+      processedDate: '2026-11-18 15:40',
       assignedTo: 'Lê Quốc Bảo (Kế toán)',
       isMyCreated: false,
       totalOriginalAmount: 1840000,
       chargeRate: 10,
       chargeAmount: 184000,
+      groupRefundAmount: 1656000,
       totalRefundAmount: 1656000,
       reason: 'Đã thẩm tra hợp lệ: Vé chưa quét qua cổng kiểm soát, VinWonders đã xác nhận hủy mã QR.',
       documents: ['Xac-nhan-huy-qr-vinwonders.png', 'Bien-ban-duyet-hoan.pdf'],
       tickets: [
-        { type: 'Vé Vào Cổng & Cáp Treo VinWonders', qrCode: 'QR-NT-3011', price: 920000, charge: 92000, refund: 828000 },
-        { type: 'Vé Vào Cổng & Cáp Treo VinWonders', qrCode: 'QR-NT-3012', price: 920000, charge: 92000, refund: 828000 }
+        { type: 'Vé Vào Cổng & Cáp Treo VinWonders', qrCode: 'QR-NT-3011', price: 920000, refundFromGroup: 828000, groupPenalty: 92000, finalRefund: 828000 },
+        { type: 'Vé Vào Cổng & Cáp Treo VinWonders', qrCode: 'QR-NT-3012', price: 920000, refundFromGroup: 828000, groupPenalty: 92000, finalRefund: 828000 }
       ]
     },
     {
@@ -364,26 +411,26 @@
       requesterEmail: 'linh.hoang@mienan.vn',
       requesterPhone: '0938112233',
       taxId: '0319887766',
-      status: 'DANG_HOAN_TIEN',
-      subStatus: 'CHO_GIAI_NGAN',
+      status: 'DA_XU_LY',
+      subStatus: 'THANH_CONG', // Đã duyệt hoàn tiền thành công
       createdDate: '2026-11-17 15:00',
+      processedDate: '2026-11-17 17:20',
       assignedTo: 'Lê Quốc Bảo (Kế toán)',
       isMyCreated: false,
       totalOriginalAmount: 3120000,
       chargeRate: 10,
       chargeAmount: 312000,
+      groupRefundAmount: 2808000,
       totalRefundAmount: 2808000,
       reason: 'Biển động sóng lớn, tàu cao tốc và cáp treo Hòn Thơm tạm dừng chuyên chở.',
       documents: ['Bien-ban-hoan-hon-thom.pdf'],
       tickets: [
-        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5501', price: 780000, charge: 78000, refund: 702000 },
-        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5502', price: 780000, charge: 78000, refund: 702000 },
-        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5503', price: 780000, charge: 78000, refund: 702000 },
-        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5504', price: 780000, charge: 78000, refund: 702000 }
+        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5501', price: 780000, refundFromGroup: 702000, groupPenalty: 78000, finalRefund: 702000 },
+        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5502', price: 780000, refundFromGroup: 702000, groupPenalty: 78000, finalRefund: 702000 },
+        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5503', price: 780000, refundFromGroup: 702000, groupPenalty: 78000, finalRefund: 702000 },
+        { type: 'Cáp Treo Hòn Thơm & Công Viên Nước', qrCode: 'QR-HT-5504', price: 780000, refundFromGroup: 702000, groupPenalty: 78000, finalRefund: 702000 }
       ]
     },
-
-    // --- TAB: ĐÃ XỬ LÝ (DA_XU_LY) ---
     {
       requestCode: 'RQRF2611160008',
       refundOrderCode: 'RFD-2611-008',
@@ -399,20 +446,21 @@
       requesterPhone: '0903123456',
       taxId: '0312456789',
       status: 'DA_XU_LY',
-      subStatus: 'HOAN_TAT',
+      subStatus: 'THANH_CONG', // Đã duyệt hoàn tiền thành công
       createdDate: '2026-11-16 09:00',
-      assignedTo: 'Trần Thị Mai (Booking CSKH)',
       processedDate: '2026-11-16 14:30',
-      isMyCreated: false,
+      assignedTo: 'Trần Thị Mai (Booking CSKH)',
+      isMyCreated: true, // Đơn do mình tạo được duyệt hoàn tất
       totalOriginalAmount: 1900000,
       chargeRate: 10,
       chargeAmount: 190000,
+      groupRefundAmount: 1710000,
       totalRefundAmount: 1710000,
       reason: 'Khách sốt xuất huyết nhập viện, có hồ sơ bệnh án hợp lệ.',
       documents: ['Ho-so-benh-an-bv-cho-ray.pdf', 'Uy-nhiem-chi-hoan-tien.pdf'],
       tickets: [
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-7102', price: 950000, charge: 95000, refund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-7103', price: 950000, charge: 95000, refund: 855000 }
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-7102', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-7103', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 }
       ]
     },
     {
@@ -430,26 +478,64 @@
       requesterPhone: '0912345678',
       taxId: '0100123456',
       status: 'DA_XU_LY',
-      subStatus: 'TU_CHOI',
+      subStatus: 'TU_CHOI', // Đơn bị từ chối
       createdDate: '2026-11-15 11:30',
-      assignedTo: 'Nguyễn Văn An (Booking CSKH)',
       processedDate: '2026-11-15 13:00',
-      isMyCreated: false,
+      assignedTo: 'Nguyễn Văn An (Booking CSKH)',
+      isMyCreated: false, // Đơn đại lý gửi bị mình từ chối
       totalOriginalAmount: 680000,
       chargeRate: 100,
       chargeAmount: 680000,
+      groupRefundAmount: 0,
       totalRefundAmount: 0,
       reason: 'Khách quên mang vé muốn hoàn vé sau khi giờ dịch vụ đã kết thúc.',
-      rejectReason: 'Vé quá hạn sử dụng (quá 24h sau giờ mở cửa công viên), hệ thống VinWonders từ chối hỗ trợ theo quy định.',
+      rejectReason: 'Vé quá hạn hoàn/hủy theo quy định của Tập đoàn',
+      rejectDetails: 'Vé quá hạn sử dụng (quá 24h sau giờ mở cửa công viên), hệ thống VinWonders từ chối hỗ trợ theo quy chế bảo mật mã QR.',
+      rejectDocuments: ['Thong-bao-tu-choi-vinwonders.pdf'],
       documents: ['Thong-bao-tu-choi-vinwonders.pdf'],
       tickets: [
-        { type: 'Vé Vào Cổng Nam Hội An', qrCode: 'QR-HA-1092', price: 680000, charge: 680000, refund: 0 }
+        { type: 'Vé Vào Cổng Nam Hội An', qrCode: 'QR-HA-1092', price: 680000, refundFromGroup: 0, groupPenalty: 680000, finalRefund: 0 }
+      ]
+    },
+    {
+      requestCode: 'RQRF2611140011',
+      refundOrderCode: 'RFD-2611-011',
+      originalOrderCode: 'ORD-2611-018',
+      serviceDate: '2026-11-14',
+      ticketCount: 1,
+      corp: 'Sun World',
+      site: 'Sun World Ba Na Hills',
+      agency: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)',
+      agencyCode: 'DL-8899',
+      requesterName: 'Nguyễn Văn An',
+      requesterEmail: 'an.nguyen@vietravel.com',
+      requesterPhone: '0903123456',
+      taxId: '0312456789',
+      status: 'DA_XU_LY',
+      subStatus: 'TU_CHOI', // Đơn do mình tạo bị cấp trên từ chối
+      createdDate: '2026-11-14 08:45',
+      processedDate: '2026-11-14 10:15',
+      assignedTo: 'Hoàng Minh Thắng (Trưởng phòng Vé)',
+      isMyCreated: true,
+      totalOriginalAmount: 950000,
+      chargeRate: 100,
+      chargeAmount: 950000,
+      groupRefundAmount: 0,
+      totalRefundAmount: 0,
+      reason: 'Khách hàng cấp cứu mổ ruột thừa khẩn cấp, xin hủy vé cáp treo Ba Na Hills.',
+      rejectReason: 'Thiếu hồ sơ chứng từ đối soát hợp lệ (giấy hoãn/hủy chuyến, bệnh án...)',
+      rejectDetails: 'Hồ sơ đính kèm chỉ có ảnh chụp đơn thuốc kê đơn, quy chế Tập đoàn yêu cầu phải có giấy ra viện hoặc giấy xác nhận phẫu thuật mộc đỏ bệnh viện.',
+      rejectDocuments: ['Bien-ban-tu-choi-hoan-ve-cap-tren.pdf'],
+      documents: ['Don-thuoc-chua-hop-le.jpg', 'Bien-ban-tu-choi-hoan-ve-cap-tren.pdf'],
+      tickets: [
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-9081', price: 950000, refundFromGroup: 0, groupPenalty: 950000, finalRefund: 0 }
       ]
     }
   ];
 
   // 4. QUẢN LÝ TRẠNG THÁI HIỆN TẠI CỦA VIEW
-  let activeTab = 'CHO_XU_LY'; // CHO_XU_LY, DANG_XU_LY, DANG_HOAN_TIEN, DA_XU_LY
+  let activeTab = 'DOI_TIEP_NHAN'; // 3 Tab chuẩn: DOI_TIEP_NHAN, DANG_XU_LY, DA_XU_LY
+  let filterProcessedSubStatus = 'ALL'; // Dropdown lọc tại Tab Đã xử lý: ALL, THANH_CONG, TU_CHOI
   let filterAgency = 'ALL';
   let filterCorp = 'ALL';
   let filterSite = 'ALL';
@@ -671,6 +757,13 @@
     selectSiteFilter('ALL', 'Tất cả khu du lịch');
   }
 
+  // 6.3 BỘ LỌC TRẠNG THÁI CON TẠI TAB ĐÃ XỬ LÝ (THÀNH CÔNG / TỪ CHỐI)
+  function onProcessedStatusFilterChange(val) {
+    filterProcessedSubStatus = val || 'ALL';
+    refundCurrentPage = 1;
+    renderRefundTable();
+  }
+
   function changeRefundPageSize(newSize) {
     refundPageSize = parseInt(newSize, 10) || 10;
     refundCurrentPage = 1;
@@ -683,11 +776,25 @@
   }
 
 
-  // 7. LỌC DỮ LIỆU DANH SÁCH (FILTER ENGINE)
+  // 7. LỌC DỮ LIỆU DANH SÁCH (FILTER ENGINE THEO 3 TAB CHUẨN)
   function getFilteredDataset() {
     return refundDataset.filter(item => {
-      // 1. Lọc theo Tab trạng thái
-      if (item.status !== activeTab) return false;
+      // 1. Lọc theo 3 Tab trạng thái
+      if (activeTab === 'DOI_TIEP_NHAN') {
+        if (item.status !== 'DOI_TIEP_NHAN' && item.status !== 'CHO_XU_LY') return false;
+      } else if (activeTab === 'DANG_XU_LY') {
+        if (item.status !== 'DANG_XU_LY') return false;
+      } else if (activeTab === 'DA_XU_LY') {
+        if (item.status !== 'DA_XU_LY' && item.status !== 'DANG_HOAN_TIEN') return false;
+        // Lọc trạng thái con (Thành công / Từ chối) khi ở Tab Đã xử lý
+        if (filterProcessedSubStatus === 'TU_CHOI') {
+          if (item.subStatus !== 'TU_CHOI') return false;
+        } else if (filterProcessedSubStatus === 'THANH_CONG') {
+          if (item.subStatus === 'TU_CHOI') return false;
+        }
+      } else {
+        if (item.status !== activeTab) return false;
+      }
 
       // 2. Tìm kiếm mờ (partial match) theo: Mã yêu cầu, Mã đơn gốc, hoặc Tên người gửi
       if (filterSearch) {
@@ -721,26 +828,30 @@
     });
   }
 
-  // Cập nhật số lượng Badge trên 4 Tab
+  // Cập nhật số lượng Badge trên Tab (nếu có element)
   function updateTabBadges() {
-    const tabs = ['CHO_XU_LY', 'DANG_XU_LY', 'DANG_HOAN_TIEN', 'DA_XU_LY'];
-    tabs.forEach(tabKey => {
-      const count = refundDataset.filter(item => item.status === tabKey).length;
-      const badgeEl = document.getElementById(`badgeTab_${tabKey}`);
-      if (badgeEl) badgeEl.innerText = count;
-    });
+    // Đã tinh gọn nhãn theo yêu cầu: không badge số đếm
   }
 
-  // 8. RENDER BẢNG DANH SÁCH (CÓ PHÂN TRANG)
+  // 8. RENDER BẢNG DANH SÁCH (CÓ PHÂN TRANG & CỘT TRẠNG THÁI RIÊNG TẠI TAB ĐÃ XỬ LÝ)
   function renderRefundTable() {
     const tbody = document.getElementById('refundTableBody');
     const emptyNotice = document.getElementById('refundEmptyNotice');
     const paginContainer = document.getElementById('refundPaginationContainer');
     const paginInfo = document.getElementById('refundPaginationInfo');
     const paginButtons = document.getElementById('refundPaginationButtons');
+    const thStatus = document.getElementById('thStatusColumn');
     if (!tbody) return;
 
-    updateTabBadges();
+    // Cột Trạng thái đặt ngay sau Mã yêu cầu, chỉ hiển thị tại Tab Đã xử lý
+    if (thStatus) {
+      if (activeTab === 'DA_XU_LY') {
+        thStatus.classList.remove('hidden');
+      } else {
+        thStatus.classList.add('hidden');
+      }
+    }
+
     const data = getFilteredDataset();
     const totalRecords = data.length;
     const totalPages = Math.max(1, Math.ceil(totalRecords / refundPageSize));
@@ -772,6 +883,31 @@
       else if (item.corp === 'VinWonders') corpBadgeClass = 'bg-rose-50 text-rose-800 border-rose-200';
       else if (item.corp === 'Nova Dreams') corpBadgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
 
+      // Phân biệt vai trò người tạo
+      const creatorBadge = item.isMyCreated ? `
+        <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 shrink-0" title="Đơn do bạn tạo gửi lên cấp trên">Tôi tạo</span>
+      ` : `
+        <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 shrink-0" title="Đơn do Đại lý/Người gửi gửi lên">Đại lý</span>
+      `;
+
+      // Cột Trạng thái tại Tab Đã xử lý (Thành công / Từ chối)
+      const isRejected = (item.subStatus === 'TU_CHOI');
+      const statusColHtml = (activeTab === 'DA_XU_LY') ? `
+        <td class="px-3.5 py-3 whitespace-nowrap">
+          ${isRejected ? `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
+              <i class="fa-solid fa-circle-xmark text-[10px]"></i>
+              <span>Từ chối</span>
+            </span>
+          ` : `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+              <i class="fa-solid fa-circle-check text-[10px]"></i>
+              <span>Thành công</span>
+            </span>
+          `}
+        </td>
+      ` : '';
+
       return `
         <tr class="hover:bg-slate-50/90 transition-colors group">
           <!-- 1. Mã yêu cầu (RQRF...) -->
@@ -780,12 +916,15 @@
             <span class="text-[10.5px] text-slate-400 font-medium">${item.createdDate}</span>
           </td>
 
-          <!-- 2. Mã đơn hoàn -->
+          <!-- 2. Cột Trạng thái (Bổ sung riêng tại Tab Đã xử lý) -->
+          ${statusColHtml}
+
+          <!-- 3. Mã đơn hoàn -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="font-mono text-xs font-bold text-slate-800 block">${item.refundOrderCode}</span>
           </td>
 
-          <!-- 3. Mã đơn gốc -->
+          <!-- 4. Mã đơn gốc -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <a href="orders.html?search=${encodeURIComponent(item.originalOrderCode)}" class="font-mono text-xs font-bold text-slate-700 hover:text-brand-600 inline-flex items-center gap-1 transition-colors">
               <span>${item.originalOrderCode}</span>
@@ -793,31 +932,31 @@
             </a>
           </td>
 
-          <!-- 4. Ngày sử dụng (T) -->
+          <!-- 5. Ngày sử dụng (T) -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${serviceDateFormatted}</span>
           </td>
 
-          <!-- 5. Số vé hoàn -->
+          <!-- 6. Số vé hoàn -->
           <td class="px-3.5 py-3 whitespace-nowrap text-center">
             <span class="font-mono text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
               ${item.ticketCount} vé
             </span>
           </td>
 
-          <!-- 6. Tập đoàn -->
+          <!-- 7. Tập đoàn -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${corpBadgeClass}">
               ${item.corp}
             </span>
           </td>
 
-          <!-- 7. Khu du lịch -->
+          <!-- 8. Khu du lịch -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="text-xs font-semibold text-slate-800">${item.site}</span>
           </td>
 
-          <!-- 8. Đại lý -->
+          <!-- 9. Đại lý -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <div class="max-w-[200px] truncate" title="${item.agency}">
               <span class="font-bold text-xs text-slate-800 block truncate">${item.agency}</span>
@@ -825,25 +964,28 @@
             </div>
           </td>
 
-          <!-- 9. Người gửi yêu cầu -->
+          <!-- 10. Người gửi yêu cầu (Kèm badge vai trò nhận biết) -->
           <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="text-xs font-semibold text-slate-800 block">${item.requesterName}</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-xs font-semibold text-slate-800">${item.requesterName}</span>
+              ${creatorBadge}
+            </div>
             <span class="text-[10.5px] text-slate-400 font-mono">${item.requesterPhone || ''}</span>
           </td>
 
-          <!-- 10. Email -->
+          <!-- 11. Email -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="font-mono text-xs text-slate-600">${item.requesterEmail}</span>
           </td>
 
-          <!-- 11. Mã số thuế -->
+          <!-- 12. Mã số thuế -->
           <td class="px-3.5 py-3 whitespace-nowrap">
             <span class="font-mono text-xs text-slate-700 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/70">
               ${item.taxId || '-'}
             </span>
           </td>
 
-          <!-- 12. Thao tác: NÚT ICON CON MẮT VIỀN XANH ĐƠN GIẢN -->
+          <!-- 13. Thao tác: NÚT ICON CON MẮT VIỀN XANH ĐƠN GIẢN -->
           <td class="px-3.5 py-3 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-slate-50/90 shadow-[-4px_0_12px_rgba(0,0,0,0.03)]">
             <button
               type="button"
@@ -918,12 +1060,13 @@
     }
   }
 
-  // 9. CHUYỂN TAB TRẠNG THÁI
+  // 9. CHUYỂN TAB TRẠNG THÁI (CHUẨN HÓA 3 TAB)
   function switchRefundTab(tabKey) {
+    if (tabKey === 'CHO_XU_LY') tabKey = 'DOI_TIEP_NHAN';
     activeTab = tabKey;
     refundCurrentPage = 1;
 
-    const tabs = ['CHO_XU_LY', 'DANG_XU_LY', 'DANG_HOAN_TIEN', 'DA_XU_LY'];
+    const tabs = ['DOI_TIEP_NHAN', 'DANG_XU_LY', 'DA_XU_LY'];
     tabs.forEach(key => {
       const btn = document.getElementById(`tabBtn_${key}`);
       if (btn) {
@@ -934,6 +1077,18 @@
         }
       }
     });
+
+    // Hiển thị dropdown bộ lọc kết quả khi đứng tại Tab Đã xử lý
+    const statusFilterWrapper = document.getElementById('refundProcessedStatusFilterWrapper');
+    if (statusFilterWrapper) {
+      if (tabKey === 'DA_XU_LY') {
+        statusFilterWrapper.classList.remove('hidden');
+        statusFilterWrapper.classList.add('flex');
+      } else {
+        statusFilterWrapper.classList.add('hidden');
+        statusFilterWrapper.classList.remove('flex');
+      }
+    }
 
     renderRefundTable();
   }
@@ -996,18 +1151,90 @@
     if (dtCreatedDate) dtCreatedDate.textContent = item.createdDate || '--';
 
     if (dtStatusBadge) {
-      if (item.status === 'CHO_XU_LY') {
+      if (item.status === 'DOI_TIEP_NHAN' || item.status === 'CHO_XU_LY') {
         dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
-        dtStatusBadge.textContent = 'Chờ xử lý';
+        dtStatusBadge.textContent = 'Đợi tiếp nhận';
       } else if (item.status === 'DANG_XU_LY') {
         dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
         dtStatusBadge.textContent = 'Đang xử lý';
-      } else if (item.status === 'DANG_HOAN_TIEN') {
-        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200';
-        dtStatusBadge.textContent = 'Đang hoàn tiền';
+      } else if (item.status === 'DA_XU_LY') {
+        if (item.subStatus === 'TU_CHOI') {
+          dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200';
+          dtStatusBadge.textContent = 'Từ chối';
+        } else {
+          dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200';
+          dtStatusBadge.textContent = 'Thành công';
+        }
       } else {
-        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-        dtStatusBadge.textContent = 'Đã xử lý';
+        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200';
+        dtStatusBadge.textContent = 'Thành công';
+      }
+    }
+
+    // 1.1 KHỐI LÝ DO TỪ CHỐI (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ TRẠNG THÁI TỪ CHỐI)
+    const rejectBlock = document.getElementById('dtRejectNoticeBlock');
+    if (rejectBlock) {
+      if (item.status === 'DA_XU_LY' && item.subStatus === 'TU_CHOI') {
+        rejectBlock.classList.remove('hidden');
+
+        const auditInfo = document.getElementById('dtRejectAuditInfo');
+        if (auditInfo) {
+          auditInfo.innerHTML = `Từ chối bởi: <strong>${item.assignedTo || 'Chuyên viên CSKH / Thẩm định'}</strong> • Lúc: <span class="font-mono">${item.processedDate || '--'}</span>`;
+        }
+
+        const reasonContent = document.getElementById('dtRejectReasonContent');
+        if (reasonContent) {
+          const mainReason = item.rejectReason || 'Vé không đủ điều kiện hoàn hủy theo quy chế của Tập đoàn cung cấp dịch vụ.';
+          const detailHtml = item.rejectDetails ? `<div class="mt-2 pt-2 border-t border-rose-100 text-slate-700 font-normal leading-relaxed text-xs"><strong class="font-bold text-rose-700">Chi tiết giải trình:</strong> ${item.rejectDetails}</div>` : '';
+          reasonContent.innerHTML = `
+            <div class="font-bold text-rose-900 text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+              <span>${mainReason}</span>
+            </div>
+            ${detailHtml}
+          `;
+        }
+
+        const filesWrapper = document.getElementById('dtRejectFilesWrapper');
+        const filesList = document.getElementById('dtRejectFilesList');
+        const rejectDocs = item.rejectDocuments || [];
+        if (filesWrapper && filesList) {
+          if (rejectDocs.length > 0) {
+            filesWrapper.classList.remove('hidden');
+            filesList.innerHTML = rejectDocs.map(docName => `
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-rose-200 text-xs hover:bg-rose-50/50 transition-colors shadow-2xs">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-file-pdf text-[11px]"></i>
+                  </div>
+                  <span class="font-bold text-slate-800 truncate text-[11px]">${docName}</span>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onclick="previewDetailDocument('${docName}')"
+                    class="px-2 py-0.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[10.5px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <i class="fa-regular fa-eye text-[9px]"></i>
+                    <span>Xem</span>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="downloadDetailDocument('${docName}')"
+                    class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-[10.5px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <i class="fa-solid fa-download text-[9px]"></i>
+                    <span>Tải về</span>
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            filesWrapper.classList.add('hidden');
+          }
+        }
+      } else {
+        rejectBlock.classList.add('hidden');
       }
     }
 
@@ -1209,7 +1436,8 @@
     if (!tbody) return;
 
     const tickets = item.tickets || [];
-    const isEditable = (item.status === 'CHO_XU_LY' || item.status === 'DANG_XU_LY');
+    // Phân quyền: Chỉ cho phép nhập số tiền hoàn khi là đơn từ đối tác gửi lên và chưa đóng hồ sơ
+    const isEditable = (!item.isMyCreated && (item.status === 'DOI_TIEP_NHAN' || item.status === 'CHO_XU_LY' || item.status === 'DANG_XU_LY'));
 
     // Đồng bộ số liệu
     syncDetailTotalsAndCards(item);
@@ -1357,87 +1585,113 @@
     }
   }
 
-  // 11. RENDER CHÂN TRANG THEO QUY TẮC CỦA TỪNG TAB
+  // 11. RENDER CHÂN TRANG THEO QUY TẮC CỦA TỪNG TAB & VAI TRÒ 2 LUỒNG
   function renderDetailActionButtons(item) {
     const footerContainer = document.getElementById('dtActionButtonsContainer');
     if (!footerContainer) return;
 
     let html = '';
 
-    if (item.status === 'CHO_XU_LY') {
-      // TAB 1: CHỜ XỬ LÝ - Nút Từ chối & Nhận yêu cầu
-      html = `
-        <div class="flex items-center justify-between w-full flex-wrap gap-3">
-          <div>
-            ${item.isMyCreated ? `
-              <button type="button" onclick="actionRevokeRequest('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
+    if (item.status === 'DOI_TIEP_NHAN' || item.status === 'CHO_XU_LY') {
+      // TAB 1: ĐỢI TIẾP NHẬN
+      if (item.isMyCreated) {
+        // Luồng 2: Đơn do chính mình tạo gửi lên cấp trên
+        html = `
+          <div class="flex items-center justify-between w-full flex-wrap gap-3">
+            <div class="flex items-center gap-2 text-xs font-semibold text-amber-800 bg-amber-50 px-3.5 py-2 rounded-xl border border-amber-200">
+              <i class="fa-solid fa-clock-rotate-left text-amber-600"></i>
+              <span>Đơn do bạn tạo — Đang chờ cấp trên tiếp nhận & xác nhận</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="actionRevokeRequest('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs">
                 <i class="fa-solid fa-rotate-left"></i>
                 <span>Thu hồi yêu cầu</span>
               </button>
-            ` : `
-              <span class="text-xs text-slate-400 italic">Đang chờ chuyên viên CSKH / Kế toán tiếp nhận thẩm tra</span>
-            `}
+              <button type="button" onclick="closeRefundDetail()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer">
+                <span>Đóng</span>
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2.5">
-            <button type="button" onclick="openRejectRefundModal('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs">
-              <i class="fa-solid fa-xmark"></i>
-              <span>Từ chối</span>
-            </button>
-            <button type="button" onclick="openApproveRefundModal('${item.requestCode}', 'ACCEPT')" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
-              <i class="fa-solid fa-hand-holding-hand"></i>
-              <span>Nhận yêu cầu</span>
-            </button>
+        `;
+      } else {
+        // Luồng 1: Đơn từ người gửi tạo gửi lên cho mình tiếp nhận
+        html = `
+          <div class="flex items-center justify-between w-full flex-wrap gap-3">
+            <div class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+              <i class="fa-solid fa-user-check text-blue-500"></i>
+              <span>Yêu cầu từ đối tác cần bạn kiểm tra hồ sơ và tiếp nhận xử lý.</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <button type="button" onclick="openRejectRefundModal('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs">
+                <i class="fa-solid fa-xmark"></i>
+                <span>Từ chối</span>
+              </button>
+              <button type="button" onclick="openApproveRefundModal('${item.requestCode}', 'ACCEPT')" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+                <i class="fa-solid fa-hand-holding-hand"></i>
+                <span>Nhận yêu cầu</span>
+              </button>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     } else if (item.status === 'DANG_XU_LY') {
-      // TAB 2: ĐANG XỬ LÝ - Áp dụng phí, đính kèm, Từ chối, Duyệt hoàn vé
-      html = `
-        <div class="flex items-center justify-between w-full flex-wrap gap-3">
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="actionBatchCharge('${item.requestCode}')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer">
-              <i class="fa-solid fa-sliders text-slate-500"></i>
-              <span>Phí Charge hàng loạt</span>
-            </button>
-            <button type="button" onclick="actionAttachDocument('${item.requestCode}')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer">
-              <i class="fa-solid fa-paperclip text-slate-500"></i>
-              <span>Đính kèm tài liệu</span>
-            </button>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <button type="button" onclick="openRejectRefundModal('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs">
-              <i class="fa-solid fa-xmark"></i>
-              <span>Từ chối</span>
-            </button>
-            <button type="button" onclick="openApproveRefundModal('${item.requestCode}', 'APPROVE')" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
-              <i class="fa-solid fa-check"></i>
-              <span>Duyệt hoàn vé</span>
+      // TAB 2: ĐANG XỬ LÝ
+      if (item.isMyCreated) {
+        // Luồng 2: Cấp trên đang xử lý đơn của mình
+        html = `
+          <div class="flex items-center justify-between w-full flex-wrap gap-3">
+            <div class="flex items-center gap-2 text-xs font-semibold text-blue-800 bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-200">
+              <i class="fa-solid fa-spinner animate-spin text-blue-600"></i>
+              <span>Đơn do bạn tạo — Cấp trên đã tiếp nhận, đang thẩm định đối soát và nhập số tiền hoàn</span>
+            </div>
+            <button type="button" onclick="closeRefundDetail()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer">
+              <span>Đóng</span>
             </button>
           </div>
-        </div>
-      `;
-    } else if (item.status === 'DANG_HOAN_TIEN') {
-      // TAB 3: ĐANG HOÀN TIỀN
-      html = `
-        <div class="flex items-center justify-between w-full flex-wrap gap-3">
-          <div class="flex items-center gap-2 text-xs text-purple-700 font-bold bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
-            <i class="fa-solid fa-spinner animate-spin"></i>
-            <span>Đã duyệt hạn mức hoàn: ${(item.totalRefundAmount || 0).toLocaleString('vi-VN')} đ - Chờ giải ngân</span>
+        `;
+      } else {
+        // Luồng 1: Mình đang xử lý đơn của đối tác -> Vào chi tiết để nhập số tiền hoàn và duyệt thẳng sang Đã xử lý [Thành công] hoặc Từ chối
+        html = `
+          <div class="flex items-center justify-between w-full flex-wrap gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <button type="button" onclick="actionBatchCharge('${item.requestCode}')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer">
+                <i class="fa-solid fa-sliders text-slate-500"></i>
+                <span>Phí Charge hàng loạt</span>
+              </button>
+              <button type="button" onclick="actionAttachDocument('${item.requestCode}')" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer">
+                <i class="fa-solid fa-paperclip text-slate-500"></i>
+                <span>Đính kèm tài liệu</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <button type="button" onclick="openRejectRefundModal('${item.requestCode}')" class="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs">
+                <i class="fa-solid fa-xmark"></i>
+                <span>Từ chối</span>
+              </button>
+              <button type="button" onclick="openApproveRefundModal('${item.requestCode}', 'APPROVE')" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+                <i class="fa-solid fa-check"></i>
+                <span>Duyệt hoàn vé</span>
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2.5">
-            <button type="button" onclick="actionConfirmDisbursement('${item.requestCode}')" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
-              <i class="fa-solid fa-wallet"></i>
-              <span>Xác nhận hoàn tiền (Ví / TK Ngân hàng)</span>
-            </button>
-          </div>
-        </div>
-      `;
+        `;
+      }
     } else {
-      // TAB 4: ĐÃ XỬ LÝ (Read-only)
+      // TAB 3: ĐÃ XỬ LÝ (Read-only)
+      const isRejected = (item.subStatus === 'TU_CHOI');
       html = `
         <div class="flex items-center justify-between w-full flex-wrap gap-3">
-          <div class="text-xs text-slate-500 font-medium">
-            <i class="fa-solid fa-lock mr-1 text-slate-400"></i> Hồ sơ hoàn hủy đã đóng và lưu vết kiểm toán hệ thống.
+          <div class="text-xs text-slate-600 font-medium flex items-center gap-2">
+            ${isRejected ? `
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
+                <i class="fa-solid fa-circle-xmark"></i> Yêu cầu bị từ chối
+              </span>
+            ` : `
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <i class="fa-solid fa-circle-check"></i> Hoàn vé thành công
+              </span>
+            `}
+            <span>Hồ sơ hoàn hủy đã hoàn tất lưu vết trên hệ thống.</span>
           </div>
           <div class="flex items-center gap-2">
             <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer">
@@ -1528,23 +1782,36 @@
       return;
     }
 
-    let finalReason = reasonSelect.value;
+    const REJECT_REASON_LABELS = {
+      'QUAS_HAN_HOAN_HUY': 'Vé quá hạn hoàn/hủy theo quy định của Tập đoàn',
+      'DIEU_KIEN_VE_KHONG_CHO_PHEP': 'Loại vé không áp dụng chính sách hoàn hủy (Non-refundable)',
+      'THIEU_HO_SO_DOI_SOAT': 'Thiếu hồ sơ chứng từ đối soát hợp lệ (giấy hoãn/hủy chuyến, bệnh án...)',
+      'VE_DA_SU_DUNG': 'Vé đã quét qua cổng kiểm soát, không đủ điều kiện hoàn vé',
+      'OTHER': 'Lý do khác'
+    };
+
+    let finalReasonTitle = REJECT_REASON_LABELS[reasonSelect.value] || reasonSelect.value;
+    let detailText = '';
     if (reasonSelect.value === 'OTHER') {
-      const detailText = (otherDetail?.value || '').trim();
+      detailText = (otherDetail?.value || '').trim();
       if (!detailText) {
         if (otherErr) otherErr.classList.remove('hidden');
         if (otherDetail) otherDetail.focus();
         return;
       }
-      finalReason = detailText;
+      finalReasonTitle = 'Lý do khác: ' + detailText;
     }
 
     item.status = 'DA_XU_LY';
     item.subStatus = 'TU_CHOI';
-    item.rejectReason = finalReason;
+    item.rejectReason = finalReasonTitle;
+    item.rejectDetails = detailText;
+    item.assignedTo = 'Chuyên viên CSKH / Booking';
     item.processedDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
     if (currentRejectUploadedFileName) {
+      if (!item.rejectDocuments) item.rejectDocuments = [];
+      item.rejectDocuments.push(currentRejectUploadedFileName);
       if (!item.documents) item.documents = [];
       item.documents.push(currentRejectUploadedFileName);
     }
@@ -1552,7 +1819,7 @@
     closeRejectRefundModal();
 
     if (typeof showToast === 'function') {
-      showToast('Đã từ chối yêu cầu', `Đã từ chối yêu cầu ${currentRejectRequestCode} và chuyển sang Tab Đã xử lý.`);
+      showToast('Đã từ chối yêu cầu', `Đã từ chối yêu cầu ${currentRejectRequestCode} và chuyển sang Tab Đã xử lý [Từ chối].`);
     }
 
     // Cập nhật lại view
@@ -1607,8 +1874,8 @@
       if (btnText) btnText.textContent = 'Xác nhận tiếp nhận';
     } else {
       if (titleEl) titleEl.textContent = 'Xác nhận duyệt đề xuất hoàn vé';
-      if (msgEl) msgEl.textContent = `Xác nhận phê duyệt hoàn vé với số tiền hoàn cuối ${(item.totalRefundAmount || 0).toLocaleString('vi-VN')} đ và chuyển sang bước giải ngân hoàn tiền.`;
-      if (btnText) btnText.textContent = 'Xác nhận duyệt hoàn';
+      if (msgEl) msgEl.textContent = `Xác nhận phê duyệt hoàn vé với số tiền hoàn cuối ${(item.totalRefundAmount || 0).toLocaleString('vi-VN')} đ. Yêu cầu chuyển thẳng sang Tab Đã xử lý (Thành công).`;
+      if (btnText) btnText.textContent = 'Xác nhận & Duyệt hoàn';
     }
 
     if (modal) modal.classList.remove('hidden');
@@ -1634,11 +1901,13 @@
         showToast('Đã tiếp nhận yêu cầu', `Yêu cầu ${currentApproveRequestCode} đã được chuyển sang Tab Đang xử lý.`);
       }
     } else {
-      item.status = 'DANG_HOAN_TIEN';
-      item.subStatus = 'CHO_GIAI_NGAN';
+      // Chuyển thẳng sang Đã xử lý [Thành công] mà không qua bước trung gian
+      item.status = 'DA_XU_LY';
+      item.subStatus = 'THANH_CONG';
+      item.processedDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
       if (typeof showToast === 'function') {
-        showToast('Duyệt hoàn vé thành công', `Yêu cầu ${currentApproveRequestCode} đã chuyển sang Tab Đang hoàn tiền.`);
+        showToast('Duyệt hoàn vé thành công', `Yêu cầu ${currentApproveRequestCode} đã hoàn tất và chuyển thẳng sang Tab Đã xử lý [Thành công].`);
       }
     }
 
@@ -2750,11 +3019,11 @@
       requesterEmail: sEmail,
       requesterPhone: order.customerPhone || '0903123456',
       taxId: sTax,
-      status: 'CHO_XU_LY', // Luôn ghi nhận vào Tab Chờ xử lý
+      status: 'DOI_TIEP_NHAN', // Ghi nhận vào Tab Đợi tiếp nhận
       subStatus: 'DA_GUI_YEU_CAU',
       createdDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
       assignedTo: null,
-      isMyCreated: true, // Phiếu do chính mình tạo (có quyền thu hồi)
+      isMyCreated: true, // Phiếu do chính mình tạo (có quyền thu hồi khi chưa tiếp nhận)
       totalOriginalAmount: totalOriginal,
       chargeRate: policy.rate,
       chargeAmount: totalCharge,
@@ -2769,21 +3038,21 @@
 
     refundDataset.unshift(newRecord);
 
-    // Đóng Nextpage và chuyển về Danh sách Tab Chờ xử lý
+    // Đóng Nextpage và chuyển về Danh sách Tab Đợi tiếp nhận
     const createView = document.getElementById('viewCreateRefundRequest');
     const listView = document.getElementById('viewRefundRequestsList');
     if (createView) createView.classList.add('hidden');
     if (listView) listView.classList.remove('hidden');
 
-    // Chuyển sang Tab Chờ xử lý
-    switchRefundTab('CHO_XU_LY');
+    // Chuyển sang Tab Đợi tiếp nhận
+    switchRefundTab('DOI_TIEP_NHAN');
 
     // Hiển thị Toast thông báo
     if (typeof showToast === 'function') {
-      showToast('Tạo yêu cầu thành công', `Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và chuyển vào Tab Chờ xử lý.`);
+      showToast('Tạo yêu cầu thành công', `Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và chuyển vào Tab Đợi tiếp nhận.`);
     } else {
       alert(`Tạo yêu cầu thành công!
-Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và ghi nhận vào Tab Chờ xử lý.`);
+Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và ghi nhận vào Tab Đợi tiếp nhận.`);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3021,6 +3290,7 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
   window.confirmSubmitRejectRefund = confirmSubmitRejectRefund;
   window.openApproveRefundModal = openApproveRefundModal;
   window.closeApproveRefundModal = closeApproveRefundModal;
+  window.onProcessedStatusFilterChange = onProcessedStatusFilterChange;
   window.confirmSubmitApproveRefund = confirmSubmitApproveRefund;
 
   if (document.readyState === 'loading') {
