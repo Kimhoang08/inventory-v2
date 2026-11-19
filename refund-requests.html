@@ -450,7 +450,7 @@
             </div>
             <div>
               <span class="text-slate-400 block text-[11px] mb-0.5">Đại lý</span>
-              <span id="dtInfoAgencyName" class="font-bold text-slate-800 text-xs block truncate" title="">--</span>
+              <span id="dtInfoAgencyName" class="font-bold text-slate-800 text-xs block break-words whitespace-normal" title="">--</span>
               <span id="dtInfoAgencyCode" class="font-mono text-[10.5px] text-slate-400 block">--</span>
             </div>
 
@@ -655,25 +655,11 @@
         
         <!-- Header Nextpage & Stepper Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs">
-          <div class="flex items-center gap-3.5">
-            <button
-              type="button"
-              onclick="closeCreateRefundNextPage()"
-              class="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-rose-500 hover:bg-rose-50 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs group shrink-0"
-              title="Quay lại danh sách yêu cầu"
-            >
-              <i class="fa-solid fa-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
-            </button>
-            <div>
-              <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                <span class="hover:text-slate-600 cursor-pointer" onclick="closeCreateRefundNextPage()">Danh sách hoàn/hủy</span>
-                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                <span class="text-rose-600 font-bold">Tạo yêu cầu hoàn vé</span>
-              </div>
-              <h2 class="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                Tạo Yêu Cầu Hoàn/Hủy Vé
-              </h2>
-            </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+              Tạo Yêu Cầu Hoàn/Hủy Vé
+            </h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Khởi tạo hồ sơ xin hoàn/hủy vé và lập biên bản đối soát điện tử</p>
           </div>
 
           <!-- Stepper Indicator -->
@@ -741,13 +727,12 @@
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">
                   Tên đại lý
                 </label>
-                <input
-                  type="text"
+                <textarea
                   id="senderAgencyName"
                   readonly
-                  value="Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)"
-                  class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none"
-                />
+                  rows="2"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none resize-none leading-relaxed whitespace-normal break-words"
+                >Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)</textarea>
               </div>
             </div>
 
@@ -783,14 +768,13 @@
                 <label class="block text-[11px] font-bold text-slate-600 mb-1">
                   Địa chỉ đại lý <span class="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <textarea
                   id="senderAddress"
-                  value="Tầng 6, Tòa nhà Bitexco, 02 Hải Triều, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+                  rows="2"
                   oninput="onSenderInfoChange()"
-                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-rose-500 transition-colors"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-rose-500 transition-colors resize-none leading-relaxed whitespace-normal break-words"
                   placeholder="Nhập địa chỉ trụ sở đại lý..."
-                />
+                >Tầng 6, Tòa nhà Bitexco, 02 Hải Triều, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh</textarea>
               </div>
             </div>
           </div>
@@ -1145,10 +1129,10 @@
                 <!-- Bên A -->
                 <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5">
                   <p class="font-bold uppercase text-[11px] text-blue-700">BÊN YÊU CẦU HOÀN VÉ (ĐẠI LÝ B2B):</p>
-                  <p>• <strong>Đại lý:</strong> <span id="pdfAgencyName">Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt</span></p>
+                  <p>• <strong>Đại lý:</strong> <span id="pdfAgencyName" class="font-bold break-words whitespace-normal">Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt</span></p>
                   <p>• <strong>Mã đại lý:</strong> <span id="pdfAgencyCode" class="font-mono font-bold">DL-2410-090</span></p>
                   <p>• <strong>Mã số thuế:</strong> <span id="pdfTaxId" class="font-mono">0318999888</span></p>
-                  <p>• <strong>Địa chỉ:</strong> <span id="pdfAddress">Tầng 6, Bitexco, Q.1, TP.HCM</span></p>
+                  <p>• <strong>Địa chỉ:</strong> <span id="pdfAddress" class="break-words whitespace-normal">Tầng 6, Bitexco, Q.1, TP.HCM</span></p>
                   <p>• <strong>Người đại diện:</strong> <span id="pdfRequesterName">Trần Hoàng Nam</span></p>
                 </div>
 
