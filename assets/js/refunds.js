@@ -180,16 +180,16 @@
       isMyCreated: true, // Đơn do chính mình tạo gửi lên cấp trên (Chờ cấp trên tiếp nhận)
       totalOriginalAmount: 3800000,
       chargeRate: 10,
-      chargeAmount: 380000,
-      groupRefundAmount: 3420000,
-      totalRefundAmount: 3420000,
+      chargeAmount: null,
+      groupRefundAmount: null,
+      totalRefundAmount: null,
       reason: 'Khách bị delay chuyến bay từ Hà Nội vào Đà Nẵng, có giấy xác nhận của Vietnam Airlines.',
       documents: ['Giay-xac-nhan-delay-VN128.pdf', 'Yeu-cau-hoan-ve-vietravel.jpg'],
       tickets: [
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880192', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880193', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880194', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 },
-        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880195', price: 950000, refundFromGroup: 855000, groupPenalty: 95000, finalRefund: 855000 }
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880192', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880193', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880194', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-880195', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null }
       ]
     },
     {
@@ -213,14 +213,14 @@
       isMyCreated: false, // Đơn do Đại lý gửi lên cho mình xử lý
       totalOriginalAmount: 2500000,
       chargeRate: 15,
-      chargeAmount: 375000,
-      groupRefundAmount: 2125000,
-      totalRefundAmount: 2125000,
+      chargeAmount: null,
+      groupRefundAmount: null,
+      totalRefundAmount: null,
       reason: 'Khách hàng có người nhà ốm đột xuất phải hủy lịch trình Phú Quốc.',
       documents: ['Giay-xac-nhan-y-te.pdf'],
       tickets: [
-        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110291', price: 1250000, refundFromGroup: 1062500, groupPenalty: 187500, finalRefund: 1062500 },
-        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110292', price: 1250000, refundFromGroup: 1062500, groupPenalty: 187500, finalRefund: 1062500 }
+        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110291', price: 1250000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cổng + Safari (Người lớn)', qrCode: 'QR-PQ-110292', price: 1250000, refundFromGroup: null, groupPenalty: null, finalRefund: null }
       ]
     },
     {
@@ -244,18 +244,18 @@
       isMyCreated: false, // Đơn do Đại lý gửi lên cho mình xử lý
       totalOriginalAmount: 5100000,
       chargeRate: 10,
-      chargeAmount: 510000,
-      groupRefundAmount: 4590000,
-      totalRefundAmount: 4590000,
+      chargeAmount: null,
+      groupRefundAmount: null,
+      totalRefundAmount: null,
       reason: 'Đoàn tour 6 khách chuyển hướng sang tour Mộc Châu, xin hủy hoàn vé Fansipan.',
       documents: ['Bien-ban-chuyen-tour.pdf'],
       tickets: [
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44011', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44012', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44013', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44014', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44015', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 },
-        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44016', price: 850000, refundFromGroup: 765000, groupPenalty: 85000, finalRefund: 765000 }
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44011', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44012', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44013', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44014', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44015', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp Treo Khứ Hồi Fansipan', qrCode: 'QR-FS-44016', price: 850000, refundFromGroup: null, groupPenalty: null, finalRefund: null }
       ]
     },
 
@@ -284,15 +284,15 @@
       isMyCreated: false, // Đơn đại lý gửi lên, mình đã tiếp nhận, đang nhập tiền hoàn & đối soát
       totalOriginalAmount: 2160000,
       chargeRate: 15,
-      chargeAmount: 324000,
-      groupRefundAmount: 1836000,
-      totalRefundAmount: 1836000,
+      chargeAmount: null,
+      groupRefundAmount: null,
+      totalRefundAmount: null,
       reason: 'Thời tiết Quảng Ninh mưa to gió lớn cấp 6, cáp treo Nữ Hoàng tạm dừng vận hành.',
       documents: ['Thong-bao-dung-van-hanh-ha-long.png'],
       tickets: [
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99201', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 },
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99202', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 },
-        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99203', price: 720000, refundFromGroup: 612000, groupPenalty: 108000, finalRefund: 612000 }
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99201', price: 720000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99202', price: 720000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Combo Dragon Park & Cáp Treo', qrCode: 'QR-HL-99203', price: 720000, refundFromGroup: null, groupPenalty: null, finalRefund: null }
       ]
     },
     {
@@ -530,12 +530,44 @@
       tickets: [
         { type: 'Vé Cáp Treo & Buffet (Người lớn)', qrCode: 'QR-BN-9081', price: 950000, refundFromGroup: 0, groupPenalty: 950000, finalRefund: 0 }
       ]
+    },
+    {
+      requestCode: 'RQRF2611130012',
+      refundOrderCode: 'RFD-2611-012',
+      originalOrderCode: 'ORD-2611-020',
+      serviceDate: '2026-11-13',
+      ticketCount: 2,
+      corp: 'Sun World',
+      site: 'Sun World Ba Na Hills',
+      agency: 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)',
+      agencyCode: 'DL-8899',
+      requesterName: 'Nguyễn Văn An',
+      requesterEmail: 'an.nguyen@vietravel.com',
+      requesterPhone: '0903123456',
+      taxId: '0312456789',
+      status: 'DA_XU_LY',
+      subStatus: 'THU_HOI', // Đơn do Tôi tạo đã chủ động thu hồi
+      createdDate: '2026-11-13 14:00',
+      processedDate: '2026-11-13 16:30',
+      assignedTo: 'Tôi (Người tạo yêu cầu)',
+      isMyCreated: true,
+      totalOriginalAmount: 1900000,
+      chargeRate: 0,
+      chargeAmount: 0,
+      groupRefundAmount: 0,
+      totalRefundAmount: 0,
+      reason: 'Khách hàng báo lại đã thu xếp được công việc, tiếp tục đi tour theo lịch trình cũ nên xin rút lại yêu cầu hoàn hủy.',
+      documents: ['Don-xin-rut-yeu-cau.pdf'],
+      tickets: [
+        { type: 'Vé Cáp treo Ba Na Hills khứ hồi', qrCode: 'QR-BN-9911', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null },
+        { type: 'Vé Cáp treo Ba Na Hills khứ hồi', qrCode: 'QR-BN-9912', price: 950000, refundFromGroup: null, groupPenalty: null, finalRefund: null }
+      ]
     }
   ];
 
   // 4. QUẢN LÝ TRẠNG THÁI HIỆN TẠI CỦA VIEW
   let activeTab = 'DOI_TIEP_NHAN'; // 3 Tab chuẩn: DOI_TIEP_NHAN, DANG_XU_LY, DA_XU_LY
-  let filterProcessedSubStatus = 'ALL'; // Dropdown lọc tại Tab Đã xử lý: ALL, THANH_CONG, TU_CHOI
+  let filterProcessedSubStatus = 'ALL'; // Dropdown lọc tại Tab Đã xử lý: ALL, THANH_CONG, TU_CHOI, THU_HOI
   let filterAgency = 'ALL';
   let filterCorp = 'ALL';
   let filterSite = 'ALL';
@@ -786,11 +818,13 @@
         if (item.status !== 'DANG_XU_LY') return false;
       } else if (activeTab === 'DA_XU_LY') {
         if (item.status !== 'DA_XU_LY' && item.status !== 'DANG_HOAN_TIEN') return false;
-        // Lọc trạng thái con (Thành công / Từ chối) khi ở Tab Đã xử lý
+        // Lọc trạng thái con (Thành công / Từ chối / Thu hồi) khi ở Tab Đã xử lý
         if (filterProcessedSubStatus === 'TU_CHOI') {
           if (item.subStatus !== 'TU_CHOI') return false;
+        } else if (filterProcessedSubStatus === 'THU_HOI') {
+          if (item.subStatus !== 'THU_HOI') return false;
         } else if (filterProcessedSubStatus === 'THANH_CONG') {
-          if (item.subStatus === 'TU_CHOI') return false;
+          if (item.subStatus !== 'THANH_CONG' && item.subStatus !== 'HOAN_TAT') return false;
         }
       } else {
         if (item.status !== activeTab) return false;
@@ -890,21 +924,36 @@
         <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 shrink-0" title="Đơn do Đại lý/Người gửi gửi lên">Đại lý</span>
       `;
 
-      // Cột Trạng thái tại Tab Đã xử lý (Thành công / Từ chối)
+      // Cột Trạng thái tại Tab Đã xử lý (Thành công / Từ chối / Thu hồi)
       const isRejected = (item.subStatus === 'TU_CHOI');
+      const isRevoked = (item.subStatus === 'THU_HOI');
+      let statusBadgeHtml = '';
+      if (isRejected) {
+        statusBadgeHtml = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
+            <i class="fa-solid fa-circle-xmark text-[10px]"></i>
+            <span>Từ chối</span>
+          </span>
+        `;
+      } else if (isRevoked) {
+        statusBadgeHtml = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs">
+            <i class="fa-solid fa-rotate-left text-[10px]"></i>
+            <span>Thu hồi</span>
+          </span>
+        `;
+      } else {
+        statusBadgeHtml = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+            <i class="fa-solid fa-circle-check text-[10px]"></i>
+            <span>Thành công</span>
+          </span>
+        `;
+      }
+
       const statusColHtml = (activeTab === 'DA_XU_LY') ? `
         <td class="px-3.5 py-3 whitespace-nowrap">
-          ${isRejected ? `
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
-              <i class="fa-solid fa-circle-xmark text-[10px]"></i>
-              <span>Từ chối</span>
-            </span>
-          ` : `
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-              <i class="fa-solid fa-circle-check text-[10px]"></i>
-              <span>Thành công</span>
-            </span>
-          `}
+          ${statusBadgeHtml}
         </td>
       ` : '';
 
@@ -1161,6 +1210,9 @@
         if (item.subStatus === 'TU_CHOI') {
           dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200';
           dtStatusBadge.textContent = 'Từ chối';
+        } else if (item.subStatus === 'THU_HOI') {
+          dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200';
+          dtStatusBadge.textContent = 'Thu hồi';
         } else {
           dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200';
           dtStatusBadge.textContent = 'Thành công';
@@ -1171,7 +1223,21 @@
       }
     }
 
-    // 1.1 KHỐI LÝ DO TỪ CHỐI (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ TRẠNG THÁI TỪ CHỐI)
+    // 1.1 KHỐI THÔNG BÁO ĐÃ THU HỒI YÊU CẦU (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ TRẠNG THÁI THU HỒI)
+    const revokeBlock = document.getElementById('dtRevokeNoticeBlock');
+    if (revokeBlock) {
+      if (item.status === 'DA_XU_LY' && item.subStatus === 'THU_HOI') {
+        revokeBlock.classList.remove('hidden');
+        const auditInfo = document.getElementById('dtRevokeAuditInfo');
+        if (auditInfo) {
+          auditInfo.innerHTML = `Thu hồi bởi: <strong>${item.assignedTo || 'Tôi (Người tạo)'}</strong> • Lúc: <span class="font-mono">${item.processedDate || item.createdDate || '--'}</span>`;
+        }
+      } else {
+        revokeBlock.classList.add('hidden');
+      }
+    }
+
+    // 1.2 KHỐI LÝ DO TỪ CHỐI (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ TRẠNG THÁI TỪ CHỐI)
     const rejectBlock = document.getElementById('dtRejectNoticeBlock');
     if (rejectBlock) {
       if (item.status === 'DA_XU_LY' && item.subStatus === 'TU_CHOI') {
@@ -1358,25 +1424,36 @@
     let sumPenalty = 0;
     let sumGroupRefund = 0;
     let sumFinalRefund = 0;
+    let hasGroupVal = false;
+    let hasFinalVal = false;
 
     item.tickets.forEach(t => {
       const orig = t.price || 0;
-      const groupRef = (t.refundFromGroup !== undefined) ? t.refundFromGroup : (t.refund || Math.round(orig * 0.9));
-      const penalty = Math.max(0, orig - groupRef);
-      const finalRef = (t.finalRefund !== undefined) ? t.finalRefund : (t.refund || groupRef);
-
-      t.price = orig;
-      t.refundFromGroup = groupRef;
-      t.groupPenalty = penalty;
-      t.finalRefund = finalRef;
-
       sumOrig += orig;
-      sumPenalty += penalty;
-      sumGroupRefund += groupRef;
-      sumFinalRefund += finalRef;
+
+      if (t.refundFromGroup !== null && t.refundFromGroup !== undefined && t.refundFromGroup !== '') {
+        const grp = Math.max(0, parseFloat(t.refundFromGroup) || 0);
+        t.refundFromGroup = grp;
+        t.groupPenalty = Math.max(0, orig - grp);
+        sumGroupRefund += grp;
+        sumPenalty += t.groupPenalty;
+        hasGroupVal = true;
+      } else {
+        t.refundFromGroup = null;
+        t.groupPenalty = null;
+      }
+
+      if (t.finalRefund !== null && t.finalRefund !== undefined && t.finalRefund !== '') {
+        const fin = Math.max(0, parseFloat(t.finalRefund) || 0);
+        t.finalRefund = fin;
+        sumFinalRefund += fin;
+        hasFinalVal = true;
+      } else {
+        t.finalRefund = null;
+      }
     });
 
-    const profitAfterRefund = sumGroupRefund - sumFinalRefund;
+    const profitAfterRefund = (hasGroupVal && hasFinalVal) ? (sumGroupRefund - sumFinalRefund) : null;
 
     // Cập nhật footer bảng
     const dtTotalOrig = document.getElementById('dtTotalOriginal');
@@ -1386,17 +1463,22 @@
     const dtProfitEl = document.getElementById('dtTotalProfitAfterRefund');
 
     if (dtTotalOrig) dtTotalOrig.textContent = sumOrig.toLocaleString('vi-VN') + ' đ';
-    if (dtTotalPenalty) dtTotalPenalty.textContent = sumPenalty.toLocaleString('vi-VN') + ' đ';
-    if (dtTotalGroupRefund) dtTotalGroupRefund.textContent = sumGroupRefund.toLocaleString('vi-VN') + ' đ';
-    if (dtTotalFinalRefund) dtTotalFinalRefund.textContent = sumFinalRefund.toLocaleString('vi-VN') + ' đ';
+    if (dtTotalPenalty) dtTotalPenalty.textContent = hasGroupVal ? (sumPenalty.toLocaleString('vi-VN') + ' đ') : '--';
+    if (dtTotalGroupRefund) dtTotalGroupRefund.textContent = hasGroupVal ? (sumGroupRefund.toLocaleString('vi-VN') + ' đ') : '--';
+    if (dtTotalFinalRefund) dtTotalFinalRefund.textContent = hasFinalVal ? (sumFinalRefund.toLocaleString('vi-VN') + ' đ') : '--';
 
     if (dtProfitEl) {
-      const prefix = profitAfterRefund > 0 ? '+' : '';
-      dtProfitEl.textContent = `${prefix}${profitAfterRefund.toLocaleString('vi-VN')} đ`;
-      if (profitAfterRefund >= 0) {
-        dtProfitEl.className = 'font-mono font-black text-emerald-700 text-sm';
+      if (profitAfterRefund !== null) {
+        const prefix = profitAfterRefund > 0 ? '+' : '';
+        dtProfitEl.textContent = `${prefix}${profitAfterRefund.toLocaleString('vi-VN')} đ`;
+        if (profitAfterRefund >= 0) {
+          dtProfitEl.className = 'font-mono font-black text-emerald-700 text-sm';
+        } else {
+          dtProfitEl.className = 'font-mono font-black text-rose-600 text-sm';
+        }
       } else {
-        dtProfitEl.className = 'font-mono font-black text-rose-600 text-sm';
+        dtProfitEl.textContent = '--';
+        dtProfitEl.className = 'font-mono font-bold text-slate-400 text-sm';
       }
     }
 
@@ -1413,20 +1495,20 @@
     if (c1Val) c1Val.textContent = sumOrig.toLocaleString('vi-VN') + ' đ';
     if (c1Sub) c1Sub.textContent = `Tổng tiền khách thanh toán trong đơn gốc (${item.tickets.length} vé)`;
 
-    if (c2Val) c2Val.textContent = sumPenalty.toLocaleString('vi-VN') + ' đ';
+    if (c2Val) c2Val.textContent = hasGroupVal ? (sumPenalty.toLocaleString('vi-VN') + ' đ') : '--';
     if (c2Sub) c2Sub.textContent = `Giá KH thanh toán — Giá hoàn từ tập đoàn`;
 
-    if (c3Val) c3Val.textContent = sumGroupRefund.toLocaleString('vi-VN') + ' đ';
+    if (c3Val) c3Val.textContent = hasGroupVal ? (sumGroupRefund.toLocaleString('vi-VN') + ' đ') : '--';
     if (c3Sub) c3Sub.textContent = `Số tiền Tập đoàn duyệt hoàn lại`;
 
-    if (c4Val) c4Val.textContent = sumFinalRefund.toLocaleString('vi-VN') + ' đ';
+    if (c4Val) c4Val.textContent = hasFinalVal ? (sumFinalRefund.toLocaleString('vi-VN') + ' đ') : '--';
     if (c4Sub) c4Sub.textContent = `Số tiền hoàn chi trả thực tế cho Đại lý`;
 
     // Lưu lại vào item data
     item.totalOriginalAmount = sumOrig;
-    item.chargeAmount = sumPenalty;
-    item.groupRefundAmount = sumGroupRefund;
-    item.totalRefundAmount = sumFinalRefund;
+    item.chargeAmount = hasGroupVal ? sumPenalty : null;
+    item.groupRefundAmount = hasGroupVal ? sumGroupRefund : null;
+    item.totalRefundAmount = hasFinalVal ? sumFinalRefund : null;
     item.profitAfterRefund = profitAfterRefund;
   }
 
@@ -1436,26 +1518,50 @@
     if (!tbody) return;
 
     const tickets = item.tickets || [];
-    // Phân quyền: Chỉ cho phép nhập số tiền hoàn khi là đơn từ đối tác gửi lên và chưa đóng hồ sơ
+    // Phân quyền: Cho phép chỉnh sửa khi là đơn từ đối tác gửi lên và chưa đóng hồ sơ
     const isEditable = (!item.isMyCreated && (item.status === 'DOI_TIEP_NHAN' || item.status === 'CHO_XU_LY' || item.status === 'DANG_XU_LY'));
+
+    // Hiển thị / ẩn nút Charge hàng loạt trên header bảng vé
+    const batchTopBtn = document.getElementById('dtBatchChargeTopBtnWrapper');
+    if (batchTopBtn) {
+      if (isEditable) {
+        batchTopBtn.classList.remove('hidden');
+      } else {
+        batchTopBtn.classList.add('hidden');
+      }
+    }
+
+    // Reset checkbox chọn tất cả
+    const selectAllCb = document.getElementById('dtSelectAllTickets');
+    if (selectAllCb) {
+      selectAllCb.checked = false;
+      selectAllCb.indeterminate = false;
+      selectAllCb.disabled = !isEditable;
+    }
 
     // Đồng bộ số liệu
     syncDetailTotalsAndCards(item);
 
     tbody.innerHTML = tickets.map((t, idx) => {
       const origPrice = t.price || 0;
-      const groupRefund = (t.refundFromGroup !== undefined) ? t.refundFromGroup : (t.refund || Math.round(origPrice * 0.9));
-      const penalty = Math.max(0, origPrice - groupRefund);
-      const finalRefund = (t.finalRefund !== undefined) ? t.finalRefund : (t.refund || groupRefund);
-
-      t.price = origPrice;
-      t.refundFromGroup = groupRefund;
-      t.groupPenalty = penalty;
-      t.finalRefund = finalRefund;
+      const penaltyText = (t.groupPenalty !== null && t.groupPenalty !== undefined) ? (t.groupPenalty.toLocaleString('vi-VN') + ' đ') : '--';
+      const grpVal = (t.refundFromGroup !== null && t.refundFromGroup !== undefined) ? t.refundFromGroup : '';
+      const finVal = (t.finalRefund !== null && t.finalRefund !== undefined) ? t.finalRefund : '';
 
       return `
         <tr class="hover:bg-slate-50/80 transition-colors divide-x divide-slate-100">
-          <td class="p-3 text-center font-bold text-slate-500">${idx + 1}</td>
+          <td class="p-3 text-center font-bold text-slate-500">
+            <div class="flex items-center justify-center gap-1.5">
+              <input
+                type="checkbox"
+                class="dt-ticket-select-cb rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer w-3.5 h-3.5"
+                data-idx="${idx}"
+                onchange="onDetailTicketCheckboxChange()"
+                ${!isEditable ? 'disabled' : ''}
+              />
+              <span>${idx + 1}</span>
+            </div>
+          </td>
           <td class="p-3">
             <div class="font-bold text-slate-800 text-xs break-words">${t.type || t.name || 'Vé tham quan'}</div>
             <div class="font-mono text-[11px] text-slate-500 font-semibold flex items-center gap-1.5 mt-0.5">
@@ -1463,51 +1569,55 @@
               <span>${t.qrCode || t.serial || '--'}</span>
             </div>
           </td>
-          <td class="p-3 text-right font-mono font-bold text-slate-800 text-xs">
+          <td class="p-3 text-right font-mono font-bold text-slate-800 text-xs whitespace-nowrap">
             ${origPrice.toLocaleString('vi-VN')} đ
           </td>
-          <td class="p-3 text-right">
+          <td class="p-3 text-right whitespace-nowrap">
             <span id="ticketGroupPenalty_${idx}" class="font-mono font-bold text-rose-600 text-xs">
-              ${penalty.toLocaleString('vi-VN')} đ
+              ${penaltyText}
             </span>
           </td>
-          <td class="p-3 text-right">
+          <td class="p-3 text-right whitespace-nowrap">
             ${isEditable ? `
               <div class="inline-flex items-center gap-1 justify-end">
                 <input
                   type="number"
-                  value="${groupRefund}"
+                  id="ticketGroupRefundInput_${idx}"
+                  value="${grpVal}"
+                  placeholder="Nhập số tiền..."
                   min="0"
                   max="${origPrice}"
                   step="10000"
                   oninput="onDetailGroupRefundChange(${idx}, this.value)"
-                  class="w-24 sm:w-28 px-2 py-1 text-right font-mono font-bold text-blue-700 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-blue-500 text-xs"
+                  class="w-28 sm:w-32 px-2 py-1 text-right font-mono font-bold text-blue-700 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-blue-500 text-xs"
                 />
                 <span class="text-[11px] text-slate-400">đ</span>
               </div>
             ` : `
               <span class="font-mono font-bold text-blue-600 text-xs">
-                ${groupRefund.toLocaleString('vi-VN')} đ
+                ${grpVal !== '' ? (Number(grpVal).toLocaleString('vi-VN') + ' đ') : '--'}
               </span>
             `}
           </td>
-          <td class="p-3 text-right">
+          <td class="p-3 text-right whitespace-nowrap">
             ${isEditable ? `
               <div class="inline-flex items-center gap-1 justify-end">
                 <input
                   type="number"
-                  value="${finalRefund}"
+                  id="ticketFinalRefundInput_${idx}"
+                  value="${finVal}"
+                  placeholder="Nhập số tiền..."
                   min="0"
                   max="${origPrice}"
                   step="10000"
                   oninput="onDetailFinalRefundChange(${idx}, this.value)"
-                  class="w-24 sm:w-28 px-2 py-1 text-right font-mono font-black text-emerald-600 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-emerald-500 text-xs"
+                  class="w-28 sm:w-32 px-2 py-1 text-right font-mono font-black text-emerald-600 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-emerald-500 text-xs"
                 />
                 <span class="text-[11px] text-slate-400">đ</span>
               </div>
             ` : `
               <span class="font-mono font-black text-emerald-600 text-xs">
-                ${finalRefund.toLocaleString('vi-VN')} đ
+                ${finVal !== '' ? (Number(finVal).toLocaleString('vi-VN') + ' đ') : '--'}
               </span>
             `}
           </td>
@@ -1525,12 +1635,18 @@
 
     const t = item.tickets[idx];
     const origPrice = t.price || 0;
-    const numVal = Math.max(0, Math.min(origPrice, parseFloat(val) || 0));
-    t.refundFromGroup = numVal;
-    t.groupPenalty = Math.max(0, origPrice - numVal);
-
-    const penaltyEl = document.getElementById(`ticketGroupPenalty_${idx}`);
-    if (penaltyEl) penaltyEl.textContent = t.groupPenalty.toLocaleString('vi-VN') + ' đ';
+    if (val === '' || val === null || val === undefined) {
+      t.refundFromGroup = null;
+      t.groupPenalty = null;
+      const penaltyEl = document.getElementById(`ticketGroupPenalty_${idx}`);
+      if (penaltyEl) penaltyEl.textContent = '--';
+    } else {
+      const numVal = Math.max(0, Math.min(origPrice, parseFloat(val) || 0));
+      t.refundFromGroup = numVal;
+      t.groupPenalty = Math.max(0, origPrice - numVal);
+      const penaltyEl = document.getElementById(`ticketGroupPenalty_${idx}`);
+      if (penaltyEl) penaltyEl.textContent = t.groupPenalty.toLocaleString('vi-VN') + ' đ';
+    }
 
     syncDetailTotalsAndCards(item);
   }
@@ -1542,8 +1658,12 @@
 
     const t = item.tickets[idx];
     const origPrice = t.price || 0;
-    const numVal = Math.max(0, Math.min(origPrice, parseFloat(val) || 0));
-    t.finalRefund = numVal;
+    if (val === '' || val === null || val === undefined) {
+      t.finalRefund = null;
+    } else {
+      const numVal = Math.max(0, Math.min(origPrice, parseFloat(val) || 0));
+      t.finalRefund = numVal;
+    }
 
     syncDetailTotalsAndCards(item);
   }
@@ -1679,18 +1799,32 @@
     } else {
       // TAB 3: ĐÃ XỬ LÝ (Read-only)
       const isRejected = (item.subStatus === 'TU_CHOI');
+      const isRevoked = (item.subStatus === 'THU_HOI');
+      let statusTag = '';
+      if (isRejected) {
+        statusTag = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
+            <i class="fa-solid fa-circle-xmark"></i> Yêu cầu bị từ chối
+          </span>
+        `;
+      } else if (isRevoked) {
+        statusTag = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200">
+            <i class="fa-solid fa-rotate-left"></i> Yêu cầu đã thu hồi
+          </span>
+        `;
+      } else {
+        statusTag = `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <i class="fa-solid fa-circle-check"></i> Hoàn vé thành công
+          </span>
+        `;
+      }
+
       html = `
         <div class="flex items-center justify-between w-full flex-wrap gap-3">
           <div class="text-xs text-slate-600 font-medium flex items-center gap-2">
-            ${isRejected ? `
-              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
-                <i class="fa-solid fa-circle-xmark"></i> Yêu cầu bị từ chối
-              </span>
-            ` : `
-              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <i class="fa-solid fa-circle-check"></i> Hoàn vé thành công
-              </span>
-            `}
+            ${statusTag}
             <span>Hồ sơ hoàn hủy đã hoàn tất lưu vết trên hệ thống.</span>
           </div>
           <div class="flex items-center gap-2">
@@ -1818,13 +1952,17 @@
 
     closeRejectRefundModal();
 
+    // Tự động chuyển Tab sang ĐÃ XỬ LÝ
+    switchRefundTab('DA_XU_LY');
+
+    // Reload giao diện chi tiết real-time ngay tại màn hình hiện tại
+    renderDetailContent(item);
+    renderDetailTicketsTable(item);
+    renderDetailActionButtons(item);
+
     if (typeof showToast === 'function') {
       showToast('Đã từ chối yêu cầu', `Đã từ chối yêu cầu ${currentRejectRequestCode} và chuyển sang Tab Đã xử lý [Từ chối].`);
     }
-
-    // Cập nhật lại view
-    openRefundDetail(currentRejectRequestCode);
-    renderRefundTable();
   }
 
   let currentApproveRequestCode = null;
@@ -1857,15 +1995,20 @@
     if (sumAgency) sumAgency.textContent = item.agency || '--';
     if (sumTickets) sumTickets.textContent = `${item.ticketCount || (item.tickets ? item.tickets.length : 0)} vé`;
     if (sumPaid) sumPaid.textContent = (item.totalOriginalAmount || 0).toLocaleString('vi-VN') + ' đ';
-    if (sumPenalty) sumPenalty.textContent = (item.chargeAmount || 0).toLocaleString('vi-VN') + ' đ';
-    if (sumGroupRef) sumGroupRef.textContent = (item.groupRefundAmount || 0).toLocaleString('vi-VN') + ' đ';
-    if (sumFinalRef) sumFinalRef.textContent = (item.totalRefundAmount || 0).toLocaleString('vi-VN') + ' đ';
+    if (sumPenalty) sumPenalty.textContent = (item.chargeAmount !== null && item.chargeAmount !== undefined) ? item.chargeAmount.toLocaleString('vi-VN') + ' đ' : '--';
+    if (sumGroupRef) sumGroupRef.textContent = (item.groupRefundAmount !== null && item.groupRefundAmount !== undefined) ? item.groupRefundAmount.toLocaleString('vi-VN') + ' đ' : '--';
+    if (sumFinalRef) sumFinalRef.textContent = (item.totalRefundAmount !== null && item.totalRefundAmount !== undefined) ? item.totalRefundAmount.toLocaleString('vi-VN') + ' đ' : '--';
 
-    const profit = (item.groupRefundAmount || 0) - (item.totalRefundAmount || 0);
+    const profit = (item.groupRefundAmount !== null && item.totalRefundAmount !== null) ? (item.groupRefundAmount - item.totalRefundAmount) : null;
     if (sumProfit) {
-      const pfx = profit > 0 ? '+' : '';
-      sumProfit.textContent = `${pfx}${profit.toLocaleString('vi-VN')} đ`;
-      sumProfit.className = profit >= 0 ? 'font-mono text-emerald-700 font-black' : 'font-mono text-rose-600 font-black';
+      if (profit !== null) {
+        const pfx = profit > 0 ? '+' : '';
+        sumProfit.textContent = `${pfx}${profit.toLocaleString('vi-VN')} đ`;
+        sumProfit.className = profit >= 0 ? 'font-mono text-emerald-700 font-black' : 'font-mono text-rose-600 font-black';
+      } else {
+        sumProfit.textContent = '--';
+        sumProfit.className = 'font-mono text-slate-400 font-bold';
+      }
     }
 
     if (mode === 'ACCEPT') {
@@ -1874,7 +2017,8 @@
       if (btnText) btnText.textContent = 'Xác nhận tiếp nhận';
     } else {
       if (titleEl) titleEl.textContent = 'Xác nhận duyệt đề xuất hoàn vé';
-      if (msgEl) msgEl.textContent = `Xác nhận phê duyệt hoàn vé với số tiền hoàn cuối ${(item.totalRefundAmount || 0).toLocaleString('vi-VN')} đ. Yêu cầu chuyển thẳng sang Tab Đã xử lý (Thành công).`;
+      const finalAmtStr = (item.totalRefundAmount !== null && item.totalRefundAmount !== undefined) ? (item.totalRefundAmount.toLocaleString('vi-VN') + ' đ') : '0 đ';
+      if (msgEl) msgEl.textContent = `Xác nhận phê duyệt hoàn vé với số tiền hoàn cuối ${finalAmtStr}. Yêu cầu chuyển thẳng sang Tab Đã xử lý (Thành công).`;
       if (btnText) btnText.textContent = 'Xác nhận & Duyệt hoàn';
     }
 
@@ -1897,6 +2041,9 @@
       item.subStatus = 'DANG_THAM_DINH';
       item.assignedTo = 'Chuyên viên CSKH / Kế toán';
 
+      // Tự động chuyển Tab sang ĐANG XỬ LÝ
+      switchRefundTab('DANG_XU_LY');
+
       if (typeof showToast === 'function') {
         showToast('Đã tiếp nhận yêu cầu', `Yêu cầu ${currentApproveRequestCode} đã được chuyển sang Tab Đang xử lý.`);
       }
@@ -1906,14 +2053,20 @@
       item.subStatus = 'THANH_CONG';
       item.processedDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
+      // Tự động chuyển Tab sang ĐÃ XỬ LÝ
+      switchRefundTab('DA_XU_LY');
+
       if (typeof showToast === 'function') {
         showToast('Duyệt hoàn vé thành công', `Yêu cầu ${currentApproveRequestCode} đã hoàn tất và chuyển thẳng sang Tab Đã xử lý [Thành công].`);
       }
     }
 
     closeApproveRefundModal();
-    openRefundDetail(currentApproveRequestCode);
-    renderRefundTable();
+
+    // Reload giao diện chi tiết real-time ngay tại màn hình hiện tại
+    renderDetailContent(item);
+    renderDetailTicketsTable(item);
+    renderDetailActionButtons(item);
   }
 
   function actionAcceptRequest(requestCode) {
@@ -1923,13 +2076,23 @@
   function actionRevokeRequest(requestCode) {
     const item = refundDataset.find(r => r.requestCode === requestCode);
     if (!item) return;
-    if (confirm(`Bạn có chắc chắn muốn THU HỒI yêu cầu hoàn vé ${requestCode}? Thao tác này sẽ hủy phiếu yêu cầu.`)) {
-      refundDataset = refundDataset.filter(r => r.requestCode !== requestCode);
+    if (confirm(`Bạn có chắc chắn muốn THU HỒI yêu cầu hoàn vé ${requestCode}? Yêu cầu sẽ được chuyển sang Tab Đã xử lý với trạng thái Thu hồi.`)) {
+      item.status = 'DA_XU_LY';
+      item.subStatus = 'THU_HOI';
+      item.assignedTo = 'Tôi (Người tạo yêu cầu)';
+      item.processedDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
+
+      // Tự động chuyển Tab sang ĐÃ XỬ LÝ
+      switchRefundTab('DA_XU_LY');
+
+      // Reload giao diện chi tiết real-time ngay tại màn hình hiện tại
+      renderDetailContent(item);
+      renderDetailTicketsTable(item);
+      renderDetailActionButtons(item);
+
       if (typeof showToast === 'function') {
-        showToast('Đã thu hồi yêu cầu', `Đã hủy và thu hồi yêu cầu ${requestCode} thành công.`);
+        showToast('Đã thu hồi yêu cầu', `Đã thu hồi yêu cầu ${requestCode} và lưu vào Tab Đã xử lý [Thu hồi].`);
       }
-      closeRefundDetail();
-      renderRefundTable();
     }
   }
 
@@ -1945,14 +2108,15 @@
     const item = refundDataset.find(r => r.requestCode === requestCode);
     if (!item) return;
 
-    if (confirm(`Xác nhận hoàn tất giải ngân số tiền ${item.totalRefundAmount.toLocaleString('vi-VN')} đ về Ví / Tài khoản đối tác?`)) {
+    const disbursementAmt = item.totalRefundAmount || 0;
+    if (confirm(`Xác nhận hoàn tất giải ngân số tiền ${disbursementAmt.toLocaleString('vi-VN')} đ về Ví / Tài khoản đối tác?`)) {
       item.status = 'DA_XU_LY';
       item.subStatus = 'HOAN_TAT';
       item.processedDate = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
       // Nếu có TecheraDB, cộng tiền vào ví đại lý
       if (typeof TecheraDB !== 'undefined' && typeof TecheraDB.adjustWalletBalance === 'function') {
-        TecheraDB.adjustWalletBalance(item.totalRefundAmount, {
+        TecheraDB.adjustWalletBalance(disbursementAmt, {
           isTopup: false,
           method: 'Hoàn tiền vé',
           note: `Hoàn tiền yêu cầu #${item.requestCode} (Đơn gốc: ${item.originalOrderCode})`
@@ -1960,37 +2124,185 @@
       }
 
       if (typeof showToast === 'function') {
-        showToast('Hoàn tiền thành công', `Đã hạch toán hoàn tất số tiền ${item.totalRefundAmount.toLocaleString('vi-VN')} đ cho yêu cầu ${requestCode}.`);
+        showToast('Hoàn tiền thành công', `Đã hạch toán hoàn tất số tiền ${disbursementAmt.toLocaleString('vi-VN')} đ cho yêu cầu ${requestCode}.`);
       }
       openRefundDetail(requestCode);
     }
   }
 
+  // 12.1 HÀM XỬ LÝ MODAL CHARGE HÀNG LOẠT (CỘT GIÁ HOÀN CUỐI)
   function actionBatchCharge(requestCode) {
-    const item = refundDataset.find(r => r.requestCode === requestCode);
-    if (!item) return;
+    const code = requestCode || viewingRequestCode;
+    const item = refundDataset.find(r => r.requestCode === code);
+    if (!item || !item.tickets) return;
 
-    const rateStr = prompt('Nhập % phí phạt hoàn vé muốn áp dụng cho tất cả vé (VD: 10, 15, 20):', String(item.chargeRate || 10));
-    if (rateStr !== null) {
-      const rate = parseFloat(rateStr) || 0;
-      item.chargeRate = rate;
-      let totalCharge = 0;
-      let totalRefund = 0;
+    const totalTickets = item.tickets.length;
+    const selectedCbs = document.querySelectorAll('.dt-ticket-select-cb:checked');
+    const selectedCount = selectedCbs.length;
 
-      (item.tickets || []).forEach(t => {
-        t.charge = Math.round((t.price * rate) / 100);
-        t.refund = t.price - t.charge;
-        totalCharge += t.charge;
-        totalRefund += t.refund;
+    const modal = document.getElementById('modalBatchCharge');
+    const totalCountEl = document.getElementById('batchChargeTotalCount');
+    const selectedCountEl = document.getElementById('batchChargeSelectedCount');
+    const inputValEl = document.getElementById('batchChargeInputValue');
+
+    if (totalCountEl) totalCountEl.textContent = totalTickets;
+    if (selectedCountEl) selectedCountEl.textContent = selectedCount;
+    if (inputValEl) inputValEl.value = '';
+
+    // Nếu người dùng đã tick chọn ít nhất 1 vé, ưu tiên chọn radio phạm vi "Chỉ các vé đang được tick chọn"
+    const scopeRadios = document.getElementsByName('batchChargeScopeRadio');
+    if (scopeRadios) {
+      scopeRadios.forEach(r => {
+        if (selectedCount > 0 && r.value === 'SELECTED') r.checked = true;
+        else if (selectedCount === 0 && r.value === 'ALL') r.checked = true;
       });
+    }
 
-      item.chargeAmount = totalCharge;
-      item.totalRefundAmount = totalRefund;
+    onBatchChargeTypeChange();
+    if (modal) modal.classList.remove('hidden');
+    if (inputValEl) setTimeout(() => inputValEl.focus(), 100);
+  }
 
-      renderDetailTicketsTable(item);
-      if (typeof showToast === 'function') {
-        showToast('Cập nhật phí hoàn', `Đã áp dụng mức charge ${rate}% cho toàn bộ vé.`);
+  function closeBatchChargeModal() {
+    const modal = document.getElementById('modalBatchCharge');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function onBatchChargeTypeChange() {
+    const radios = document.getElementsByName('batchChargeTypeRadio');
+    let selectedType = 'FIXED_AMOUNT';
+    radios.forEach(r => {
+      if (r.checked) selectedType = r.value;
+    });
+
+    const labelEl = document.getElementById('batchChargeInputLabel');
+    const inputEl = document.getElementById('batchChargeInputValue');
+    const unitEl = document.getElementById('batchChargeInputUnit');
+    const helpEl = document.getElementById('batchChargeInputHelp');
+
+    if (selectedType === 'FIXED_AMOUNT') {
+      if (labelEl) labelEl.textContent = 'Số tiền hoàn mỗi vé (VNĐ):';
+      if (inputEl) {
+        inputEl.placeholder = 'VD: 800000';
+        inputEl.min = '0';
+        inputEl.max = '';
+        inputEl.step = '10000';
       }
+      if (unitEl) unitEl.textContent = 'đ';
+      if (helpEl) helpEl.textContent = 'Điền đồng loạt số tiền này vào cột Giá hoàn cuối cho các vé mục tiêu.';
+    } else {
+      if (labelEl) labelEl.textContent = 'Tỷ lệ hoàn (% Giá KH thanh toán):';
+      if (inputEl) {
+        inputEl.placeholder = 'VD: 90 (hoàn 90% giá khách trả)';
+        inputEl.min = '0';
+        inputEl.max = '100';
+        inputEl.step = '1';
+      }
+      if (unitEl) unitEl.textContent = '%';
+      if (helpEl) helpEl.textContent = 'Tự động tính: Giá hoàn cuối = Giá KH thanh toán × Tỷ lệ % áp dụng.';
+    }
+  }
+
+  function onToggleSelectAllDetailTickets(checked) {
+    const cbs = document.querySelectorAll('.dt-ticket-select-cb');
+    cbs.forEach(cb => {
+      if (!cb.disabled) cb.checked = checked;
+    });
+    onDetailTicketCheckboxChange();
+  }
+
+  function onDetailTicketCheckboxChange() {
+    const cbs = document.querySelectorAll('.dt-ticket-select-cb:not(:disabled)');
+    const selectedCbs = document.querySelectorAll('.dt-ticket-select-cb:checked');
+    const selectAllCb = document.getElementById('dtSelectAllTickets');
+    const selectedCountEl = document.getElementById('batchChargeSelectedCount');
+
+    if (selectAllCb) {
+      if (cbs.length === 0 || selectedCbs.length === 0) {
+        selectAllCb.checked = false;
+        selectAllCb.indeterminate = false;
+      } else if (selectedCbs.length === cbs.length) {
+        selectAllCb.checked = true;
+        selectAllCb.indeterminate = false;
+      } else {
+        selectAllCb.checked = false;
+        selectAllCb.indeterminate = true;
+      }
+    }
+
+    if (selectedCountEl) {
+      selectedCountEl.textContent = selectedCbs.length;
+    }
+  }
+
+  function confirmApplyBatchCharge() {
+    if (!viewingRequestCode) return;
+    const item = refundDataset.find(r => r.requestCode === viewingRequestCode);
+    if (!item || !item.tickets) return;
+
+    const inputValEl = document.getElementById('batchChargeInputValue');
+    const rawVal = inputValEl?.value.trim();
+    if (!rawVal || isNaN(rawVal) || parseFloat(rawVal) < 0) {
+      alert('Vui lòng nhập một giá trị hợp lệ lớn hơn hoặc bằng 0!');
+      if (inputValEl) inputValEl.focus();
+      return;
+    }
+
+    const numVal = parseFloat(rawVal);
+
+    // Xác định kiểu tính
+    const typeRadios = document.getElementsByName('batchChargeTypeRadio');
+    let calcType = 'FIXED_AMOUNT';
+    typeRadios.forEach(r => {
+      if (r.checked) calcType = r.value;
+    });
+
+    // Xác định phạm vi
+    const scopeRadios = document.getElementsByName('batchChargeScopeRadio');
+    let scope = 'ALL';
+    scopeRadios.forEach(r => {
+      if (r.checked) scope = r.value;
+    });
+
+    const selectedIdxs = new Set();
+    if (scope === 'SELECTED') {
+      const selectedCbs = document.querySelectorAll('.dt-ticket-select-cb:checked');
+      if (selectedCbs.length === 0) {
+        alert('Chưa có vé nào được chọn! Vui lòng tick chọn ít nhất 1 vé hoặc chọn phạm vi "Toàn bộ vé trong bảng".');
+        return;
+      }
+      selectedCbs.forEach(cb => {
+        const idx = parseInt(cb.getAttribute('data-idx'), 10);
+        if (!isNaN(idx)) selectedIdxs.add(idx);
+      });
+    }
+
+    let appliedCount = 0;
+    item.tickets.forEach((t, idx) => {
+      if (scope === 'ALL' || selectedIdxs.has(idx)) {
+        const origPrice = t.price || 0;
+        let finalVal = 0;
+        if (calcType === 'FIXED_AMOUNT') {
+          finalVal = Math.min(origPrice, numVal);
+        } else {
+          const pct = Math.max(0, Math.min(100, numVal));
+          finalVal = Math.round((origPrice * pct) / 100);
+        }
+
+        t.finalRefund = finalVal;
+        appliedCount++;
+
+        // Cập nhật giá trị ô input tương ứng trên giao diện
+        const inp = document.getElementById(`ticketFinalRefundInput_${idx}`);
+        if (inp) inp.value = finalVal;
+      }
+    });
+
+    syncDetailTotalsAndCards(item);
+    closeBatchChargeModal();
+
+    if (typeof showToast === 'function') {
+      showToast('Áp dụng hàng loạt thành công', `Đã cập nhật Giá hoàn cuối cho ${appliedCount} vé.`);
     }
   }
 
@@ -3278,6 +3590,11 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
   window.actionApproveRefund = actionApproveRefund;
   window.actionConfirmDisbursement = actionConfirmDisbursement;
   window.actionBatchCharge = actionBatchCharge;
+  window.closeBatchChargeModal = closeBatchChargeModal;
+  window.onBatchChargeTypeChange = onBatchChargeTypeChange;
+  window.onToggleSelectAllDetailTickets = onToggleSelectAllDetailTickets;
+  window.onDetailTicketCheckboxChange = onDetailTicketCheckboxChange;
+  window.confirmApplyBatchCharge = confirmApplyBatchCharge;
   window.actionAttachDocument = actionAttachDocument;
   window.onDetailTicketChargeChange = onDetailTicketChargeChange;
   window.onDetailGroupRefundChange = onDetailGroupRefundChange;

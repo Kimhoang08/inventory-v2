@@ -340,6 +340,7 @@
                 <option value="ALL">Tất cả kết quả</option>
                 <option value="THANH_CONG">Thành công</option>
                 <option value="TU_CHOI">Từ chối</option>
+                <option value="THU_HOI">Thu hồi</option>
               </select>
             </div>
           </div>
@@ -465,6 +466,24 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- KHỐI THÔNG BÁO THU HỒI YÊU CẦU (CHỈ HIỂN THỊ KHI Ở TAB ĐÃ XỬ LÝ VÀ CÓ TRẠNG THÁI THU HỒI) -->
+        <div id="dtRevokeNoticeBlock" class="hidden bg-amber-50/90 border border-amber-200/90 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-2 animate-in fade-in duration-200">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-amber-200/60">
+            <div class="flex items-center gap-2 text-amber-800 font-extrabold text-sm">
+              <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-rotate-left text-sm"></i>
+              </div>
+              <span>Yêu cầu hoàn vé đã được thu hồi</span>
+            </div>
+            <div id="dtRevokeAuditInfo" class="text-[11px] text-amber-700 font-medium">
+              <!-- Nạp động: Thu hồi bởi ... lúc ... -->
+            </div>
+          </div>
+          <p class="text-xs text-amber-900 leading-relaxed font-medium">
+            Phiếu yêu cầu này đã được người tạo thu hồi trước khi cấp trên tiếp nhận thẩm định. Hồ sơ đã dừng xử lý và lưu vết kiểm toán trên hệ thống.
+          </p>
         </div>
 
         <!-- 1. KHỐI THÔNG TIN YÊU CẦU (RÚT GỌN, PHẲNG VÀ DỄ ĐỌC) -->
@@ -644,10 +663,20 @@
 
         <!-- Khối Bảng kê Vé & Định giá hoàn phí (6 CỘT CHUẨN) -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
-          <div class="p-4 sm:px-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+          <div class="p-4 sm:px-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
             <div>
               <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Danh sách Vé &amp; Định giá Hoàn trả</h3>
               <p class="text-[11px] text-slate-500">Đối soát chi tiết từng mã vé, giá thanh toán, phí phạt và giá hoàn cuối</p>
+            </div>
+            <div id="dtBatchChargeTopBtnWrapper" class="hidden">
+              <button
+                type="button"
+                onclick="actionBatchCharge()"
+                class="px-3.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              >
+                <i class="fa-solid fa-sliders text-emerald-600"></i>
+                <span>Charge hàng loạt</span>
+              </button>
             </div>
           </div>
 
@@ -655,7 +684,18 @@
             <table class="w-full text-left border-collapse text-xs min-w-[760px]">
               <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
                 <tr class="divide-x divide-slate-200">
-                  <th class="p-3 text-center w-12">STT</th>
+                  <th class="p-3 text-center w-14">
+                    <div class="flex items-center justify-center gap-1">
+                      <input
+                        type="checkbox"
+                        id="dtSelectAllTickets"
+                        onchange="onToggleSelectAllDetailTickets(this.checked)"
+                        class="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer w-3.5 h-3.5"
+                        title="Chọn tất cả vé"
+                      />
+                      <span>STT</span>
+                    </div>
+                  </th>
                   <th class="p-3 min-w-[200px]">TÊN VÀ MÃ VÉ</th>
                   <th class="p-3 text-right min-w-[130px]">GIÁ KH THANH TOÁN</th>
                   <th class="p-3 text-right min-w-[140px]">PHÍ PHẠT TỪ TẬP ĐOÀN</th>
@@ -816,7 +856,7 @@
               </div>
               <div class="md:col-span-8">
                 <label class="block text-[11px] font-bold text-slate-600 mb-1">
-                  Địa chỉ đại lý <span class="text-rose-500">*</span>
+                  Địa chỉ đại lý
                 </label>
                 <textarea
                   id="senderAddress"
@@ -1471,6 +1511,96 @@
           <button type="button" id="btnConfirmApproveStep" onclick="confirmSubmitApproveRefund()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
             <i class="fa-solid fa-arrow-right"></i>
             <span id="btnConfirmApproveText">Xác nhận chuyển bước</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: CHARGE HÀNG LOẠT CHO CỘT GIÁ HOÀN CUỐI                          -->
+  <!-- ==================================================================== -->
+  <div id="modalBatchCharge" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-emerald-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-800">Charge hàng loạt</h3>
+            <p class="text-[11px] text-slate-500 font-medium">Áp dụng đồng loạt cho cột Giá hoàn cuối</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeBatchChargeModal()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs overflow-y-auto">
+        <!-- Phương thức áp dụng -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+            Phương thức tính giá hoàn cuối:
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-emerald-300 transition-colors">
+              <input type="radio" name="batchChargeTypeRadio" value="FIXED_AMOUNT" checked onchange="onBatchChargeTypeChange()" class="text-emerald-600 focus:ring-emerald-500" />
+              <span class="font-bold text-slate-800">Số tiền cố định (đ)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-emerald-300 transition-colors">
+              <input type="radio" name="batchChargeTypeRadio" value="PERCENT_ORIGINAL" onchange="onBatchChargeTypeChange()" class="text-emerald-600 focus:ring-emerald-500" />
+              <span class="font-bold text-slate-800">Theo % Giá KH trả</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Ô nhập giá trị -->
+        <div>
+          <label id="batchChargeInputLabel" class="block font-bold text-slate-700 mb-1">
+            Số tiền hoàn mỗi vé (VNĐ):
+          </label>
+          <div class="relative">
+            <input
+              type="number"
+              id="batchChargeInputValue"
+              placeholder="VD: 800000"
+              class="w-full pl-3 pr-8 py-2.5 rounded-xl border border-slate-300 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500 shadow-2xs"
+            />
+            <span id="batchChargeInputUnit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs pointer-events-none">đ</span>
+          </div>
+          <p id="batchChargeInputHelp" class="text-[11px] text-slate-400 mt-1">
+            Điền đồng loạt số tiền này vào cột Giá hoàn cuối cho các vé mục tiêu.
+          </p>
+        </div>
+
+        <!-- Phạm vi áp dụng -->
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <span class="font-bold text-slate-700 block uppercase tracking-wider text-[10.5px]">Phạm vi áp dụng:</span>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+              <input type="radio" name="batchChargeScopeRadio" value="ALL" checked class="text-emerald-600 focus:ring-emerald-500" />
+              <span>Toàn bộ vé trong bảng (<strong id="batchChargeTotalCount" class="text-slate-900">0</strong> vé)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-slate-700 font-medium">
+              <input type="radio" name="batchChargeScopeRadio" value="SELECTED" id="radioBatchScopeSelected" class="text-emerald-600 focus:ring-emerald-500" />
+              <span>Chỉ các vé đang được tick chọn (<strong id="batchChargeSelectedCount" class="text-slate-900">0</strong> vé)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Lưu ý -->
+        <p class="text-[11px] text-slate-400 italic">
+          * Sau khi áp dụng hàng loạt, bạn vẫn có thể chỉnh sửa tay lẻ từng dòng nếu có trường hợp ngoại lệ.
+        </p>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeBatchChargeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+            Hủy bỏ
+          </button>
+          <button type="button" onclick="confirmApplyBatchCharge()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-check"></i>
+            <span>Áp dụng hàng loạt</span>
           </button>
         </div>
       </div>
