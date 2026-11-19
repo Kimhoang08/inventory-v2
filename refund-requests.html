@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
   <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-32 lg:pb-16 space-y-6">
 
       <!-- ==================================================================== -->
       <!-- VIEW 1: DANH SÁCH YÊU CẦU HOÀN / HỦY VÉ                              -->
@@ -542,42 +542,42 @@
 
         <!-- 3. DẢI 4 CARD CHỈ SỐ TÀI CHÍNH (KÈM CHÚ THÍCH PHỤ SUB-LABEL) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Card 1: Tổng KH thanh toán -->
+          <!-- Card 1: KH thanh toán -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
             <div>
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Tổng KH thanh toán</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">KH thanh toán</span>
               <div id="cardTotalOriginalPaid" class="text-lg sm:text-xl font-mono font-black text-slate-900 mt-1">
                 0 đ
               </div>
             </div>
             <div id="cardTotalOriginalSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
-              Giá trị vé xuất bán ban đầu (0 vé)
+              Tổng tiền khách thanh toán trong đơn gốc (0 vé)
             </div>
           </div>
 
-          <!-- Card 2: Giá nhập tổng -->
+          <!-- Card 2: Phí phạt từ tập đoàn -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
             <div>
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Giá nhập tổng</span>
-              <div id="cardTotalCost" class="text-lg sm:text-xl font-mono font-black text-slate-800 mt-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Phí phạt từ tập đoàn</span>
+              <div id="cardTotalGroupPenalty" class="text-lg sm:text-xl font-mono font-black text-rose-600 mt-1">
                 0 đ
               </div>
             </div>
-            <div id="cardTotalCostSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
-              Giá vốn gốc theo hợp đồng đại lý
+            <div id="cardTotalGroupPenaltySub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
+              Giá KH thanh toán — Giá hoàn từ tập đoàn
             </div>
           </div>
 
-          <!-- Card 3: Giá hoàn từ NCC -->
+          <!-- Card 3: Giá hoàn từ Tập đoàn -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
             <div>
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Giá hoàn từ NCC</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Giá hoàn từ Tập đoàn</span>
               <div id="cardRefundFromSupplier" class="text-lg sm:text-xl font-mono font-black text-blue-600 mt-1">
                 0 đ
               </div>
             </div>
             <div id="cardRefundFromSupplierSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
-              Ghi nhận từ NCC (sau khấu trừ 0%)
+              Số tiền Tập đoàn duyệt hoàn lại
             </div>
           </div>
 
@@ -604,35 +604,47 @@
           <p id="dtRejectReasonText" class="text-xs text-rose-700 font-semibold pl-6">--</p>
         </div>
 
-        <!-- Khối Bảng kê Vé & Định giá hoàn phí -->
+        <!-- Khối Bảng kê Vé & Định giá hoàn phí (6 CỘT CHUẨN) -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
           <div class="p-4 sm:px-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
             <div>
               <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Danh sách Vé &amp; Định giá Hoàn trả</h3>
-              <p class="text-[11px] text-slate-500">Kiểm tra mã QR vé và nhập phí phạt hoàn vé (charge) nếu áp dụng</p>
+              <p class="text-[11px] text-slate-500">Đối soát chi tiết từng mã vé, giá thanh toán, phí phạt và giá hoàn cuối</p>
             </div>
           </div>
 
           <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
+            <table class="w-full text-left border-collapse text-xs min-w-[760px]">
               <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
                 <tr class="divide-x divide-slate-200">
                   <th class="p-3 text-center w-12">STT</th>
-                  <th class="p-3">Hạng vé &amp; Mã QR</th>
-                  <th class="p-3 text-right">Giá niêm yết (Gốc)</th>
-                  <th class="p-3 text-right">Phí phạt / Charge</th>
-                  <th class="p-3 text-right">Tiền hoàn trả thực tế</th>
+                  <th class="p-3 min-w-[200px]">TÊN VÀ MÃ VÉ</th>
+                  <th class="p-3 text-right min-w-[130px]">GIÁ KH THANH TOÁN</th>
+                  <th class="p-3 text-right min-w-[140px]">PHÍ PHẠT TỪ TẬP ĐOÀN</th>
+                  <th class="p-3 text-right min-w-[150px]">GIÁ HOÀN TỪ TẬP ĐOÀN</th>
+                  <th class="p-3 text-right min-w-[140px]">GIÁ HOÀN CUỐI</th>
                 </tr>
               </thead>
-              <tbody id="dtTicketsTableBody">
-                <!-- Rendered dynamically -->
+              <tbody id="dtTicketsTableBody" class="divide-y divide-slate-100">
+                <!-- Rendered dynamically by refunds.js -->
               </tbody>
-              <tfoot class="bg-slate-50/90 border-t-2 border-slate-200 text-xs font-bold divide-x divide-slate-200">
-                <tr>
+              <tfoot class="bg-slate-50/90 border-t-2 border-slate-200 text-xs font-bold divide-y divide-slate-200">
+                <!-- Dòng Tổng cộng -->
+                <tr class="divide-x divide-slate-200">
                   <td colspan="2" class="p-3 text-right font-black uppercase text-slate-700">Tổng cộng:</td>
                   <td id="dtTotalOriginal" class="p-3 text-right font-mono font-bold text-slate-800">0 đ</td>
-                  <td id="dtTotalCharge" class="p-3 text-right font-mono font-bold text-rose-600">0 đ</td>
-                  <td id="dtTotalRefund" class="p-3 text-right font-mono font-black text-emerald-600 text-sm">0 đ</td>
+                  <td id="dtTotalGroupPenalty" class="p-3 text-right font-mono font-bold text-rose-600">0 đ</td>
+                  <td id="dtTotalGroupRefund" class="p-3 text-right font-mono font-bold text-blue-600">0 đ</td>
+                  <td id="dtTotalFinalRefund" class="p-3 text-right font-mono font-black text-emerald-600">0 đ</td>
+                </tr>
+                <!-- Dòng cuối cùng: Lợi nhuận sau hoàn = Giá hoàn từ Tập đoàn - Giá hoàn cuối -->
+                <tr class="bg-emerald-50/70">
+                  <td colspan="4" class="p-3 text-right font-extrabold uppercase text-emerald-900 text-xs">
+                    Lợi nhuận sau hoàn = Giá hoàn từ Tập đoàn — Giá hoàn cuối:
+                  </td>
+                  <td colspan="2" class="p-3 text-right font-mono font-black text-emerald-700 text-sm">
+                    <span id="dtTotalProfitAfterRefund">+0 đ</span>
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -1279,6 +1291,154 @@
   </div>
 
   <!-- ==================================================================== -->
+  <!-- ==================================================================== -->
+  <!-- MODAL: TỪ CHỐI YÊU CẦU HOÀN VÉ                                       -->
+  <!-- ==================================================================== -->
+  <div id="modalRejectRefund" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-rose-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-800">Từ chối Yêu cầu Hoàn vé</h3>
+            <p id="rejectModalSubTitle" class="text-[11px] text-slate-500 font-mono">Phiếu: RQRF...</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeRejectRefundModal()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="formRejectRefund" onsubmit="event.preventDefault(); confirmSubmitRejectRefund();" class="p-6 space-y-4 overflow-y-auto">
+        <!-- Lý do từ chối chuẩn (Bắt buộc) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">
+            Lý do từ chối <span class="text-rose-500">*</span>
+          </label>
+          <select id="rejectReasonSelect" required onchange="onRejectReasonSelectChange()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100 cursor-pointer">
+            <option value="">-- Chọn lý do từ chối chuẩn --</option>
+            <option value="Vé đã qua ngày sử dụng hoặc đã quét mã vào cổng">Vé đã qua ngày sử dụng hoặc đã quét mã vào cổng</option>
+            <option value="Hồ sơ đính kèm không hợp lệ / thiếu xác nhận của cơ quan thẩm quyền">Hồ sơ đính kèm không hợp lệ / thiếu xác nhận của cơ quan thẩm quyền</option>
+            <option value="Không thuộc chính sách miễn trừ hoàn/hủy bất khả kháng">Không thuộc chính sách miễn trừ hoàn/hủy bất khả kháng</option>
+            <option value="Quá thời hạn tiếp nhận yêu cầu hoàn/hủy vé theo quy định">Quá thời hạn tiếp nhận yêu cầu hoàn/hủy vé theo quy định</option>
+            <option value="OTHER">Lý do khác... (Bắt buộc nhập chi tiết bên dưới)</option>
+          </select>
+        </div>
+
+        <!-- Khối chi tiết lý do khác (Bắt buộc khi chọn OTHER) -->
+        <div id="rejectOtherReasonBox" class="hidden space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700">
+            Chi tiết lý do từ chối <span class="text-rose-500">*</span>
+          </label>
+          <textarea id="rejectOtherReasonDetail" rows="3" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100 placeholder:text-slate-400" placeholder="Vui lòng nêu chi tiết nguyên nhân từ chối..."></textarea>
+          <p id="rejectOtherError" class="text-[11px] font-bold text-rose-600 hidden">Vui lòng nhập chi tiết lý do từ chối!</p>
+        </div>
+
+        <!-- Đính kèm hồ sơ minh chứng nếu có -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">
+            Đính kèm tài liệu minh chứng (nếu có)
+          </label>
+          <div class="relative border-2 border-dashed border-slate-200 hover:border-rose-300 rounded-2xl p-3 text-center transition-colors bg-slate-50/50">
+            <input type="file" id="rejectDocumentFileInput" onchange="onRejectFileChosen(this)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-600">
+              <i class="fa-solid fa-cloud-arrow-up text-rose-500"></i>
+              <span id="rejectFileNameDisplay" class="font-medium">Nhấn để chọn tệp biên bản / email từ chối...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning note -->
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
+          <i class="fa-solid fa-circle-exclamation text-amber-600 mt-0.5 shrink-0"></i>
+          <span>Khi xác nhận, yêu cầu sẽ được chuyển vào <strong>Tab Đã xử lý</strong> với trạng thái <strong>Đã từ chối</strong> và thông báo lý do tới đại lý.</span>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeRejectRefundModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+            Hủy bỏ
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-check"></i>
+            <span>Xác nhận từ chối</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: DUYỆT & CHUYỂN BƯỚC HOÀN TIỀN                                 -->
+  <!-- ==================================================================== -->
+  <div id="modalApproveRefund" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-emerald-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <h3 id="approveModalTitle" class="text-sm font-extrabold text-slate-800">Xác nhận chuyển bước xử lý</h3>
+            <p id="approveModalSubTitle" class="text-[11px] text-slate-500 font-mono">Phiếu: RQRF...</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeApproveRefundModal()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <!-- Bảng tóm tắt tài chính -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Đại lý yêu cầu:</span>
+            <span id="approveSummaryAgency" class="font-bold text-slate-800">--</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Số vé hoàn:</span>
+            <span id="approveSummaryTicketsCount" class="font-bold text-slate-800">-- vé</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600 pt-2 border-t border-slate-200">
+            <span>Giá KH thanh toán:</span>
+            <span id="approveSummaryPaid" class="font-mono font-bold text-slate-900">0 đ</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Phí phạt từ Tập đoàn:</span>
+            <span id="approveSummaryPenalty" class="font-mono font-bold text-rose-600">0 đ</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Giá hoàn từ Tập đoàn:</span>
+            <span id="approveSummaryGroupRefund" class="font-mono font-bold text-blue-600">0 đ</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-700 font-bold pt-2 border-t border-slate-200">
+            <span class="text-emerald-700">Giá hoàn cuối cho Đại lý:</span>
+            <span id="approveSummaryFinalRefund" class="font-mono text-emerald-600 font-black text-sm">0 đ</span>
+          </div>
+          <div class="flex justify-between items-center text-emerald-800 font-extrabold pt-1">
+            <span>Lợi nhuận sau hoàn:</span>
+            <span id="approveSummaryProfit" class="font-mono text-emerald-700">+0 đ</span>
+          </div>
+        </div>
+
+        <p id="approveModalMessage" class="text-xs text-slate-600 font-medium leading-relaxed">
+          Xác nhận tiếp nhận và chuyển yêu cầu sang bước đối soát / hoàn tiền.
+        </p>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeApproveRefundModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+            Hủy bỏ
+          </button>
+          <button type="button" id="btnConfirmApproveStep" onclick="confirmSubmitApproveRefund()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span id="btnConfirmApproveText">Xác nhận chuyển bước</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================================================================== -->
   <!-- MODAL: XEM TRƯỚC TÀI LIỆU MINH CHỨNG ĐÃ TẢI LÊN                     -->
   <!-- ==================================================================== -->
