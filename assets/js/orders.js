@@ -94,24 +94,24 @@ function formatCompactRevenue(amount) {
 function getStatusBadgeMarkup(status) {
   switch (status) {
     case 'Đã xuất vé':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đã xuất vé</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-emerald-50 text-emerald-700 border border-emerald-200">Đã xuất vé</span>`;
     case 'Đã xác nhận':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Đã xác nhận</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-blue-50 text-blue-700 border border-blue-200">Đã xác nhận</span>`;
     case 'Đang xử lý':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Đang xử lý</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-amber-50 text-amber-700 border border-amber-200">Đang xử lý</span>`;
     case 'Đợi thanh toán':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Đợi thanh toán</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-sky-50 text-sky-700 border border-sky-200">Đợi thanh toán</span>`;
     case 'Nháp':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200">Nháp</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-slate-100 text-slate-600 border border-slate-200">Nháp</span>`;
     case 'Đã hủy':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-orange-50 text-orange-700 border border-orange-200">Đã hủy</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-orange-50 text-orange-700 border border-orange-200">Đã hủy</span>`;
     case 'Đã hoàn tiền':
     case 'Hoàn tiền':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Đã hoàn tiền</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200">Đã hoàn tiền</span>`;
     case 'Thất bại':
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Thất bại</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-rose-50 text-rose-700 border border-rose-200">Thất bại</span>`;
     default:
-      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-600 border border-slate-200">${status || 'Chờ xử lý'}</span>`;
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-slate-100 text-slate-600 border border-slate-200">${status || 'Chờ xử lý'}</span>`;
   }
 }
 
@@ -696,7 +696,7 @@ function renderOrdersListView() {
         const staffTag = o.salesOwner || (o.staff !== '-' ? o.staff : 'Nguyễn Thị Kim Hoàng');
 
         return `
-          <tr class="hover:bg-slate-50/80 transition-colors divide-x divide-slate-100">
+          <tr class="group hover:bg-slate-50/80 transition-colors divide-x divide-slate-100">
             <!-- 1. Mã đơn hàng -->
             <td class="p-3.5 whitespace-nowrap">
               <span class="font-bold text-blue-700 text-xs font-mono tracking-tight block">${o.orderCode}</span>
@@ -708,13 +708,13 @@ function renderOrdersListView() {
             </td>
 
             <!-- 3. Khách hàng / Đại lý -->
-            <td class="p-3.5">
+            <td class="p-3.5 whitespace-nowrap">
               <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-[10.5px] shrink-0 tracking-wider">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-[11px] shrink-0 tracking-wider">
                   ${initials}
                 </div>
                 <div class="min-w-0">
-                  <div class="font-bold text-slate-800 text-xs truncate max-w-[180px]">${o.customerName}</div>
+                  <div class="font-bold text-slate-800 text-xs truncate max-w-[200px]" title="${o.customerName}">${o.customerName}</div>
                   <div class="text-[11px] text-slate-400 font-mono">${o.customerPhone || 'Chưa cập nhật'}</div>
                 </div>
               </div>
@@ -726,12 +726,12 @@ function renderOrdersListView() {
                 <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full text-[10.5px] font-semibold">${channelTag}</span>
                 <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-[10.5px] font-semibold">${subTypeTag}</span>
               </div>
-              <div class="text-[10.5px] text-slate-400 truncate max-w-[160px] mt-0.5" title="Phụ trách: ${staffTag}">${staffTag}</div>
+              <div class="text-[10.5px] text-slate-400 truncate max-w-[180px] mt-0.5" title="Phụ trách: ${staffTag}">${staffTag}</div>
             </td>
 
             <!-- 5. Ngày sử dụng -->
             <td class="p-3.5 whitespace-nowrap">
-              <span class="font-bold text-slate-800 text-xs bg-slate-100 px-2 py-0.5 rounded">${formatDisplayDate(o.useDate)}</span>
+              <span class="font-bold text-slate-800 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">${formatDisplayDate(o.useDate)}</span>
             </td>
 
             <!-- 6. Tổng tiền -->
@@ -745,13 +745,13 @@ function renderOrdersListView() {
             </td>
 
             <!-- 8. Thao tác (Desktop) -->
-            <td class="p-3.5 whitespace-nowrap text-center">
-              <div class="flex items-center justify-center gap-1.5">
+            <td class="p-3.5 whitespace-nowrap text-center sticky right-0 bg-white group-hover:bg-slate-50/95 shadow-[-4px_0_12px_rgba(0,0,0,0.03)] z-10">
+              <div class="flex items-center justify-center gap-1.5 whitespace-nowrap">
                 <!-- Icon con mắt Xem chi tiết -->
                 <button
                   type="button"
                   onclick="openOrderDetailModal('${o.orderCode}')"
-                  class="w-7 h-7 rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                  class="w-7 h-7 rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors cursor-pointer shadow-2xs shrink-0"
                   title="Xem chi tiết"
                 >
                   <i class="fa-regular fa-eye text-xs"></i>
@@ -761,7 +761,7 @@ function renderOrdersListView() {
                   <button
                     type="button"
                     onclick="openRefundTicketModal('${o.orderCode}')"
-                    class="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1"
+                    class="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1 shrink-0 whitespace-nowrap"
                     title="Hoàn vé"
                   >
                     <i class="fa-solid fa-rotate-left text-[10px]"></i>
@@ -852,19 +852,19 @@ function renderOrdersListView() {
 
       container.innerHTML = `
         <!-- BẢNG DANH SÁCH DESKTOP (>= 1024px) -->
-        <div class="hidden lg:block bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
+        <div class="hidden lg:block bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden w-full">
+          <div class="overflow-x-auto min-h-[360px]">
+            <table class="w-full text-left border-collapse text-xs min-w-[1150px] xl:min-w-[1200px]">
+              <thead class="bg-slate-50/95 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider sticky top-0 z-10">
                 <tr class="divide-x divide-slate-200">
-                  <th class="p-3.5 whitespace-nowrap">MÃ ĐƠN HÀNG</th>
-                  <th class="p-3.5 whitespace-nowrap">THỜI GIAN TẠO</th>
-                  <th class="p-3.5 min-w-[200px]">KHÁCH HÀNG / ĐẠI LÝ</th>
-                  <th class="p-3.5 whitespace-nowrap">KÊNH BÁN &amp; NGUỒN</th>
-                  <th class="p-3.5 whitespace-nowrap">NGÀY SỬ DỤNG</th>
-                  <th class="p-3.5 text-right whitespace-nowrap">TỔNG TIỀN</th>
-                  <th class="p-3.5 whitespace-nowrap text-center">TRẠNG THÁI</th>
-                  <th class="p-3.5 text-center whitespace-nowrap min-w-[130px]">THAO TÁC</th>
+                  <th class="p-3.5 whitespace-nowrap min-w-[140px]">MÃ ĐƠN HÀNG</th>
+                  <th class="p-3.5 whitespace-nowrap min-w-[150px]">THỜI GIAN TẠO</th>
+                  <th class="p-3.5 whitespace-nowrap min-w-[220px]">KHÁCH HÀNG / ĐẠI LÝ</th>
+                  <th class="p-3.5 whitespace-nowrap min-w-[180px]">KÊNH BÁN &amp; NGUỒN</th>
+                  <th class="p-3.5 whitespace-nowrap min-w-[130px]">NGÀY SỬ DỤNG</th>
+                  <th class="p-3.5 text-right whitespace-nowrap min-w-[130px]">TỔNG TIỀN</th>
+                  <th class="p-3.5 whitespace-nowrap text-center min-w-[130px]">TRẠNG THÁI</th>
+                  <th class="p-3.5 text-center whitespace-nowrap min-w-[140px] w-[140px] sticky right-0 bg-slate-50 shadow-[-4px_0_12px_rgba(0,0,0,0.03)] z-10">THAO TÁC</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
