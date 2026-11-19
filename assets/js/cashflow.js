@@ -976,7 +976,7 @@
               }
               return `<th class="py-3 px-3.5 whitespace-nowrap ${alignClass}">${c.label}</th>`;
             }).join('')}
-            <th class="py-3 px-3.5 text-center whitespace-nowrap sticky right-0 bg-slate-50/95 backdrop-blur-xs shadow-[-6px_0_12px_rgba(0,0,0,0.03)] z-20">Thao tác</th>
+            <th class="cf-action-header whitespace-nowrap">Thao tác</th>
           </tr>
         `;
       }
@@ -1002,24 +1002,24 @@
         } else {
           if (isDetail) {
             bodyEl.innerHTML = pageSlice.map(tx => `
-              <tr class="hover:bg-slate-50/80 transition-colors">
+              <tr class="cf-row group">
                 ${activeCols.map(c => renderCashFlowCell(c.id, tx)).join('')}
                 <!-- Cột thao tác: Icon con mắt 👁 -->
-                <td class="py-2.5 px-3.5 text-center whitespace-nowrap sticky right-0 bg-white/95 backdrop-blur-xs shadow-[-6px_0_12px_rgba(0,0,0,0.03)] z-10">
-                  <button type="button" onclick="openCashFlowDetailModal('${tx.orderCode}', '${tx.txCode}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 flex items-center justify-center transition-all cursor-pointer mx-auto shadow-2xs" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
-                    <i class="fa-solid fa-eye text-xs"></i>
+                <td class="cf-cell cf-action-cell">
+                  <button type="button" onclick="openCashFlowDetailModal('${tx.orderCode}', '${tx.txCode}')" class="cf-action-btn" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
+                    <i class="fa-regular fa-eye"></i>
                   </button>
                 </td>
               </tr>
             `).join('');
           } else {
             bodyEl.innerHTML = pageSlice.map(ord => `
-              <tr class="hover:bg-slate-50/80 transition-colors">
+              <tr class="cf-row group">
                 ${activeCols.map(c => renderCashFlowOrderCell(c.id, ord)).join('')}
                 <!-- Cột thao tác: Icon con mắt 👁 -->
-                <td class="py-2.5 px-3.5 text-center whitespace-nowrap sticky right-0 bg-white/95 backdrop-blur-xs shadow-[-6px_0_12px_rgba(0,0,0,0.03)] z-10">
-                  <button type="button" onclick="openCashFlowDetailModal('${ord.orderCode}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 flex items-center justify-center transition-all cursor-pointer mx-auto shadow-2xs" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
-                    <i class="fa-solid fa-eye text-xs"></i>
+                <td class="cf-cell cf-action-cell">
+                  <button type="button" onclick="openCashFlowDetailModal('${ord.orderCode}')" class="cf-action-btn" title="Xem chi tiết đơn hàng (Icon con mắt 👁)">
+                    <i class="fa-regular fa-eye"></i>
                   </button>
                 </td>
               </tr>

@@ -2,6 +2,8 @@
    TECHERA B2B PORTAL - MAIN STYLESHEET
    ========================================================================== */
 
+@import url('cashflow-table.css');
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

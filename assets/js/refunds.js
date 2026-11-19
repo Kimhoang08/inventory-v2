@@ -952,16 +952,16 @@
       }
 
       const statusColHtml = (activeTab === 'DA_XU_LY') ? `
-        <td class="px-3.5 py-3 whitespace-nowrap">
+        <td class="cf-cell whitespace-nowrap">
           ${statusBadgeHtml}
         </td>
       ` : '';
 
       return `
-        <tr class="hover:bg-slate-50/90 transition-colors group">
+        <tr class="cf-row group">
           <!-- 1. Mã yêu cầu (RQRF...) -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="font-mono text-xs font-black text-blue-700 tracking-tight block">${item.requestCode}</span>
+          <td class="cf-cell whitespace-nowrap">
+            <span class="cf-code text-blue-700 block">${item.requestCode}</span>
             <span class="text-[10.5px] text-slate-400 font-medium">${item.createdDate}</span>
           </td>
 
@@ -969,80 +969,82 @@
           ${statusColHtml}
 
           <!-- 3. Mã đơn hoàn -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="font-mono text-xs font-bold text-slate-800 block">${item.refundOrderCode}</span>
+          <td class="cf-cell whitespace-nowrap">
+            <span class="cf-code block">${item.refundOrderCode}</span>
           </td>
 
           <!-- 4. Mã đơn gốc -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <a href="orders.html?search=${encodeURIComponent(item.originalOrderCode)}" class="font-mono text-xs font-bold text-slate-700 hover:text-brand-600 inline-flex items-center gap-1 transition-colors">
+          <td class="cf-cell whitespace-nowrap">
+            <a href="orders.html?search=${encodeURIComponent(item.originalOrderCode)}" class="cf-code-link">
               <span>${item.originalOrderCode}</span>
               <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-slate-400"></i>
             </a>
           </td>
 
           <!-- 5. Ngày sử dụng (T) -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${serviceDateFormatted}</span>
+          <td class="cf-cell whitespace-nowrap">
+            <span class="font-bold text-slate-800 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">${serviceDateFormatted}</span>
           </td>
 
           <!-- 6. Số vé hoàn -->
-          <td class="px-3.5 py-3 whitespace-nowrap text-center">
+          <td class="cf-cell whitespace-nowrap text-center">
             <span class="font-mono text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
               ${item.ticketCount} vé
             </span>
           </td>
 
           <!-- 7. Tập đoàn -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${corpBadgeClass}">
+          <td class="cf-cell whitespace-nowrap">
+            <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${corpBadgeClass}">
               ${item.corp}
             </span>
           </td>
 
           <!-- 8. Khu du lịch -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
+          <td class="cf-cell whitespace-nowrap">
             <span class="text-xs font-semibold text-slate-800">${item.site}</span>
           </td>
 
           <!-- 9. Đại lý -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <div class="max-w-[200px] truncate" title="${item.agency}">
-              <span class="font-bold text-xs text-slate-800 block truncate">${item.agency}</span>
-              <span class="font-mono text-[10.5px] text-slate-400">${item.agencyCode || 'DL-B2B'}</span>
+          <td class="cf-cell whitespace-nowrap">
+            <div class="cf-two-tier max-w-[200px]" title="${item.agency}">
+              <span class="cf-two-tier-title truncate">${item.agency}</span>
+              <span class="cf-two-tier-sub">${item.agencyCode || 'DL-B2B'}</span>
             </div>
           </td>
 
           <!-- 10. Người gửi yêu cầu (Kèm badge vai trò nhận biết) -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-xs font-semibold text-slate-800">${item.requesterName}</span>
-              ${creatorBadge}
+          <td class="cf-cell whitespace-nowrap">
+            <div class="cf-two-tier">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="cf-two-tier-title">${item.requesterName}</span>
+                ${creatorBadge}
+              </div>
+              <span class="cf-two-tier-sub">${item.requesterPhone || ''}</span>
             </div>
-            <span class="text-[10.5px] text-slate-400 font-mono">${item.requesterPhone || ''}</span>
           </td>
 
           <!-- 11. Email -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
+          <td class="cf-cell whitespace-nowrap">
             <span class="font-mono text-xs text-slate-600">${item.requesterEmail}</span>
           </td>
 
           <!-- 12. Mã số thuế -->
-          <td class="px-3.5 py-3 whitespace-nowrap">
+          <td class="cf-cell whitespace-nowrap">
             <span class="font-mono text-xs text-slate-700 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/70">
               ${item.taxId || '-'}
             </span>
           </td>
 
-          <!-- 13. Thao tác: NÚT ICON CON MẮT VIỀN XANH ĐƠN GIẢN -->
-          <td class="px-3.5 py-3 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-slate-50/90 shadow-[-4px_0_12px_rgba(0,0,0,0.03)]">
+          <!-- 13. Thao tác: NÚT ICON CON MẮT ĐỒNG BỘ -->
+          <td class="cf-cell cf-action-cell">
             <button
               type="button"
               onclick="openRefundDetail('${item.requestCode}')"
-              class="w-8 h-8 rounded-xl border border-blue-500/40 bg-blue-50/40 hover:bg-blue-600 text-blue-600 hover:text-white inline-flex items-center justify-center transition-all cursor-pointer shadow-2xs group/btn"
+              class="cf-action-btn"
               title="Xem chi tiết"
             >
-              <i class="fa-regular fa-eye text-xs"></i>
+              <i class="fa-regular fa-eye"></i>
             </button>
           </td>
         </tr>

@@ -11,6 +11,7 @@
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/cashflow-table.css" />
   <style>
     /* Ẩn cột linh hoạt dựa vào class hidden */
     .col-hidden { display: none !important; }
@@ -354,7 +355,7 @@
       </div>
 
       <!-- 3. Bảng dữ liệu Báo cáo xuất vé Desktop (>= 1024px) -->
-      <div class="hidden lg:block bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="hidden lg:block cf-table-card">
         <div class="p-4 border-b border-slate-100 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <h3 class="font-extrabold text-sm text-slate-900">Chi tiết xuất vé</h3>
@@ -366,29 +367,29 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs whitespace-nowrap" id="tableTicketReport">
-            <thead>
-              <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider font-extrabold text-[10px] border-b border-slate-200">
-                <th class="py-3 px-3.5 col-issue-date">Ngày xuất vé</th>
-                <th class="py-3 px-3.5 col-agency">Đại lý</th>
-                <th class="py-3 px-3.5 col-order-code">Mã đơn hàng</th>
-                <th class="py-3 px-3.5 col-ncc-code">Mã đơn NCC</th>
-                <th class="py-3 px-3.5 col-ticket-code">Mã vé</th>
-                <th class="py-3 px-3.5 col-site">Địa điểm</th>
-                <th class="py-3 px-3.5 col-sku">Mã SKU</th>
-                <th class="py-3 px-3.5 col-ticket-name">Tên vé</th>
-                <th class="py-3 px-3.5 text-center col-quantity">SL</th>
-                <th class="py-3 px-3.5 text-right col-cost-price">Giá nhập</th>
-                <th class="py-3 px-3.5 text-right col-list-price">Giá niêm yết</th>
-                <th class="py-3 px-3.5 text-right col-selling-price">Giá bán</th>
-                <th class="py-3 px-3.5 text-right col-discount">Chiết khấu</th>
-                <th class="py-3 px-3.5 text-right col-total-discount">Tổng Chiết Khấu</th>
-                <th class="py-3 px-3.5 text-right col-total-amount">Tổng thu</th>
-                <th class="py-3 px-3.5 text-center col-status">Trạng thái</th>
+        <div class="cf-table-scroll min-h-[360px]">
+          <table class="cf-table whitespace-nowrap" id="tableTicketReport">
+            <thead class="cf-thead">
+              <tr>
+                <th class="col-issue-date">Ngày xuất vé</th>
+                <th class="col-agency">Đại lý</th>
+                <th class="col-order-code">Mã đơn hàng</th>
+                <th class="col-ncc-code">Mã đơn NCC</th>
+                <th class="col-ticket-code">Mã vé</th>
+                <th class="col-site">Địa điểm</th>
+                <th class="col-sku">Mã SKU</th>
+                <th class="col-ticket-name">Tên vé</th>
+                <th class="text-center col-quantity">SL</th>
+                <th class="text-right col-cost-price">Giá nhập</th>
+                <th class="text-right col-list-price">Giá niêm yết</th>
+                <th class="text-right col-selling-price">Giá bán</th>
+                <th class="text-right col-discount">Chiết khấu</th>
+                <th class="text-right col-total-discount">Tổng Chiết Khấu</th>
+                <th class="text-right col-total-amount">Tổng thu</th>
+                <th class="text-center col-status">Trạng thái</th>
               </tr>
             </thead>
-            <tbody id="ticketReportDesktopTbody" class="divide-y divide-slate-100 text-slate-700">
+            <tbody id="ticketReportDesktopTbody">
               <!-- Dynamically rendered rows -->
             </tbody>
           </table>
@@ -1049,84 +1050,86 @@
 
       tbody.innerHTML = records.map(t => {
         return `
-          <tr class="hover:bg-slate-50/80 transition-colors">
+          <tr class="cf-row group">
             <!-- 1. Ngày xuất vé -->
-            <td class="py-3 px-3.5 col-issue-date font-medium text-slate-700">${formatVnDate(t.issueDate)}</td>
+            <td class="cf-cell col-issue-date font-medium text-slate-700">${formatVnDate(t.issueDate)}</td>
 
             <!-- 2. Đại lý -->
-            <td class="py-3 px-3.5 col-agency">
-              <div class="font-bold text-slate-900">${t.agencyName}</div>
-              <div class="text-[10px] text-slate-400 font-mono">${t.agencyCode}</div>
+            <td class="cf-cell col-agency">
+              <div class="cf-two-tier">
+                <div class="cf-two-tier-title truncate max-w-[200px]" title="${t.agencyName}">${t.agencyName}</div>
+                <div class="cf-two-tier-sub">${t.agencyCode}</div>
+              </div>
             </td>
 
             <!-- 3. Mã đơn hàng -->
-            <td class="py-3 px-3.5 col-order-code font-mono font-bold text-blue-600">
-              <a href="orders.html?search=${encodeURIComponent(t.orderCode)}" class="hover:underline flex items-center gap-1">
+            <td class="cf-cell col-order-code">
+              <a href="orders.html?search=${encodeURIComponent(t.orderCode)}" class="cf-code-link">
                 <span>${t.orderCode}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
               </a>
             </td>
 
             <!-- 4. Mã đơn NCC -->
-            <td class="py-3 px-3.5 col-ncc-code font-mono text-slate-600 font-semibold">${t.nccCode}</td>
+            <td class="cf-cell col-ncc-code font-mono text-slate-600 font-semibold">${t.nccCode}</td>
 
             <!-- 5. Mã vé -->
-            <td class="py-3 px-3.5 col-ticket-code">
+            <td class="cf-cell col-ticket-code">
               <div class="inline-flex items-center gap-1.5">
-                <span class="font-mono font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                <span class="cf-code bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
                   ${t.ticketCode}
                 </span>
                 <button
                   type="button"
                   onclick="previewTicketQr('${t.ticketCode}', '${t.ticketName}', '${t.site}', '${formatVnDate(t.issueDate)}', '${t.orderCode}', '${t.status}')"
-                  class="w-6 h-6 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 flex items-center justify-center cursor-pointer transition-colors"
+                  class="cf-action-btn w-7 h-7"
                   title="Xem mã QR vé"
                 >
-                  <i class="fa-solid fa-qrcode text-[11px]"></i>
+                  <i class="fa-solid fa-qrcode text-[11px] text-purple-600"></i>
                 </button>
               </div>
             </td>
 
             <!-- 6. Địa điểm -->
-            <td class="py-3 px-3.5 col-site font-medium text-slate-800">${t.site}</td>
+            <td class="cf-cell col-site font-medium text-slate-800">${t.site}</td>
 
             <!-- 7. Mã SKU -->
-            <td class="py-3 px-3.5 col-sku font-mono text-slate-500 text-[11px]">${t.sku}</td>
+            <td class="cf-cell col-sku font-mono text-slate-500 text-[11px]">${t.sku}</td>
 
             <!-- 8. Tên vé -->
-            <td class="py-3 px-3.5 col-ticket-name font-bold text-slate-900 max-w-[220px] truncate" title="${t.ticketName}">${t.ticketName}</td>
+            <td class="cf-cell col-ticket-name font-bold text-slate-900 max-w-[220px] truncate" title="${t.ticketName}">${t.ticketName}</td>
 
             <!-- 9. Số lượng -->
-            <td class="py-3 px-3.5 text-center col-quantity font-bold text-slate-700">${t.quantity}</td>
+            <td class="cf-cell text-center col-quantity font-bold text-slate-700">${t.quantity}</td>
 
             <!-- 10. Giá nhập -->
-            <td class="py-3 px-3.5 text-right col-cost-price text-slate-600">${formatMoney(t.costPrice)}</td>
+            <td class="cf-cell text-right col-cost-price text-slate-600">${formatMoney(t.costPrice)}</td>
 
             <!-- 11. Giá niêm yết -->
-            <td class="py-3 px-3.5 text-right col-list-price text-slate-500 line-through text-[11px]">${formatMoney(t.listPrice)}</td>
+            <td class="cf-cell text-right col-list-price text-slate-500 line-through text-[11px]">${formatMoney(t.listPrice)}</td>
 
             <!-- 12. Giá bán -->
-            <td class="py-3 px-3.5 text-right col-selling-price font-bold text-slate-800">${formatMoney(t.sellingPrice)}</td>
+            <td class="cf-cell text-right col-selling-price font-bold text-slate-800">${formatMoney(t.sellingPrice)}</td>
 
             <!-- 13. Chiết khấu -->
-            <td class="py-3 px-3.5 text-right col-discount text-slate-600">${formatMoney(t.discount)}</td>
+            <td class="cf-cell text-right col-discount text-slate-600">${formatMoney(t.discount)}</td>
 
             <!-- 14. Tổng Chiết Khấu -->
-            <td class="py-3 px-3.5 text-right col-total-discount">
+            <td class="cf-cell text-right col-total-discount">
               <span class="inline-block px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">
                 ${formatMoney(t.totalDiscount)}
               </span>
             </td>
 
             <!-- 15. Tổng thu -->
-            <td class="py-3 px-3.5 text-right col-total-amount">
+            <td class="cf-cell text-right col-total-amount">
               <span class="inline-block px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-black">
                 ${formatMoney(t.totalAmount)}
               </span>
             </td>
 
             <!-- 16. Trạng thái -->
-            <td class="py-3 px-3.5 text-center col-status">
+            <td class="cf-cell text-center col-status">
               ${renderStatusBadge(t.status)}
             </td>
           </tr>
