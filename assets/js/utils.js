@@ -796,22 +796,41 @@ function createStandardDateRangePicker(config = {}) {
       if (trigger && typeof window !== 'undefined') {
         const windowWidth = window.innerWidth;
         if (windowWidth < 640) {
-          // Trên mobile: căn chuẩn 12px từ cả 2 lề màn hình, luôn nằm trọn vẹn trong màn hình
-          const parentRect = popover.parentElement.getBoundingClientRect();
+          // Trên mobile: Định vị fixed trọn vẹn theo viewport, bung ngay bên dưới ô input kích hoạt, căn giữa màn hình chống cắt cụt lửng
+          const triggerRect = trigger.getBoundingClientRect();
           const popoverWidth = Math.min(windowWidth - 24, 360);
-          const relativeLeft = 12 - parentRect.left;
-          popover.style.position = 'absolute';
-          popover.style.left = `${relativeLeft}px`;
+          const leftPos = Math.max(12, Math.floor((windowWidth - popoverWidth) / 2));
+          
+          const availableHeightBelow = window.innerHeight - triggerRect.bottom - 16;
+          const estimatedHeight = 440;
+          let topPos;
+          if (availableHeightBelow >= 280 || triggerRect.top < 280) {
+            topPos = Math.max(10, Math.floor(triggerRect.bottom + 6));
+            popover.style.maxHeight = `${Math.max(260, window.innerHeight - topPos - 16)}px`;
+          } else {
+            topPos = Math.max(10, Math.floor(triggerRect.top - estimatedHeight - 6));
+            popover.style.maxHeight = `${Math.max(260, triggerRect.top - 16)}px`;
+          }
+
+          popover.style.position = 'fixed';
+          popover.style.top = `${topPos}px`;
+          popover.style.left = `${leftPos}px`;
           popover.style.right = 'auto';
           popover.style.width = `${popoverWidth}px`;
           popover.style.maxWidth = `${windowWidth - 24}px`;
+          popover.style.zIndex = '60';
+          popover.style.overflowY = 'auto';
         } else {
           // Trên desktop: căn trái hoặc phải theo mép màn hình
           popover.style.position = '';
+          popover.style.top = '';
           popover.style.left = '';
           popover.style.right = '';
           popover.style.width = '';
           popover.style.maxWidth = '';
+          popover.style.maxHeight = '';
+          popover.style.zIndex = '';
+          popover.style.overflowY = '';
           const rect = trigger.getBoundingClientRect();
           if (rect.left + 360 > windowWidth - 16) {
             popover.classList.remove('left-0');
@@ -895,10 +914,15 @@ function createStandardDateRangePicker(config = {}) {
     const backdrop = document.getElementById(`${prefix}_datePopoverBackdrop`);
     if (popover) {
       popover.classList.add('hidden');
+      popover.style.position = '';
+      popover.style.top = '';
       popover.style.left = '';
       popover.style.right = '';
       popover.style.width = '';
       popover.style.maxWidth = '';
+      popover.style.maxHeight = '';
+      popover.style.zIndex = '';
+      popover.style.overflowY = '';
     }
     if (backdrop) backdrop.classList.add('hidden');
     onCancelCallback();
@@ -934,10 +958,15 @@ function createStandardDateRangePicker(config = {}) {
     const backdrop = document.getElementById(`${prefix}_datePopoverBackdrop`);
     if (popover) {
       popover.classList.add('hidden');
+      popover.style.position = '';
+      popover.style.top = '';
       popover.style.left = '';
       popover.style.right = '';
       popover.style.width = '';
       popover.style.maxWidth = '';
+      popover.style.maxHeight = '';
+      popover.style.zIndex = '';
+      popover.style.overflowY = '';
     }
     if (backdrop) backdrop.classList.add('hidden');
 
@@ -978,6 +1007,27 @@ function createStandardDateRangePicker(config = {}) {
     if (popover && popover.contains(e.target)) return;
 
     cancel(e);
+  });
+
+  // Handle window resize or orientation change when popover is open
+  window.addEventListener('resize', () => {
+    const popover = document.getElementById(`${prefix}_popoverDateRange`);
+    const trigger = document.getElementById(`${prefix}_btnDateTrigger`);
+    if (!popover || popover.classList.contains('hidden')) return;
+
+    if (window.innerWidth < 640 && trigger) {
+      const triggerRect = trigger.getBoundingClientRect();
+      const popoverWidth = Math.min(window.innerWidth - 24, 360);
+      const leftPos = Math.max(12, Math.floor((window.innerWidth - popoverWidth) / 2));
+      const topPos = Math.max(10, Math.floor(triggerRect.bottom + 6));
+      popover.style.left = `${leftPos}px`;
+      popover.style.top = `${topPos}px`;
+      popover.style.width = `${popoverWidth}px`;
+      popover.style.maxWidth = `${window.innerWidth - 24}px`;
+      popover.style.maxHeight = `${Math.max(260, window.innerHeight - topPos - 16)}px`;
+    } else {
+      cancel();
+    }
   });
 
   // Export functions globally
@@ -1030,7 +1080,7 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
       </button>
 
       <!-- 2. Dropdown Popover -->
-      <div id="${prefix}_datePopoverBackdrop" class="fixed inset-0 bg-slate-900/25 backdrop-blur-2xs z-40 hidden sm:hidden" onclick="${prefix}_cancel(event)"></div>
+      <div id="${prefix}_datePopoverBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden sm:hidden" onclick="${prefix}_cancel(event)"></div>
       <div
         id="${prefix}_popoverDateRange"
         onclick="event.stopPropagation()"
