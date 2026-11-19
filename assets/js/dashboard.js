@@ -17,7 +17,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       nov_1_10: {
         rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
+          revenue: { value: '6.4M', fullValue: '6.400.000 đ', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -35,7 +35,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       oct_full: {
         rangeLabel: '01/10/2026 - 31/10/2026',
         kpis: {
-          revenue: { value: '9.1M', dir: 'up', pct: '18.20%' },
+          revenue: { value: '9.1M', fullValue: '9.100.000 đ', dir: 'up', pct: '18.20%' },
           tickets: { value: '15', dir: 'up', pct: '25.00%' },
           agencies: { value: '7', dir: 'up', pct: '16.67%' },
           kols: { value: '25', dir: 'up', pct: '4.17%' },
@@ -53,7 +53,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       last_7: {
         rangeLabel: '12/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '5.1M', dir: 'down', pct: '12.40%' },
+          revenue: { value: '5.1M', fullValue: '5.100.000 đ', dir: 'down', pct: '12.40%' },
           tickets: { value: '8', dir: 'down', pct: '11.11%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -71,7 +71,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       nov_full: {
         rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
+          revenue: { value: '6.4M', fullValue: '6.400.000 đ', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -194,7 +194,16 @@ window.reportOrdersDataset = reportOrdersDataset;
       map.forEach(([valId, trendId, item]) => {
         const valEl = document.getElementById(valId);
         const trendEl = document.getElementById(trendId);
-        if (valEl) valEl.innerText = item.value;
+        if (valEl) {
+          valEl.innerText = item.value;
+          if (item.fullValue) {
+            valEl.setAttribute('title', item.fullValue);
+            valEl.classList.add('cursor-help');
+          } else {
+            valEl.removeAttribute('title');
+            valEl.classList.remove('cursor-help');
+          }
+        }
         if (trendEl) trendEl.innerHTML = renderKpiTrendHtml(item);
       });
     }
@@ -548,9 +557,7 @@ window.reportOrdersDataset = reportOrdersDataset;
 
     // Đồng bộ Dashboard Tổng quan (KPI, Biểu đồ, Top Kênh bán) theo reportOrdersDataset (> 3 tỷ VND)
     function formatCompactVndShort(amount) {
-      if (amount >= 1e9) return `${(amount / 1e9).toFixed(2)} tỷ`;
-      if (amount >= 1e6) return `${(amount / 1e6).toFixed(1)}M`;
-      return `${formatMoney(amount)} đ`;
+      return typeof formatKpiCurrency === 'function' ? formatKpiCurrency(amount) : `${formatMoney(amount)} đ`;
     }
 
     function buildDashboardDataFromOrders(startIso, endIso, rangeLabel) {
@@ -583,7 +590,12 @@ window.reportOrdersDataset = reportOrdersDataset;
       return {
         rangeLabel,
         kpis: {
-          revenue: { value: formatCompactVndShort(totalRev), dir: 'up', pct: '18.45%' },
+          revenue: { 
+            value: formatCompactVndShort(totalRev), 
+            fullValue: `${formatMoney(totalRev)} đ`, 
+            dir: 'up', 
+            pct: '18.45%' 
+          },
           tickets: { value: formatMoney(totalTickets), dir: 'up', pct: '15.20%' },
           agencies: { value: String(activeAgencies), dir: 'up', pct: '25.00%' },
           kols: { value: String(activeKols), dir: 'up', pct: '11.11%' },

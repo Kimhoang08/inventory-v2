@@ -21,7 +21,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       nov_1_10: {
         rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
+          revenue: { value: '6.4M', fullValue: '6.400.000 đ', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -39,7 +39,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       oct_full: {
         rangeLabel: '01/10/2026 - 31/10/2026',
         kpis: {
-          revenue: { value: '9.1M', dir: 'up', pct: '18.20%' },
+          revenue: { value: '9.1M', fullValue: '9.100.000 đ', dir: 'up', pct: '18.20%' },
           tickets: { value: '15', dir: 'up', pct: '25.00%' },
           agencies: { value: '7', dir: 'up', pct: '16.67%' },
           kols: { value: '25', dir: 'up', pct: '4.17%' },
@@ -57,7 +57,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       last_7: {
         rangeLabel: '12/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '5.1M', dir: 'down', pct: '12.40%' },
+          revenue: { value: '5.1M', fullValue: '5.100.000 đ', dir: 'down', pct: '12.40%' },
           tickets: { value: '8', dir: 'down', pct: '11.11%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -75,7 +75,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       nov_full: {
         rangeLabel: '01/11/2026 - 18/11/2026',
         kpis: {
-          revenue: { value: '6.4M', dir: 'down', pct: '29.48%' },
+          revenue: { value: '6.4M', fullValue: '6.400.000 đ', dir: 'down', pct: '29.48%' },
           tickets: { value: '10', dir: 'down', pct: '33.33%' },
           agencies: { value: '8', dir: 'up', pct: '14.29%' },
           kols: { value: '25', dir: 'up', pct: '0.00%' },
@@ -198,7 +198,16 @@ window.reportOrdersDataset = reportOrdersDataset;
       map.forEach(([valId, trendId, item]) => {
         const valEl = document.getElementById(valId);
         const trendEl = document.getElementById(trendId);
-        if (valEl) valEl.innerText = item.value;
+        if (valEl) {
+          valEl.innerText = item.value;
+          if (item.fullValue) {
+            valEl.setAttribute('title', item.fullValue);
+            valEl.classList.add('cursor-help');
+          } else {
+            valEl.removeAttribute('title');
+            valEl.classList.remove('cursor-help');
+          }
+        }
         if (trendEl) trendEl.innerHTML = renderKpiTrendHtml(item);
       });
     }
@@ -563,7 +572,12 @@ window.reportOrdersDataset = reportOrdersDataset;
       return {
         rangeLabel,
         kpis: {
-          revenue: { value: formatCompactVndShort(totalRev), dir: 'up', pct: '18.45%' },
+          revenue: { 
+            value: formatCompactVndShort(totalRev), 
+            fullValue: `${formatMoney(totalRev)} đ`, 
+            dir: 'up', 
+            pct: '18.45%' 
+          },
           tickets: { value: formatMoney(totalTickets), dir: 'up', pct: '15.20%' },
           agencies: { value: String(activeAgencies), dir: 'up', pct: '25.00%' },
           kols: { value: String(activeKols), dir: 'up', pct: '11.11%' },
@@ -1433,7 +1447,13 @@ window.reportOrdersDataset = reportOrdersDataset;
       const setCard = (valId, trendId, val, prevVal) => {
         const vEl = document.getElementById(valId);
         const tEl = document.getElementById(trendId);
-        if (vEl) vEl.innerText = `${formatMoney(val)} đ`;
+        if (vEl) {
+          if (typeof setKpiCardValue === 'function') {
+            setKpiCardValue(vEl, val);
+          } else {
+            vEl.innerText = `${formatMoney(val)} đ`;
+          }
+        }
         if (tEl) tEl.innerHTML = formatPctDiffHtml(val, prevVal);
       };
 
@@ -1470,7 +1490,13 @@ window.reportOrdersDataset = reportOrdersDataset;
       const totalWallet = agencyWalletsDataset.reduce((s, w) => s + w.balance, 0);
       const walletTotalEl = document.getElementById('bizAgencyWalletTotal');
       const walletMiniEl = document.getElementById('bizAgencyWalletMiniList');
-      if (walletTotalEl) walletTotalEl.innerText = `${formatMoney(totalWallet)} đ`;
+      if (walletTotalEl) {
+        if (typeof setKpiCardValue === 'function') {
+          setKpiCardValue(walletTotalEl, totalWallet);
+        } else {
+          walletTotalEl.innerText = `${formatMoney(totalWallet)} đ`;
+        }
+      }
       if (walletMiniEl) {
         walletMiniEl.innerHTML = agencyWalletsDataset.slice(0, 2).map(w => `
           <div class="flex items-center justify-between gap-2">

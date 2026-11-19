@@ -1492,16 +1492,43 @@
     const c4Val = document.getElementById('cardFinalRefundAmount');
     const c4Sub = document.getElementById('cardFinalRefundSub');
 
-    if (c1Val) c1Val.textContent = sumOrig.toLocaleString('vi-VN') + ' đ';
+    if (c1Val) {
+      if (typeof setKpiCardValue === 'function') setKpiCardValue(c1Val, sumOrig);
+      else c1Val.textContent = sumOrig.toLocaleString('vi-VN') + ' đ';
+    }
     if (c1Sub) c1Sub.textContent = `Tổng tiền khách thanh toán trong đơn gốc (${item.tickets.length} vé)`;
 
-    if (c2Val) c2Val.textContent = hasGroupVal ? (sumPenalty.toLocaleString('vi-VN') + ' đ') : '--';
+    if (c2Val) {
+      if (hasGroupVal) {
+        if (typeof setKpiCardValue === 'function') setKpiCardValue(c2Val, sumPenalty);
+        else c2Val.textContent = sumPenalty.toLocaleString('vi-VN') + ' đ';
+      } else {
+        c2Val.textContent = '--';
+        c2Val.removeAttribute('title');
+      }
+    }
     if (c2Sub) c2Sub.textContent = `Giá KH thanh toán — Giá hoàn từ tập đoàn`;
 
-    if (c3Val) c3Val.textContent = hasGroupVal ? (sumGroupRefund.toLocaleString('vi-VN') + ' đ') : '--';
+    if (c3Val) {
+      if (hasGroupVal) {
+        if (typeof setKpiCardValue === 'function') setKpiCardValue(c3Val, sumGroupRefund);
+        else c3Val.textContent = sumGroupRefund.toLocaleString('vi-VN') + ' đ';
+      } else {
+        c3Val.textContent = '--';
+        c3Val.removeAttribute('title');
+      }
+    }
     if (c3Sub) c3Sub.textContent = `Số tiền Tập đoàn duyệt hoàn lại`;
 
-    if (c4Val) c4Val.textContent = hasFinalVal ? (sumFinalRefund.toLocaleString('vi-VN') + ' đ') : '--';
+    if (c4Val) {
+      if (hasFinalVal) {
+        if (typeof setKpiCardValue === 'function') setKpiCardValue(c4Val, sumFinalRefund);
+        else c4Val.textContent = sumFinalRefund.toLocaleString('vi-VN') + ' đ';
+      } else {
+        c4Val.textContent = '--';
+        c4Val.removeAttribute('title');
+      }
+    }
     if (c4Sub) c4Sub.textContent = `Số tiền hoàn chi trả thực tế cho Đại lý`;
 
     // Lưu lại vào item data

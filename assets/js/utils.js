@@ -25,10 +25,64 @@ function formatSignedVnd(amount) {
   return amount < 0 ? `-${formatMoney(Math.abs(amount))} đ` : `${formatMoney(amount)} đ`;
 }
 
+/**
+ * Rút gọn số tiền cho các Card chỉ số / KPI Cards:
+ * - Dưới 1.000.000: Hiển thị đầy đủ kèm đơn vị (VD: 850.000 đ)
+ * - Từ 1.000.000 đến dưới 1.000.000.000 (M): bỏ 4 số cuối, lấy tối đa 2 chữ số thập phân (VD: 1.875.000 -> 1.87M, 254.353.700 -> 254.35M)
+ * - Từ 1.000.000.000 trở lên (B): chia 1 tỷ, làm tròn 2 chữ số thập phân (VD: 1.800.000.000 -> 1.8B, 2.439.030.000 -> 2.44B)
+ */
+function formatKpiCurrency(amount) {
+  const num = Number(amount) || 0;
+  const isNeg = num < 0;
+  const absNum = Math.abs(num);
+
+  let formatted = '';
+  if (absNum < 1e6) {
+    formatted = `${formatMoney(absNum)} đ`;
+  } else if (absNum < 1e9) {
+    const val = Math.floor(absNum / 10000) / 100;
+    formatted = `${parseFloat(val.toFixed(2))}M`;
+  } else {
+    const val = Math.round((absNum / 1e9) * 100) / 100;
+    formatted = `${parseFloat(val.toFixed(2))}B`;
+  }
+
+  return isNeg ? `-${formatted}` : formatted;
+}
+
 function formatCompactVndShort(amount) {
-  if (amount >= 1e9) return `${(amount / 1e9).toFixed(2)} tỷ`;
-  if (amount >= 1e6) return `${(amount / 1e6).toFixed(1)}M`;
-  return `${formatMoney(amount)} đ`;
+  return formatKpiCurrency(amount);
+}
+
+/**
+ * Gán giá trị rút gọn cho phần tử Card chỉ số, giữ nguyên số gốc trên tooltip/title khi hover
+ * @param {HTMLElement|string} elOrId - Phần tử DOM hoặc ID
+ * @param {number} amount - Số tiền gốc
+ * @param {string} [prefix=''] - Tiền tố (ví dụ '+', '-')
+ */
+function setKpiCardValue(elOrId, amount, prefix = '') {
+  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  if (!el) return;
+  const num = Number(amount) || 0;
+  const compact = formatKpiCurrency(num);
+  const full = `${formatMoney(Math.abs(num))} đ`;
+  const fullText = (num < 0 ? `-${full}` : full);
+  el.innerText = prefix ? `${prefix}${compact}` : compact;
+  el.setAttribute('title', prefix ? `${prefix}${fullText}` : fullText);
+  el.classList.add('cursor-help');
+}
+
+/**
+ * Tạo chuỗi HTML rút gọn cho Card chỉ số kèm tooltip số gốc
+ */
+function renderKpiValueMarkup(amount, prefix = '') {
+  const num = Number(amount) || 0;
+  const compact = formatKpiCurrency(num);
+  const full = `${formatMoney(Math.abs(num))} đ`;
+  const fullText = (num < 0 ? `-${full}` : full);
+  const display = prefix ? `${prefix}${compact}` : compact;
+  const title = prefix ? `${prefix}${fullText}` : fullText;
+  return `<span title="${title}" class="cursor-help">${display}</span>`;
 }
 
 function removeVietnameseTones(str) {
@@ -1169,3 +1223,6 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
 }
 
 window.renderStandardDateRangePickerHTML = renderStandardDateRangePickerHTML;
+window.formatKpiCurrency = formatKpiCurrency;
+window.setKpiCardValue = setKpiCardValue;
+window.renderKpiValueMarkup = renderKpiValueMarkup;

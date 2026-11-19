@@ -742,29 +742,45 @@
       const totalIncome = cashFlowFilteredDataset
         .filter(t => t.group === 'Thu' && t.status === 'Thành công')
         .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-      const incEl = document.getElementById('cfKpiTotalIncome');
-      if (incEl) incEl.innerText = `${formatMoney(totalIncome)} đ`;
+      if (typeof setKpiCardValue === 'function') {
+        setKpiCardValue('cfKpiTotalIncome', totalIncome);
+      } else {
+        const incEl = document.getElementById('cfKpiTotalIncome');
+        if (incEl) incEl.innerText = `${formatMoney(totalIncome)} đ`;
+      }
 
       // 3. Tổng chi: Thực chi từ giao dịch Chi ở trạng thái Thành công
       const totalExpense = cashFlowFilteredDataset
         .filter(t => t.group === 'Chi' && t.status === 'Thành công')
         .reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0);
-      const expEl = document.getElementById('cfKpiTotalExpense');
-      if (expEl) expEl.innerText = `${formatMoney(totalExpense)} đ`;
+      if (typeof setKpiCardValue === 'function') {
+        setKpiCardValue('cfKpiTotalExpense', totalExpense);
+      } else {
+        const expEl = document.getElementById('cfKpiTotalExpense');
+        if (expEl) expEl.innerText = `${formatMoney(totalExpense)} đ`;
+      }
 
       // 4. Dự kiến thu: Giao dịch Thu đang Chờ xử lý
       const expIncome = cashFlowFilteredDataset
         .filter(t => t.group === 'Thu' && t.status === 'Chờ xử lý')
         .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-      const expIncEl = document.getElementById('cfKpiExpectedIncome');
-      if (expIncEl) expIncEl.innerText = `${formatMoney(expIncome)} đ`;
+      if (typeof setKpiCardValue === 'function') {
+        setKpiCardValue('cfKpiExpectedIncome', expIncome);
+      } else {
+        const expIncEl = document.getElementById('cfKpiExpectedIncome');
+        if (expIncEl) expIncEl.innerText = `${formatMoney(expIncome)} đ`;
+      }
 
       // 5. Dự kiến chi: Giao dịch Chi đang Chờ xử lý
       const expExpense = cashFlowFilteredDataset
         .filter(t => t.group === 'Chi' && t.status === 'Chờ xử lý')
         .reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0);
-      const expExpEl = document.getElementById('cfKpiExpectedExpense');
-      if (expExpEl) expExpEl.innerText = `${formatMoney(expExpense)} đ`;
+      if (typeof setKpiCardValue === 'function') {
+        setKpiCardValue('cfKpiExpectedExpense', expExpense);
+      } else {
+        const expExpEl = document.getElementById('cfKpiExpectedExpense');
+        if (expExpEl) expExpEl.innerText = `${formatMoney(expExpense)} đ`;
+      }
 
       // 6. Hóa đơn chưa xuất / đã xuất: Tỷ lệ % từ tập đơn hàng theo bộ lọc
       const relevantOrderCodes = new Set(cashFlowFilteredDataset.map(t => t.orderCode));

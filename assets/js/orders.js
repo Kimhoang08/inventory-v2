@@ -81,14 +81,7 @@ function formatOrderCreatedDateTime(dateStr, seed = 0) {
 }
 
 function formatCompactRevenue(amount) {
-  const num = Number(amount) || 0;
-  if (num >= 1e9) return `${(num / 1e9).toFixed(1)}B`;
-  if (num >= 1e6) {
-    const m = num / 1e6;
-    return m % 1 === 0 ? `${m}M` : `${m.toFixed(1)}M`;
-  }
-  if (num >= 1e3) return `${Math.round(num / 1e3)}K`;
-  return `${formatMoney(num)} đ`;
+  return typeof formatKpiCurrency === 'function' ? formatKpiCurrency(amount) : `${formatMoney(amount)} đ`;
 }
 
 function getStatusBadgeMarkup(status) {
@@ -658,8 +651,13 @@ function renderOrdersListView() {
   };
   setEl('kpiCompletedOrders', formatMoney(completedOrders.length));
   setEl('kpiProcessingOrders', formatMoney(processingOrders.length));
-  setEl('kpiActualRevenue', formatCompactRevenue(completedRevenue));
-  setEl('kpiActualProfit', `${formatMoney(completedProfit)} đ`);
+  if (typeof setKpiCardValue === 'function') {
+    setKpiCardValue('kpiActualRevenue', completedRevenue);
+    setKpiCardValue('kpiActualProfit', completedProfit);
+  } else {
+    setEl('kpiActualRevenue', formatCompactRevenue(completedRevenue));
+    setEl('kpiActualProfit', `${formatMoney(completedProfit)} đ`);
+  }
 
   // Update feed counter badge
   setEl('ordersFeedCountBadge', filtered.length);
