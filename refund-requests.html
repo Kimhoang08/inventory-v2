@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yêu cầu Hoàn/Hủy Vé - Techera Portal B2B</title>
+  <title>Quản lý Yêu cầu Hoàn/Hủy Vé - Techera Portal B2B</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -16,229 +16,583 @@
   <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
 
-      <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Yêu cầu Hoàn/Hủy Vé</h1>
-          <p class="text-xs text-slate-500 mt-0.5">Tiếp nhận, thẩm tra và xử lý hoàn tiền vé điện tử QR toàn hệ thống</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <a href="orders.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
-            <i class="fa-solid fa-list-check text-xs"></i>
-            <span>Đơn hàng gốc</span>
-          </a>
-          <button type="button" onclick="openCreateRefundModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer">
-            <i class="fa-solid fa-plus text-[11px]"></i>
-            <span>Tạo yêu cầu hoàn vé</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 4 KPI Cards -->
-      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-clock-rotate-left text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Chờ phê duyệt</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">3 yêu cầu</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-clock-rotate-left absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-circle-check text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Đã hoàn tiền</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">18 yêu cầu</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-circle-check absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-hand-holding-dollar text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Tổng tiền hoàn trả</div>
-              <div class="text-xl font-extrabold text-rose-600 leading-tight mt-0.5">48.950.000 đ</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-hand-holding-dollar absolute -right-2 -bottom-2 text-rose-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-chart-pie text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Tỷ lệ hoàn vé</div>
-              <div class="text-xl font-extrabold text-blue-700 leading-tight mt-0.5">1.8%</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-chart-pie absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-      </section>
-
-      <!-- Bộ lọc (Thiết kế chuẩn đồng bộ) -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <!-- ==================================================================== -->
+      <!-- VIEW 1: DANH SÁCH YÊU CẦU HOÀN / HỦY VÉ                              -->
+      <!-- ==================================================================== -->
+      <div id="viewRefundRequestsList" class="space-y-5 animate-in fade-in duration-200">
+        
+        <!-- 1. Header (Bỏ nút Đơn hàng gốc, Bỏ card chỉ số) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm yêu cầu</label>
-            <div class="relative">
-              <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-              <input type="text" id="refundSearchInput" placeholder="Mã hoàn, mã đơn, khách..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 placeholder:text-slate-400" />
-            </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Danh sách Yêu cầu Hoàn/Hủy</h1>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Tiếp nhận, thẩm tra, định giá phí phạt và xử lý hoàn tiền vé điện tử QR toàn hệ thống</p>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái duyệt</label>
-            <select id="refundStatusFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer">
-              <option value="ALL">Tất cả trạng thái</option>
-              <option value="PENDING">Chờ phê duyệt</option>
-              <option value="APPROVED">Đã hoàn tiền</option>
-              <option value="REJECTED">Đã từ chối</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khu du lịch</label>
-            <select id="refundSiteFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer">
-              <option value="ALL">Tất cả khu vui chơi</option>
-              <option value="BANA">Sun World Ba Na Hills</option>
-              <option value="PHUQUOC">VinWonders Phú Quốc</option>
-              <option value="FANSIPAN">Sun World Fansipan</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Hành động</label>
-            <button type="button" onclick="showToast('Áp dụng bộ lọc', 'Đã cập nhật danh sách yêu cầu hoàn vé.')" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-2xs transition-colors cursor-pointer flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-filter text-[11px]"></i>
-              <span>Lọc kết quả</span>
+          <div class="flex items-center gap-2.5 self-start sm:self-auto">
+            <button
+              type="button"
+              onclick="openCreateRefundModal()"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold shadow-2xs transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-plus text-[11px]"></i>
+              <span>Tạo yêu cầu hoàn vé</span>
             </button>
           </div>
         </div>
-      </section>
 
-      <!-- Bảng danh sách yêu cầu hoàn vé -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-          <div class="font-extrabold text-sm text-slate-900">Danh sách Yêu cầu Hoàn/Hủy vé</div>
-          <span class="text-xs text-slate-400">Hiển thị 4 yêu cầu gần nhất</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <tr>
-                <th class="px-4 py-3">Mã hoàn / Ngày tạo</th>
-                <th class="px-4 py-3">Đơn hàng gốc</th>
-                <th class="px-4 py-3">Khách hàng / Đại lý</th>
-                <th class="px-4 py-3">Gói vé &amp; Số lượng</th>
-                <th class="px-4 py-3 text-right">Số tiền hoàn</th>
-                <th class="px-4 py-3 text-center">Trạng thái</th>
-                <th class="px-4 py-3 text-right">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5">
-                  <strong class="font-mono text-blue-700 block text-xs">REF-2611-008</strong>
-                  <span class="text-[11px] text-slate-400">18/11/2026 09:12</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <a href="orders.html" class="font-mono font-bold text-slate-800 hover:text-blue-600">ORD-2611-008</a>
-                  <div class="text-[11px] text-slate-400">Dùng: 20/11/2026</div>
-                </td>
-                <td class="px-4 py-3.5">
-                  <strong class="text-slate-800 block">Nguyễn Văn An</strong>
-                  <span class="text-[11px] text-slate-500">Đại lý HuyEra (0909123456)</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <div class="font-semibold text-slate-800">Sun World Ba Na Hills</div>
-                  <div class="text-[11px] text-slate-400 truncate max-w-[200px]">CB Cáp Treo &amp; Buffet • 4 vé</div>
-                </td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-rose-600">
-                  4.704.000 đ
-                </td>
-                <td class="px-4 py-3.5 text-center">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Chờ duyệt</span>
-                </td>
-                <td class="px-4 py-3.5 text-right">
-                  <div class="inline-flex items-center gap-1.5">
-                    <button type="button" onclick="approveRefundNow('REF-2611-008', 4704000)" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs cursor-pointer">Duyệt hoàn</button>
-                    <button type="button" onclick="rejectRefundNow('REF-2611-008')" class="px-2 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 font-semibold text-[11px] cursor-pointer">Từ chối</button>
+        <!-- 2. Khối Bộ lọc Đa điều kiện (Thiết kế chuẩn đồng bộ với orders.html & cashflow.html) -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3.5">
+          <!-- Hàng 1: Tìm kiếm từ khóa + 3 Dropdowns (Đại lý, Tập đoàn, Khu du lịch) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+            <!-- Ô tìm kiếm mờ (span 4): Mã RQRF..., Mã đơn gốc ORD-..., hoặc Tên người gửi -->
+            <div class="lg:col-span-4">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                Tìm kiếm từ khóa
+              </label>
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input
+                  type="text"
+                  id="refundSearchInput"
+                  placeholder="Tìm theo Mã RQRF..., Mã đơn gốc, Tên người gửi..."
+                  class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 placeholder:text-slate-400 transition-colors shadow-2xs"
+                />
+              </div>
+            </div>
+
+            <!-- (1) Dropdown Đại lý B2B (span 3) -->
+            <div class="lg:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                Đại lý B2B
+              </label>
+              <select
+                id="refundAgencyFilter"
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer transition-colors shadow-2xs"
+              >
+                <option value="ALL">Tất cả đại lý</option>
+                <!-- Nạp tự động từ refunds.js -->
+              </select>
+            </div>
+
+            <!-- (2) Dropdown Tập đoàn (span 2) -->
+            <div class="lg:col-span-2">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                Tập đoàn
+              </label>
+              <select
+                id="refundCorpFilter"
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer transition-colors shadow-2xs"
+              >
+                <option value="ALL">Tất cả tập đoàn</option>
+                <!-- Nạp tự động từ refunds.js -->
+              </select>
+            </div>
+
+            <!-- (3) Dropdown Khu du lịch (span 3) - Tự động lọc theo Tập đoàn -->
+            <div class="lg:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                Khu du lịch
+              </label>
+              <select
+                id="refundSiteFilter"
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 cursor-pointer transition-colors shadow-2xs"
+              >
+                <option value="ALL">Tất cả khu du lịch</option>
+                <!-- Nạp tự động từ refunds.js -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Hàng 2: Bộ lọc Thời gian chuẩn (Date Range Popover Picker) + Nút Đặt lại -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <!-- Bộ lọc Thời gian dạng dropdown bung mở ngay bên dưới ô kích hoạt -->
+            <div class="flex items-center gap-2.5">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">
+                Thời gian tạo:
+              </span>
+              <div class="relative date-range-picker-wrap">
+                <!-- Trigger Button -->
+                <button
+                  id="refund_btnDateTrigger"
+                  type="button"
+                  onclick="refund_toggleDatePopover(event)"
+                  class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors shadow-2xs focus:outline-none h-[34px]"
+                >
+                  <i class="fa-regular fa-calendar text-rose-500 text-xs shrink-0"></i>
+                  <span id="refund_dateDisplayText" class="truncate text-xs font-bold">01/11/2026 - 19/11/2026</span>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
+                </button>
+
+                <!-- Backdrop che mờ nền trên mobile -->
+                <div id="refund_datePopoverBackdrop" class="fixed inset-0 bg-slate-900/25 backdrop-blur-2xs z-40 hidden sm:hidden" onclick="refund_cancel(event)"></div>
+
+                <!-- Popover Dropdown (Hiển thị ngay bên dưới ô input kích hoạt Thời gian) -->
+                <div
+                  id="refund_popoverDateRange"
+                  onclick="event.stopPropagation()"
+                  class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-1.5 w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3.5 z-50 text-left animate-in fade-in zoom-in-95 duration-150 ring-1 ring-slate-900/5"
+                >
+                  <!-- 1. Header -->
+                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
+                    <span class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="refund_activeTagLabel" class="font-bold text-rose-600">Tháng này</span></span>
                   </div>
-                </td>
-              </tr>
 
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5">
-                  <strong class="font-mono text-blue-700 block text-xs">REF-2611-007</strong>
-                  <span class="text-[11px] text-slate-400">18/11/2026 08:45</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <a href="orders.html" class="font-mono font-bold text-slate-800 hover:text-blue-600">ORD-2611-005</a>
-                  <div class="text-[11px] text-slate-400">Dùng: 18/11/2026</div>
-                </td>
-                <td class="px-4 py-3.5">
-                  <strong class="text-slate-800 block">Trần Thị Mai</strong>
-                  <span class="text-[11px] text-slate-500">CÔNG TY TNHH DVDL BA MIEN</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <div class="font-semibold text-slate-800">VinWonders Phú Quốc</div>
-                  <div class="text-[11px] text-slate-400 truncate max-w-[200px]">Vé Vào Cổng + Safari • 6 vé</div>
-                </td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-slate-800">
-                  7.500.000 đ
-                </td>
-                <td class="px-4 py-3.5 text-center">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đã hoàn tiền</span>
-                </td>
-                <td class="px-4 py-3.5 text-right">
-                  <span class="text-[11px] text-slate-400 italic">Hoàn về Ví B2B</span>
-                </td>
-              </tr>
+                  <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
+                      <span id="refund_displayStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
+                      <span id="refund_displayEndDate" class="font-black text-slate-800 text-xs tracking-tight">19/11/2026</span>
+                    </div>
+                  </div>
 
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5">
-                  <strong class="font-mono text-blue-700 block text-xs">REF-2611-006</strong>
-                  <span class="text-[11px] text-slate-400">17/11/2026 16:20</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <a href="orders.html" class="font-mono font-bold text-slate-800 hover:text-blue-600">ORD-2611-002</a>
-                  <div class="text-[11px] text-slate-400">Dùng: 16/11/2026</div>
-                </td>
-                <td class="px-4 py-3.5">
-                  <strong class="text-slate-800 block">Hoàng Văn Thái</strong>
-                  <span class="text-[11px] text-slate-500">Khách lẻ B2C (0988776655)</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <div class="font-semibold text-slate-800">Sun World Fansipan Legend</div>
-                  <div class="text-[11px] text-slate-400 truncate max-w-[200px]">Vé Cáp Treo Khứ Hồi • 2 vé</div>
-                </td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-slate-800">
-                  1.700.000 đ
-                </td>
-                <td class="px-4 py-3.5 text-center">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Đã từ chối</span>
-                </td>
-                <td class="px-4 py-3.5 text-right">
-                  <span class="text-[11px] text-slate-400 italic">Quá hạn hủy vé</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
+                  <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+                    <button type="button" id="refund_btnPreset_7days" onclick="refund_selectPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      7 ngày
+                    </button>
+                    <button type="button" id="refund_btnPreset_30days" onclick="refund_selectPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      30 ngày
+                    </button>
+                    <button type="button" id="refund_btnPreset_this_month" onclick="refund_selectPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-rose-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+                      Tháng này
+                    </button>
+                    <button type="button" id="refund_btnPreset_quarter" onclick="refund_selectPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      Quý
+                    </button>
+                    <button type="button" id="refund_btnPreset_custom" onclick="refund_selectPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+                      <span>Tùy chỉnh</span>
+                      <span id="refund_customDot" class="w-1.5 h-1.5 rounded-full bg-rose-600 hidden"></span>
+                    </button>
+                  </div>
+
+                  <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
+                  <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <!-- Điều hướng tháng -->
+                    <div class="flex items-center justify-between px-1">
+                      <button type="button" onclick="refund_navigateMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
+                        <i class="fa-solid fa-chevron-left"></i>
+                      </button>
+                      <span id="refund_calendarMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
+                      <button type="button" onclick="refund_navigateMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </div>
+
+                    <!-- Thứ trong tuần -->
+                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
+                      <span>T2</span>
+                      <span>T3</span>
+                      <span>T4</span>
+                      <span>T5</span>
+                      <span>T6</span>
+                      <span>T7</span>
+                      <span>CN</span>
+                    </div>
+
+                    <!-- Lưới ngày -->
+                    <div id="refund_calendarGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
+                      <!-- Render tự động qua utils.js -->
+                    </div>
+                  </div>
+
+                  <!-- 6. Chân Dropdown (Footer Actions) -->
+                  <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
+                    <button type="button" onclick="refund_cancel(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+                      Hủy
+                    </button>
+                    <button type="button" onclick="refund_apply(event)" class="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+                      Áp dụng
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nút Đặt lại bộ lọc -->
+            <button
+              type="button"
+              onclick="resetRefundFilters()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-rose-600 font-bold text-xs shadow-2xs transition-all cursor-pointer h-[34px] self-end sm:self-auto"
+            >
+              <i class="fa-solid fa-rotate-right text-[11px]"></i>
+              <span>Đặt lại bộ lọc</span>
+            </button>
+          </div>
         </div>
-      </section>
+
+        <!-- 3. Tabs Trạng thái & Bảng Danh sách -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          
+          <!-- Hàng Tabs 4 Trạng thái chuẩn nghiệp vụ -->
+          <div class="p-3 sm:px-4 sm:py-3 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70">
+            <div class="flex flex-wrap items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl">
+              <!-- Tab 1: Chờ xử lý (Mặc định) -->
+              <button
+                type="button"
+                id="tabBtn_CHO_XU_LY"
+                onclick="switchRefundTab('CHO_XU_LY')"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all bg-white text-brand-600 shadow-2xs cursor-pointer border border-brand-200/60"
+              >
+                <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
+                <span>Chờ xử lý</span>
+                <span id="badgeTab_CHO_XU_LY" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800">0</span>
+              </button>
+
+              <!-- Tab 2: Đang xử lý -->
+              <button
+                type="button"
+                id="tabBtn_DANG_XU_LY"
+                onclick="switchRefundTab('DANG_XU_LY')"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 cursor-pointer border border-transparent"
+              >
+                <i class="fa-solid fa-spinner text-blue-500"></i>
+                <span>Đang xử lý</span>
+                <span id="badgeTab_DANG_XU_LY" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800">0</span>
+              </button>
+
+              <!-- Tab 3: Đang hoàn tiền -->
+              <button
+                type="button"
+                id="tabBtn_DANG_HOAN_TIEN"
+                onclick="switchRefundTab('DANG_HOAN_TIEN')"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 cursor-pointer border border-transparent"
+              >
+                <i class="fa-solid fa-money-bill-transfer text-purple-500"></i>
+                <span>Đang hoàn tiền</span>
+                <span id="badgeTab_DANG_HOAN_TIEN" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800">0</span>
+              </button>
+
+              <!-- Tab 4: Đã xử lý -->
+              <button
+                type="button"
+                id="tabBtn_DA_XU_LY"
+                onclick="switchRefundTab('DA_XU_LY')"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 cursor-pointer border border-transparent"
+              >
+                <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                <span>Đã xử lý</span>
+                <span id="badgeTab_DA_XU_LY" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700">0</span>
+              </button>
+            </div>
+
+            <!-- Tổng số bản ghi hiển thị -->
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+              <span>Tổng số:</span>
+              <span id="refundTableRecordCount" class="font-extrabold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">0 yêu cầu</span>
+            </div>
+          </div>
+
+          <!-- Bảng dữ liệu chuẩn 11 Cột theo yêu cầu (Cột cuối: Thống nhất Nút Xem chi tiết) -->
+          <div class="overflow-x-auto min-h-[320px]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50/90 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider sticky top-0 z-10">
+                <tr>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Mã yêu cầu</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Mã đơn hoàn</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Mã đơn gốc</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Ngày sử dụng (T)</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap text-center">Số vé hoàn</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Tập đoàn</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Khu du lịch</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Đại lý</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Người gửi</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Email</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap">Mã số thuế</th>
+                  <th class="px-3.5 py-3 whitespace-nowrap text-right sticky right-0 bg-slate-50/95 shadow-[-4px_0_12px_rgba(0,0,0,0.03)]">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="refundTableBody" class="divide-y divide-slate-100">
+                <!-- Nạp tự động từ refunds.js -->
+              </tbody>
+            </table>
+
+            <!-- Thông báo khi không có dữ liệu -->
+            <div id="refundEmptyNotice" class="hidden py-14 text-center space-y-2">
+              <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-lg">
+                <i class="fa-solid fa-inbox"></i>
+              </div>
+              <p class="text-xs font-bold text-slate-700">Không tìm thấy yêu cầu hoàn/hủy phù hợp</p>
+              <p class="text-[11px] text-slate-400">Hãy thử thay đổi từ khóa tìm kiếm hoặc điều chỉnh lại các bộ lọc</p>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- /#viewRefundRequestsList -->
+
+
+      <!-- ==================================================================== -->
+      <!-- VIEW 2: CHI TIẾT ĐƠN HOÀN HỦY (NEXTPAGE WORKSPACE THEO QUY TẮC TAB) -->
+      <!-- ==================================================================== -->
+      <div id="viewRefundRequestDetail" class="hidden space-y-6 animate-in fade-in duration-200">
+        
+        <!-- Header Chi tiết: Nút Quay lại & Trạng thái -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs">
+          <div class="flex items-center gap-3.5">
+            <button
+              type="button"
+              onclick="closeRefundDetail()"
+              class="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-brand-500 hover:bg-brand-50 text-slate-600 hover:text-brand-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs group shrink-0"
+              title="Quay lại danh sách hoàn hủy"
+            >
+              <i class="fa-solid fa-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+            </button>
+            <div>
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Chi tiết Yêu cầu Hoàn/Hủy</h2>
+                <span id="dtRequestCode" class="font-mono text-sm font-black text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200">
+                  RQRF...
+                </span>
+                <span id="dtStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                  Chờ xử lý
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Mã đơn hoàn: <strong id="dtRefundOrderCode" class="font-mono text-slate-800 mr-2">RFD-...</strong>
+                Mã đơn gốc: <strong id="dtOriginalOrderCode" class="font-mono text-slate-800 mr-2">ORD-...</strong>
+                Tạo lúc: <span id="dtCreatedDate" class="text-slate-600">--</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              onclick="closeRefundDetail()"
+              class="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+            >
+              Quay lại danh sách
+            </button>
+          </div>
+        </div>
+
+        <!-- Khối Thông tin Đối tác, Tập đoàn & Lý do -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Cột 1: Thông tin Đại lý & Người gửi -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
+            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
+              <i class="fa-solid fa-building text-blue-600"></i>
+              <span>Đại lý &amp; Người gửi</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Đại lý B2B:</span>
+                <strong id="dtAgencyName" class="text-slate-800 text-xs block">--</strong>
+                <span id="dtAgencyCode" class="font-mono text-[11px] text-slate-500 block">--</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                <div>
+                  <span class="text-slate-400 block text-[11px]">Người gửi:</span>
+                  <strong id="dtRequesterName" class="text-slate-800 block">--</strong>
+                </div>
+                <div>
+                  <span class="text-slate-400 block text-[11px]">Điện thoại:</span>
+                  <span id="dtRequesterPhone" class="font-mono font-semibold text-slate-700 block">--</span>
+                </div>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Email liên hệ:</span>
+                <span id="dtRequesterEmail" class="text-slate-700 block font-medium">--</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Mã số thuế (MST):</span>
+                <span id="dtTaxId" class="font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded inline-block">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Thông tin Tập đoàn & Địa điểm dịch vụ -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
+            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
+              <i class="fa-solid fa-map-location-dot text-rose-500"></i>
+              <span>Dịch vụ &amp; Địa điểm</span>
+            </div>
+            <div class="space-y-2.5 text-xs">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Tập đoàn cung cấp:</span>
+                <span id="dtCorpName" class="font-bold text-slate-800 block text-xs">--</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Khu du lịch / Công viên:</span>
+                <strong id="dtSiteName" class="text-slate-900 block text-xs">--</strong>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Ngày sử dụng vé (T):</span>
+                <span id="dtServiceDate" class="font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 inline-block font-mono">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 3: Lý do & Tài liệu đính kèm -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
+            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
+              <i class="fa-solid fa-clipboard-question text-amber-500"></i>
+              <span>Lý do &amp; Hồ sơ đối soát</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Lý do đề xuất hoàn hủy:</span>
+                <p id="dtReasonText" class="text-slate-700 italic bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11.5px] leading-relaxed">
+                  --
+                </p>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px] mb-1">Tài liệu / Biên bản đính kèm:</span>
+                <div id="dtDocumentsList" class="flex flex-wrap gap-2">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khối Thông báo Lý do từ chối (Chỉ hiển thị khi đơn bị từ chối) -->
+        <div id="dtRejectBox" class="hidden p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-1">
+          <div class="flex items-center gap-2 text-rose-800 text-xs font-black">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>YÊU CẦU ĐÃ BỊ TỪ CHỐI HOÀN VÉ</span>
+          </div>
+          <p id="dtRejectReasonText" class="text-xs text-rose-700 font-semibold pl-6">--</p>
+        </div>
+
+        <!-- Khối Bảng kê Vé & Định giá hoàn phí -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div class="p-4 sm:px-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+            <div>
+              <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Danh sách Vé &amp; Định giá Hoàn trả</h3>
+              <p class="text-[11px] text-slate-500">Kiểm tra mã QR vé và nhập phí phạt hoàn vé (charge) nếu áp dụng</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
+                <tr class="divide-x divide-slate-200">
+                  <th class="p-3 text-center w-12">STT</th>
+                  <th class="p-3">Hạng vé &amp; Mã QR</th>
+                  <th class="p-3 text-right">Giá niêm yết (Gốc)</th>
+                  <th class="p-3 text-right">Phí phạt / Charge</th>
+                  <th class="p-3 text-right">Tiền hoàn trả thực tế</th>
+                </tr>
+              </thead>
+              <tbody id="dtTicketsTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+              <tfoot class="bg-slate-50/90 border-t-2 border-slate-200 text-xs font-bold divide-x divide-slate-200">
+                <tr>
+                  <td colspan="2" class="p-3 text-right font-black uppercase text-slate-700">Tổng cộng:</td>
+                  <td id="dtTotalOriginal" class="p-3 text-right font-mono font-bold text-slate-800">0 đ</td>
+                  <td id="dtTotalCharge" class="p-3 text-right font-mono font-bold text-rose-600">0 đ</td>
+                  <td id="dtTotalRefund" class="p-3 text-right font-mono font-black text-emerald-600 text-sm">0 đ</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Chân trang Hành động Tác nghiệp theo Đúng Quy tắc của từng Tab -->
+        <div id="dtActionButtonsContainer" class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-between">
+          <!-- Rendered dynamically by refunds.js according to tab specs -->
+        </div>
+
+      </div> <!-- /#viewRefundRequestDetail -->
 
     </main>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: TẠO MỚI YÊU CẦU HOÀN VÉ                                       -->
+  <!-- ==================================================================== -->
+  <div id="modalCreateRefundRequest" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs hidden">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-800">Tạo Yêu cầu Hoàn/Hủy Vé mới</h3>
+            <p class="text-[11px] text-slate-500 font-medium">Phiếu sẽ được lập ở trạng thái Chờ xử lý</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCreateRefundModal()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="formCreateRefund" onsubmit="event.preventDefault(); submitNewRefundRequest();" class="p-6 space-y-3.5 overflow-y-auto text-xs">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Mã yêu cầu (Sinh tự động)</label>
+          <input type="text" id="newRefundRequestCode" readonly class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono font-bold text-blue-700 bg-slate-100/80 cursor-not-allowed select-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Mã đơn hàng gốc *</label>
+            <input type="text" id="newOriginalOrderCode" required placeholder="VD: ORD-2611-008" value="ORD-2611-008" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Số lượng vé hoàn *</label>
+            <input type="number" id="newTicketCount" required min="1" max="50" value="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500 font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tập đoàn *</label>
+            <select id="newCorpSelect" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500">
+              <option value="Sun World">Sun World</option>
+              <option value="VinWonders">VinWonders</option>
+              <option value="Nova Dreams">Nova Dreams</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Khu du lịch *</label>
+            <input type="text" id="newSiteSelect" required value="Sun World Ba Na Hills" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Đại lý đề xuất *</label>
+          <input type="text" id="newAgencySelect" required value="Công ty Cổ phần Du Lịch Việt Nam (Vietravel)" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Họ tên người gửi *</label>
+            <input type="text" id="newRequesterName" required value="Nguyễn Văn An" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email người gửi *</label>
+            <input type="email" id="newRequesterEmail" required value="an.nguyen@vietravel.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Đơn giá vé (VNĐ) *</label>
+          <input type="number" id="newUnitPrice" required value="950000" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-rose-500 font-mono">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Lý do hoàn vé *</label>
+          <textarea id="newReasonText" rows="2" required placeholder="Nhập lý do chi tiết..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-rose-500">Khách đổi lịch trình đột xuất do điều kiện thời tiết.</textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeCreateRefundModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+            Hủy bỏ
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Tạo yêu cầu</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Scripts -->
@@ -247,41 +601,23 @@
   <script src="database/orders.db.js"></script>
   <script src="database/cashflow.db.js"></script>
   <script src="database/db-store.js"></script>
-  <script src="assets/js/utils.js?v=2.6.0"></script>
-  <script src="assets/js/layout.js?v=2.6.0"></script>
+  <script src="assets/js/utils.js?v=2.6.2"></script>
+  <script src="assets/js/layout.js?v=2.6.2"></script>
+  <script src="assets/js/refunds.js?v=2.6.2"></script>
   <script>
-    function approveRefundNow(code, amount) {
-      if (confirm(`Xác nhận duyệt hoàn tiền cho yêu cầu ${code} với số tiền ${formatMoney(amount)} đ về Ví điện tử?`)) {
-        TecheraDB.adjustWalletBalance(amount, { isTopup: false, method: 'Hoàn tiền vé', note: `Hoàn tiền yêu cầu #${code}` });
-        TecheraDB.pushNotification({
-          title: `Duyệt hoàn vé #${code}`,
-          desc: `Yêu cầu hoàn vé ${code} đã được phê duyệt. Hoàn tiền +${formatMoney(amount)} đ về Ví đại lý.`,
-          type: 'success'
-        });
-        syncNotificationBadges();
-        syncWalletAndDebtDisplays();
-        showToast('Đã duyệt hoàn tiền', `Số tiền ${formatMoney(amount)} đ đã được hoàn trả thành công.`);
-        setTimeout(() => window.location.reload(), 1000);
-      }
-    }
-
-    function rejectRefundNow(code) {
-      const reason = prompt('Nhập lý do từ chối yêu cầu hoàn vé:', 'Vé cận giờ sử dụng không đủ điều kiện hoàn');
-      if (reason) {
-        showToast('Đã từ chối', `Yêu cầu ${code} đã bị từ chối: ${reason}`);
-      }
-    }
-
-    function openCreateRefundModal() {
-      if (typeof openRefundTicketModal === 'function') {
-        openRefundTicketModal('ORD-2611-008');
-      } else {
-        window.location.href = 'orders.html?filter=refund';
-      }
-    }
+    // Định nghĩa sớm các hàm tương tác cho Date Picker
+    window.refund_toggleDatePopover = window.refund_toggleDatePopover || function(e) { if(e) e.stopPropagation(); const p = document.getElementById('refund_popoverDateRange'); if(p) p.classList.toggle('hidden'); const b = document.getElementById('refund_datePopoverBackdrop'); if(b) b.classList.toggle('hidden'); };
+    window.refund_selectPreset = window.refund_selectPreset || function() {};
+    window.refund_navigateMonth = window.refund_navigateMonth || function() {};
+    window.refund_cancel = window.refund_cancel || function() { const p = document.getElementById('refund_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('refund_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
+    window.refund_apply = window.refund_apply || function() { const p = document.getElementById('refund_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('refund_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
 
     window.addEventListener('DOMContentLoaded', () => {
-      renderSharedShell({ activePage: 'refund-requests', pageTitle: 'Yêu cầu Hoàn/Hủy vé' });
+      renderSharedShell({
+        activePage: 'refund-requests',
+        pageTitle: 'Quản lý Yêu cầu Hoàn/Hủy Vé',
+        showGlobalHeader: true
+      });
     });
   </script>
 </body>
