@@ -540,62 +540,49 @@
 
     </div>
   </div>
-  <!-- Modal Xác nhận Hoàn vé (Refund Confirmation Modal) -->
+  <!-- Modal Popup Xác nhận Hoàn vé (Refund Confirmation Popup) -->
   <div id="modalRefundTicket" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-start justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-rotate-left text-sm"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900">Xác nhận Hoàn vé</h3>
-            <p id="refundModalCode" class="text-xs font-mono font-bold text-blue-700">ORD-...</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeRefundTicketModal()" class="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-150">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl shadow-2xs">
+        <i class="fa-solid fa-rotate-left"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-extrabold text-slate-800">Xác nhận hoàn vé</h3>
+        <p class="text-xs text-slate-600 mt-1 font-medium">
+          Bạn có chắc chắn muốn hoàn vé này?
+        </p>
+        <p id="refundModalCode" class="font-mono font-bold text-xs text-rose-700 mt-1">ORD-...</p>
       </div>
 
-      <div class="p-3.5 bg-rose-50/60 border border-rose-100 rounded-2xl text-xs space-y-2">
+      <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs space-y-1.5 text-left">
         <div class="flex items-center justify-between">
           <span class="text-slate-500">Khách hàng:</span>
-          <strong id="refundModalCustomer" class="text-slate-800">-</strong>
+          <strong id="refundModalCustomer" class="text-slate-800 truncate max-w-[170px]">-</strong>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-500">Gói vé:</span>
-          <strong id="refundModalPackage" class="text-slate-800 truncate max-w-[200px]">-</strong>
+          <strong id="refundModalPackage" class="text-slate-800 truncate max-w-[170px]">-</strong>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-500">Số lượng:</span>
           <strong id="refundModalTickets" class="text-slate-800">-</strong>
         </div>
-        <div class="flex items-center justify-between pt-1.5 border-t border-rose-100/80">
-          <span class="font-bold text-rose-700">Số tiền hoàn lại:</span>
-          <strong id="refundModalAmount" class="font-extrabold text-rose-600 text-sm">-</strong>
+        <div class="flex items-center justify-between pt-1 border-t border-slate-200/60">
+          <span class="font-bold text-slate-700">Tổng thanh toán:</span>
+          <strong id="refundModalAmount" class="font-black text-rose-600 font-mono">-</strong>
         </div>
       </div>
 
-      <div>
-        <label for="refundModalReason" class="block text-xs font-bold text-slate-700 mb-1.5">Lý do hoàn vé</label>
-        <select id="refundModalReason" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium bg-white focus:outline-none focus:border-rose-500">
-          <option value="Khách yêu cầu hủy sớm (đủ điều kiện hoàn)">Khách yêu cầu hủy sớm (đủ điều kiện hoàn)</option>
-          <option value="Thay đổi kế hoạch / Lịch trình công tác">Thay đổi kế hoạch / Lịch trình công tác</option>
-          <option value="Sự cố kỹ thuật / Khu vui chơi tạm đóng cổng">Sự cố kỹ thuật / Khu vui chơi tạm đóng cổng</option>
-          <option value="Khách đặt trùng lặp đơn">Khách đặt trùng lặp đơn</option>
-          <option value="Lý do khác">Lý do khác</option>
-        </select>
-      </div>
-
       <p class="text-[11px] text-slate-400 italic">
-        * Sau khi xác nhận, vé điện tử QR sẽ bị thu hồi và trạng thái đơn hàng sẽ chuyển thành "Đã hoàn tiền".
+        * Hệ thống sẽ chuyển tiếp sang màn hình Tạo Yêu Cầu Hoàn/Hủy Vé và tự động điền thông tin của đơn hàng này.
       </p>
 
-      <div class="grid grid-cols-2 gap-2 pt-1">
+      <div class="grid grid-cols-2 gap-2.5 pt-1">
         <button type="button" onclick="closeRefundTicketModal()" class="py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs cursor-pointer transition-colors">
-          Hủy bỏ
+          Hủy
         </button>
         <button id="btnConfirmRefundExecute" type="button" onclick="confirmExecuteRefund()" class="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs cursor-pointer transition-colors">
-          Xác nhận Hoàn
+          Xác nhận
         </button>
       </div>
     </div>

@@ -669,7 +669,7 @@ function renderOrdersListView() {
   ordersListPage = Math.min(Math.max(1, ordersListPage), totalPages);
   const pageSlice = filtered.slice((ordersListPage - 1) * ORDERS_LIST_PAGE_SIZE, ordersListPage * ORDERS_LIST_PAGE_SIZE);
 
-  // Render Order Feed Cards
+  // Render Order Feed: Desktop Table (>= 1024px) & Mobile Cards (< 1024px)
   const container = document.getElementById('ordersFeedContainer');
   if (container) {
     if (pageSlice.length === 0) {
@@ -685,12 +685,101 @@ function renderOrdersListView() {
           </button>
         </div>`;
     } else {
-      container.innerHTML = pageSlice.map((o, idx) => {
+      // 1. DÒNG DỮ LIỆU BẢNG DESKTOP (>= 1024px)
+      const desktopRowsHtml = pageSlice.map((o, idx) => {
         const globalIdx = (ordersListPage - 1) * ORDERS_LIST_PAGE_SIZE + idx;
         const initials = getCustomerInitials(o.customerName);
-        const isIssuedOrConfirmed = ['Đã xuất vé', 'Đã xác nhận'].includes(o.status);
+        const isIssued = (o.status === 'Đã xuất vé');
 
-        // Tags
+        const channelTag = o.channel || 'Website';
+        const subTypeTag = (o.subType && o.subType !== '-') ? o.subType : 'Booking';
+        const staffTag = o.salesOwner || (o.staff !== '-' ? o.staff : 'Nguyễn Thị Kim Hoàng');
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors divide-x divide-slate-100">
+            <!-- 1. Mã đơn hàng -->
+            <td class="p-3.5 whitespace-nowrap">
+              <span class="font-bold text-blue-700 text-xs font-mono tracking-tight block">${o.orderCode}</span>
+            </td>
+
+            <!-- 2. Thời gian tạo -->
+            <td class="p-3.5 whitespace-nowrap">
+              <span class="text-xs text-slate-500 font-medium">${formatOrderCreatedDateTime(o.createdDate, globalIdx + 1)}</span>
+            </td>
+
+            <!-- 3. Khách hàng / Đại lý -->
+            <td class="p-3.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-[10.5px] shrink-0 tracking-wider">
+                  ${initials}
+                </div>
+                <div class="min-w-0">
+                  <div class="font-bold text-slate-800 text-xs truncate max-w-[180px]">${o.customerName}</div>
+                  <div class="text-[11px] text-slate-400 font-mono">${o.customerPhone || 'Chưa cập nhật'}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- 4. Kênh bán & Nguồn -->
+            <td class="p-3.5 whitespace-nowrap">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full text-[10.5px] font-semibold">${channelTag}</span>
+                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full text-[10.5px] font-semibold">${subTypeTag}</span>
+              </div>
+              <div class="text-[10.5px] text-slate-400 truncate max-w-[160px] mt-0.5" title="Phụ trách: ${staffTag}">${staffTag}</div>
+            </td>
+
+            <!-- 5. Ngày sử dụng -->
+            <td class="p-3.5 whitespace-nowrap">
+              <span class="font-bold text-slate-800 text-xs bg-slate-100 px-2 py-0.5 rounded">${formatDisplayDate(o.useDate)}</span>
+            </td>
+
+            <!-- 6. Tổng tiền -->
+            <td class="p-3.5 text-right whitespace-nowrap">
+              <span class="font-extrabold text-slate-900 text-xs font-mono">${formatMoney(o.revenue)} đ</span>
+            </td>
+
+            <!-- 7. Trạng thái -->
+            <td class="p-3.5 whitespace-nowrap text-center">
+              ${getStatusBadgeMarkup(o.status)}
+            </td>
+
+            <!-- 8. Thao tác (Desktop) -->
+            <td class="p-3.5 whitespace-nowrap text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <!-- Icon con mắt Xem chi tiết -->
+                <button
+                  type="button"
+                  onclick="openOrderDetailModal('${o.orderCode}')"
+                  class="w-7 h-7 rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                  title="Xem chi tiết"
+                >
+                  <i class="fa-regular fa-eye text-xs"></i>
+                </button>
+                <!-- Nút Hoàn vé chỉ hiển thị khi Đã xuất vé -->
+                ${isIssued ? `
+                  <button
+                    type="button"
+                    onclick="openRefundTicketModal('${o.orderCode}')"
+                    class="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1"
+                    title="Hoàn vé"
+                  >
+                    <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                    <span>Hoàn vé</span>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 2. DẠNG THẺ DỌC MOBILE (< 1024px)
+      const mobileCardsHtml = pageSlice.map((o, idx) => {
+        const globalIdx = (ordersListPage - 1) * ORDERS_LIST_PAGE_SIZE + idx;
+        const initials = getCustomerInitials(o.customerName);
+        const isIssued = (o.status === 'Đã xuất vé');
+
         const channelTag = o.channel || 'Website';
         const subTypeTag = (o.subType && o.subType !== '-') ? o.subType : 'Booking';
         const staffTag = o.salesOwner || (o.staff !== '-' ? o.staff : 'Nguyễn Thị Kim Hoàng');
@@ -706,7 +795,7 @@ function renderOrdersListView() {
             <!-- Hàng 2: Thời gian tạo đơn màu xám & Tổng doanh thu màu đen đậm -->
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs text-slate-400 font-medium">${formatOrderCreatedDateTime(o.createdDate, globalIdx + 1)}</span>
-              <span class="text-sm sm:text-base font-extrabold text-slate-900">${formatMoney(o.revenue)} đ</span>
+              <span class="text-sm sm:text-base font-extrabold text-slate-900 font-mono">${formatMoney(o.revenue)} đ</span>
             </div>
 
             <!-- Hàng 3: Khách hàng - Avatar tròn xanh dương (2 chữ cái) + Tên đậm + SĐT -->
@@ -733,38 +822,63 @@ function renderOrdersListView() {
               <span class="font-bold text-slate-800">${formatDisplayDate(o.useDate)}</span>
             </div>
 
-            <!-- Hàng 6: Nút hành động -->
-            <div class="pt-1">
-              ${isIssuedOrConfirmed ? `
-                <div class="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onclick="openOrderDetailModal('${o.orderCode}')"
-                    class="w-full py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs transition-colors cursor-pointer text-center"
-                  >
-                    Xem chi tiết
-                  </button>
-                  <button
-                    type="button"
-                    onclick="openRefundTicketModal('${o.orderCode}')"
-                    class="w-full py-2.5 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-600 font-bold text-xs transition-colors cursor-pointer text-center"
-                  >
-                    Hoàn vé
-                  </button>
-                </div>
-              ` : `
+            <!-- Hàng 6: Nút hành động chân Card (Mobile) -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+              <!-- Icon con mắt Xem chi tiết -->
+              <button
+                type="button"
+                onclick="openOrderDetailModal('${o.orderCode}')"
+                class="w-8 h-8 rounded-xl border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors cursor-pointer shadow-2xs shrink-0"
+                title="Xem chi tiết"
+              >
+                <i class="fa-regular fa-eye text-xs"></i>
+              </button>
+              <!-- Nút Hoàn vé chỉ hiển thị khi Đã xuất vé -->
+              ${isIssued ? `
                 <button
                   type="button"
-                  onclick="openOrderDetailModal('${o.orderCode}')"
-                  class="w-full py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs transition-colors cursor-pointer text-center"
+                  onclick="openRefundTicketModal('${o.orderCode}')"
+                  class="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5"
+                  title="Hoàn vé"
                 >
-                  Xem chi tiết
+                  <i class="fa-solid fa-rotate-left text-[11px]"></i>
+                  <span>Hoàn vé</span>
                 </button>
-              `}
+              ` : ''}
             </div>
           </div>
         `;
       }).join('');
+
+      container.innerHTML = `
+        <!-- BẢNG DANH SÁCH DESKTOP (>= 1024px) -->
+        <div class="hidden lg:block bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
+                <tr class="divide-x divide-slate-200">
+                  <th class="p-3.5 whitespace-nowrap">MÃ ĐƠN HÀNG</th>
+                  <th class="p-3.5 whitespace-nowrap">THỜI GIAN TẠO</th>
+                  <th class="p-3.5 min-w-[200px]">KHÁCH HÀNG / ĐẠI LÝ</th>
+                  <th class="p-3.5 whitespace-nowrap">KÊNH BÁN &amp; NGUỒN</th>
+                  <th class="p-3.5 whitespace-nowrap">NGÀY SỬ DỤNG</th>
+                  <th class="p-3.5 text-right whitespace-nowrap">TỔNG TIỀN</th>
+                  <th class="p-3.5 whitespace-nowrap text-center">TRẠNG THÁI</th>
+                  <th class="p-3.5 text-center whitespace-nowrap min-w-[130px]">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${desktopRowsHtml}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BỐ CỤC CARD MOBILE (< 1024px) -->
+        <div class="block lg:hidden space-y-3">
+          ${mobileCardsHtml}
+        </div>
+      `;
     }
   }
 
@@ -941,34 +1055,30 @@ function confirmExecuteRefund() {
     return;
   }
 
-  const reasonEl = document.getElementById('refundModalReason');
-  const reason = reasonEl ? reasonEl.value : 'Khách yêu cầu hủy sớm';
+  // Pre-fill context cho màn hình Tạo yêu cầu hoàn vé
+  const prefillData = {
+    orderId: order.orderCode,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone || '0903 123 456',
+    serviceDate: order.useDate || order.createdDate || '2026-11-25',
+    totalPaid: order.revenue || 0,
+    corp: order.corp || 'Sun World',
+    site: order.site || 'Sun World Ba Na Hills',
+    ticketsCount: order.tickets || 2,
+    agency: (order.channel === 'Đại lý' ? (order.salesOwner || order.customerName) : '') || '',
+    packageName: order.packageName || ('Vé tham quan ' + (order.site || 'Ba Na Hills'))
+  };
 
-  // 1. Cập nhật trạng thái đơn hàng sang "Đã hoàn tiền"
-  TecheraDB.updateOrderStatus(orderCode, 'Đã hoàn tiền');
-
-  // 2. Hoàn tiền về ví đại lý (nếu thanh toán qua ví)
-  const isWalletPayment = (order.paymentMethod === 'Ví điện tử' || !order.paymentMethod);
-  if (isWalletPayment && order.revenue > 0) {
-    TecheraDB.adjustWalletBalance(order.revenue, {
-      isTopup: false,
-      method: 'Hoàn tiền vé',
-      note: `Hoàn tiền vé đơn hàng #${orderCode}`
-    });
-    syncWalletAndDebtDisplays();
+  try {
+    sessionStorage.setItem('prefillRefundOrder', JSON.stringify(prefillData));
+  } catch (e) {
+    console.error('Failed to set sessionStorage prefillRefundOrder', e);
   }
 
-  // 3. Đẩy thông báo hệ thống
-  TecheraDB.pushNotification({
-    title: `Hoàn vé đơn hàng #${orderCode}`,
-    desc: `Đơn hàng ${orderCode} đã hoàn vé thành công. Lý do: ${reason}. Số tiền hoàn: ${formatMoney(order.revenue)} đ.`,
-    type: 'info'
-  });
-  syncNotificationBadges();
-
   closeRefundTicketModal();
-  renderOrdersListView();
-  showToast('Hoàn vé thành công', `Đơn ${orderCode} đã được hoàn tiền ${formatMoney(order.revenue)} đ.`);
+
+  // Điều hướng thẳng sang màn hình Tạo Yêu Cầu Hoàn/Hủy Vé
+  window.location.href = `refund-requests.html?action=create&orderId=${encodeURIComponent(orderCode)}`;
 }
 
 // ============================================================================
@@ -992,8 +1102,8 @@ window.addEventListener('DOMContentLoaded', () => {
 // Exports for HTML inline onclick
 window.toggleDateRangePickerPopover = toggleDateRangePickerPopover;
 window.closeDateRangePickerPopover = closeDateRangePickerPopover;
-window.selectDateRangePreset = selectDateRangePreset;
-window.applyCustomDateRange = applyCustomDateRange;
+window.selectDateRangePreset = typeof selectDateRangePreset !== 'undefined' ? selectDateRangePreset : selectDateRangeTagPreset;
+window.applyCustomDateRange = typeof applyCustomDateRange !== 'undefined' ? applyCustomDateRange : applyDateRangePickerSelection;
 window.applyOrdersListFilters = applyOrdersListFilters;
 window.resetOrdersListFilters = resetOrdersListFilters;
 window.selectOrdersChannelTab = selectOrdersChannelTab;

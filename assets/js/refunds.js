@@ -42,7 +42,7 @@
 
   // 2.1 DANH SÁCH ĐƠN HÀNG ĐỦ ĐIỀU KIỆN HOÀN/HỦY (MOCK_ELIGIBLE_ORDERS)
   // Chỉ liệt kê các đơn hàng đã thanh toán/xuất vé và còn vé khả dụng
-  const MOCK_ELIGIBLE_ORDERS = [
+  let MOCK_ELIGIBLE_ORDERS = [
     {
       orderId: 'ORD-2611-088',
       customerName: 'Nguyễn Tuấn Kiệt',
@@ -2354,8 +2354,72 @@
   const PDF_PAGE_SIZE = 4; // Mặc định 4 mã vé / trang theo quy cách
   let collapsedAccordionGroups = new Set();
 
+  // ĐĂNG KÝ HOẶC TỰ ĐỘNG NẠP ĐƠN HÀNG VÀO DANH SÁCH ĐỦ ĐIỀU KIỆN (KHI CHUYỂN TỪ ORDERS SANG)
+  function registerEligibleOrderIfMissing(orderId) {
+    if (!orderId) return null;
+    let existing = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === orderId);
+    if (existing) return existing;
+
+    // Đọc context từ sessionStorage (nếu được truyền từ orders.html)
+    let stored = null;
+    try {
+      const raw = sessionStorage.getItem('prefillRefundOrder');
+      if (raw) stored = JSON.parse(raw);
+    } catch (e) {}
+
+    const sDate = (stored && stored.serviceDate) || '2026-11-25';
+    const cName = (stored && stored.customerName) || 'Khách hàng hoàn vé';
+    const cPhone = (stored && stored.customerPhone) || '0903 123 456';
+    const tPaid = (stored && stored.totalPaid) || 2000000;
+    const corp = (stored && stored.corp) || 'Sun World';
+    const site = (stored && stored.site) || 'Sun World Ba Na Hills';
+    const tCount = (stored && stored.ticketsCount) || 2;
+    const pName = (stored && stored.packageName) || `Vé tham quan trọn gói ${site}`;
+
+    const unitPrice = Math.round(tPaid / tCount);
+    const tickets = [];
+    for (let i = 1; i <= tCount; i++) {
+      tickets.push({
+        serial: `TK-${orderId}-${String(i).padStart(3, '0')}`,
+        name: `${pName} - Vé ${i}`,
+        price: unitPrice,
+        status: 'ELIGIBLE'
+      });
+    }
+
+    const newOrder = {
+      orderId: orderId,
+      customerName: cName,
+      customerPhone: cPhone,
+      serviceDate: sDate,
+      totalPaid: tPaid,
+      corp: corp,
+      site: site,
+      packages: [
+        {
+          packageId: `PKG-${orderId}`,
+          packageName: pName,
+          category: 'Vé tham quan',
+          tickets: tickets
+        }
+      ]
+    };
+
+    MOCK_ELIGIBLE_ORDERS.unshift(newOrder);
+
+    // Điền thông tin đại lý / người gửi nếu có
+    if (stored && stored.agency) {
+      setTimeout(() => {
+        const agencyInput = document.getElementById('senderAgencyName');
+        if (agencyInput) agencyInput.value = stored.agency;
+      }, 50);
+    }
+
+    return newOrder;
+  }
+
   // 13.1 MỞ NEXTPAGE TẠO YÊU CẦU HOÀN VÉ
-  function openCreateRefundNextPage() {
+  function openCreateRefundNextPage(targetOrderId) {
     // Ẩn Danh sách & Chi tiết
     const listView = document.getElementById('viewRefundRequestsList');
     const detailView = document.getElementById('viewRefundRequestDetail');
@@ -2395,11 +2459,15 @@
     if (sTax && !sTax.value) sTax.value = '0318999888';
     if (sAddr && !sAddr.value) sAddr.value = 'Tầng 6, Tòa nhà Bitexco, 02 Hải Triều, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh';
 
+    // Đảm bảo đơn hàng được nạp vào danh mục
+    const chosenOrderId = targetOrderId || selectedOrigOrderId || 'ORD-2611-088';
+    registerEligibleOrderIfMissing(chosenOrderId);
+
     // Populate dropdown đơn hàng gốc
     populateOrigOrdersDropdown();
 
-    // Chọn đơn hàng mặc định (ORD-2611-088)
-    selectOrigOrder('ORD-2611-088');
+    // Chọn đơn hàng mục tiêu
+    selectOrigOrder(chosenOrderId);
 
     // Đưa về Bước 1
     goToStep1(true);
@@ -3533,11 +3601,16 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
       }
     });
 
-    // Check URL parameters for direct detail viewing
+    // Check URL parameters for direct detail viewing or creating refund
     const urlParams = new URLSearchParams(window.location.search);
     const codeParam = urlParams.get('code');
+    const actionParam = urlParams.get('action');
+    const orderIdParam = urlParams.get('orderId') || urlParams.get('order') || urlParams.get('orderCode');
+
     if (codeParam) {
       openRefundDetail(codeParam);
+    } else if (actionParam === 'create' || orderIdParam) {
+      openCreateRefundNextPage(orderIdParam);
     }
   }
 
