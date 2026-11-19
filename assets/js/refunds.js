@@ -506,13 +506,25 @@
     if (txt) txt.textContent = 'Tất cả khu du lịch';
     filterSiteOptions('');
   }
-  // 6.1 BỘ LỌC ĐẠI LÝ (CUSTOM DROPDOWN CÓ SEARCH BÊN TRONG)
+    // 6.1 BỘ LỌC ĐẠI LÝ (SEARCHABLE DROPDOWN CÓ SEARCH BÊN TRONG & XÓA NHANH)
   function toggleAgencyFilterDropdown(forceOpen) {
     const menu = document.getElementById('menuAgencyFilterDropdown');
+    const siteMenu = document.getElementById('menuSiteFilterDropdown');
+    if (siteMenu) siteMenu.classList.add('hidden');
     if (!menu) return;
-    if (forceOpen === true) menu.classList.remove('hidden');
-    else if (forceOpen === false) menu.classList.add('hidden');
-    else menu.classList.toggle('hidden');
+    if (forceOpen === true) {
+      menu.classList.remove('hidden');
+      const input = document.getElementById('searchAgencyFilterInput');
+      if (input) setTimeout(() => input.focus(), 50);
+    } else if (forceOpen === false) {
+      menu.classList.add('hidden');
+    } else {
+      menu.classList.toggle('hidden');
+      if (!menu.classList.contains('hidden')) {
+        const input = document.getElementById('searchAgencyFilterInput');
+        if (input) setTimeout(() => input.focus(), 50);
+      }
+    }
   }
 
   function filterAgencyOptions(query) {
@@ -540,7 +552,7 @@
       return `
         <button
           type="button"
-          onclick="selectAgencyFilter('${a.name}', '${a.name === 'ALL' ? 'Tất cả đại lý' : a.name}')"
+          onclick="selectAgencyFilter('${a.code === 'ALL' ? 'ALL' : a.name}', '${a.name}')"
           class="w-full px-3 py-2 rounded-xl text-left transition-colors flex items-center justify-between cursor-pointer ${
             isSelected ? 'bg-rose-50 border border-rose-200 text-rose-800 font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
           }"
@@ -555,19 +567,44 @@
   function selectAgencyFilter(agencyVal, agencyLabel) {
     filterAgency = (agencyVal === 'Tất cả đại lý' || agencyVal === 'ALL') ? 'ALL' : agencyVal;
     const txt = document.getElementById('selectedAgencyText');
+    const clearBtn = document.getElementById('btnClearAgencyFilter');
     if (txt) txt.textContent = (filterAgency === 'ALL') ? 'Tất cả đại lý' : agencyLabel;
+    if (clearBtn) {
+      if (filterAgency !== 'ALL') clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+    }
     toggleAgencyFilterDropdown(false);
     refundCurrentPage = 1;
     renderRefundTable();
   }
 
-  // 6.2 BỘ LỌC KHU DU LỊCH (CUSTOM DROPDOWN CÓ SEARCH BÊN TRONG)
+  function clearAgencyFilter(e) {
+    if (e) e.stopPropagation();
+    const searchInput = document.getElementById('searchAgencyFilterInput');
+    if (searchInput) searchInput.value = '';
+    filterAgencyOptions('');
+    selectAgencyFilter('ALL', 'Tất cả đại lý');
+  }
+
+  // 6.2 BỘ LỌC KHU DU LỊCH (SEARCHABLE DROPDOWN CÓ SEARCH BÊN TRONG & XÓA NHANH)
   function toggleSiteFilterDropdown(forceOpen) {
     const menu = document.getElementById('menuSiteFilterDropdown');
+    const agMenu = document.getElementById('menuAgencyFilterDropdown');
+    if (agMenu) agMenu.classList.add('hidden');
     if (!menu) return;
-    if (forceOpen === true) menu.classList.remove('hidden');
-    else if (forceOpen === false) menu.classList.add('hidden');
-    else menu.classList.toggle('hidden');
+    if (forceOpen === true) {
+      menu.classList.remove('hidden');
+      const input = document.getElementById('searchSiteFilterInput');
+      if (input) setTimeout(() => input.focus(), 50);
+    } else if (forceOpen === false) {
+      menu.classList.add('hidden');
+    } else {
+      menu.classList.toggle('hidden');
+      if (!menu.classList.contains('hidden')) {
+        const input = document.getElementById('searchSiteFilterInput');
+        if (input) setTimeout(() => input.focus(), 50);
+      }
+    }
   }
 
   function filterSiteOptions(query) {
@@ -600,7 +637,7 @@
       return `
         <button
           type="button"
-          onclick="selectSiteFilter('${item.name}', '${item.name}')"
+          onclick="selectSiteFilter('${item.name === 'Tất cả khu du lịch' ? 'ALL' : item.name}', '${item.name}')"
           class="w-full px-3 py-2 rounded-xl text-left transition-colors flex items-center justify-between cursor-pointer ${
             isSelected ? 'bg-rose-50 border border-rose-200 text-rose-800 font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
           }"
@@ -615,10 +652,23 @@
   function selectSiteFilter(siteVal, siteLabel) {
     filterSite = (siteVal === 'Tất cả khu du lịch' || siteVal === 'ALL') ? 'ALL' : siteVal;
     const txt = document.getElementById('selectedSiteText');
+    const clearBtn = document.getElementById('btnClearSiteFilter');
     if (txt) txt.textContent = (filterSite === 'ALL') ? 'Tất cả khu du lịch' : siteLabel;
+    if (clearBtn) {
+      if (filterSite !== 'ALL') clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+    }
     toggleSiteFilterDropdown(false);
     refundCurrentPage = 1;
     renderRefundTable();
+  }
+
+  function clearSiteFilter(e) {
+    if (e) e.stopPropagation();
+    const searchInput = document.getElementById('searchSiteFilterInput');
+    if (searchInput) searchInput.value = '';
+    filterSiteOptions('');
+    selectSiteFilter('ALL', 'Tất cả khu du lịch');
   }
 
   function changeRefundPageSize(newSize) {
@@ -809,23 +859,26 @@
       `;
     }).join('');
 
-    // Cập nhật thông tin phân trang
+        // Cập nhật thông tin phân trang chuẩn theo yêu cầu: Hiển thị 1–10 / 45 yêu cầu
     if (paginInfo) {
-      paginInfo.innerHTML = `Hiển thị <strong>${startIdx + 1}</strong> - <strong>${endIdx}</strong> trên tổng số <strong>${totalRecords}</strong> yêu cầu`;
+      paginInfo.innerHTML = `Hiển thị <strong>${startIdx + 1}–${endIdx}</strong> / <strong>${totalRecords}</strong> yêu cầu`;
     }
 
-    // Cập nhật các nút phân trang
+    // Cập nhật các nút phân trang (Trước, số trang 1, 2, 3..., Sau)
     if (paginButtons) {
       let btnsHtml = '';
+      
+      // Nút Trước
       btnsHtml += `
         <button
           type="button"
           onclick="goToRefundPage(${refundCurrentPage - 1})"
           ${refundCurrentPage <= 1 ? 'disabled' : ''}
-          class="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors shadow-2xs"
           title="Trang trước"
         >
           <i class="fa-solid fa-chevron-left text-[10px]"></i>
+          <span>Trước</span>
         </button>
       `;
 
@@ -836,7 +889,7 @@
             <button
               type="button"
               onclick="goToRefundPage(${p})"
-              class="w-7 h-7 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+              class="min-w-[32px] h-8 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 isActive ? 'bg-rose-600 text-white shadow-2xs' : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
               }"
             >
@@ -844,18 +897,20 @@
             </button>
           `;
         } else if (p === refundCurrentPage - 2 || p === refundCurrentPage + 2) {
-          btnsHtml += `<span class="w-5 text-center text-slate-400 text-xs">...</span>`;
+          btnsHtml += `<span class="w-6 text-center text-slate-400 text-xs">...</span>`;
         }
       }
 
+      // Nút Sau
       btnsHtml += `
         <button
           type="button"
           onclick="goToRefundPage(${refundCurrentPage + 1})"
           ${refundCurrentPage >= totalPages ? 'disabled' : ''}
-          class="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors shadow-2xs"
           title="Trang sau"
         >
+          <span>Sau</span>
           <i class="fa-solid fa-chevron-right text-[10px]"></i>
         </button>
       `;
@@ -884,7 +939,7 @@
     renderRefundTable();
   }
 
-  // 10. MÀN HÌNH CHI TIẾT ĐƠN HOÀN HỦY (NEXTPAGE WORKSPACE)
+    // 10. MÀN HÌNH CHI TIẾT ĐƠN HOÀN HỦY (NEXTPAGE WORKSPACE)
   function openRefundDetail(requestCode) {
     viewingRequestCode = requestCode;
     const item = refundDataset.find(r => r.requestCode === requestCode);
@@ -892,135 +947,39 @@
 
     const listView = document.getElementById('viewRefundRequestsList');
     const detailView = document.getElementById('viewRefundRequestDetail');
+    const createView = document.getElementById('viewCreateRefundRequest');
     if (!listView || !detailView) return;
 
+    if (createView) createView.classList.add('hidden');
     listView.classList.add('hidden');
     detailView.classList.remove('hidden');
+
+    // Lưu trạng thái lịch sử điều hướng để nút Back luôn trả về đúng danh sách hoàn hủy
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ screen: 'refund-detail', requestCode }, '', '#detail-' + requestCode);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Render thông tin chi tiết
     renderDetailContent(item);
-  }
-
-  function closeRefundDetail() {
-    viewingRequestCode = null;
-    const listView = document.getElementById('viewRefundRequestsList');
-    const detailView = document.getElementById('viewRefundRequestDetail');
-    if (!listView || !detailView) return;
-
-    detailView.classList.add('hidden');
-    listView.classList.remove('hidden');
-    renderRefundTable();
-  }
-
-  function renderDetailContent(item) {
-    // 1. Breadcrumb & Header info
-    document.getElementById('dtRequestCode').innerText = item.requestCode;
-    document.getElementById('dtRefundOrderCode').innerText = item.refundOrderCode;
-    document.getElementById('dtOriginalOrderCode').innerText = item.originalOrderCode;
-    document.getElementById('dtCreatedDate').innerText = item.createdDate;
-    document.getElementById('dtRequesterName').innerText = item.requesterName;
-    document.getElementById('dtRequesterEmail').innerText = item.requesterEmail;
-    document.getElementById('dtRequesterPhone').innerText = item.requesterPhone || '-';
-    document.getElementById('dtAgencyName').innerText = item.agency;
-    document.getElementById('dtAgencyCode').innerText = item.agencyCode || '-';
-    document.getElementById('dtTaxId').innerText = item.taxId || '-';
-    document.getElementById('dtCorpName').innerText = item.corp;
-    document.getElementById('dtSiteName').innerText = item.site;
-    document.getElementById('dtServiceDate').innerText = item.serviceDate ? item.serviceDate.split('-').reverse().join('/') : '-';
-    document.getElementById('dtReasonText').innerText = item.reason;
-
-    // Trạng thái badge
-    const statusBadge = document.getElementById('dtStatusBadge');
-    if (statusBadge) {
-      if (item.status === 'CHO_XU_LY') {
-        statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
-        statusBadge.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Chờ xử lý';
-      } else if (item.status === 'DANG_XU_LY') {
-        statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
-        statusBadge.innerHTML = '<i class="fa-solid fa-spinner mr-1"></i> Đang xử lý';
-      } else if (item.status === 'DANG_HOAN_TIEN') {
-        statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200';
-        statusBadge.innerHTML = '<i class="fa-solid fa-money-bill-transfer mr-1"></i> Đang hoàn tiền';
-      } else {
-        if (item.subStatus === 'TU_CHOI') {
-          statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200';
-          statusBadge.innerHTML = '<i class="fa-solid fa-ban mr-1"></i> Đã từ chối';
-        } else {
-          statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-          statusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Đã hoàn tất';
-        }
-      }
-    }
-
-    // 2. Tài liệu đính kèm
-    const docsContainer = document.getElementById('dtDocumentsList');
-    if (docsContainer) {
-      if (item.documents && item.documents.length > 0) {
-        docsContainer.innerHTML = item.documents.map(doc => `
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-colors">
-            <i class="fa-regular fa-file-pdf text-rose-500"></i>
-            <span>${doc}</span>
-          </div>
-        `).join('');
-      } else {
-        docsContainer.innerHTML = '<span class="text-xs text-slate-400 italic">Không có tệp đính kèm</span>';
-      }
-    }
-
-    // 3. Khối Từ chối (nếu có lý do từ chối)
-    const rejectBox = document.getElementById('dtRejectBox');
-    if (rejectBox) {
-      if (item.subStatus === 'TU_CHOI' && item.rejectReason) {
-        rejectBox.classList.remove('hidden');
-        document.getElementById('dtRejectReasonText').innerText = item.rejectReason;
-      } else {
-        rejectBox.classList.add('hidden');
-      }
-    }
-
-    // 4. Bảng tính vé và chi phí
     renderDetailTicketsTable(item);
-
-    // 5. Render Button Chân trang theo đúng Quy tắc từng Tab
     renderDetailActionButtons(item);
   }
 
-  function renderDetailTicketsTable(item) {
-    const tableBody = document.getElementById('dtTicketsTableBody');
-    if (!tableBody) return;
+  function closeRefundDetail() {
+    const listView = document.getElementById('viewRefundRequestsList');
+    const detailView = document.getElementById('viewRefundRequestDetail');
+    if (detailView) detailView.classList.add('hidden');
+    if (listView) listView.classList.remove('hidden');
 
-    const isEditable = item.status === 'DANG_XU_LY';
+    viewingRequestCode = null;
 
-    tableBody.innerHTML = (item.tickets || []).map((t, idx) => {
-      return `
-        <tr class="divide-x divide-slate-100 border-b border-slate-100">
-          <td class="p-3 text-center text-xs font-mono text-slate-400">${idx + 1}</td>
-          <td class="p-3">
-            <span class="font-bold text-xs text-slate-800 block">${t.type}</span>
-            <span class="font-mono text-[11px] text-blue-600 font-semibold">${t.qrCode}</span>
-          </td>
-          <td class="p-3 text-right font-mono font-bold text-xs text-slate-700">
-            ${(t.price || 0).toLocaleString('vi-VN')} đ
-          </td>
-          <td class="p-3 text-right font-mono text-xs">
-            ${isEditable ? `
-              <input type="number" onchange="onDetailTicketChargeChange(${idx}, this.value)" value="${t.charge || 0}" class="w-28 px-2 py-1 text-right rounded-lg border border-slate-200 font-mono text-xs font-bold text-rose-600 focus:outline-none focus:border-brand-500">
-            ` : `
-              <span class="font-bold text-rose-600">-${(t.charge || 0).toLocaleString('vi-VN')} đ</span>
-            `}
-          </td>
-          <td class="p-3 text-right font-mono font-black text-xs text-emerald-600">
-            ${(t.refund || 0).toLocaleString('vi-VN')} đ
-          </td>
-        </tr>
-      `;
-    }).join('');
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ screen: 'refund-list' }, '', window.location.pathname);
+    }
 
-    // Cập nhật tổng kết tiền
-    document.getElementById('dtTotalOriginal').innerText = `${(item.totalOriginalAmount || 0).toLocaleString('vi-VN')} đ`;
-    document.getElementById('dtTotalCharge').innerText = `-${(item.chargeAmount || 0).toLocaleString('vi-VN')} đ`;
-    document.getElementById('dtTotalRefund').innerText = `${(item.totalRefundAmount || 0).toLocaleString('vi-VN')} đ`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // 11. RENDER CHÂN TRANG THEO QUY TẮC CỦA TỪNG TAB
@@ -1300,6 +1259,10 @@
     if (detailView) detailView.classList.add('hidden');
     if (createView) createView.classList.remove('hidden');
 
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ screen: 'refund-create' }, '', '#create');
+    }
+
     // Khởi tạo trạng thái form mới
     createRequestCode = generateRefundRequestCode();
     selectedTicketSerials.clear();
@@ -1350,6 +1313,10 @@
     const createView = document.getElementById('viewCreateRefundRequest');
     if (createView) createView.classList.add('hidden');
     if (listView) listView.classList.remove('hidden');
+
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ screen: 'refund-list' }, '', window.location.pathname);
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1517,12 +1484,12 @@
     }
   }
 
-  function updatePenaltyBanner(serviceDateStr) {
+    function updatePenaltyBanner(serviceDateStr) {
     const policy = getPenaltyPolicy(serviceDateStr);
     const badge = document.getElementById('policyAppliedBadge');
     if (badge) {
       badge.textContent = policy.badgeText;
-      badge.className = `self-start sm:self-auto px-3 py-1.5 rounded-xl font-extrabold text-[11px] shadow-2xs whitespace-nowrap ${policy.badgeClass}`;
+      badge.className = 'text-xs font-semibold text-slate-700';
     }
   }
 
@@ -2393,20 +2360,70 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
   // Khởi động phân hệ
   function initRefundSubsystem() {
     populateCorpAndSiteFilters();
+    filterAgencyOptions('');
+    filterSiteOptions('');
     setupFilterEventListeners();
     initRefundDateRangePicker();
     renderRefundTable();
 
-    // Tự động đóng các dropdown khi click ra ngoài
+    // Override global goBackPage để khi bấm Back luôn trả về đúng danh sách hoàn hủy
+    window.goBackPage = function(fallback) {
+      const detailView = document.getElementById('viewRefundRequestDetail');
+      const createView = document.getElementById('viewCreateRefundRequest');
+      const listView = document.getElementById('viewRefundRequestsList');
+
+      if (detailView && !detailView.classList.contains('hidden')) {
+        closeRefundDetail();
+        return;
+      }
+      if (createView && !createView.classList.contains('hidden')) {
+        closeCreateRefundNextPage();
+        return;
+      }
+      if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+      } else {
+        window.location.href = fallback || 'index.html';
+      }
+    };
+
+    // Lắng nghe popstate (nút Back của trình duyệt / mobile)
+    window.addEventListener('popstate', (e) => {
+      const detailView = document.getElementById('viewRefundRequestDetail');
+      const createView = document.getElementById('viewCreateRefundRequest');
+      const listView = document.getElementById('viewRefundRequestsList');
+
+      if (detailView && !detailView.classList.contains('hidden')) {
+        detailView.classList.add('hidden');
+        if (listView) listView.classList.remove('hidden');
+        viewingRequestCode = null;
+        return;
+      }
+      if (createView && !createView.classList.contains('hidden')) {
+        createView.classList.add('hidden');
+        if (listView) listView.classList.remove('hidden');
+        return;
+      }
+    });
+
+    // Đóng dropdown khi click ra ngoài
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('#agencyDropdownContainer')) {
-        toggleAgencyFilterDropdown(false);
+      const agContainer = document.getElementById('agencyDropdownContainer');
+      const agMenu = document.getElementById('menuAgencyFilterDropdown');
+      if (agContainer && agMenu && !agContainer.contains(e.target)) {
+        agMenu.classList.add('hidden');
       }
-      if (!e.target.closest('#siteDropdownContainer')) {
-        toggleSiteFilterDropdown(false);
+
+      const siteContainer = document.getElementById('siteDropdownContainer');
+      const siteMenu = document.getElementById('menuSiteFilterDropdown');
+      if (siteContainer && siteMenu && !siteContainer.contains(e.target)) {
+        siteMenu.classList.add('hidden');
       }
-      if (!e.target.closest('#origOrderDropdownContainer')) {
-        toggleOrigOrderDropdown(false);
+
+      const origContainer = document.getElementById('origOrderDropdownContainer');
+      const origMenu = document.getElementById('menuOrigOrderDropdown');
+      if (origContainer && origMenu && !origContainer.contains(e.target)) {
+        origMenu.classList.add('hidden');
       }
     });
 
@@ -2419,19 +2436,20 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
   }
 
   // EXPORT GLOBAL FUNCTIONS
-  
+  window.switchRefundTab = switchRefundTab;
+  window.openRefundDetail = openRefundDetail;
+  window.closeRefundDetail = closeRefundDetail;
+  window.resetRefundFilters = resetRefundFilters;
+  window.clearAgencyFilter = clearAgencyFilter;
+  window.clearSiteFilter = clearSiteFilter;
   window.toggleAgencyFilterDropdown = toggleAgencyFilterDropdown;
   window.filterAgencyOptions = filterAgencyOptions;
   window.selectAgencyFilter = selectAgencyFilter;
   window.toggleSiteFilterDropdown = toggleSiteFilterDropdown;
   window.filterSiteOptions = filterSiteOptions;
   window.selectSiteFilter = selectSiteFilter;
-  window.changeRefundPageSize = changeRefundPageSize;
   window.goToRefundPage = goToRefundPage;
-  window.switchRefundTab = switchRefundTab;
-  window.openRefundDetail = openRefundDetail;
-  window.closeRefundDetail = closeRefundDetail;
-  window.resetRefundFilters = resetRefundFilters;
+  window.changeRefundPageSize = changeRefundPageSize;
   window.openCreateRefundNextPage = openCreateRefundNextPage;
   window.closeCreateRefundNextPage = closeCreateRefundNextPage;
   window.openCreateRefundModal = openCreateRefundModal;

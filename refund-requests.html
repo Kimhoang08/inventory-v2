@@ -59,23 +59,36 @@
               </div>
             </div>
 
-            <!-- (1) Dropdown Đại lý (span 3 - Custom Dropdown có Search bên trong) -->
+            <!-- (1) Dropdown Đại lý (span 3 - Searchable Dropdown có ô Search bên trong & Xóa nhanh) -->
             <div class="lg:col-span-3 relative" id="agencyDropdownContainer">
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 Đại lý
               </label>
-              <button
-                type="button"
-                id="btnSelectAgency"
-                onclick="toggleAgencyFilterDropdown()"
-                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 flex items-center justify-between cursor-pointer transition-colors shadow-2xs h-[38px]"
-              >
-                <span id="selectedAgencyText" class="truncate">Tất cả đại lý</span>
-                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-2 shrink-0"></i>
-              </button>
+              <div class="relative">
+                <button
+                  type="button"
+                  id="btnSelectAgency"
+                  onclick="toggleAgencyFilterDropdown()"
+                  class="w-full pl-3 pr-8 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 flex items-center justify-between cursor-pointer transition-colors shadow-2xs h-[38px]"
+                >
+                  <span id="selectedAgencyText" class="truncate">Tất cả đại lý</span>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 shrink-0 pointer-events-none"></i>
+                </button>
+                <button
+                  type="button"
+                  id="btnClearAgencyFilter"
+                  onclick="clearAgencyFilter(event)"
+                  class="hidden absolute right-7 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer text-[10px]"
+                  title="Xóa chọn đại lý"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Menu xổ xuống có thanh tìm kiếm bên trong -->
               <div
                 id="menuAgencyFilterDropdown"
-                class="hidden absolute z-30 left-0 right-0 mt-1 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 space-y-2 animate-in fade-in zoom-in-95 duration-100 min-w-[260px]"
+                class="hidden absolute z-30 left-0 right-0 mt-1 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 space-y-2 animate-in fade-in zoom-in-95 duration-100 min-w-[270px]"
               >
                 <div class="relative">
                   <i class="fa-solid fa-magnifying-glass text-[11px] text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
@@ -88,7 +101,7 @@
                   />
                 </div>
                 <div id="listAgencyFilterOptions" class="max-h-52 overflow-y-auto divide-y divide-slate-100 text-xs space-y-1">
-                  <!-- Rendered by JS -->
+                  <!-- Rendered dynamically by refunds.js -->
                 </div>
               </div>
             </div>
@@ -107,23 +120,36 @@
               </select>
             </div>
 
-            <!-- (3) Dropdown Khu du lịch (span 3 - Custom Dropdown có Search bên trong) -->
+            <!-- (3) Dropdown Khu du lịch (span 3 - Searchable Dropdown có ô Search bên trong & Xóa nhanh) -->
             <div class="lg:col-span-3 relative" id="siteDropdownContainer">
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 Khu du lịch
               </label>
-              <button
-                type="button"
-                id="btnSelectSite"
-                onclick="toggleSiteFilterDropdown()"
-                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 flex items-center justify-between cursor-pointer transition-colors shadow-2xs h-[38px]"
-              >
-                <span id="selectedSiteText" class="truncate">Tất cả khu du lịch</span>
-                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-2 shrink-0"></i>
-              </button>
+              <div class="relative">
+                <button
+                  type="button"
+                  id="btnSelectSite"
+                  onclick="toggleSiteFilterDropdown()"
+                  class="w-full pl-3 pr-8 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-rose-500 flex items-center justify-between cursor-pointer transition-colors shadow-2xs h-[38px]"
+                >
+                  <span id="selectedSiteText" class="truncate">Tất cả khu du lịch</span>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 shrink-0 pointer-events-none"></i>
+                </button>
+                <button
+                  type="button"
+                  id="btnClearSiteFilter"
+                  onclick="clearSiteFilter(event)"
+                  class="hidden absolute right-7 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer text-[10px]"
+                  title="Xóa chọn khu du lịch"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Menu xổ xuống có thanh tìm kiếm bên trong -->
               <div
                 id="menuSiteFilterDropdown"
-                class="hidden absolute z-30 left-0 right-0 mt-1 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 space-y-2 animate-in fade-in zoom-in-95 duration-100 min-w-[260px]"
+                class="hidden absolute z-30 left-0 right-0 mt-1 bg-white rounded-2xl border border-slate-200 shadow-xl p-2.5 space-y-2 animate-in fade-in zoom-in-95 duration-100 min-w-[270px]"
               >
                 <div class="relative">
                   <i class="fa-solid fa-magnifying-glass text-[11px] text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
@@ -136,7 +162,7 @@
                   />
                 </div>
                 <div id="listSiteFilterOptions" class="max-h-52 overflow-y-auto divide-y divide-slate-100 text-xs space-y-1">
-                  <!-- Rendered by JS -->
+                  <!-- Rendered dynamically by refunds.js -->
                 </div>
               </div>
             </div>
@@ -267,8 +293,8 @@
         <!-- 3. Tabs Trạng thái & Bảng Danh sách -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
           
-          <!-- Hàng Tabs 4 Trạng thái chuẩn nghiệp vụ -->
-          <div class="p-3 sm:px-4 sm:py-3 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70">
+          <!-- Hàng Tabs 4 Trạng thái chuẩn nghiệp vụ (Tinh gọn không icon, không badge con số, không tổng số) -->
+          <div class="p-2.5 sm:px-4 sm:py-2.5 border-b border-slate-100 flex items-center bg-slate-50/70">
             <div class="flex flex-wrap items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl">
               <!-- Tab 1: Chờ xử lý -->
               <button
@@ -348,17 +374,16 @@
 
           <!-- Thanh phân trang bên dưới bảng danh sách -->
           <div id="refundPaginationContainer" class="p-3 sm:px-4 sm:py-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white text-xs text-slate-500">
-            <div class="flex items-center gap-2">
-              <span id="refundPaginationInfo">Hiển thị 1 - 10 / 16 yêu cầu</span>
+            <div class="flex items-center gap-3">
+              <span id="refundPaginationInfo" class="font-medium text-slate-600">Hiển thị 1–10 / 16 yêu cầu</span>
               <span class="text-slate-300">|</span>
               <div class="flex items-center gap-1.5">
-                <span>Hiển thị</span>
+                <span>Số dòng:</span>
                 <select
                   id="refundPageSizeSelect"
                   onchange="changeRefundPageSize(this.value)"
                   class="px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 focus:outline-none focus:border-rose-500 cursor-pointer"
                 >
-                  <option value="5">5 / trang</option>
                   <option value="10" selected>10 / trang</option>
                   <option value="20">20 / trang</option>
                   <option value="50">50 / trang</option>
@@ -366,8 +391,8 @@
               </div>
             </div>
 
-            <div id="refundPaginationButtons" class="flex items-center gap-1 self-center sm:self-auto">
-              <!-- Rendered dynamically by refunds.js -->
+            <div id="refundPaginationButtons" class="flex items-center gap-1.5 self-center sm:self-auto">
+              <!-- Rendered dynamically by refunds.js (Trước, 1, 2, 3..., Sau) -->
             </div>
           </div>
         </div>
@@ -380,7 +405,7 @@
       <!-- ==================================================================== -->
       <div id="viewRefundRequestDetail" class="hidden space-y-6 animate-in fade-in duration-200">
         
-        <!-- Header Chi tiết: Nút Quay lại & Trạng thái -->
+        <!-- Header Chi tiết: Thông tin & Trạng thái -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs">
           <div class="flex items-center gap-3.5">
             <div>
@@ -537,6 +562,7 @@
 
     
       <!-- ==================================================================== -->
+      <!-- ==================================================================== -->
       <!-- VIEW 3: TẠO YÊU CẦU HOÀN VÉ (NEXTPAGE TỪ NÚT TẠO YÊU CẦU)            -->
       <!-- ==================================================================== -->
       <div id="viewCreateRefundRequest" class="hidden space-y-6 animate-in fade-in duration-200">
@@ -583,7 +609,7 @@
         <!-- 1. KHU VỰC THÔNG TIN CHUNG (HIỂN THỊ XUYÊN SUỐT ĐẦU TRANG) -->
         <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-5">
           
-          <!-- 1.1 Khối Thông tin người gửi -->
+          <!-- Khối Thông tin người gửi -->
           <div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
               <div class="flex items-center gap-2">
@@ -592,25 +618,13 @@
                 </div>
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Thông tin người gửi</h3>
               </div>
-              <span class="text-[11px] text-slate-400 font-medium italic">Tự động điền theo tài khoản đăng nhập & Biên bản hoàn hủy</span>
             </div>
 
-            <!-- Hàng 1: Read-only (Tên đại lý, Người gửi, Email nhận phản hồi) -->
+            <!-- Hàng 1 (Người gửi, Email, Tên đại lý) - Căn chỉnh tỷ lệ: Người gửi & Email gọn gàng, Tên đại lý rộng rãi -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 mb-3.5">
-              <div class="md:col-span-6">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">
-                  Tên đại lý
-                </label>
-                <input
-                  type="text"
-                  id="senderAgencyName"
-                  readonly
-                  value="Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)"
-                  class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none"
-                />
-              </div>
+              <!-- Người gửi (col-span-3) -->
               <div class="md:col-span-3">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">
                   Người gửi
                 </label>
                 <input
@@ -621,8 +635,10 @@
                   class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none"
                 />
               </div>
+
+              <!-- Email nhận phản hồi (col-span-3) -->
               <div class="md:col-span-3">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">
                   Email nhận phản hồi
                 </label>
                 <input
@@ -633,9 +649,23 @@
                   class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none font-mono"
                 />
               </div>
+
+              <!-- Tên đại lý (col-span-6) -->
+              <div class="md:col-span-6">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">
+                  Tên đại lý
+                </label>
+                <input
+                  type="text"
+                  id="senderAgencyName"
+                  readonly
+                  value="Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)"
+                  class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100/90 text-xs font-bold text-slate-700 cursor-not-allowed select-none"
+                />
+              </div>
             </div>
 
-            <!-- Hàng 2: Editable (Mã đại lý, Mã số thuế, Địa chỉ) -->
+            <!-- Hàng 2 (Mã đại lý, Mã số thuế, Địa chỉ đại lý) - Mã đại lý & MST gọn, Địa chỉ mở rộng tối đa -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5">
               <div class="md:col-span-2">
                 <label class="block text-[11px] font-bold text-slate-600 mb-1">
@@ -666,7 +696,6 @@
               <div class="md:col-span-8">
                 <label class="block text-[11px] font-bold text-slate-600 mb-1">
                   Địa chỉ đại lý <span class="text-rose-500">*</span>
-                  <span class="text-[10px] text-slate-400 font-normal">(Đổ tự động vào Biên bản hoàn hủy)</span>
                 </label>
                 <input
                   type="text"
@@ -680,7 +709,7 @@
             </div>
           </div>
 
-          <!-- 1.2 Khối Thông tin yêu cầu hoàn/hủy -->
+          <!-- Khối Thông tin yêu cầu hoàn/hủy -->
           <div class="pt-4 border-t border-slate-100">
             <div class="flex items-center justify-between pb-3 mb-4">
               <div class="flex items-center gap-2">
@@ -696,7 +725,7 @@
               <!-- Mã RQRF -->
               <div class="lg:col-span-3">
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">
-                  Mã yêu cầu <span class="text-[10px] font-normal text-blue-600">(Sinh tự động)</span>
+                  Mã yêu cầu
                 </label>
                 <input
                   type="text"
@@ -710,7 +739,6 @@
               <div class="lg:col-span-4 relative" id="origOrderDropdownContainer">
                 <label class="block text-[11px] font-bold text-slate-600 mb-1">
                   Mã đơn hàng gốc <span class="text-rose-500">*</span>
-                  <span class="text-[10px] font-normal text-slate-400">(Chỉ liệt kê đơn đủ điều kiện)</span>
                 </label>
                 
                 <!-- Dropdown trigger button -->
@@ -775,7 +803,7 @@
             </div>
 
             <!-- Hàng 2: Tập đoàn + Khu du lịch -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3">
               <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">
                   Tập đoàn
@@ -800,16 +828,15 @@
               </div>
             </div>
 
-            <!-- Gợi ý chính sách phạt (Hiển thị text như thông tin phụ) -->
-            <div id="policyPenaltyBanner" class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <i class="fa-solid fa-circle-info text-slate-400 text-[11px]"></i>
-                <span class="font-medium text-slate-600">Gợi ý chính sách phí phạt:</span>
-                <span class="text-[11px] text-slate-500">Trước T: phạt 30% • Trong ngày T: phạt 50% • Sau T: không hỗ trợ hoàn</span>
+            <!-- Gợi ý chính sách phạt (Hạ cấp thành text thông tin phụ trung tính) -->
+            <div id="policyPenaltyBanner" class="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11.5px] text-slate-500">
+              <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                <span>Chính sách phí phạt tham chiếu: Trước T (30%), Trong ngày T (50%), Sau T (Không hoàn).</span>
               </div>
-              <span id="policyAppliedBadge" class="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+              <div id="policyAppliedBadge" class="text-xs font-semibold text-slate-700">
                 Đang áp dụng: Phạt 30% (Trước ngày đi T)
-              </span>
+              </div>
             </div>
 
           </div>
@@ -818,25 +845,24 @@
         <!-- 2. BƯỚC 1: CHỌN VÉ HOÀN/HỦY TRONG ĐƠN HÀNG (STEP 1) -->
         <div id="containerStep1" class="space-y-4">
           
-          <!-- 2.1 Thanh thống kê & Công cụ lọc danh sách vé -->
+          <!-- Thanh thống kê & Công cụ lọc danh sách vé -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3.5">
             
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div class="flex items-center gap-2">
                 <h3 class="text-sm font-extrabold text-slate-900">Chọn vé trong đơn hàng</h3>
-                <span class="text-xs text-slate-400 font-medium">(Tick chọn các vé cần lập yêu cầu hoàn/hủy)</span>
               </div>
               <!-- Realtime Counter Badge: Đã chọn X/Y vé để gửi yêu cầu -->
-              <div id="ticketCountBadgeRealtime" class="px-3.5 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold self-start sm:self-auto">
+              <div id="ticketCountBadgeRealtime" class="px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold self-start sm:self-auto">
                 Đã chọn <span id="countSelectedTickets" class="font-black text-rose-600">0</span>/<span id="countEligibleTickets" class="font-bold">0</span> vé để gửi yêu cầu
               </div>
             </div>
 
-            <!-- Cảnh báo nghiệp vụ hiển thị text thông tin phụ -->
-            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 pt-0.5">
-              <i class="fa-solid fa-circle-info text-slate-400 text-[11px] shrink-0"></i>
+            <!-- Dòng cảnh báo đối chiếu mã vé (Hạ cấp thành text thông tin phụ trung tính) -->
+            <p class="text-[11.5px] text-slate-500 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
               <span>Hệ thống không tự xác định vé đã sử dụng. Vui lòng đối chiếu Mã Vé trước khi gửi yêu cầu.</span>
-            </div>
+            </p>
 
             <!-- Thanh công cụ tìm kiếm & Chọn nhanh -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
@@ -875,12 +901,12 @@
 
           </div>
 
-          <!-- 2.2 Danh sách vé gom nhóm theo Gói vé (Accordion Group) -->
+          <!-- Danh sách vé gom nhóm theo Gói vé (Accordion Group) -->
           <div id="ticketAccordionGroupsContainer" class="space-y-3">
             <!-- Rendered dynamically by refunds.js -->
           </div>
 
-          <!-- 2.3 Nút điều hướng Bước 1 -->
+          <!-- Nút điều hướng Bước 1 -->
           <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
             <button
               type="button"
@@ -911,7 +937,7 @@
         <!-- 3. BƯỚC 2: LÝ DO, TỆP ĐÍNH KÈM & BIÊN BẢN HOÀN HỦY (STEP 2) -->
         <div id="containerStep2" class="hidden space-y-5">
           
-          <!-- 3.1 Nhập lý do & Quản lý tệp đính kèm -->
+          <!-- Lý do & Hồ sơ -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-4">
             <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
               <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs font-bold">
@@ -941,7 +967,7 @@
             <!-- Tải tệp đính kèm -->
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                Tài liệu minh chứng đính kèm <span class="text-slate-400 font-normal">(Nếu có - Hỗ trợ PDF, JPG, PNG)</span>
+                Tài liệu minh chứng đính kèm
               </label>
               
               <div
@@ -971,7 +997,7 @@
             </div>
           </div>
 
-          <!-- 3.2 Xem trước & Xác nhận Biên bản hoàn hủy vé (Auto-generated PDF) -->
+          <!-- Biên bản hoàn/hủy vé -->
           <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-4">
             
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
@@ -980,8 +1006,8 @@
                   <i class="fa-solid fa-file-contract"></i>
                 </div>
                 <div>
-                  <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Xem trước Biên bản hoàn/hủy vé</h3>
-                  <p class="text-[11px] text-slate-400 font-medium">Hệ thống tự động đổ dữ liệu từ Thông tin người gửi, Đơn gốc và Vé đã chọn</p>
+                  <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Biên bản hoàn/hủy vé</h3>
+                  <p class="text-[11px] text-slate-400 font-medium">Hệ thống tự động sinh dữ liệu từ Thông tin người gửi, Đơn gốc và Vé đã chọn</p>
                 </div>
               </div>
 
@@ -1133,7 +1159,7 @@
             </div>
 
             <!-- Xác nhận pháp lý & Checkbox bắt buộc -->
-            <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-200/90 flex items-start gap-3">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3">
               <input
                 type="checkbox"
                 id="chkLegalConfirmation"
@@ -1269,6 +1295,37 @@
     window.refund_navigateMonth = window.refund_navigateMonth || function() {};
     window.refund_cancel = window.refund_cancel || function() { const p = document.getElementById('refund_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('refund_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
     window.refund_apply = window.refund_apply || function() { const p = document.getElementById('refund_popoverDateRange'); if(p) p.classList.add('hidden'); const b = document.getElementById('refund_datePopoverBackdrop'); if(b) b.classList.add('hidden'); };
+
+    // Ghi đè nút Back (Footer / Header) để luôn quay về đúng danh sách hoàn/hủy thay vì chuyển sang orders.html
+    window.goBackPage = function(fallback) {
+      const detailView = document.getElementById('viewRefundRequestDetail');
+      const createView = document.getElementById('viewCreateRefundRequest');
+      const listView = document.getElementById('viewRefundRequestsList');
+
+      if (detailView && !detailView.classList.contains('hidden')) {
+        if (typeof closeRefundDetail === 'function') {
+          closeRefundDetail();
+        } else {
+          detailView.classList.add('hidden');
+          if (listView) listView.classList.remove('hidden');
+        }
+        return;
+      }
+      if (createView && !createView.classList.contains('hidden')) {
+        if (typeof closeCreateRefundNextPage === 'function') {
+          closeCreateRefundNextPage();
+        } else {
+          createView.classList.add('hidden');
+          if (listView) listView.classList.remove('hidden');
+        }
+        return;
+      }
+      if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+      } else {
+        window.location.href = fallback || 'index.html';
+      }
+    };
 
     window.addEventListener('DOMContentLoaded', () => {
       renderSharedShell({
