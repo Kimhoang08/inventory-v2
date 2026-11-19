@@ -3,122 +3,684 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thông tin Đại lý - Techera Portal B2B</title>
+  <title>Quản lý Đại lý - Techera Portal B2B</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/cashflow-table.css" />
   <link rel="stylesheet" href="assets/css/main.css" />
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
   <div id="mainAppWrapper" class="flex-1 min-w-0 min-h-screen flex flex-col">
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 space-y-6">
 
-      <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Thông tin Đại lý &amp; Đối tác Lữ hành</h1>
-          <p class="text-xs text-slate-500 mt-0.5">Mạng lưới 10 đại lý B2B cấp 1 (TA Partner), phân hạng tài khoản, công nợ và doanh số tích lũy</p>
+      <!-- ==================================================================== -->
+      <!-- VIEW 1: BẢNG DANH SÁCH QUẢN LÝ ĐẠI LÝ (ĐỒNG BỘ CHUẨN LỊCH SỬ DÒNG TIỀN) -->
+      <!-- ==================================================================== -->
+      <div id="viewAgenciesList" class="space-y-6">
+        
+        <!-- Header Danh sách Đại lý -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Quản lý Đại lý &amp; Đối tác Lữ hành</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Mạng lưới đại lý B2B cấp 1 (TA Partner), phân hạng tài khoản, số dư ví và các site liên kết</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="wallet.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
+              <i class="fa-solid fa-wallet text-brand-500"></i>
+              <span>Ví đại lý</span>
+            </a>
+            <button
+              type="button"
+              onclick="openCreateAgencyModal()"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer"
+            >
+              <i class="fa-solid fa-plus text-[11px]"></i>
+              <span>Thêm đại lý mới</span>
+            </button>
+          </div>
         </div>
+
+        <!-- 4 Thẻ KPI thống kê nhanh -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-users-rectangle text-base"></i>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold text-slate-500">Đại lý đối tác B2B</div>
+                <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">10 Đại lý</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-users-rectangle absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
+          </div>
+
+          <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-circle-check text-base"></i>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold text-slate-500">Đang hoạt động</div>
+                <div class="text-xl font-extrabold text-emerald-700 leading-tight mt-0.5">9 Đại lý</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-circle-check absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
+          </div>
+
+          <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-wallet text-base"></i>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold text-slate-500">Tổng số dư ví</div>
+                <div class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5 cursor-help" title="88.400.000 đ">88.4M</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-wallet absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
+          </div>
+
+          <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-chart-line text-base"></i>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold text-slate-500">Doanh thu quý này</div>
+                <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5 cursor-help" title="1.450.000.000 đ">1.45B</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chart-line absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+          </div>
+        </section>
+
+        <!-- Bảng danh sách đại lý (chuẩn Lịch sử Dòng tiền) -->
+        <section class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          
+          <!-- Thanh công cụ tìm kiếm và bộ lọc nhanh -->
+          <div class="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-sm text-slate-900">Danh bạ Đại lý B2B</span>
+              <span id="agenciesCountBadge" class="px-2.5 py-0.5 rounded-full bg-slate-200/70 text-slate-700 text-xs font-bold">10 Đại lý</span>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-xl justify-end">
+              <!-- Ô tìm kiếm -->
+              <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input
+                  type="text"
+                  id="agencySearchInput"
+                  oninput="onAgencyFilterSearch(this.value)"
+                  placeholder="Tìm tên đại lý, ID, email, SĐT, mã số thuế..."
+                  class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white hover:bg-slate-50/50 focus:outline-none focus:border-blue-500 shadow-2xs"
+                />
+              </div>
+
+              <!-- Dropdown trạng thái -->
+              <select
+                id="agencyStatusFilter"
+                onchange="onAgencyStatusFilterChange(this.value)"
+                class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 shadow-2xs focus:outline-none focus:border-blue-500 cursor-pointer h-[34px]"
+              >
+                <option value="ALL">Tất cả trạng thái</option>
+                <option value="Hoạt động">Hoạt động</option>
+                <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+              </select>
+
+              <!-- Đặt lại bộ lọc -->
+              <button
+                type="button"
+                onclick="resetAgenciesFilters()"
+                class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-bold text-xs shadow-2xs transition-colors cursor-pointer h-[34px] shrink-0"
+                title="Đặt lại bộ lọc"
+              >
+                <i class="fa-solid fa-rotate-right text-[11px]"></i>
+                <span class="hidden sm:inline">Đặt lại</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BẢNG DESKTOP (>= 1024px) CHUẨN 7 CỘT HIỂN THỊ -->
+          <div class="hidden lg:block cf-table-scroll min-h-[360px]">
+            <table class="cf-table min-w-[980px]">
+              <thead class="cf-thead">
+                <tr>
+                  <th class="min-w-[220px]">TÊN ĐẠI LÝ</th>
+                  <th class="min-w-[170px]">EMAIL</th>
+                  <th class="min-w-[130px]">SĐT</th>
+                  <th class="min-w-[130px]">MÃ SỐ THUẾ</th>
+                  <th class="min-w-[140px]">SỐ DƯ VÍ</th>
+                  <th class="min-w-[130px]">TRẠNG THÁI</th>
+                  <th class="cf-action-header min-w-[120px] w-[120px]">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody id="agenciesTableBody">
+                <!-- Rendered dynamically by agencies.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- BỐ CỤC MOBILE (< 1024px) DẠNG CARD GỌN GÀNG -->
+          <div id="agenciesMobileContainer" class="block lg:hidden p-3 sm:p-4 space-y-3">
+            <!-- Rendered dynamically by agencies.js -->
+          </div>
+
+          <!-- Thông báo khi không tìm thấy kết quả -->
+          <div id="agenciesEmptyNotice" class="hidden py-14 text-center space-y-2">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-lg">
+              <i class="fa-solid fa-building-circle-exclamation"></i>
+            </div>
+            <p class="text-xs font-bold text-slate-700">Không tìm thấy đại lý phù hợp</p>
+            <p class="text-[11px] text-slate-400">Hãy thử thay đổi từ khóa tìm kiếm hoặc trạng thái lọc</p>
+          </div>
+
+          <!-- Phân trang bên dưới bảng danh sách -->
+          <div id="agenciesPaginationFooter" class="p-3 sm:px-4 sm:py-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white text-xs text-slate-500">
+            <div class="flex items-center gap-3">
+              <span id="agenciesPaginationInfo" class="font-medium text-slate-600">Hiển thị 1–10 / 10 đại lý</span>
+              <span class="text-slate-300">|</span>
+              <div class="flex items-center gap-1.5">
+                <span>Số dòng:</span>
+                <select
+                  id="agenciesPageSizeSelect"
+                  onchange="changeAgenciesPageSize(this.value)"
+                  class="px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+                >
+                  <option value="10" selected>10 / trang</option>
+                  <option value="20">20 / trang</option>
+                  <option value="50">50 / trang</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="agenciesPaginationButtons" class="flex items-center gap-1 self-center sm:self-auto">
+              <!-- Rendered dynamically by agencies.js -->
+            </div>
+          </div>
+        </section>
+
+      </div> <!-- /#viewAgenciesList -->
+
+
+      <!-- ==================================================================== -->
+      <!-- VIEW 2: MÀN HÌNH DANH SÁCH SITE CỦA ĐẠI LÝ (KHI BẤM ICON QUẢ ĐỊA CẦU 🌐) -->
+      <!-- ==================================================================== -->
+      <div id="viewAgencySites" class="hidden space-y-6 animate-in fade-in duration-200">
+        
+        <!-- Header màn hình Sites của đại lý -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs">
+          <div class="flex items-center gap-3.5">
+            <button
+              type="button"
+              onclick="backToAgenciesList()"
+              class="w-9 h-9 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors cursor-pointer shrink-0 shadow-2xs"
+              title="Quay lại Quản lý Đại lý"
+            >
+              <i class="fa-solid fa-arrow-left text-sm"></i>
+            </button>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 id="agencySitesPageTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Danh sách site của Đại lý</h2>
+                <span id="agencySitesCountBadge" class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-extrabold">2 khu vui chơi</span>
+              </div>
+              <p id="agencySitesPageSub" class="text-xs text-slate-500 mt-0.5">Quản lý và cập nhật thông tin các site trên hệ thống</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onclick="backToAgenciesList()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+            >
+              <i class="fa-solid fa-arrow-left text-[11px]"></i>
+              <span>Về danh sách đại lý</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bảng danh sách site Desktop (>= 1024px) -->
+        <div class="hidden lg:block cf-table-card">
+          <div class="cf-table-scroll min-h-[320px]">
+            <table class="cf-table min-w-[850px]">
+              <thead class="cf-thead">
+                <tr>
+                  <th class="w-24">ID</th>
+                  <th class="min-w-[220px]">TÊN KHU DU LỊCH</th>
+                  <th class="min-w-[150px]">ĐỊA ĐIỂM</th>
+                  <th class="min-w-[140px]">NHÀ CUNG CẤP</th>
+                  <th class="min-w-[140px]">CẬP NHẬT LÚC</th>
+                  <th class="text-center min-w-[150px]">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody id="agencySitesTableBody">
+                <!-- Rendered dynamically by agencies.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Chân bảng & Phân trang Desktop -->
+          <div class="p-3.5 bg-slate-50/70 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div id="sitesPaginationInfoDesk">Hiển thị 2 của 2 khu vui chơi</div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1.5">
+                <span>Số dòng / trang:</span>
+                <select
+                  id="sitesPageSizeSelect"
+                  onchange="changeSitesPageSize(this.value)"
+                  class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none cursor-pointer"
+                >
+                  <option value="10" selected>10 / page</option>
+                  <option value="25">25 / page</option>
+                  <option value="50">50 / page</option>
+                </select>
+              </div>
+              <div id="sitesPaginationControls" class="flex items-center gap-1">
+                <!-- Dynamic pagination buttons -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Giao diện Mobile (< 1024px) - Card tóm tắt từng Site -->
+        <div class="block lg:hidden space-y-3">
+          <div id="agencySitesMobileContainer" class="space-y-3">
+            <!-- Dynamically populated mobile cards -->
+          </div>
+
+          <div id="sitesPaginationInfoMob" class="p-3 bg-white rounded-xl border border-slate-200 text-xs text-center text-slate-500 font-medium">
+            Hiển thị 2 của 2 khu vui chơi
+          </div>
+        </div>
+
+      </div> <!-- /#viewAgencySites -->
+
+    </main>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 1: FORM TẠO MỚI / CHỈNH SỬA ĐẠI LÝ (THEO ĐÚNG MẪU THIẾT KẾ) -->
+  <!-- ==================================================================== -->
+  <div id="modalAgencyForm" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-8">
+      
+      <!-- Header Modal -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <h3 id="modalAgencyFormTitle" class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Tạo mới đại lý</h3>
+        <button
+          type="button"
+          onclick="closeAgencyFormModal()"
+          class="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
+        >
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Body Modal Form -->
+      <form id="formAgencyDetails" onsubmit="submitAgencyForm(event)" class="p-5 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        
+        <!-- Hàng 1 (2 cột): Tên người dùng (*) & Mật khẩu -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Tên người dùng <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="formAgencyUsername"
+              placeholder="Nhập tên người dùng"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Mật khẩu
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="formAgencyPassword"
+                value="Abc@12345"
+                placeholder="Nhập mật khẩu"
+                class="w-full pl-3 pr-9 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs font-mono"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility('formAgencyPassword', this)"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                title="Ẩn/hiện mật khẩu"
+              >
+                <i class="fa-regular fa-eye text-xs"></i>
+              </button>
+            </div>
+            <p class="text-[10.5px] text-slate-400 mt-1">Mặc định: Abc@12345</p>
+          </div>
+        </div>
+
+        <!-- Hàng 2 (2 cột): Số điện thoại (*) & Email (*) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Số điện thoại <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="tel"
+              id="formAgencyPhone"
+              placeholder="Nhập số điện thoại"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Email <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="formAgencyEmail"
+              placeholder="Nhập email"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs font-mono"
+            />
+          </div>
+        </div>
+
+        <!-- Hàng 3 (1 cột): Tên đại lý (*) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Tên đại lý <span class="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="formAgencyName"
+            placeholder="Nhập tên đại lý"
+            required
+            class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs"
+          />
+        </div>
+
+        <!-- Hàng 4 (2 cột): Mã số thuế (*) & Địa chỉ (*) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Mã số thuế <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="formAgencyTaxId"
+              placeholder="Nhập mã số thuế"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs font-mono"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Địa chỉ <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="formAgencyAddress"
+              placeholder="Nhập địa chỉ"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs"
+            />
+          </div>
+        </div>
+
+        <!-- Hàng 5 (1 cột): Số tiền tối thiểu (*) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Số tiền tối thiểu <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              id="formAgencyMinDeposit"
+              placeholder="VD: 1.000.000"
+              required
+              class="w-full pl-3 pr-10 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs font-mono"
+            />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">VNĐ</span>
+          </div>
+        </div>
+
+        <!-- Hàng 6 (1 cột): Upload (Upload avatar) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Upload Avatar
+          </label>
+          <div class="relative border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl p-4 text-center bg-slate-50/50 transition-colors">
+            <input
+              type="file"
+              id="formAgencyAvatarFile"
+              accept=".jpg,.jpeg,.png"
+              onchange="handleAvatarFileInput(this)"
+              class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+            />
+            
+            <!-- Vùng placeholder khi chưa chọn ảnh -->
+            <div id="avatarUploadPlaceholder" class="space-y-1">
+              <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-base">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <div class="text-xs font-bold text-slate-700">Kéo thả hoặc click để chọn ảnh đại diện</div>
+              <p class="text-[10.5px] text-slate-400">Hỗ trợ JPG, JPEG, PNG • Tối đa 5MB • Khuyến nghị 512×512px</p>
+            </div>
+
+            <!-- Preview khi đã chọn ảnh -->
+            <div id="avatarUploadPreviewContainer" class="hidden flex items-center justify-center gap-3 relative z-20">
+              <img id="avatarUploadPreviewImg" src="" alt="Avatar" class="w-14 h-14 rounded-full object-cover border-2 border-blue-500 shadow-xs" />
+              <div class="text-left">
+                <span class="text-xs font-bold text-slate-800 block">Ảnh đại diện đã chọn</span>
+                <button type="button" onclick="resetAvatarUploadPreview()" class="text-[11px] text-rose-600 hover:underline cursor-pointer font-semibold">
+                  <i class="fa-solid fa-trash-can mr-1"></i> Xóa ảnh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hàng 7 (1 cột): Admin phụ trách -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Admin phụ trách
+          </label>
+          <select
+            id="formAgencyAdmin"
+            class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs cursor-pointer"
+          >
+            <option value="">Chọn admin...</option>
+            <option value="Nguyễn Văn An (Sale Manager)">Nguyễn Văn An (Sale Manager)</option>
+            <option value="Trần Thị Mai (Booking CSKH)">Trần Thị Mai (Booking CSKH)</option>
+            <option value="Lê Quốc Bảo (Account Lead)">Lê Quốc Bảo (Account Lead)</option>
+            <option value="Phạm Minh Tuấn (Sale Admin)">Phạm Minh Tuấn (Sale Admin)</option>
+            <option value="Hoàng Thảo Linh (CSKH)">Hoàng Thảo Linh (CSKH)</option>
+          </select>
+        </div>
+
+        <!-- Hàng 8 (1 cột): Nhà cung cấp (*) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Nhà cung cấp <span class="text-rose-500">*</span>
+          </label>
+          <select
+            id="formAgencySupplier"
+            onchange="onFormSupplierChange(this.value)"
+            required
+            class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-500 shadow-2xs cursor-pointer"
+          >
+            <option value="">Chọn nhà cung cấp...</option>
+            <option value="Sun World">Sun World</option>
+            <option value="VinWonders">VinWonders</option>
+            <option value="NovaDreams">NovaDreams</option>
+            <option value="TECHERA">TECHERA</option>
+          </select>
+        </div>
+
+        <!-- Hàng 9 (1 cột): Sites kết nối (*) [Multi-select] -->
+        <div id="sitesMultiSelectWrapper" class="space-y-2">
+          <label class="block text-xs font-bold text-slate-700">
+            Sites kết nối <span class="text-rose-500">*</span>
+          </label>
+
+          <!-- Khi chưa chọn Nhà cung cấp (Khóa) -->
+          <div id="sitesDisabledNotice" class="p-3.5 bg-slate-100 rounded-xl border border-slate-200 text-xs text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-lock text-slate-400"></i>
+            <span>Vui lòng chọn nhà cung cấp trước</span>
+          </div>
+
+          <!-- Khi đã chọn Nhà cung cấp (Active multi-select) -->
+          <div id="sitesActiveContainer" class="hidden space-y-2 border border-slate-200 rounded-2xl p-3 bg-slate-50/50">
+            
+            <!-- Danh sách Tag/Chip các Site đã chọn -->
+            <div>
+              <div class="text-[11px] font-bold text-slate-500 uppercase mb-1">Các Site đã chọn:</div>
+              <div id="sitesSelectedTags" class="flex flex-wrap items-center gap-1.5 min-h-[32px] p-1.5 bg-white rounded-xl border border-slate-200">
+                <!-- Chips render dynamically -->
+              </div>
+            </div>
+
+            <!-- Toolbar lọc nhanh site + Nút chọn tất cả -->
+            <div class="flex items-center justify-between gap-2 pt-1">
+              <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input
+                  type="text"
+                  id="sitesSearchInput"
+                  oninput="filterSitesChecklist(this.value)"
+                  placeholder="Tìm nhanh khu vui chơi..."
+                  class="w-full pl-7 pr-2 py-1 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onclick="selectAllSitesInForm()"
+                  class="px-2 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-[11px] font-semibold text-slate-700 cursor-pointer"
+                >
+                  Chọn tất cả
+                </button>
+                <button
+                  type="button"
+                  onclick="deselectAllSitesInForm()"
+                  class="px-2 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-[11px] font-semibold text-slate-700 cursor-pointer"
+                >
+                  Bỏ chọn
+                </button>
+              </div>
+            </div>
+
+            <!-- Danh sách Checklist các khu vui chơi -->
+            <div id="sitesChecklistOptions" class="max-h-40 overflow-y-auto space-y-1 pr-1 bg-white rounded-xl border border-slate-200 p-2">
+              <!-- Checklist render dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Chân Modal: Cụm nút hành động căn giữa cuối form -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onclick="closeAgencyFormModal()"
+            class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            id="btnSubmitAgencyModal"
+            class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-xs transition-colors cursor-pointer inline-flex items-center gap-1.5"
+          >
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>Tạo mới</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 2: CẤU HÌNH CHIẾT KHẤU SITE CỦA ĐẠI LÝ -->
+  <!-- ==================================================================== -->
+  <div id="modalDiscountConfig" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
         <div class="flex items-center gap-2">
-          <a href="wallet.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs">
-            <i class="fa-solid fa-wallet text-brand-500"></i>
-            <span>Ví đại lý</span>
-          </a>
-          <button type="button" onclick="showToast('Thêm đại lý', 'Vui lòng liên hệ Trưởng phòng KD để thiết lập hợp đồng B2B mới.')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-extrabold shadow-2xs transition-colors cursor-pointer">
-            <i class="fa-solid fa-plus text-[11px]"></i>
-            <span>Thêm đại lý mới</span>
+          <div class="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs">
+            <i class="fa-solid fa-percent"></i>
+          </div>
+          <h3 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">Cấu hình Chiết khấu Site</h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeDiscountModal()"
+          class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
+        >
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div class="bg-slate-50 rounded-xl p-3 space-y-1.5 border border-slate-100">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400 font-medium">Đại lý:</span>
+            <span id="discountModalAgencyName" class="font-bold text-slate-800">--</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400 font-medium">Khu du lịch:</span>
+            <span id="discountModalSiteName" class="font-extrabold text-blue-700">--</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Tỷ lệ chiết khấu (%) <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="number"
+              id="discountModalRateInput"
+              min="0"
+              max="100"
+              step="0.5"
+              value="10"
+              class="w-full pl-3 pr-8 py-2 rounded-xl border border-slate-200 text-xs font-extrabold text-slate-900 bg-white focus:outline-none focus:border-teal-500 shadow-2xs font-mono"
+            />
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">%</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Áp dụng trực tiếp cho các đơn hàng xuất vé tại Site này</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onclick="closeDiscountModal()"
+            class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            onclick="saveDiscountConfig()"
+            class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-extrabold transition-colors cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+          >
+            <i class="fa-solid fa-check text-xs"></i>
+            <span>Lưu cấu hình</span>
           </button>
         </div>
       </div>
-
-      <!-- 4 KPI Cards -->
-      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-users-rectangle text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Đại lý đối tác B2B</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">10 Đại lý</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-users-rectangle absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-medal text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Đại lý Platinum</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">6 Đại lý</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-medal absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-scale-balanced text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Tổng hạn mức công nợ</div>
-              <div class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5 cursor-help" title="500.000.000 đ">500M</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-scale-balanced absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-
-        <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-chart-line text-base"></i>
-            </div>
-            <div>
-              <div class="text-[11px] font-bold text-slate-500">Doanh thu quý này</div>
-              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5 cursor-help" title="1.450.000.000 đ">1.45B</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-chart-line absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
-        </div>
-      </section>
-
-      <!-- Bảng danh sách đại lý -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="font-extrabold text-sm text-slate-900">Danh bạ Đối tác Đại lý Lữ hành Cấp 1</div>
-          <div class="relative w-full sm:w-72">
-            <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-            <input type="text" placeholder="Tìm tên công ty, mã đại lý, NVKD..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-blue-500 placeholder:text-slate-400" />
-          </div>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <tr>
-                <th class="px-4 py-3">Tên đại lý / Mã đối tác</th>
-                <th class="px-4 py-3">Phân hạng</th>
-                <th class="px-4 py-3">NVKD phụ trách</th>
-                <th class="px-4 py-3 text-right">Số dư ví</th>
-                <th class="px-4 py-3 text-right">Hạn mức công nợ</th>
-                <th class="px-4 py-3 text-center">Trạng thái</th>
-                <th class="px-4 py-3 text-right">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody id="agenciesTableBody" class="divide-y divide-slate-100">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-    </main>
+    </div>
   </div>
 
   <!-- Scripts -->
@@ -129,46 +691,12 @@
   <script src="database/db-store.js"></script>
   <script src="assets/js/utils.js?v=2.6.0"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
+  <script src="assets/js/agencies.js?v=2.6.0"></script>
   <script>
-    const DEMO_AGENCIES = [
-      { name: 'CÔNG TY TNHH DVDL BA MIEN HCM', code: 'TA-BAMIEN', tier: 'Platinum', sales: 'Nguyễn Văn An (Sale)', balance: 14500000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'DU LỊCH VIỆT HOLIDAY', code: 'TA-VIETHOLIDAY', tier: 'Platinum', sales: 'Trần Thị Mai (Sale)', balance: 8200000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'SAIGON TOURIST PRO', code: 'TA-SAIGONTOUR', tier: 'Gold', sales: 'Lê Quốc Bảo (Sale)', balance: -12500000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'VIETRAVEL B2B', code: 'TA-VIETRAVEL', tier: 'Platinum', sales: 'Phạm Minh Tuấn (Sale)', balance: 35000000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'BEN THANH TOURIST B2B', code: 'TA-BENTHANH', tier: 'Gold', sales: 'Hoàng Thảo Linh (Sale)', balance: 4100000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'FIDITOUR TRAVEL', code: 'TA-FIDITOUR', tier: 'Platinum', sales: 'Nguyễn Văn An (Sale)', balance: 19800000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'DAT VIET TOUR', code: 'TA-DATVIET', tier: 'Gold', sales: 'Trần Thị Mai (Sale)', balance: 6500000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'TST TOURIST PRO', code: 'TA-TSTTOUR', tier: 'Platinum', sales: 'Lê Quốc Bảo (Sale)', balance: 22400000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'HANOI RED TOURS', code: 'TA-REDTOURS', tier: 'Gold', sales: 'Phạm Minh Tuấn (Sale)', balance: 3200000, debtLimit: 50000000, status: 'Hoạt động' },
-      { name: 'PHÚ QUỐC SUNSHINE TOURS', code: 'TA-PQSUNSHINE', tier: 'Platinum', sales: 'Hoàng Thảo Linh (Sale)', balance: 11600000, debtLimit: 50000000, status: 'Hoạt động' }
-    ];
-
-    function renderAgenciesTable() {
-      const tbody = document.getElementById('agenciesTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = DEMO_AGENCIES.map(a => `
-        <tr class="hover:bg-slate-50/80 transition-colors">
-          <td class="px-4 py-3.5">
-            <strong class="text-slate-900 block text-xs font-bold">${a.name}</strong>
-            <span class="text-[11px] text-slate-400 font-mono">${a.code}</span>
-          </td>
-          <td class="px-4 py-3.5">
-            <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold ${a.tier === 'Platinum' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${a.tier}</span>
-          </td>
-          <td class="px-4 py-3.5 font-medium text-slate-700">${a.sales}</td>
-          <td class="px-4 py-3.5 text-right font-extrabold ${a.balance < 0 ? 'text-rose-600' : 'text-emerald-700'}">${formatMoney(a.balance)} đ</td>
-          <td class="px-4 py-3.5 text-right font-bold text-slate-800">${formatMoney(a.debtLimit)} đ</td>
-          <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">${a.status}</span></td>
-          <td class="px-4 py-3.5 text-right">
-            <button type="button" onclick="showToast('Hồ sơ đại lý', 'Đang mở thông tin hợp đồng và công nợ của đại lý ${a.code}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Chi tiết</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      renderSharedShell({ activePage: 'agencies', pageTitle: 'Thông tin Đại lý' });
-      renderAgenciesTable();
+      if (typeof renderSharedShell === 'function') {
+        renderSharedShell({ activePage: 'agencies', pageTitle: 'Quản lý Đại lý' });
+      }
     });
   </script>
 </body>
