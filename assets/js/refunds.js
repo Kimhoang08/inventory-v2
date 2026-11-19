@@ -40,6 +40,119 @@
     { code: 'DL-DANANG', name: 'Cty CP Tour & Vé Bà Nà Express', mst: '0409876543' }
   ];
 
+  // 2.1 DANH SÁCH ĐƠN HÀNG ĐỦ ĐIỀU KIỆN HOÀN/HỦY (MOCK_ELIGIBLE_ORDERS)
+  // Chỉ liệt kê các đơn hàng đã thanh toán/xuất vé và còn vé khả dụng
+  const MOCK_ELIGIBLE_ORDERS = [
+    {
+      orderId: 'ORD-2611-088',
+      customerName: 'Nguyễn Tuấn Kiệt',
+      customerPhone: '0918 223 344',
+      serviceDate: '2026-11-25', // Trước ngày T (hôm nay 19/11/2026) -> Phạt 30%
+      totalPaid: 4750000,
+      corp: 'Sun World',
+      site: 'Sun World Ba Na Hills',
+      packages: [
+        {
+          packageId: 'PKG-01',
+          packageName: 'Vé Cáp treo Ba Na Hills khứ hồi - Người lớn',
+          category: 'Cáp treo & Tham quan',
+          tickets: [
+            { serial: 'BND-2611-00101', name: 'Vé cáp treo Người lớn', price: 950000, status: 'ELIGIBLE' },
+            { serial: 'BND-2611-00102', name: 'Vé cáp treo Người lớn', price: 950000, status: 'ELIGIBLE' },
+            { serial: 'BND-2611-00103', name: 'Vé cáp treo Người lớn', price: 950000, status: 'PENDING_REFUND' } // Đang có yêu cầu hoàn/hủy
+          ]
+        },
+        {
+          packageId: 'PKG-02',
+          packageName: 'Vé Buffet trưa Nhà hàng Beer Plaza',
+          category: 'Ẩm thực & Buffet',
+          tickets: [
+            { serial: 'BNB-2611-00201', name: 'Suất buffet trưa Người lớn', price: 350000, status: 'ELIGIBLE' },
+            { serial: 'BNB-2611-00202', name: 'Suất buffet trưa Người lớn', price: 350000, status: 'REFUNDED' }, // Đã hoàn
+            { serial: 'BNB-2611-00203', name: 'Suất buffet trưa Người lớn', price: 350000, status: 'CANCELLED' } // Đã hủy
+          ]
+        }
+      ]
+    },
+    {
+      orderId: 'ORD-2611-092',
+      customerName: 'Trần Minh Tâm',
+      customerPhone: '0909 887 766',
+      serviceDate: '2026-11-19', // Đúng ngày T (hôm nay 19/11/2026) -> Phạt 50%
+      totalPaid: 5100000,
+      corp: 'VinWonders',
+      site: 'VinWonders Nha Trang',
+      packages: [
+        {
+          packageId: 'PKG-11',
+          packageName: 'Vé vào cổng trọn gói VinWonders Nha Trang',
+          category: 'Vé vào cổng',
+          tickets: [
+            { serial: 'VNW-2611-0101', name: 'Vé vào cổng Người lớn', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'VNW-2611-0102', name: 'Vé vào cổng Người lớn', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'VNW-2611-0103', name: 'Vé vào cổng Người lớn', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'VNW-2611-0104', name: 'Vé vào cổng Trẻ em', price: 650000, status: 'REFUNDED' }
+          ]
+        },
+        {
+          packageId: 'PKG-12',
+          packageName: 'Vé Cáp treo vượt biển khứ hồi',
+          category: 'Vận chuyển',
+          tickets: [
+            { serial: 'VNW-2611-0201', name: 'Cáp treo khứ hồi', price: 200000, status: 'ELIGIBLE' },
+            { serial: 'VNW-2611-0202', name: 'Cáp treo khứ hồi', price: 200000, status: 'ELIGIBLE' }
+          ]
+        }
+      ]
+    },
+    {
+      orderId: 'ORD-2611-095',
+      customerName: 'Lê Thu Hằng',
+      customerPhone: '0983 556 677',
+      serviceDate: '2026-11-28', // Trước ngày T -> Phạt 30%
+      totalPaid: 3400000,
+      corp: 'Sun World',
+      site: 'Sun World Fansipan Legend',
+      packages: [
+        {
+          packageId: 'PKG-21',
+          packageName: 'Vé Cáp treo Fansipan & Tàu hỏa Mường Hoa',
+          category: 'Cáp treo & Tham quan',
+          tickets: [
+            { serial: 'FSP-2611-0001', name: 'Vé Cáp treo Fansipan', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'FSP-2611-0002', name: 'Vé Cáp treo Fansipan', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'FSP-2611-0003', name: 'Vé Cáp treo Fansipan', price: 850000, status: 'ELIGIBLE' },
+            { serial: 'FSP-2611-0004', name: 'Vé Cáp treo Fansipan', price: 850000, status: 'ELIGIBLE' }
+          ]
+        }
+      ]
+    },
+    {
+      orderId: 'ORD-2611-102',
+      customerName: 'Phạm Hoàng Nam',
+      customerPhone: '0934 112 233',
+      serviceDate: '2026-11-30', // Trước ngày T -> Phạt 30%
+      totalPaid: 2800000,
+      corp: 'Nova Dreams',
+      site: 'NovaWorld Phan Thiết (Water Park & Circus Land)',
+      packages: [
+        {
+          packageId: 'PKG-31',
+          packageName: 'Vé Công viên nước Wonderland Water Park',
+          category: 'Công viên nước',
+          tickets: [
+            { serial: 'WLD-2611-001', name: 'Vé ngày Người lớn', price: 350000, status: 'ELIGIBLE' },
+            { serial: 'WLD-2611-002', name: 'Vé ngày Người lớn', price: 350000, status: 'ELIGIBLE' },
+            { serial: 'WLD-2611-003', name: 'Vé ngày Người lớn', price: 350000, status: 'ELIGIBLE' },
+            { serial: 'WLD-2611-004', name: 'Vé ngày Người lớn', price: 350000, status: 'ELIGIBLE' },
+            { serial: 'WLD-2611-005', name: 'Vé ngày Trẻ em', price: 250000, status: 'PENDING_REFUND' }
+          ]
+        }
+      ]
+    }
+  ];
+
+
   // 3. MOCK DATA YÊU CẦU HOÀN/HỦY VÉ
   let refundDataset = [
     // --- TAB: CHỜ XỬ LÝ (CHO_XU_LY) ---
@@ -992,88 +1105,1022 @@
     renderDetailTicketsTable(item);
   }
 
-  // 13. TẠO YÊU CẦU HOÀN VÉ MỚI (MODAL CREATE)
+  // 13. QUẢN LÝ MÀN HÌNH TẠO YÊU CẦU HOÀN VÉ (CREATE REFUND REQUEST NEXTPAGE WORKSPACE)
+  let createRequestCode = '';
+  let selectedOrigOrderId = 'ORD-2611-088';
+  let selectedTicketSerials = new Set();
+  let searchTicketsKeyword = '';
+  let uploadedFiles = [];
+  let pdfCurrentPage = 1;
+  const PDF_PAGE_SIZE = 4; // Mặc định 4 mã vé / trang theo quy cách
+  let collapsedAccordionGroups = new Set();
+
+  // 13.1 MỞ NEXTPAGE TẠO YÊU CẦU HOÀN VÉ
+  function openCreateRefundNextPage() {
+    // Ẩn Danh sách & Chi tiết
+    const listView = document.getElementById('viewRefundRequestsList');
+    const detailView = document.getElementById('viewRefundRequestDetail');
+    const createView = document.getElementById('viewCreateRefundRequest');
+
+    if (listView) listView.classList.add('hidden');
+    if (detailView) detailView.classList.add('hidden');
+    if (createView) createView.classList.remove('hidden');
+
+    // Khởi tạo trạng thái form mới
+    createRequestCode = generateRefundRequestCode();
+    selectedTicketSerials.clear();
+    searchTicketsKeyword = '';
+    uploadedFiles = [];
+    pdfCurrentPage = 1;
+    collapsedAccordionGroups.clear();
+
+    const codeInput = document.getElementById('createRequestCode');
+    if (codeInput) codeInput.value = createRequestCode;
+
+    // Reset thông tin người gửi nếu chưa có
+    const aName = document.getElementById('senderAgencyName');
+    const rName = document.getElementById('senderRequesterName');
+    const sEmail = document.getElementById('senderEmail');
+    const aCode = document.getElementById('senderAgencyCode');
+    const sTax = document.getElementById('senderTaxId');
+    const sAddr = document.getElementById('senderAddress');
+
+    if (aName && !aName.value) aName.value = 'Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)';
+    if (rName && !rName.value) rName.value = 'Trần Hoàng Nam';
+    if (sEmail && !sEmail.value) sEmail.value = 'nam.tran@vietdiscovery.vn';
+    if (aCode && !aCode.value) aCode.value = 'DL-2410-090';
+    if (sTax && !sTax.value) sTax.value = '0318999888';
+    if (sAddr && !sAddr.value) sAddr.value = 'Tầng 6, Tòa nhà Bitexco, 02 Hải Triều, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh';
+
+    // Populate dropdown đơn hàng gốc
+    populateOrigOrdersDropdown();
+
+    // Chọn đơn hàng mặc định (ORD-2611-088)
+    selectOrigOrder('ORD-2611-088');
+
+    // Đưa về Bước 1
+    goToStep1(true);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Đóng Nextpage trở về Danh sách
+  function closeCreateRefundNextPage() {
+    if (selectedTicketSerials.size > 0) {
+      if (!confirm('Dữ liệu yêu cầu chưa được gửi. Bạn có chắc chắn muốn quay lại Danh sách?')) {
+        return;
+      }
+    }
+
+    const listView = document.getElementById('viewRefundRequestsList');
+    const createView = document.getElementById('viewCreateRefundRequest');
+    if (createView) createView.classList.add('hidden');
+    if (listView) listView.classList.remove('hidden');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Backward compatibility alias
   function openCreateRefundModal() {
-    const modal = document.getElementById('modalCreateRefundRequest');
-    if (!modal) return;
-
-    // Tự sinh mã yêu cầu
-    const newReqCode = generateRefundRequestCode();
-    const reqCodeInput = document.getElementById('newRefundRequestCode');
-    if (reqCodeInput) reqCodeInput.value = newReqCode;
-
-    modal.classList.remove('hidden');
+    openCreateRefundNextPage();
   }
-
   function closeCreateRefundModal() {
-    const modal = document.getElementById('modalCreateRefundRequest');
-    if (modal) modal.classList.add('hidden');
+    closeCreateRefundNextPage();
   }
 
-  function submitNewRefundRequest() {
-    const reqCode = document.getElementById('newRefundRequestCode')?.value || generateRefundRequestCode();
-    const origOrder = document.getElementById('newOriginalOrderCode')?.value.trim() || 'ORD-2611-099';
-    const corp = document.getElementById('newCorpSelect')?.value || 'Sun World';
-    const site = document.getElementById('newSiteSelect')?.value || 'Sun World Ba Na Hills';
-    const agency = document.getElementById('newAgencySelect')?.value || 'Công ty Cổ phần Du Lịch Việt Nam (Vietravel)';
-    const requester = document.getElementById('newRequesterName')?.value.trim() || 'Nguyễn Văn An';
-    const email = document.getElementById('newRequesterEmail')?.value.trim() || 'an.nguyen@vietravel.com';
-    const ticketCount = parseInt(document.getElementById('newTicketCount')?.value, 10) || 2;
-    const unitPrice = parseFloat(document.getElementById('newUnitPrice')?.value) || 950000;
-    const reason = document.getElementById('newReasonText')?.value.trim() || 'Lý do hoàn vé đột xuất';
+  // 13.2 POPULATE & TÌM KIẾM ĐƠN HÀNG GỐC TRONG DROPDOWN
+  function populateOrigOrdersDropdown() {
+    filterOrigOrdersDropdown('');
+  }
 
-    const totalAmt = ticketCount * unitPrice;
-    const charge = Math.round(totalAmt * 0.1);
-    const refundAmt = totalAmt - charge;
+  function toggleOrigOrderDropdown(forceOpen) {
+    const menu = document.getElementById('menuOrigOrderDropdown');
+    if (!menu) return;
+    if (forceOpen === true) {
+      menu.classList.remove('hidden');
+    } else if (forceOpen === false) {
+      menu.classList.add('hidden');
+    } else {
+      menu.classList.toggle('hidden');
+    }
+  }
 
-    const tickets = [];
-    for (let i = 1; i <= ticketCount; i++) {
-      tickets.push({
-        type: 'Vé tham quan tiêu chuẩn',
-        qrCode: `QR-${Date.now().toString().slice(-6)}-${i}`,
-        price: unitPrice,
-        charge: Math.round(unitPrice * 0.1),
-        refund: unitPrice - Math.round(unitPrice * 0.1)
+  function filterOrigOrdersDropdown(query) {
+    const listContainer = document.getElementById('listOrigOrderOptions');
+    if (!listContainer) return;
+
+    const q = (query || '').toLowerCase().trim();
+    const filteredOrders = MOCK_ELIGIBLE_ORDERS.filter(o => {
+      // Đếm số vé đủ điều kiện
+      let eligibleCount = 0;
+      o.packages.forEach(pkg => {
+        eligibleCount += pkg.tickets.filter(t => t.status === 'ELIGIBLE').length;
+      });
+      // Chỉ hiển thị đơn có vé khả dụng
+      if (eligibleCount === 0) return false;
+
+      if (!q) return true;
+      return o.orderId.toLowerCase().includes(q) ||
+             o.customerName.toLowerCase().includes(q) ||
+             o.customerPhone.includes(q) ||
+             o.corp.toLowerCase().includes(q) ||
+             o.site.toLowerCase().includes(q);
+    });
+
+    if (filteredOrders.length === 0) {
+      listContainer.innerHTML = `
+        <div class="p-3 text-center text-slate-400 text-xs font-medium">
+          Không tìm thấy đơn hàng đủ điều kiện phù hợp
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = filteredOrders.map(o => {
+      let eligibleCount = 0;
+      let totalCount = 0;
+      o.packages.forEach(pkg => {
+        pkg.tickets.forEach(t => {
+          totalCount++;
+          if (t.status === 'ELIGIBLE') eligibleCount++;
+        });
+      });
+
+      const isSelected = o.orderId === selectedOrigOrderId;
+      return `
+        <button
+          type="button"
+          onclick="selectOrigOrder('${o.orderId}')"
+          class="w-full px-3 py-2.5 rounded-xl text-left transition-colors flex items-center justify-between cursor-pointer ${
+            isSelected ? 'bg-rose-50/80 border border-rose-200 text-rose-900' : 'hover:bg-slate-50 text-slate-700'
+          }"
+        >
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono font-bold text-xs ${isSelected ? 'text-rose-700' : 'text-slate-900'}">${o.orderId}</span>
+              <span class="text-[11px] font-semibold text-slate-500">• ${o.customerName}</span>
+              <span class="text-[10px] text-slate-400 font-mono">(${o.customerPhone})</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2">
+              <span>${o.site}</span>
+              <span>• Ngày đi: <strong class="font-mono">${o.serviceDate}</strong></span>
+            </div>
+          </div>
+          <div class="text-right shrink-0 ml-2">
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+              eligibleCount > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'
+            }">
+              ${eligibleCount}/${totalCount} vé khả dụng
+            </span>
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  // 13.3 CHỌN MÃ ĐƠN HÀNG GỐC VÀ TỰ ĐỘNG ĐIỀN DỮ LIỆU (AUTO-FILL)
+  function selectOrigOrder(orderId) {
+    selectedOrigOrderId = orderId;
+    toggleOrigOrderDropdown(false);
+
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    // Cập nhật text trên dropdown trigger
+    const triggerText = document.getElementById('selectedOrigOrderText');
+    if (triggerText) {
+      triggerText.textContent = `${order.orderId} - ${order.customerName} (${order.corp})`;
+    }
+
+    // Auto-fill dữ liệu
+    const sDateInput = document.getElementById('createServiceDate');
+    const totalPaidInput = document.getElementById('createTotalPaid');
+    const corpInput = document.getElementById('createCorp');
+    const siteInput = document.getElementById('createSite');
+
+    if (sDateInput) sDateInput.value = order.serviceDate;
+    if (totalPaidInput) totalPaidInput.value = order.totalPaid.toLocaleString('vi-VN') + ' đ';
+    if (corpInput) corpInput.value = order.corp;
+    if (siteInput) siteInput.value = order.site;
+
+    // Cập nhật banner chính sách phạt
+    updatePenaltyBanner(order.serviceDate);
+
+    // Reset chọn vé khi đổi đơn
+    selectedTicketSerials.clear();
+
+    // Render danh sách vé Bước 1
+    renderStep1Tickets(searchTicketsKeyword);
+
+    // Cập nhật lại dropdown list active class
+    populateOrigOrdersDropdown();
+  }
+
+  // 13.4 GỢI Ý CHÍNH SÁCH PHẠT DỰA TRÊN NGÀY ĐI T
+  function getPenaltyPolicy(serviceDateStr) {
+    const todayStr = '2026-11-19'; // Ngày hiện tại của hệ thống
+    if (serviceDateStr > todayStr) {
+      return {
+        rate: 30,
+        badgeText: 'Đang áp dụng: Phạt 30% (Trước ngày đi T)',
+        badgeClass: 'bg-amber-500 text-white',
+        note: 'Yêu cầu hủy trước ngày sử dụng T. Phí phạt áp dụng 30% giá vé niêm yết.'
+      };
+    } else if (serviceDateStr === todayStr) {
+      return {
+        rate: 50,
+        badgeText: 'Đang áp dụng: Phạt 50% (Trong ngày đi T)',
+        badgeClass: 'bg-rose-500 text-white',
+        note: 'Yêu cầu hủy đúng ngày sử dụng T. Phí phạt tăng cường áp dụng 50% giá vé niêm yết.'
+      };
+    } else {
+      return {
+        rate: 100,
+        badgeText: 'Sau ngày T: Không hỗ trợ hoàn vé',
+        badgeClass: 'bg-slate-700 text-white',
+        note: 'Đã qua ngày sử dụng T, hệ thống theo quy định không hỗ trợ hoàn vé.'
+      };
+    }
+  }
+
+  function updatePenaltyBanner(serviceDateStr) {
+    const policy = getPenaltyPolicy(serviceDateStr);
+    const badge = document.getElementById('policyAppliedBadge');
+    if (badge) {
+      badge.textContent = policy.badgeText;
+      badge.className = `self-start sm:self-auto px-3 py-1.5 rounded-xl font-extrabold text-[11px] shadow-2xs whitespace-nowrap ${policy.badgeClass}`;
+    }
+  }
+
+  // 13.5 RENDER DANH SÁCH VÉ BƯỚC 1 (ACCORDION GROUPS & TABLES)
+  function renderStep1Tickets(searchQuery) {
+    const container = document.getElementById('ticketAccordionGroupsContainer');
+    if (!container) return;
+
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId);
+    if (!order) {
+      container.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs font-semibold">Vui lòng chọn đơn hàng gốc</div>`;
+      return;
+    }
+
+    const q = (searchQuery || '').toLowerCase().trim();
+
+    let totalEligibleInOrder = 0;
+    let totalSelectedInOrder = 0;
+    let totalVisibleSerials = 0;
+    let totalOrderSerials = 0;
+
+    let allVisibleEligibleSerials = [];
+
+    const groupsHtml = order.packages.map(pkg => {
+      // Lọc vé theo từ khóa tìm kiếm
+      const filteredTickets = pkg.tickets.filter(t => {
+        totalOrderSerials++;
+        if (t.status === 'ELIGIBLE') totalEligibleInOrder++;
+        if (selectedTicketSerials.has(t.serial)) totalSelectedInOrder++;
+
+        if (!q) return true;
+        return t.serial.toLowerCase().includes(q) || t.name.toLowerCase().includes(q);
+      });
+
+      if (filteredTickets.length === 0 && q) {
+        return ''; // Không có vé khớp trong nhóm này khi search
+      }
+
+      totalVisibleSerials += filteredTickets.length;
+
+      // Đếm số vé đã chọn trong nhóm này
+      let groupSelectedCount = 0;
+      let groupEligibleCount = 0;
+      let groupEligibleSerials = [];
+
+      filteredTickets.forEach(t => {
+        if (t.status === 'ELIGIBLE') {
+          groupEligibleCount++;
+          groupEligibleSerials.push(t.serial);
+          allVisibleEligibleSerials.push(t.serial);
+        }
+        if (selectedTicketSerials.has(t.serial)) {
+          groupSelectedCount++;
+        }
+      });
+
+      const isGroupAllSelected = groupEligibleCount > 0 && groupSelectedCount === groupEligibleCount;
+      const isGroupIndeterminate = groupSelectedCount > 0 && groupSelectedCount < groupEligibleCount;
+      const isCollapsed = collapsedAccordionGroups.has(pkg.packageId);
+
+      // Render từng dòng vé
+      let hasDisabledTicketsInGroup = false;
+      const rowsHtml = filteredTickets.map((t, idx) => {
+        const isEligible = (t.status === 'ELIGIBLE');
+        const isSelected = selectedTicketSerials.has(t.serial);
+        if (!isEligible) hasDisabledTicketsInGroup = true;
+
+        // Trạng thái vé theo yêu cầu
+        let statusBadgeHtml = '';
+        if (t.status === 'ELIGIBLE') {
+          statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200"><i class="fa-solid fa-circle-check text-[9px]"></i>Khả dụng</span>`;
+        } else if (t.status === 'REFUNDED') {
+          statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-money-bill-transfer text-[9px]"></i>Vé đã hoàn</span>`;
+        } else if (t.status === 'CANCELLED') {
+          statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-ban text-[9px]"></i>Vé đã hủy</span>`;
+        } else if (t.status === 'PENDING_REFUND') {
+          statusBadgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-solid fa-clock text-[9px]"></i>Đang có yêu cầu hoàn/hủy</span>`;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors ${!isEligible ? 'bg-slate-50/40 text-slate-400' : ''}">
+            <td class="p-3 text-center">
+              <input
+                type="checkbox"
+                ${isEligible ? '' : 'disabled'}
+                ${isSelected ? 'checked' : ''}
+                onchange="toggleSelectTicket('${t.serial}', this.checked)"
+                class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500 border-slate-300 ${isEligible ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}"
+              />
+            </td>
+            <td class="p-3 text-center font-bold text-xs ${isEligible ? 'text-slate-600' : 'text-slate-400'}">
+              ${idx + 1}
+            </td>
+            <td class="p-3">
+              <span class="font-mono font-bold text-xs ${isEligible ? 'text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md' : 'text-slate-400 font-normal line-through'}">
+                ${t.serial}
+              </span>
+            </td>
+            <td class="p-3 font-semibold text-xs ${isEligible ? 'text-slate-800' : 'text-slate-400'}">
+              ${t.name}
+            </td>
+            <td class="p-3 font-mono font-bold text-xs text-right ${isEligible ? 'text-slate-700' : 'text-slate-400'}">
+              ${t.price.toLocaleString('vi-VN')} đ
+            </td>
+            <td class="p-3 text-center">
+              ${statusBadgeHtml}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden transition-all">
+          <!-- Accordion Header -->
+          <div class="p-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="chkGroup_${pkg.packageId}"
+                ${groupEligibleCount === 0 ? 'disabled' : ''}
+                ${isGroupAllSelected ? 'checked' : ''}
+                onchange="toggleSelectGroup('${pkg.packageId}', this.checked)"
+                class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500 border-slate-300 ${groupEligibleCount > 0 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}"
+              />
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200/70 text-slate-700 uppercase tracking-wider">
+                  ${pkg.category || 'Gói vé'}
+                </span>
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-800">
+                  ${pkg.packageName}
+                </h4>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${
+                groupSelectedCount > 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'
+              }">
+                Đã chọn <strong class="font-mono">${groupSelectedCount}</strong>/<strong class="font-mono">${groupEligibleCount}</strong> vé
+              </span>
+              <button
+                type="button"
+                onclick="toggleAccordionGroup('${pkg.packageId}')"
+                class="w-7 h-7 rounded-lg hover:bg-slate-200/70 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+                title="${isCollapsed ? 'Mở rộng nhóm' : 'Thu gọn nhóm'}"
+              >
+                <i class="fa-solid ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'} text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Accordion Content / Table -->
+          <div id="accContent_${pkg.packageId}" class="${isCollapsed ? 'hidden' : ''}">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-100">
+                    <th class="p-3 w-12 text-center">Chọn</th>
+                    <th class="p-3 w-12 text-center">STT</th>
+                    <th class="p-3">Mã Serial</th>
+                    <th class="p-3">Tên Vé / Hạng Vé</th>
+                    <th class="p-3 text-right">Đơn giá</th>
+                    <th class="p-3 text-center">Trạng thái vé</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium">
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            ${hasDisabledTicketsInGroup ? `
+              <div class="p-2.5 px-4 bg-slate-50/90 border-t border-slate-100 text-[11px] text-slate-500 italic flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info text-slate-400 text-[10px]"></i>
+                <span>Ghi chú: Vé đã hoàn, đã hủy hoặc đang có yêu cầu hoàn/hủy bị vô hiệu hóa chọn theo quy định.</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = groupsHtml || `
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400 text-xs font-semibold">
+        Không có vé nào khớp với từ khóa "${searchQuery}"
+      </div>
+    `;
+
+    // Cập nhật bộ đếm real-time góc trên bên phải: Đã chọn X/Y vé để gửi yêu cầu
+    const selCountEl = document.getElementById('countSelectedTickets');
+    const eligCountEl = document.getElementById('countEligibleTickets');
+    if (selCountEl) selCountEl.textContent = totalSelectedInOrder;
+    if (eligCountEl) eligCountEl.textContent = totalEligibleInOrder;
+
+    // Cập nhật thông tin phân trang & hiển thị: Hiển thị A/B Serial
+    const displaySerialEl = document.getElementById('displaySerialCountText');
+    if (displaySerialEl) {
+      displaySerialEl.textContent = `Hiển thị ${totalVisibleSerials}/${totalOrderSerials} Serial`;
+    }
+
+    // Cập nhật checkbox "Tất cả vé"
+    const chkAll = document.getElementById('chkSelectAllTickets');
+    if (chkAll) {
+      if (allVisibleEligibleSerials.length > 0) {
+        const allSelected = allVisibleEligibleSerials.every(s => selectedTicketSerials.has(s));
+        const someSelected = allVisibleEligibleSerials.some(s => selectedTicketSerials.has(s));
+        chkAll.checked = allSelected;
+        chkAll.indeterminate = someSelected && !allSelected;
+        chkAll.disabled = false;
+      } else {
+        chkAll.checked = false;
+        chkAll.indeterminate = false;
+        chkAll.disabled = true;
+      }
+    }
+
+    // Nút điều hướng Bước 1: Tiếp theo chỉ kích hoạt khi có ít nhất 01 vé được chọn (X >= 1)
+    const btnNext = document.getElementById('btnStep1Next');
+    const noticeNext = document.getElementById('step1NextNotice');
+    if (btnNext) {
+      if (totalSelectedInOrder >= 1) {
+        btnNext.disabled = false;
+        if (noticeNext) noticeNext.classList.add('hidden');
+      } else {
+        btnNext.disabled = true;
+        if (noticeNext) noticeNext.classList.remove('hidden');
+      }
+    }
+  }
+
+  // 13.6 CÁC SỰ KIỆN TƯƠNG TÁC CHỌN VÉ BƯỚC 1
+  function toggleSelectTicket(serial, checked) {
+    if (checked) {
+      selectedTicketSerials.add(serial);
+    } else {
+      selectedTicketSerials.delete(serial);
+    }
+    renderStep1Tickets(searchTicketsKeyword);
+  }
+
+  function toggleSelectGroup(packageId, checked) {
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId);
+    if (!order) return;
+
+    const pkg = order.packages.find(p => p.packageId === packageId);
+    if (!pkg) return;
+
+    pkg.tickets.forEach(t => {
+      if (t.status === 'ELIGIBLE') {
+        if (checked) {
+          selectedTicketSerials.add(t.serial);
+        } else {
+          selectedTicketSerials.delete(t.serial);
+        }
+      }
+    });
+
+    renderStep1Tickets(searchTicketsKeyword);
+  }
+
+  function toggleSelectAllTickets(checked) {
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId);
+    if (!order) return;
+
+    const q = (searchTicketsKeyword || '').toLowerCase().trim();
+
+    order.packages.forEach(pkg => {
+      pkg.tickets.forEach(t => {
+        const match = !q || (t.serial.toLowerCase().includes(q) || t.name.toLowerCase().includes(q));
+        if (match && t.status === 'ELIGIBLE') {
+          if (checked) {
+            selectedTicketSerials.add(t.serial);
+          } else {
+            selectedTicketSerials.delete(t.serial);
+          }
+        }
+      });
+    });
+
+    renderStep1Tickets(searchTicketsKeyword);
+  }
+
+  function toggleAccordionGroup(packageId) {
+    if (collapsedAccordionGroups.has(packageId)) {
+      collapsedAccordionGroups.delete(packageId);
+    } else {
+      collapsedAccordionGroups.add(packageId);
+    }
+    renderStep1Tickets(searchTicketsKeyword);
+  }
+
+  function onSearchTicketsInput(val) {
+    searchTicketsKeyword = val;
+    renderStep1Tickets(searchTicketsKeyword);
+  }
+
+  // 13.7 CHUYỂN BƯỚC (STEPPER 1 & 2)
+  function goToStep1(skipScroll) {
+    const s1Cont = document.getElementById('containerStep1');
+    const s2Cont = document.getElementById('containerStep2');
+    const s1Ind = document.getElementById('step1Indicator');
+    const s2Ind = document.getElementById('step2Indicator');
+
+    if (s1Cont) s1Cont.classList.remove('hidden');
+    if (s2Cont) s2Cont.classList.add('hidden');
+
+    if (s1Ind) {
+      s1Ind.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold transition-all';
+      s1Ind.innerHTML = '<span class="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[11px] font-black">1</span><span>Chọn vé trong đơn</span>';
+    }
+    if (s2Ind) {
+      s2Ind.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold transition-all';
+      s2Ind.innerHTML = '<span class="w-5 h-5 rounded-full bg-slate-300 text-white flex items-center justify-center text-[11px] font-black">2</span><span>Lý do & Biên bản</span>';
+    }
+
+    if (!skipScroll) {
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+    }
+  }
+
+  function goToStep2() {
+    // BR1 - 003: Bắt buộc chọn ít nhất 01 vé
+    if (selectedTicketSerials.size === 0) {
+      alert('Vui lòng chọn ít nhất 01 mã vé để chuyển sang Bước 2.');
+      return;
+    }
+
+    const s1Cont = document.getElementById('containerStep1');
+    const s2Cont = document.getElementById('containerStep2');
+    const s1Ind = document.getElementById('step1Indicator');
+    const s2Ind = document.getElementById('step2Indicator');
+
+    if (s1Cont) s1Cont.classList.add('hidden');
+    if (s2Cont) s2Cont.classList.remove('hidden');
+
+    if (s1Ind) {
+      s1Ind.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold transition-all cursor-pointer';
+      s1Ind.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i><span>1. Đã chọn ' + selectedTicketSerials.size + ' vé</span>';
+      s1Ind.onclick = () => goToStep1();
+    }
+    if (s2Ind) {
+      s2Ind.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold transition-all';
+      s2Ind.innerHTML = '<span class="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[11px] font-black">2</span><span>Lý do & Biên bản</span>';
+    }
+
+    // Cập nhật dữ liệu vào Biên bản hoàn hủy ở Bước 2
+    populatePdfBiBanData();
+
+    // Reset trang PDF về 1
+    pdfCurrentPage = 1;
+    renderPdfTicketsTable();
+
+    // Kiểm tra validate Bước 2
+    onResumeValidationStep2();
+
+    window.scrollTo({ top: 350, behavior: 'smooth' });
+  }
+
+  // 13.8 CẬP NHẬT DỮ LIỆU ĐỘNG VÀO BIÊN BẢN HOÀN HỦY VÉ (AUTO-GENERATED PDF)
+  function populatePdfBiBanData() {
+    const aName = document.getElementById('senderAgencyName')?.value || 'Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt';
+    const aCode = document.getElementById('senderAgencyCode')?.value || 'DL-2410-090';
+    const sTax = document.getElementById('senderTaxId')?.value || '0318999888';
+    const sAddr = document.getElementById('senderAddress')?.value || 'Tầng 6, Bitexco, Q.1, TP.HCM';
+    const rName = document.getElementById('senderRequesterName')?.value || 'Trần Hoàng Nam';
+
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId) || {};
+
+    const pdfDocNum = document.getElementById('pdfDocNumber');
+    if (pdfDocNum) pdfDocNum.textContent = `${createRequestCode}/BB-HT`;
+
+    const pdfAgName = document.getElementById('pdfAgencyName');
+    if (pdfAgName) pdfAgName.textContent = aName;
+
+    const pdfAgCode = document.getElementById('pdfAgencyCode');
+    if (pdfAgCode) pdfAgCode.textContent = aCode;
+
+    const pdfTax = document.getElementById('pdfTaxId');
+    if (pdfTax) pdfTax.textContent = sTax;
+
+    const pdfAddress = document.getElementById('pdfAddress');
+    if (pdfAddress) pdfAddress.textContent = sAddr;
+
+    const pdfReq = document.getElementById('pdfRequesterName');
+    if (pdfReq) pdfReq.textContent = rName;
+
+    const pdfSign = document.getElementById('pdfSignRequester');
+    if (pdfSign) pdfSign.textContent = rName;
+
+    const pdfCorp = document.getElementById('pdfCorp');
+    if (pdfCorp) pdfCorp.textContent = order.corp || 'Sun World';
+
+    const pdfSite = document.getElementById('pdfSite');
+    if (pdfSite) pdfSite.textContent = order.site || 'Sun World Ba Na Hills';
+
+    const pdfOrig = document.getElementById('pdfOrigOrder');
+    if (pdfOrig) pdfOrig.textContent = order.orderId || selectedOrigOrderId;
+
+    const pdfSDate = document.getElementById('pdfServiceDate');
+    if (pdfSDate) pdfSDate.textContent = order.serviceDate || '2026-11-25';
+
+    const pdfTot = document.getElementById('pdfTotalTicketsCount');
+    if (pdfTot) pdfTot.textContent = `${selectedTicketSerials.size} vé`;
+
+    // Cập nhật lý do
+    const reasonVal = document.getElementById('createRefundReason')?.value.trim() || '';
+    const pdfReason = document.getElementById('pdfReasonText');
+    if (pdfReason) {
+      pdfReason.textContent = reasonVal || 'Chưa nhập lý do hoàn vé...';
+    }
+  }
+
+  function onSenderInfoChange() {
+    populatePdfBiBanData();
+  }
+
+  // 13.9 PHÂN TRANG VÉ TRONG BIÊN BẢN (MẶC ĐỊNH 4 MÃ VÉ / TRANG)
+  function getSelectedTicketsList() {
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId);
+    if (!order) return [];
+
+    const list = [];
+    order.packages.forEach(pkg => {
+      pkg.tickets.forEach(t => {
+        if (selectedTicketSerials.has(t.serial)) {
+          list.push({
+            serial: t.serial,
+            name: t.name,
+            price: t.price,
+            packageName: pkg.packageName
+          });
+        }
+      });
+    });
+    return list;
+  }
+
+  function renderPdfTicketsTable() {
+    const tbody = document.getElementById('pdfTicketsTableBody');
+    if (!tbody) return;
+
+    const tickets = getSelectedTicketsList();
+    const totalTickets = tickets.length;
+    const totalPages = Math.max(1, Math.ceil(totalTickets / PDF_PAGE_SIZE));
+
+    if (pdfCurrentPage > totalPages) pdfCurrentPage = totalPages;
+    if (pdfCurrentPage < 1) pdfCurrentPage = 1;
+
+    const startIndex = (pdfCurrentPage - 1) * PDF_PAGE_SIZE;
+    const pageTickets = tickets.slice(startIndex, startIndex + PDF_PAGE_SIZE);
+
+    if (pageTickets.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">Chưa có vé nào được chọn</td></tr>`;
+    } else {
+      tbody.innerHTML = pageTickets.map((t, idx) => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="p-2.5 text-center font-bold text-xs text-slate-500">${startIndex + idx + 1}</td>
+          <td class="p-2.5 font-mono font-bold text-xs text-slate-900">${t.serial}</td>
+          <td class="p-2.5 font-semibold text-xs text-slate-800">${t.name}</td>
+          <td class="p-2.5 text-right font-mono font-bold text-xs text-slate-700">${t.price.toLocaleString('vi-VN')} đ</td>
+          <td class="p-2.5 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Đề xuất hoàn</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Cập nhật nút phân trang
+    const pInput = document.getElementById('pdfCurrentPageInput');
+    const totPagesEl = document.getElementById('pdfTotalPagesCount');
+    const btnPrev = document.getElementById('btnPdfPrevPage');
+    const btnNext = document.getElementById('btnPdfNextPage');
+
+    if (pInput) pInput.value = pdfCurrentPage;
+    if (totPagesEl) totPagesEl.textContent = totalPages;
+    if (btnPrev) btnPrev.disabled = (pdfCurrentPage <= 1);
+    if (btnNext) btnNext.disabled = (pdfCurrentPage >= totalPages);
+  }
+
+  function changePdfTicketPage(delta) {
+    const tickets = getSelectedTicketsList();
+    const totalPages = Math.max(1, Math.ceil(tickets.length / PDF_PAGE_SIZE));
+    pdfCurrentPage += delta;
+    if (pdfCurrentPage < 1) pdfCurrentPage = 1;
+    if (pdfCurrentPage > totalPages) pdfCurrentPage = totalPages;
+    renderPdfTicketsTable();
+  }
+
+  function goToPdfTicketPage(pageNum) {
+    const page = parseInt(pageNum, 10);
+    const tickets = getSelectedTicketsList();
+    const totalPages = Math.max(1, Math.ceil(tickets.length / PDF_PAGE_SIZE));
+    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+      pdfCurrentPage = page;
+    }
+    renderPdfTicketsTable();
+  }
+
+  // 13.10 QUẢN LÝ TỆP ĐÍNH KÈM & PREVIEW
+  function handleFileUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const ext = file.name.split('.').pop().toLowerCase();
+      let icon = 'fa-file-lines';
+      if (['jpg', 'jpeg', 'png'].includes(ext)) icon = 'fa-file-image';
+      if (ext === 'pdf') icon = 'fa-file-pdf';
+
+      const formattedSize = file.size > 1024 * 1024
+        ? (file.size / (1024 * 1024)).toFixed(1) + ' MB'
+        : (file.size / 1024).toFixed(0) + ' KB';
+
+      uploadedFiles.push({
+        name: file.name,
+        size: formattedSize,
+        icon: icon,
+        rawFile: file
       });
     }
 
+    renderUploadedFilesList();
+    event.target.value = '';
+  }
+
+  function renderUploadedFilesList() {
+    const container = document.getElementById('uploadedFilesList');
+    if (!container) return;
+
+    if (uploadedFiles.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    container.innerHTML = uploadedFiles.map((f, idx) => `
+      <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-rose-600 flex items-center justify-center shrink-0">
+            <i class="fa-solid ${f.icon} text-xs"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="font-bold text-slate-800 truncate">${f.name}</p>
+            <p class="text-[10px] text-slate-400 font-mono">${f.size}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0 ml-2">
+          <button
+            type="button"
+            onclick="previewUploadedFile(${idx})"
+            class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 font-semibold text-[11px] transition-colors cursor-pointer"
+          >
+            <i class="fa-solid fa-eye mr-1 text-[10px]"></i>Xem trước
+          </button>
+          <button
+            type="button"
+            onclick="removeUploadedFile(${idx})"
+            class="w-7 h-7 rounded-lg text-rose-500 hover:bg-rose-50 flex items-center justify-center transition-colors cursor-pointer"
+            title="Xóa tệp"
+          >
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function removeUploadedFile(index) {
+    uploadedFiles.splice(index, 1);
+    renderUploadedFilesList();
+  }
+
+  function previewUploadedFile(index) {
+    const file = uploadedFiles[index];
+    if (!file) return;
+
+    const modal = document.getElementById('modalPreviewUploadedFile');
+    const titleEl = document.getElementById('previewFileTitle');
+    const contentEl = document.getElementById('previewFileContent');
+
+    if (titleEl) titleEl.textContent = file.name;
+    if (contentEl) {
+      contentEl.innerHTML = `
+        <div class="p-8 text-center space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-2xl shadow-xs">
+            <i class="fa-solid ${file.icon}"></i>
+          </div>
+          <h4 class="font-bold text-sm text-slate-800">${file.name}</h4>
+          <p class="text-xs text-slate-500 font-mono">Dung lượng: ${file.size}</p>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 text-left max-w-md mx-auto">
+            <p class="font-bold text-slate-700 mb-1">Tài liệu minh chứng hợp lệ:</p>
+            <p>Tệp đã được tải lên và sẵn sàng đính kèm vào hồ sơ yêu cầu hoàn vé số <strong>${createRequestCode}</strong>.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeUploadedFilePreview() {
+    const modal = document.getElementById('modalPreviewUploadedFile');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  // 13.11 TIỆN ÍCH BIÊN BẢN (TOÀN MÀN HÌNH & TẢI VỀ)
+  function openFullscreenPdfModal() {
+    const modal = document.getElementById('modalFullscreenPdf');
+    const docContainer = document.getElementById('fullscreenPdfContent');
+    const sourceDoc = document.getElementById('pdfSheetDocument');
+
+    if (modal && docContainer && sourceDoc) {
+      docContainer.innerHTML = sourceDoc.outerHTML;
+      modal.classList.remove('hidden');
+    }
+  }
+
+  function closeFullscreenPdfModal() {
+    const modal = document.getElementById('modalFullscreenPdf');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function downloadGeneratedPdf() {
+    if (typeof showToast === 'function') {
+      showToast('Đang tải Biên bản', `Đang kết xuất Biên bản hoàn hủy ${createRequestCode}/BB-HT dạng PDF...`);
+    } else {
+      alert(`Đang kết xuất Biên bản hoàn hủy ${createRequestCode}/BB-HT dạng PDF...`);
+    }
+    setTimeout(() => {
+      window.print();
+    }, 400);
+  }
+
+  // 13.12 VALIDATION BƯỚC 2 & GỬI YÊU CẦU HOÀN VÉ (BR1-001 ĐẾN BR1-007)
+  function onResumeValidationStep2() {
+    populatePdfBiBanData();
+
+    const reason = document.getElementById('createRefundReason')?.value.trim() || '';
+    const isLegalChecked = document.getElementById('chkLegalConfirmation')?.checked || false;
+    const hasTickets = (selectedTicketSerials.size >= 1);
+
+    const submitBtn = document.getElementById('btnSubmitRefundRequest');
+    const reasonErr = document.getElementById('reasonErrorMsg');
+
+    if (!reason && reasonErr) {
+      // Chỉ cảnh báo nhẹ
+    }
+
+    // BR1 - 005: Bắt buộc nhập lý do
+    // BR1 - 006: Chỉ enable nút Gửi khi tick checkbox xác nhận
+    // BR1 - 003: Phải chọn ít nhất 01 vé
+    const isValid = (hasTickets && reason.length > 0 && isLegalChecked);
+
+    if (submitBtn) {
+      submitBtn.disabled = !isValid;
+    }
+  }
+
+  function submitCompleteRefundRequest() {
+    // Kiểm tra lại quy tắc
+    if (selectedTicketSerials.size === 0) {
+      alert('Vui lòng chọn ít nhất 01 vé cần hoàn!');
+      goToStep1();
+      return;
+    }
+
+    const reason = document.getElementById('createRefundReason')?.value.trim();
+    if (!reason) {
+      alert('Vui lòng nhập lý do gửi yêu cầu hoàn vé!');
+      const reasonEl = document.getElementById('createRefundReason');
+      if (reasonEl) reasonEl.focus();
+      return;
+    }
+
+    const isLegalChecked = document.getElementById('chkLegalConfirmation')?.checked;
+    if (!isLegalChecked) {
+      alert('Vui lòng xác nhận thông tin trong Biên bản hoàn hủy là chính xác trước khi gửi!');
+      return;
+    }
+
+    const order = MOCK_ELIGIBLE_ORDERS.find(o => o.orderId === selectedOrigOrderId);
+    if (!order) return;
+
+    const aName = document.getElementById('senderAgencyName')?.value || 'Công ty TNHH Du lịch & Dịch vụ Khám Phá Việt (Viet Discovery)';
+    const aCode = document.getElementById('senderAgencyCode')?.value || 'DL-2410-090';
+    const sTax = document.getElementById('senderTaxId')?.value || '0318999888';
+    const sAddr = document.getElementById('senderAddress')?.value || 'Tầng 6, Bitexco, Q.1, TP.HCM';
+    const rName = document.getElementById('senderRequesterName')?.value || 'Trần Hoàng Nam';
+    const sEmail = document.getElementById('senderEmail')?.value || 'nam.tran@vietdiscovery.vn';
+
+    const policy = getPenaltyPolicy(order.serviceDate);
+
+    // Tính toán tài chính cho các vé đã chọn
+    let totalOriginal = 0;
+    const ticketItems = [];
+
+    order.packages.forEach(pkg => {
+      pkg.tickets.forEach(t => {
+        if (selectedTicketSerials.has(t.serial)) {
+          totalOriginal += t.price;
+          const charge = Math.round(t.price * (policy.rate / 100));
+          const refund = Math.max(0, t.price - charge);
+
+          ticketItems.push({
+            type: pkg.packageName,
+            qrCode: t.serial,
+            price: t.price,
+            charge: charge,
+            refund: refund
+          });
+
+          // BR1 - 007: Khóa ngay serial vé này thành PENDING_REFUND trong order để chặn tạo trùng
+          t.status = 'PENDING_REFUND';
+        }
+      });
+    });
+
+    const totalCharge = Math.round(totalOriginal * (policy.rate / 100));
+    const totalRefund = Math.max(0, totalOriginal - totalCharge);
+
+    // Tạo bản ghi mới vào refundDataset
     const newRecord = {
-      requestCode: reqCode,
-      refundOrderCode: `RFD-${reqCode.slice(4)}`,
-      originalOrderCode: origOrder,
-      serviceDate: '2026-11-25',
-      ticketCount: ticketCount,
-      corp: corp,
-      site: site,
-      agency: agency,
-      agencyCode: 'DL-8899',
-      requesterName: requester,
-      requesterEmail: email,
-      requesterPhone: '0903123456',
-      taxId: '0312456789',
-      status: 'CHO_XU_LY',
-      subStatus: 'CHO_TIEP_NHAN',
+      requestCode: createRequestCode,
+      refundOrderCode: `RFD-${createRequestCode.slice(4)}`,
+      originalOrderCode: order.orderId,
+      serviceDate: order.serviceDate,
+      ticketCount: ticketItems.length,
+      corp: order.corp,
+      site: order.site,
+      agency: aName,
+      agencyCode: aCode,
+      requesterName: rName,
+      requesterEmail: sEmail,
+      requesterPhone: order.customerPhone || '0903123456',
+      taxId: sTax,
+      status: 'CHO_XU_LY', // Luôn ghi nhận vào Tab Chờ xử lý
+      subStatus: 'DA_GUI_YEU_CAU',
       createdDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
       assignedTo: null,
-      isMyCreated: true,
-      totalOriginalAmount: totalAmt,
-      chargeRate: 10,
-      chargeAmount: charge,
-      totalRefundAmount: refundAmt,
+      isMyCreated: true, // Phiếu do chính mình tạo (có quyền thu hồi)
+      totalOriginalAmount: totalOriginal,
+      chargeRate: policy.rate,
+      chargeAmount: totalCharge,
+      totalRefundAmount: totalRefund,
       reason: reason,
-      documents: ['Yeu-cau-hoan-moi.pdf'],
-      tickets: tickets
+      documents: [
+        `Bien-ban-hoan-huy-${createRequestCode}.pdf`,
+        ...uploadedFiles.map(f => f.name)
+      ],
+      tickets: ticketItems
     };
 
     refundDataset.unshift(newRecord);
-    closeCreateRefundModal();
 
-    // Chuyển về Tab Chờ xử lý và render lại
+    // Đóng Nextpage và chuyển về Danh sách Tab Chờ xử lý
+    const createView = document.getElementById('viewCreateRefundRequest');
+    const listView = document.getElementById('viewRefundRequestsList');
+    if (createView) createView.classList.add('hidden');
+    if (listView) listView.classList.remove('hidden');
+
+    // Chuyển sang Tab Chờ xử lý
     switchRefundTab('CHO_XU_LY');
 
+    // Hiển thị Toast thông báo
     if (typeof showToast === 'function') {
-      showToast('Tạo yêu cầu thành công', `Đã tạo yêu cầu hoàn vé ${reqCode} ở trạng thái Chờ xử lý.`);
+      showToast('Tạo yêu cầu thành công', `Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và chuyển vào Tab Chờ xử lý.`);
+    } else {
+      alert(`Tạo yêu cầu thành công!
+Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã được gửi và ghi nhận vào Tab Chờ xử lý.`);
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // 14. KHỞI TẠO BỘ LỌC THỜI GIAN CHUẨN
@@ -1180,9 +2227,32 @@
   window.openRefundDetail = openRefundDetail;
   window.closeRefundDetail = closeRefundDetail;
   window.resetRefundFilters = resetRefundFilters;
+  window.openCreateRefundNextPage = openCreateRefundNextPage;
+  window.closeCreateRefundNextPage = closeCreateRefundNextPage;
   window.openCreateRefundModal = openCreateRefundModal;
   window.closeCreateRefundModal = closeCreateRefundModal;
-  window.submitNewRefundRequest = submitNewRefundRequest;
+  window.toggleOrigOrderDropdown = toggleOrigOrderDropdown;
+  window.filterOrigOrdersDropdown = filterOrigOrdersDropdown;
+  window.selectOrigOrder = selectOrigOrder;
+  window.toggleSelectTicket = toggleSelectTicket;
+  window.toggleSelectGroup = toggleSelectGroup;
+  window.toggleSelectAllTickets = toggleSelectAllTickets;
+  window.toggleAccordionGroup = toggleAccordionGroup;
+  window.onSearchTicketsInput = onSearchTicketsInput;
+  window.goToStep1 = goToStep1;
+  window.goToStep2 = goToStep2;
+  window.onSenderInfoChange = onSenderInfoChange;
+  window.onResumeValidationStep2 = onResumeValidationStep2;
+  window.handleFileUpload = handleFileUpload;
+  window.removeUploadedFile = removeUploadedFile;
+  window.previewUploadedFile = previewUploadedFile;
+  window.closeUploadedFilePreview = closeUploadedFilePreview;
+  window.changePdfTicketPage = changePdfTicketPage;
+  window.goToPdfTicketPage = goToPdfTicketPage;
+  window.openFullscreenPdfModal = openFullscreenPdfModal;
+  window.closeFullscreenPdfModal = closeFullscreenPdfModal;
+  window.downloadGeneratedPdf = downloadGeneratedPdf;
+  window.submitCompleteRefundRequest = submitCompleteRefundRequest;
   window.actionAcceptRequest = actionAcceptRequest;
   window.actionRevokeRequest = actionRevokeRequest;
   window.actionRejectRequest = actionRejectRequest;
