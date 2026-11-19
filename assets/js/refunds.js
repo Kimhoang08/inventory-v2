@@ -843,16 +843,15 @@
             </span>
           </td>
 
-          <!-- 12. Thao tác: NÚT DUY NHẤT "XEM CHI TIẾT" ĐIỀU HƯỚNG SANG TRANG CHI TIẾT ĐƠN HOÀN HỦY -->
+          <!-- 12. Thao tác: NÚT ICON CON MẮT VIỀN XANH ĐƠN GIẢN -->
           <td class="px-3.5 py-3 whitespace-nowrap text-right sticky right-0 bg-white group-hover:bg-slate-50/90 shadow-[-4px_0_12px_rgba(0,0,0,0.03)]">
             <button
               type="button"
               onclick="openRefundDetail('${item.requestCode}')"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 hover:border-brand-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
-              title="Xem chi tiết đơn hoàn/hủy ${item.requestCode}"
+              class="w-8 h-8 rounded-xl border border-blue-500/40 bg-blue-50/40 hover:bg-blue-600 text-blue-600 hover:text-white inline-flex items-center justify-center transition-all cursor-pointer shadow-2xs group/btn"
+              title="Xem chi tiết"
             >
-              <i class="fa-regular fa-eye text-[11px]"></i>
-              <span>Xem chi tiết</span>
+              <i class="fa-regular fa-eye text-xs"></i>
             </button>
           </td>
         </tr>
@@ -980,6 +979,275 @@
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+    // 10.1 RENDER CHI TIẾT ĐƠN HOÀN HỦY THEO BỐ CỤC MỚI
+  function renderDetailContent(item) {
+    // 1. Header phiếu
+    const dtReqCode = document.getElementById('dtRequestCode');
+    const dtStatusBadge = document.getElementById('dtStatusBadge');
+    const dtRefundCode = document.getElementById('dtRefundOrderCode');
+    const dtOrigCode = document.getElementById('dtOriginalOrderCode');
+    const dtCreatedDate = document.getElementById('dtCreatedDate');
+
+    if (dtReqCode) dtReqCode.textContent = item.requestCode;
+    if (dtRefundCode) dtRefundCode.textContent = item.refundOrderCode;
+    if (dtOrigCode) dtOrigCode.textContent = item.originalOrderCode;
+    if (dtCreatedDate) dtCreatedDate.textContent = item.createdDate || '--';
+
+    if (dtStatusBadge) {
+      if (item.status === 'CHO_XU_LY') {
+        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
+        dtStatusBadge.textContent = 'Chờ xử lý';
+      } else if (item.status === 'DANG_XU_LY') {
+        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
+        dtStatusBadge.textContent = 'Đang xử lý';
+      } else if (item.status === 'DANG_HOAN_TIEN') {
+        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200';
+        dtStatusBadge.textContent = 'Đang hoàn tiền';
+      } else {
+        dtStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        dtStatusBadge.textContent = 'Đã xử lý';
+      }
+    }
+
+    // 2. KHỐI THÔNG TIN YÊU CẦU (LƯỚI RÚT GỌN 3 CỘT)
+    const dtInfoReq = document.getElementById('dtInfoRequestCode');
+    const dtInfoCreated = document.getElementById('dtInfoCreatedDate');
+    const dtInfoAgency = document.getElementById('dtInfoAgencyName');
+    const dtInfoAgencyCode = document.getElementById('dtInfoAgencyCode');
+    const dtInfoEmail = document.getElementById('dtInfoRequesterEmail');
+    const dtInfoSite = document.getElementById('dtInfoSiteName');
+    const dtInfoOrigLink = document.getElementById('dtInfoOriginalOrderLink');
+    const dtInfoOrigCode = document.getElementById('dtInfoOriginalOrderCode');
+    const dtInfoTicketCount = document.getElementById('dtInfoTicketCount');
+    const dtInfoRequester = document.getElementById('dtInfoRequesterName');
+    const dtInfoPhone = document.getElementById('dtInfoRequesterPhone');
+    const dtInfoCorp = document.getElementById('dtInfoCorpName');
+    const dtInfoUpdated = document.getElementById('dtInfoUpdatedDate');
+    const dtInfoServiceDate = document.getElementById('dtInfoServiceDate');
+    const dtInfoTaxId = document.getElementById('dtInfoTaxId');
+
+    if (dtInfoReq) dtInfoReq.textContent = item.requestCode;
+    if (dtInfoCreated) dtInfoCreated.textContent = item.createdDate || '--';
+    if (dtInfoAgency) {
+      dtInfoAgency.textContent = item.agency || '--';
+      dtInfoAgency.title = item.agency || '';
+    }
+    if (dtInfoAgencyCode) dtInfoAgencyCode.textContent = item.agencyCode ? `[${item.agencyCode}]` : '';
+    if (dtInfoEmail) dtInfoEmail.textContent = item.requesterEmail || '--';
+    if (dtInfoSite) dtInfoSite.textContent = item.site || '--';
+    if (dtInfoOrigCode) dtInfoOrigCode.textContent = item.originalOrderCode || '--';
+    if (dtInfoOrigLink) dtInfoOrigLink.href = `orders.html?search=${encodeURIComponent(item.originalOrderCode)}`;
+    if (dtInfoTicketCount) dtInfoTicketCount.textContent = `${item.ticketCount || (item.tickets ? item.tickets.length : 0)} vé`;
+    if (dtInfoRequester) dtInfoRequester.textContent = item.requesterName || '--';
+    if (dtInfoPhone) dtInfoPhone.textContent = item.requesterPhone || '';
+    if (dtInfoCorp) dtInfoCorp.textContent = item.corp || '--';
+    if (dtInfoUpdated) dtInfoUpdated.textContent = item.createdDate || '--';
+    if (dtInfoServiceDate) {
+      const sDate = item.serviceDate ? item.serviceDate.split('-').reverse().join('/') : '--';
+      dtInfoServiceDate.textContent = sDate;
+    }
+    if (dtInfoTaxId) dtInfoTaxId.textContent = item.taxId || '--';
+
+    // 3. KHỐI LÝ DO HOÀN/HỦY & HỒ SƠ ĐÍNH KÈM
+    const dtReason = document.getElementById('dtReasonText');
+    if (dtReason) dtReason.textContent = item.reason || 'Khách yêu cầu hoàn vé theo thỏa thuận dịch vụ.';
+
+    const dtDocsList = document.getElementById('dtDocumentsList');
+    const dtDocsCount = document.getElementById('dtDocumentsCount');
+    const docs = item.documents && item.documents.length > 0 ? item.documents : [
+      'Giay-xac-nhan-delay-chuyen-bay.pdf',
+      `Bien-ban-hoan-huy-${item.requestCode}.pdf`
+    ];
+    if (dtDocsCount) dtDocsCount.textContent = `${docs.length} tệp`;
+
+    if (dtDocsList) {
+      dtDocsList.innerHTML = docs.map((docName, idx) => {
+        const ext = docName.split('.').pop().toLowerCase();
+        let icon = 'fa-file-lines';
+        if (['jpg', 'jpeg', 'png'].includes(ext)) icon = 'fa-file-image';
+        if (ext === 'pdf') icon = 'fa-file-pdf';
+
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs hover:bg-slate-100/70 transition-colors">
+            <div class="flex items-center gap-2 min-w-0 pr-2">
+              <div class="w-6 h-6 rounded-lg bg-white border border-slate-200 text-rose-600 flex items-center justify-center shrink-0">
+                <i class="fa-solid ${icon} text-[11px]"></i>
+              </div>
+              <span class="font-bold text-slate-800 truncate text-[11px]" title="${docName}">${docName}</span>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onclick="previewDetailDocument('${docName}')"
+                class="px-2 py-0.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-[10.5px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+              >
+                <i class="fa-regular fa-eye text-[9px]"></i>
+                <span>Xem</span>
+              </button>
+              <button
+                type="button"
+                onclick="downloadDetailDocument('${docName}')"
+                class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-[10.5px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+              >
+                <i class="fa-solid fa-download text-[9px]"></i>
+                <span>Tải về</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. DẢI 4 CARD CHỈ SỐ TÀI CHÍNH (KÈM CHÚ THÍCH PHỤ)
+    const ticketCount = item.ticketCount || (item.tickets ? item.tickets.length : 1);
+    let totalOrig = item.totalOriginalAmount || 0;
+    if (!totalOrig && item.tickets) {
+      totalOrig = item.tickets.reduce((sum, t) => sum + (t.price || 0), 0);
+    }
+    const totalCost = item.totalCostAmount || Math.round(totalOrig * 0.85);
+    const refundFromSupplier = item.refundFromSupplier || Math.round(totalOrig * 0.70);
+    let finalRefund = item.totalRefundAmount || Math.max(0, totalOrig - (item.chargeAmount || 0));
+
+    const c1Val = document.getElementById('cardTotalOriginalPaid');
+    const c1Sub = document.getElementById('cardTotalOriginalSub');
+    const c2Val = document.getElementById('cardTotalCost');
+    const c2Sub = document.getElementById('cardTotalCostSub');
+    const c3Val = document.getElementById('cardRefundFromSupplier');
+    const c3Sub = document.getElementById('cardRefundFromSupplierSub');
+    const c4Val = document.getElementById('cardFinalRefundAmount');
+    const c4Sub = document.getElementById('cardFinalRefundSub');
+
+    if (c1Val) c1Val.textContent = totalOrig.toLocaleString('vi-VN') + ' đ';
+    if (c1Sub) c1Sub.textContent = `Giá trị vé xuất bán ban đầu (${ticketCount} vé)`;
+
+    if (c2Val) c2Val.textContent = totalCost.toLocaleString('vi-VN') + ' đ';
+    if (c2Sub) c2Sub.textContent = `Giá vốn gốc theo hợp đồng đại lý (~85%)`;
+
+    if (c3Val) c3Val.textContent = refundFromSupplier.toLocaleString('vi-VN') + ' đ';
+    if (c3Sub) c3Sub.textContent = `Ghi nhận từ NCC (sau khấu trừ ${item.chargeRate || 30}%)`;
+
+    if (c4Val) c4Val.textContent = finalRefund.toLocaleString('vi-VN') + ' đ';
+    if (c4Sub) c4Sub.textContent = `Số tiền hoàn chi trả thực tế cho Đại lý`;
+
+    // 5. Khối thông báo Từ chối (nếu có)
+    const rejectBox = document.getElementById('dtRejectBox');
+    const rejectReason = document.getElementById('dtRejectReasonText');
+    if (rejectBox) {
+      if (item.subStatus === 'DA_TU_CHOI' && item.rejectReason) {
+        rejectBox.classList.remove('hidden');
+        if (rejectReason) rejectReason.textContent = item.rejectReason;
+      } else {
+        rejectBox.classList.add('hidden');
+      }
+    }
+  }
+
+  // 10.2 RENDER BẢNG SERIAL VÉ TRANG CHI TIẾT
+  function renderDetailTicketsTable(item) {
+    const tbody = document.getElementById('dtTicketsTableBody');
+    const totalOrigEl = document.getElementById('dtTotalOriginal');
+    const totalChargeEl = document.getElementById('dtTotalCharge');
+    const totalRefundEl = document.getElementById('dtTotalRefund');
+    if (!tbody) return;
+
+    const tickets = item.tickets || [];
+    let sumOrig = 0;
+    let sumCharge = 0;
+    let sumRefund = 0;
+
+    const isEditable = (item.status === 'DANG_XU_LY');
+
+    tbody.innerHTML = tickets.map((t, idx) => {
+      sumOrig += t.price || 0;
+      sumCharge += t.charge || 0;
+      sumRefund += t.refund || 0;
+
+      return `
+        <tr class="hover:bg-slate-50/80 transition-colors divide-x divide-slate-100">
+          <td class="p-3 text-center font-bold text-slate-500">${idx + 1}</td>
+          <td class="p-3">
+            <div class="font-bold text-slate-800 text-xs">${t.type || 'Vé tham quan'}</div>
+            <div class="font-mono text-[11px] text-slate-500 font-semibold flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-qrcode text-slate-400"></i>
+              <span>${t.qrCode || t.serial || '--'}</span>
+            </div>
+          </td>
+          <td class="p-3 text-right font-mono font-bold text-slate-800 text-xs">
+            ${(t.price || 0).toLocaleString('vi-VN')} đ
+          </td>
+          <td class="p-3 text-right">
+            ${isEditable ? `
+              <div class="inline-flex items-center gap-1">
+                <input
+                  type="number"
+                  value="${t.charge || 0}"
+                  min="0"
+                  max="${t.price || 0}"
+                  step="10000"
+                  onchange="onDetailTicketChargeChange(${idx}, this.value)"
+                  class="w-28 px-2 py-1 text-right font-mono font-bold text-rose-600 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-rose-500 text-xs"
+                />
+                <span class="text-[11px] text-slate-400">đ</span>
+              </div>
+            ` : `
+              <span class="font-mono font-bold text-rose-600 text-xs">
+                ${(t.charge || 0).toLocaleString('vi-VN')} đ
+              </span>
+            `}
+          </td>
+          <td class="p-3 text-right font-mono font-black text-emerald-600 text-xs">
+            ${(t.refund || 0).toLocaleString('vi-VN')} đ
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    if (totalOrigEl) totalOrigEl.textContent = sumOrig.toLocaleString('vi-VN') + ' đ';
+    if (totalChargeEl) totalChargeEl.textContent = sumCharge.toLocaleString('vi-VN') + ' đ';
+    if (totalRefundEl) totalRefundEl.textContent = sumRefund.toLocaleString('vi-VN') + ' đ';
+
+    // Cập nhật lại card Giá hoàn cuối
+    const c4Val = document.getElementById('cardFinalRefundAmount');
+    if (c4Val) c4Val.textContent = sumRefund.toLocaleString('vi-VN') + ' đ';
+  }
+
+  function previewDetailDocument(docName) {
+    const modal = document.getElementById('modalPreviewUploadedFile');
+    const titleEl = document.getElementById('previewFileTitle');
+    const contentEl = document.getElementById('previewFileContent');
+
+    if (titleEl) titleEl.textContent = docName;
+    if (contentEl) {
+      const ext = docName.split('.').pop().toLowerCase();
+      let icon = 'fa-file-lines';
+      if (['jpg', 'jpeg', 'png'].includes(ext)) icon = 'fa-file-image';
+      if (ext === 'pdf') icon = 'fa-file-pdf';
+
+      contentEl.innerHTML = `
+        <div class="p-8 text-center space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-2xl shadow-xs">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+          <h4 class="font-bold text-sm text-slate-800">${docName}</h4>
+          <p class="text-xs text-slate-400 font-mono">Định dạng tệp: ${ext.toUpperCase()}</p>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 text-left max-w-md mx-auto">
+            <p class="font-bold text-slate-700 mb-1">Tài liệu hồ sơ đính kèm hợp lệ:</p>
+            <p>Tệp chứng từ đối soát thuộc phiếu yêu cầu hoàn vé số <strong>${viewingRequestCode || ''}</strong>.</p>
+          </div>
+        </div>
+      `;
+    }
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function downloadDetailDocument(docName) {
+    if (typeof showToast === 'function') {
+      showToast('Tải tệp thành công', `Đang tải xuống tài liệu: ${docName}`);
+    } else {
+      alert(`Đang tải xuống tài liệu: ${docName}`);
+    }
   }
 
   // 11. RENDER CHÂN TRANG THEO QUY TẮC CỦA TỪNG TAB
@@ -2438,6 +2706,8 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
   // EXPORT GLOBAL FUNCTIONS
   window.switchRefundTab = switchRefundTab;
   window.openRefundDetail = openRefundDetail;
+  window.previewDetailDocument = previewDetailDocument;
+  window.downloadDetailDocument = downloadDetailDocument;
   window.closeRefundDetail = closeRefundDetail;
   window.resetRefundFilters = resetRefundFilters;
   window.clearAgencyFilter = clearAgencyFilter;

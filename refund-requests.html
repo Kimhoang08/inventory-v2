@@ -429,82 +429,168 @@
           
         </div>
 
-        <!-- Khối Thông tin Đối tác, Tập đoàn & Lý do -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <!-- Cột 1: Thông tin Đại lý & Người gửi -->
-          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
-              <i class="fa-solid fa-building text-blue-600"></i>
-              <span>Đại lý &amp; Người gửi</span>
+        <!-- 1. KHỐI THÔNG TIN YÊU CẦU (RÚT GỌN, PHẲNG VÀ DỄ ĐỌC) -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3.5">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
+            <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
+              <i class="fa-solid fa-file-invoice"></i>
             </div>
-            <div class="space-y-2 text-xs">
-              <div>
-                <span class="text-slate-400 block text-[11px]">Đại lý B2B:</span>
-                <strong id="dtAgencyName" class="text-slate-800 text-xs block">--</strong>
-                <span id="dtAgencyCode" class="font-mono text-[11px] text-slate-500 block">--</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-                <div>
-                  <span class="text-slate-400 block text-[11px]">Người gửi:</span>
-                  <strong id="dtRequesterName" class="text-slate-800 block">--</strong>
-                </div>
-                <div>
-                  <span class="text-slate-400 block text-[11px]">Điện thoại:</span>
-                  <span id="dtRequesterPhone" class="font-mono font-semibold text-slate-700 block">--</span>
-                </div>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[11px]">Email liên hệ:</span>
-                <span id="dtRequesterEmail" class="text-slate-700 block font-medium">--</span>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[11px]">Mã số thuế (MST):</span>
-                <span id="dtTaxId" class="font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded inline-block">--</span>
-              </div>
-            </div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Thông tin yêu cầu</h3>
           </div>
 
-          <!-- Cột 2: Thông tin Tập đoàn & Địa điểm dịch vụ -->
-          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
-              <i class="fa-solid fa-map-location-dot text-rose-500"></i>
-              <span>Dịch vụ &amp; Địa điểm</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-3.5 gap-x-6 text-xs">
+            <!-- Hàng 1: Mã yêu cầu | Ngày tạo yêu cầu | Đại lý -->
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Mã yêu cầu</span>
+              <span id="dtInfoRequestCode" class="font-mono font-black text-blue-700 text-xs block">--</span>
             </div>
-            <div class="space-y-2.5 text-xs">
-              <div>
-                <span class="text-slate-400 block text-[11px]">Tập đoàn cung cấp:</span>
-                <span id="dtCorpName" class="font-bold text-slate-800 block text-xs">--</span>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[11px]">Khu du lịch / Công viên:</span>
-                <strong id="dtSiteName" class="text-slate-900 block text-xs">--</strong>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[11px]">Ngày sử dụng vé (T):</span>
-                <span id="dtServiceDate" class="font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 inline-block font-mono">--</span>
-              </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Ngày tạo yêu cầu</span>
+              <span id="dtInfoCreatedDate" class="font-medium text-slate-700 text-xs block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Đại lý</span>
+              <span id="dtInfoAgencyName" class="font-bold text-slate-800 text-xs block truncate" title="">--</span>
+              <span id="dtInfoAgencyCode" class="font-mono text-[10.5px] text-slate-400 block">--</span>
+            </div>
+
+            <!-- Hàng 2: Email | Khu du lịch | Mã đơn hàng -->
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Email</span>
+              <span id="dtInfoRequesterEmail" class="font-mono text-slate-700 text-xs block truncate">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Khu du lịch</span>
+              <span id="dtInfoSiteName" class="font-semibold text-slate-800 text-xs block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Mã đơn hàng</span>
+              <a id="dtInfoOriginalOrderLink" href="#" class="font-mono font-bold text-slate-800 hover:text-brand-600 text-xs inline-flex items-center gap-1 transition-colors">
+                <span id="dtInfoOriginalOrderCode">--</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-slate-400"></i>
+              </a>
+            </div>
+
+            <!-- Hàng 3: Số lượng vé hoàn | Người gửi | Tập đoàn -->
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Số lượng vé hoàn</span>
+              <span id="dtInfoTicketCount" class="font-bold text-rose-600 text-xs block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Người gửi</span>
+              <span id="dtInfoRequesterName" class="font-semibold text-slate-800 text-xs block">--</span>
+              <span id="dtInfoRequesterPhone" class="font-mono text-[10.5px] text-slate-400 block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Tập đoàn</span>
+              <span id="dtInfoCorpName" class="font-semibold text-slate-800 text-xs block">--</span>
+            </div>
+
+            <!-- Hàng 4: Cập nhật gần nhất | Ngày sử dụng (T) | Mã số thuế -->
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Cập nhật gần nhất</span>
+              <span id="dtInfoUpdatedDate" class="font-medium text-slate-600 text-xs block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Ngày sử dụng (T)</span>
+              <span id="dtInfoServiceDate" class="font-mono font-bold text-slate-800 text-xs block">--</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px] mb-0.5">Mã số thuế</span>
+              <span id="dtInfoTaxId" class="font-mono font-semibold text-slate-700 text-xs block">--</span>
             </div>
           </div>
+        </div>
 
-          <!-- Cột 3: Lý do & Tài liệu đính kèm -->
-          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-            <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
-              <i class="fa-solid fa-clipboard-question text-amber-500"></i>
-              <span>Lý do &amp; Hồ sơ đối soát</span>
-            </div>
-            <div class="space-y-2 text-xs">
-              <div>
-                <span class="text-slate-400 block text-[11px]">Lý do đề xuất hoàn hủy:</span>
-                <p id="dtReasonText" class="text-slate-700 italic bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11.5px] leading-relaxed">
+        <!-- 2. KHU VỰC LÝ DO & HỒ SƠ ĐÍNH KÈM (CHUNG 1 HÀNG NGANG 2 CỘT 50%:50%) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Cột trái: Lý do hoàn/hủy -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100 mb-3">
+                <div class="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs font-bold">
+                  <i class="fa-solid fa-clipboard-question"></i>
+                </div>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Lý do hoàn/hủy</h3>
+              </div>
+              <div class="max-h-48 overflow-y-auto pr-1">
+                <p id="dtReasonText" class="text-xs font-medium text-slate-700 leading-relaxed whitespace-pre-line">
                   --
                 </p>
               </div>
-              <div>
-                <span class="text-slate-400 block text-[11px] mb-1">Tài liệu / Biên bản đính kèm:</span>
-                <div id="dtDocumentsList" class="flex flex-wrap gap-2">
-                  <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Cột phải: Hồ sơ đính kèm (Nút Xem & Tải về, max-height cân bằng) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs font-bold">
+                    <i class="fa-solid fa-paperclip"></i>
+                  </div>
+                  <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Hồ sơ đính kèm</h3>
                 </div>
+                <span id="dtDocumentsCount" class="text-[11px] font-bold text-slate-400">0 tệp</span>
               </div>
+              <div id="dtDocumentsList" class="max-h-48 overflow-y-auto space-y-2 pr-1">
+                <!-- Rendered dynamically by refunds.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. DẢI 4 CARD CHỈ SỐ TÀI CHÍNH (KÈM CHÚ THÍCH PHỤ SUB-LABEL) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Tổng KH thanh toán -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Tổng KH thanh toán</span>
+              <div id="cardTotalOriginalPaid" class="text-lg sm:text-xl font-mono font-black text-slate-900 mt-1">
+                0 đ
+              </div>
+            </div>
+            <div id="cardTotalOriginalSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
+              Giá trị vé xuất bán ban đầu (0 vé)
+            </div>
+          </div>
+
+          <!-- Card 2: Giá nhập tổng -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Giá nhập tổng</span>
+              <div id="cardTotalCost" class="text-lg sm:text-xl font-mono font-black text-slate-800 mt-1">
+                0 đ
+              </div>
+            </div>
+            <div id="cardTotalCostSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
+              Giá vốn gốc theo hợp đồng đại lý
+            </div>
+          </div>
+
+          <!-- Card 3: Giá hoàn từ NCC -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Giá hoàn từ NCC</span>
+              <div id="cardRefundFromSupplier" class="text-lg sm:text-xl font-mono font-black text-blue-600 mt-1">
+                0 đ
+              </div>
+            </div>
+            <div id="cardRefundFromSupplierSub" class="text-[11px] text-slate-500 font-medium mt-2 pt-2 border-t border-slate-100">
+              Ghi nhận từ NCC (sau khấu trừ 0%)
+            </div>
+          </div>
+
+          <!-- Card 4: Giá hoàn cuối -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs flex flex-col justify-between ring-1 ring-emerald-500/30">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 block">Giá hoàn cuối</span>
+              <div id="cardFinalRefundAmount" class="text-xl sm:text-2xl font-mono font-black text-emerald-600 mt-1">
+                0 đ
+              </div>
+            </div>
+            <div id="cardFinalRefundSub" class="text-[11px] text-emerald-700 font-medium mt-2 pt-2 border-t border-emerald-100">
+              Số tiền hoàn chi trả thực tế cho Đại lý
             </div>
           </div>
         </div>
