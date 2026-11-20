@@ -78,14 +78,14 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
   // Nếu người dùng đang mở rộng số chi tiết, giữ nguyên hiển thị số đầy đủ
   if (el.classList.contains('kpi-expanded')) {
     el.innerText = tooltipVal;
-    el.setAttribute('title', 'Bấm để thu gọn số');
+    el.setAttribute('title', `${tooltipVal} • Bấm để thu gọn số`);
   } else {
     el.innerText = displayVal;
-    el.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+    el.setAttribute('title', `${tooltipVal} • Bấm để hiển thị số đầy đủ`);
   }
 
   // Gán thêm data-kpi-full cho card cha để hover hoặc click bất kỳ đâu trên card cũng xem được số chi tiết
-  const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"]') : null;
+  const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
   if (parentCard) {
     if (!el.id) {
       el.id = 'kpi_val_' + Math.random().toString(36).substr(2, 9);
@@ -1302,6 +1302,31 @@ function autoRegisterKpiCardElements() {
   });
 }
 
+let techeraKpiToastTimeout = null;
+function showKpiToast(message, isExpanded = true) {
+  if (typeof document === 'undefined') return;
+  let toastEl = document.getElementById('techeraKpiToast');
+  if (!toastEl) {
+    toastEl = document.createElement('div');
+    toastEl.id = 'techeraKpiToast';
+    toastEl.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999999] px-4 py-2.5 rounded-2xl bg-slate-900/95 text-white text-xs font-semibold shadow-2xl backdrop-blur-md border border-slate-700/80 flex items-center gap-2 transition-all duration-200 pointer-events-none opacity-0 translate-y-3 select-none';
+    document.body.appendChild(toastEl);
+  }
+
+  toastEl.innerHTML = isExpanded 
+    ? `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <span>Số đầy đủ: <strong class="text-sky-300 font-mono tracking-tight text-[13px] ml-1">${message}</strong></span>`
+    : `<i class="fa-solid fa-compress text-amber-400 text-sm"></i> <span>Đã thu gọn: <strong class="text-amber-200 font-mono tracking-tight text-[13px] ml-1">${message}</strong></span>`;
+
+  toastEl.classList.remove('opacity-0', 'translate-y-3');
+  toastEl.classList.add('opacity-100', 'translate-y-0');
+
+  if (techeraKpiToastTimeout) clearTimeout(techeraKpiToastTimeout);
+  techeraKpiToastTimeout = setTimeout(() => {
+    toastEl.classList.remove('opacity-100', 'translate-y-0');
+    toastEl.classList.add('opacity-0', 'translate-y-3');
+  }, 2200);
+}
+
 function toggleKpiElementValue(el) {
   if (!el) return false;
   let fullVal = el.getAttribute('data-kpi-full');
@@ -1329,11 +1354,13 @@ function toggleKpiElementValue(el) {
   if (isExpanded) {
     el.innerText = compactVal || fullVal;
     el.classList.remove('kpi-expanded');
-    el.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+    el.setAttribute('title', `${fullVal} • Bấm để xem số đầy đủ`);
+    showKpiToast(compactVal, false);
   } else {
     el.innerText = fullVal;
     el.classList.add('kpi-expanded');
-    el.setAttribute('title', 'Bấm để thu gọn số');
+    el.setAttribute('title', `${compactVal} • Bấm để thu gọn số`);
+    showKpiToast(fullVal, true);
   }
 
   // Hiệu ứng nhịp nảy (pulse) nhẹ tạo cảm giác phản hồi xúc giác
@@ -1368,8 +1395,17 @@ function handleKpiClick(e) {
     }
   }
 
-  // 2. Bấm vào vùng card chứa chỉ số (Card KPI hoặc container bo góc có chứa chỉ số)
-  const card = target.closest('.kpi-card, [data-kpi-card-target], [class*="rounded-2xl"], [class*="rounded-3xl"]');
+  // 2. Bấm vào khối cha gần nhất chứa con số KPI (ví dụ box Thực tế / Dự kiến)
+  if (target.parentElement) {
+    const siblingKpiEl = target.parentElement.querySelector('.kpi-card-value, [data-kpi-full]');
+    if (siblingKpiEl && toggleKpiElementValue(siblingKpiEl)) {
+      e.stopPropagation();
+      return;
+    }
+  }
+
+  // 3. Bấm vào vùng card chứa chỉ số (Card KPI hoặc container bo góc có chứa chỉ số)
+  const card = target.closest('.kpi-card, [data-kpi-card-target], [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]');
   if (card) {
     let targetEl = null;
     const targetId = card.getAttribute('data-kpi-card-target');
@@ -1566,3 +1602,4 @@ window.renderKpiValueMarkup = renderKpiValueMarkup;
 window.initTecheraKpiTooltip = initTecheraKpiTooltip;
 window.toggleKpiElementValue = toggleKpiElementValue;
 window.autoRegisterKpiCardElements = autoRegisterKpiCardElements;
+window.showKpiToast = showKpiToast;
