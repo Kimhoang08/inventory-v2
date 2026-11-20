@@ -123,9 +123,8 @@ function renderBookingSuppliers() {
     }
   }
   if (sidebarBadge && activeSup) {
-    sidebarBadge.innerHTML = `
-      <span class="truncate">NCC: ${activeSup.name}</span>
-      <span class="text-[10px] px-1.5 py-0.5 rounded bg-white border ${activeSup.id === 'techera' ? 'text-brand-600 border-brand-200' : 'text-blue-700 border-blue-200'} shrink-0">${activeSup.id === 'techera' ? 'Kho Techera' : 'API Đối tác'}</span>`;
+    const channelName = activeSup.id === 'techera' ? 'Kho nội bộ Techera' : 'API Đối tác';
+    sidebarBadge.innerHTML = `<span class="truncate">NCC: ${activeSup.name} - ${channelName}</span>`;
   }
 }
 
@@ -833,7 +832,7 @@ function activateConfiguredPackageInOrderDrawer(pkg, autoOpenMobile = true) {
   selectedOrderTickets = { [pkg.id]: state };
   renderOrderTicketsAccordions();
   recalculateTotals();
-  if (autoOpenMobile) openMobilePaymentDetailDrawer();
+  if (autoOpenMobile && window.innerWidth < 1024) openMobilePaymentDetailDrawer();
 }
 
 function selectMarketRegionTab(marketId) {
@@ -1379,8 +1378,8 @@ function calculateDiscountedTierPrice(listedPrice, netPrice, discountPct) {
   if (pct === 0 || listed <= 0 || margin <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
   if (pct >= 100) return { sellingPrice: net, discountPerTicket: Math.max(0, listed - net) };
   const rawDiscount = margin * (pct / 100);
-  const roundedDiscount = Math.floor(rawDiscount / 5000) * 5000;
-  if (roundedDiscount < 5000) return { sellingPrice: listed, discountPerTicket: 0 };
+  const roundedDiscount = Math.round(rawDiscount / 1000) * 1000;
+  if (roundedDiscount <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
   const sellingPrice = Math.max(net, listed - roundedDiscount);
   return { sellingPrice, discountPerTicket: listed - sellingPrice };
 }
@@ -1399,14 +1398,14 @@ function renderGlobalDiscountSelector() {
   const curPct = Math.max(0, Math.min(100, Math.round(Number(bookingSessionDiscountRate) || 0)));
   const isListedActive = (curPct === 0);
   const buildMarkup = (prefix) => `
-    <div class="space-y-2">
-      <div class="text-[10.5px] font-extrabold text-slate-700 uppercase tracking-wider flex items-center justify-between gap-2">
+    <div class="space-y-1.5 pb-2 border-b border-slate-100">
+      <div class="text-[10.5px] font-black text-slate-800 uppercase tracking-wider flex items-center justify-between gap-2">
         <span>Chọn mức chiết khấu khách hàng</span>
         <span class="text-[10px] text-slate-400 font-semibold normal-case">(Áp dụng tất cả đối tượng)</span>
       </div>
-      <div class="p-2.5 rounded-2xl bg-slate-50/90 border border-slate-200/90">
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/90 shadow-2xs">
         <div class="flex items-center gap-2.5">
-          <button type="button" id="${prefix}-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}">
+          <button type="button" id="${prefix}-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}">
             <span>Áp Niêm Yết</span>
             ${isListedActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white shrink-0"></span>' : ''}
           </button>
@@ -1414,7 +1413,7 @@ function renderGlobalDiscountSelector() {
             <input type="range" id="${prefix}-globalDiscountSlider" min="0" max="100" step="1" value="${curPct}" oninput="handleGlobalDiscountChange(this.value, 'slider')" onchange="handleGlobalDiscountChange(this.value, 'slider')" style="accent-color: #F25C22; cursor: pointer;" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
           </div>
           <div class="relative flex items-center shrink-0 w-16">
-            <input type="number" id="${prefix}-globalDiscountInput" min="0" max="100" step="1" value="${curPct}" oninput="handleGlobalDiscountChange(this.value, 'input')" onchange="handleGlobalDiscountChange(this.value, 'input')" class="w-full pl-2 pr-5 py-1 text-center text-xs font-black bg-white border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-[#F25C22]">
+            <input type="number" id="${prefix}-globalDiscountInput" min="0" max="100" step="1" value="${curPct}" oninput="handleGlobalDiscountChange(this.value, 'input')" onchange="handleGlobalDiscountChange(this.value, 'input')" class="w-full pl-2 pr-5 py-1 text-center text-xs font-black bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#F25C22]">
             <span class="absolute right-2 text-slate-400 text-xs font-bold pointer-events-none">%</span>
           </div>
         </div>
@@ -1424,6 +1423,9 @@ function renderGlobalDiscountSelector() {
   ['mob', 'desk'].forEach(prefix => {
     const wrap = document.getElementById(prefix === 'mob' ? 'mobileDiscountSelectorWrap' : 'deskDiscountSelectorWrap');
     if (!wrap) return;
+    if (prefix === 'desk') {
+      wrap.classList.remove('hidden');
+    }
     const slider = document.getElementById(prefix + '-globalDiscountSlider');
     const input = document.getElementById(prefix + '-globalDiscountInput');
     const btn = document.getElementById(prefix + '-btnDiscountListed');
@@ -1432,7 +1434,7 @@ function renderGlobalDiscountSelector() {
     } else {
       if (document.activeElement !== slider) slider.value = curPct;
       if (document.activeElement !== input) input.value = curPct;
-      btn.className = `px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
+      btn.className = `px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
       btn.innerHTML = `<span>Áp Niêm Yết</span>${isListedActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white shrink-0"></span>' : ''}`;
     }
   });
@@ -1489,9 +1491,10 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
   const discount = config.listedPrice - sellingPrice;
   const lineTotal = qty * sellingPrice;
   const isFloorError = (sellingPrice < config.netPrice && qty > 0);
+  const isListed = (discount <= 0 || sellingPrice >= config.listedPrice);
   return `
     <div class="bg-slate-50/80 rounded-xl p-3 sm:p-3.5 border border-slate-200/80 space-y-2.5 ${!paxEnabled ? 'opacity-65' : ''}">
-      <!-- Hàng trên: Tên + điều kiện cam + giá Net đen đậm + giá niêm yết gạch ngang -->
+      <!-- Hàng 1 (Thông tin đối tượng & Giá gốc): Tên đối tượng + điều kiện chiều cao; bên phải hiển thị Giá Net Đại lý (in đậm) và Giá niêm yết (gạch ngang nếu có chênh lệch) -->
       <div class="flex items-start justify-between gap-2">
         <div>
           <div class="font-black text-xs text-slate-900 flex items-center gap-1.5 flex-wrap">
@@ -1505,7 +1508,7 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
         </div>
       </div>
 
-      <!-- Hàng giữa: 2 cột: SỐ LƯỢNG & GIÁ THỰC NHẬN / VÉ -->
+      <!-- Hàng 2 (Số lượng & Giá thực nhận): Cụm Số lượng & Cụm Giá thực nhận / vé -->
       <div class="flex items-end justify-between gap-2.5">
         <div class="shrink-0">
           <label class="text-[9.5px] font-bold text-slate-500 uppercase tracking-tight block mb-1 whitespace-nowrap">SỐ LƯỢNG</label>
@@ -1518,9 +1521,14 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
         <div class="shrink-0 flex flex-col items-end">
           <div class="flex items-center justify-between gap-1.5 mb-1 w-full whitespace-nowrap">
             <label class="text-[9px] font-bold text-slate-500 uppercase tracking-tight whitespace-nowrap">GIÁ THỰC NHẬN / VÉ</label>
-            <button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C22] hover:bg-orange-100 transition-colors cursor-pointer leading-none">Áp niêm yết</button>
+            <div id="${scopePrefix}-tagStatus-${pkgId}-${type}">
+              ${isListed
+                ? `<span class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C22] leading-none">Áp niêm yết</span>`
+                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer leading-none flex items-center gap-1"><span>Đã chiết khấu</span><i class="fa-solid fa-rotate-left text-[7px]"></i></button>`
+              }
+            </div>
           </div>
-          <div class="relative w-[114px] h-[38px]">
+          <div class="relative w-[124px] h-[38px]">
             <input type="text" id="${scopePrefix}-inputPrice-${pkgId}-${type}" value="${formatMoney(sellingPrice)}" oninput="handleMultiSellingPriceInput(${pkgId}, '${type}', this, '${scopePrefix}')" class="w-full h-full bg-white border ${isFloorError ? 'border-rose-500 bg-rose-50/30 text-rose-600' : 'border-slate-300 text-slate-900'} rounded-xl px-2.5 text-xs font-black text-right pr-6 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22] transition-all shadow-2xs">
             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold pointer-events-none">đ</span>
           </div>
@@ -1529,7 +1537,7 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
 
       <div id="${scopePrefix}-errorFloor-${pkgId}-${type}" class="${isFloorError ? '' : 'hidden'} text-[10px] text-rose-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i><span>Không được thấp hơn giá Net sàn: ${formatMoney(config.netPrice)} đ</span></div>
       
-      <!-- Hàng đáy: Giảm X đ/vé & Thành tiền -->
+      <!-- Hàng 3 (Tổng kết dòng): Giảm: X đ/vé bên trái & Thành tiền bên phải -->
       <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between gap-2">
         <div id="${scopePrefix}-discountLabel-${pkgId}-${type}" class="min-w-0">${renderDiscountBadge(discount)}</div>
         <div class="text-right shrink-0 whitespace-nowrap ml-auto">
@@ -1630,6 +1638,13 @@ function handleMultiSellingPriceInput(pkgId, type, inputElement, originScope = '
     if (discountContainer) discountContainer.innerHTML = renderDiscountBadge(discount);
     const errorFloorEl = document.getElementById(`${scope}-errorFloor-${pkgId}-${type}`);
     if (errorFloorEl) errorFloorEl.classList.toggle('hidden', !isFloorErr);
+    const tagEl = document.getElementById(`${scope}-tagStatus-${pkgId}-${type}`);
+    if (tagEl) {
+      const isNowListed = (rawValue >= config.listedPrice);
+      tagEl.innerHTML = isNowListed
+        ? `<span class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C22] leading-none">Áp niêm yết</span>`
+        : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer leading-none flex items-center gap-1"><span>Đã chiết khấu</span><i class="fa-solid fa-rotate-left text-[7px]"></i></button>`;
+    }
   });
   recalculateTotals();
 }
@@ -1759,6 +1774,7 @@ function recalculateTotals() {
 // ============================================================================
 
 function openMobilePaymentDetailDrawer() {
+  if (window.innerWidth >= 1024) return;
   const mobUsageDateEl = document.getElementById('mobileDrawerUsageDateText');
   if (mobUsageDateEl && selectedDate) mobUsageDateEl.innerText = `${selectedDate.dayName}, ${formatDateObjDMY(selectedDate)}`;
   renderOrderTicketsAccordions();
