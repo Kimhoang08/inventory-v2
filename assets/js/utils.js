@@ -55,7 +55,8 @@ function formatCompactVndShort(amount) {
 }
 
 /**
- * Gán giá trị rút gọn cho phần tử Card chỉ số, giữ nguyên số gốc trên tooltip/title khi hover và hỗ trợ bấm để xem số đầy đủ
+ * Gán giá trị rút gọn cho phần tử Card chỉ số, lưu trữ song song rawValue và formattedShortValue,
+ * hỗ trợ popover sáng hiển thị số chi tiết ngay khi rê chuột vào toàn bộ vùng Card.
  * @param {HTMLElement|string} elOrId - Phần tử DOM hoặc ID
  * @param {number} amount - Số tiền gốc
  * @param {string} [prefix=''] - Tiền tố (ví dụ '+', '-')
@@ -64,6 +65,7 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
   const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
   if (!el) return;
   const num = Number(amount) || 0;
+  const isShortened = Math.abs(num) >= 1000000;
   const compact = formatKpiCurrency(num);
   const full = `${formatMoney(Math.abs(num))} đ`;
   const fullText = (num < 0 ? `-${full}` : full);
@@ -73,41 +75,52 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
   el.setAttribute('data-kpi-compact', displayVal);
   el.setAttribute('data-kpi-full', tooltipVal);
   el.setAttribute('data-kpi-raw', num);
-  el.classList.add('cursor-pointer', 'kpi-card-value');
+  el.classList.add('kpi-card-value');
+
+  if (isShortened) {
+    el.classList.add('cursor-pointer', 'kpi-shortened');
+  } else {
+    el.classList.remove('kpi-shortened');
+  }
+
+  // Xóa thuộc tính title mặc định để không bị popup đen mặc định của trình duyệt che mất
+  el.removeAttribute('title');
 
   // Nếu người dùng đang mở rộng số chi tiết, giữ nguyên hiển thị số đầy đủ
   if (el.classList.contains('kpi-expanded')) {
     el.innerText = tooltipVal;
-    el.setAttribute('title', `${tooltipVal} • Bấm để thu gọn số`);
   } else {
     el.innerText = displayVal;
-    el.setAttribute('title', `${tooltipVal} • Bấm để hiển thị số đầy đủ`);
   }
 
-  // Gán thêm data-kpi-full cho card cha để hover hoặc click bất kỳ đâu trên card cũng xem được số chi tiết
+  // Gán thông tin nhận diện cho Card cha để rê chuột vào bất kỳ vị trí nào trên Card cũng kích hoạt Popover
   const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
   if (parentCard) {
     if (!el.id) {
       el.id = 'kpi_val_' + Math.random().toString(36).substr(2, 9);
     }
+    parentCard.setAttribute('data-kpi-card', 'true');
     parentCard.setAttribute('data-kpi-card-target', el.id);
-    if (!parentCard.hasAttribute('title') || (parentCard.getAttribute('title') || '').includes('đ')) {
-      parentCard.setAttribute('data-kpi-full', tooltipVal);
-    }
+    parentCard.setAttribute('data-kpi-raw', num);
+    const cardLabel = extractKpiCardLabel(parentCard, el);
+    if (cardLabel) parentCard.setAttribute('data-kpi-label', cardLabel);
+    parentCard.removeAttribute('title');
   }
 }
 
 /**
- * Tạo chuỗi HTML rút gọn cho Card chỉ số kèm tooltip số gốc và hỗ trợ click hiển thị số đầy đủ
+ * Tạo chuỗi HTML rút gọn cho Card chỉ số kèm thuộc tính đối soát chi tiết
  */
 function renderKpiValueMarkup(amount, prefix = '') {
   const num = Number(amount) || 0;
+  const isShortened = Math.abs(num) >= 1000000;
   const compact = formatKpiCurrency(num);
   const full = `${formatMoney(Math.abs(num))} đ`;
   const fullText = (num < 0 ? `-${full}` : full);
   const display = prefix ? `${prefix}${compact}` : compact;
-  const title = prefix ? `${prefix}${fullText}` : fullText;
-  return `<span title="Bấm để xem số chi tiết đầy đủ" data-kpi-compact="${display}" data-kpi-full="${title}" class="cursor-pointer kpi-card-value">${display}</span>`;
+  const fullAmount = prefix ? `${prefix}${fullText}` : fullText;
+  const shortenedClass = isShortened ? ' kpi-shortened' : '';
+  return `<span data-kpi-compact="${display}" data-kpi-full="${fullAmount}" data-kpi-raw="${num}" class="kpi-card-value${shortenedClass}">${display}</span>`;
 }
 
 function removeVietnameseTones(str) {
@@ -1248,8 +1261,8 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
 }
 
 // ============================================================================
-// INSTANT GLOBAL KPI TOOLTIP & CLICK-TO-EXPAND ENGINE
-// (HIỂN THỊ SỐ CHI TIẾT TỨC THÌ KHI HOVER HOẶC BẤM TRỰC TIẾP VÀO CARD/CON SỐ)
+// INSTANT GLOBAL KPI LIGHT POPOVER & EXPAND ENGINE
+// (HIỂN THỊ SỐ TIỀN CHI TIẾT GỌN SÁNG KHI RÊ CHUỘT VÀO TOÀN BỘ VÙNG CARD CHỈ SỐ)
 // ============================================================================
 let techeraKpiTooltipEl = null;
 let techeraKpiActiveTarget = null;
@@ -1263,43 +1276,394 @@ function initTecheraKpiTooltip() {
   techeraKpiTooltipEl.innerHTML = `
     <div class="techera-kpi-bubble">
       <div class="techera-kpi-bubble-label">
-        <i class="fa-solid fa-calculator text-[9px] text-sky-400"></i>
-        <span id="techeraKpiTooltipLabel">Số gốc chi tiết</span>
+        <span id="techeraKpiTooltipIcon" class="techera-kpi-bubble-icon"><i class="fa-solid fa-coins text-sky-500"></i></span>
+        <span id="techeraKpiTooltipLabel" class="techera-kpi-bubble-title">Chỉ số</span>
       </div>
       <div class="techera-kpi-bubble-value" id="techeraKpiTooltipValue">0 đ</div>
-      <div class="text-[9.5px] text-slate-400 font-normal mt-1 flex items-center justify-center gap-1 opacity-85" id="techeraKpiTooltipActionHint">
-        <i class="fa-solid fa-hand-pointer text-[8px] text-sky-400"></i>
-        <span>Bấm để hiển thị trực tiếp</span>
-      </div>
     </div>
     <div class="techera-kpi-arrow techera-kpi-arrow-down" id="techeraKpiTooltipArrow"></div>
   `;
   document.body.appendChild(techeraKpiTooltipEl);
 
-  // Global event delegation for instant hover
+  // Sự kiện rê chuột (hover) trên toàn bộ vùng Card trên Desktop
   document.addEventListener('mouseover', handleKpiTooltipMouseOver, { passive: true });
   document.addEventListener('mouseout', handleKpiTooltipMouseOut, { passive: true });
 
-  // Global click event to toggle full / compact number on KPI cards
+  // Sự kiện chạm (tap) trên Mobile (< 1024px) & click
+  document.addEventListener('touchstart', handleKpiTouchStart, { passive: true });
   document.addEventListener('click', handleKpiClick);
 
-  // Tự động gắn cờ cursor và chuẩn bị dữ liệu rút gọn
+  // Tự động quét và đăng ký dữ liệu cho toàn bộ Card chỉ số
   autoRegisterKpiCardElements();
 }
 
+/**
+ * Tự động đăng ký các Card chỉ số và con số rút gọn trong DOM
+ */
 function autoRegisterKpiCardElements() {
   if (typeof document === 'undefined') return;
-  const elements = document.querySelectorAll('.kpi-card-value, [data-kpi-full]');
+  // Chỉ chọn các phần tử con số thực sự mang class .kpi-card-value
+  const elements = document.querySelectorAll('.kpi-card-value');
   elements.forEach(el => {
-    if (!el.getAttribute('data-kpi-compact')) {
-      const txt = (el.innerText || el.textContent || '').trim();
-      const full = el.getAttribute('data-kpi-full');
-      if (txt && txt !== full) {
-        el.setAttribute('data-kpi-compact', txt);
+    let rawVal = el.getAttribute('data-kpi-raw');
+    let full = el.getAttribute('data-kpi-full');
+    let txt = (el.innerText || el.textContent || '').trim();
+
+    if (!el.getAttribute('data-kpi-compact') && txt && txt !== full) {
+      el.setAttribute('data-kpi-compact', txt);
+    }
+    const compact = el.getAttribute('data-kpi-compact') || txt;
+
+    // Suy luận rawVal nếu chưa được gán trực tiếp
+    if (!rawVal) {
+      if (/^[-+]?\d+(\.\d+)?\s*[MB]/i.test(compact)) {
+        let numText = compact.replace(/[^\d.MB-]/gi, '');
+        let isNeg = numText.startsWith('-');
+        numText = numText.replace('-', '');
+        let mult = 1e6;
+        if (numText.toUpperCase().endsWith('B')) mult = 1e9;
+        rawVal = parseFloat(numText) * mult * (isNeg ? -1 : 1);
+        el.setAttribute('data-kpi-raw', rawVal);
+      } else if (full && /\d/.test(full)) {
+        const clean = full.replace(/[^\d-]/g, '');
+        if (clean) {
+          rawVal = parseFloat(clean);
+          el.setAttribute('data-kpi-raw', rawVal);
+        }
       }
     }
-    el.classList.add('cursor-pointer');
+
+    const num = parseFloat(rawVal);
+    const isShortened = !isNaN(num) && Math.abs(num) >= 1000000;
+    if (isShortened) {
+      el.classList.add('kpi-shortened', 'cursor-pointer');
+    }
+
+    // Xóa title mặc định của trình duyệt để không bị popup đen che
+    el.removeAttribute('title');
+
+    // Đăng ký cho Card cha
+    const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
+    if (parentCard && parentCard !== el) {
+      if (!el.id) {
+        el.id = 'kpi_val_' + Math.random().toString(36).substr(2, 9);
+      }
+      parentCard.setAttribute('data-kpi-card', 'true');
+      parentCard.setAttribute('data-kpi-card-target', el.id);
+      if (!isNaN(num)) parentCard.setAttribute('data-kpi-raw', num);
+      const cardLabel = extractKpiCardLabel(parentCard, el);
+      if (cardLabel) parentCard.setAttribute('data-kpi-label', cardLabel);
+      parentCard.removeAttribute('title');
+    }
   });
+}
+
+/**
+ * Trích xuất nhãn/tên chỉ số sạch sẽ từ cấu trúc Card
+ */
+function extractKpiCardLabel(card, valEl) {
+  if (card && card.hasAttribute('data-kpi-label')) {
+    const l = card.getAttribute('data-kpi-label');
+    if (l) return l;
+  }
+  if (valEl && valEl.hasAttribute('data-kpi-label')) {
+    const l = valEl.getAttribute('data-kpi-label');
+    if (l) return l;
+  }
+
+  // Quét bên trong cấu trúc của Card hiện tại
+  if (card) {
+    // 1. Nếu valEl có phần tử đứng ngay trước trong cùng container
+    if (valEl && valEl.previousElementSibling && card.contains(valEl)) {
+      const prevText = (valEl.previousElementSibling.innerText || '').trim();
+      if (prevText && prevText.length < 50 && !prevText.includes('đ') && !/^[+-]?\d/.test(prevText)) {
+        return prevText;
+      }
+    }
+
+    // 2. Quét các thẻ nhãn phổ biến trong Card
+    const labelCandidates = card.querySelectorAll('[class*="text-[11px]"], [class*="text-[10px]"], [class*="text-xs"], [class*="uppercase"]');
+    for (const node of labelCandidates) {
+      if (valEl && (node.contains(valEl) || node === valEl)) continue;
+      const txt = (node.innerText || node.textContent || '').trim();
+      if (txt && txt.length < 40 && !txt.includes('%') && !txt.includes('đ') && !/^[+-]?\d/.test(txt)) {
+        return txt;
+      }
+    }
+  }
+
+  return 'Chỉ số tài chính';
+}
+
+/**
+ * Trích xuất HTML icon nhận diện của Card (ưu tiên icon badge, loại bỏ icon watermark to mờ)
+ */
+function extractKpiCardIconHTML(card) {
+  if (!card) return '<i class="fa-solid fa-coins text-sky-500 text-[11px]"></i>';
+
+  // 1. Icon nằm trong badge hình vuông/tròn bo góc nhỏ (w-10, w-8, w-7, rounded-xl...)
+  const badgeIcon = card.querySelector('.w-10 i, .w-8 i, .w-7 i, [class*="rounded-xl"] i, [class*="rounded-lg"] i');
+  if (badgeIcon) {
+    const classes = badgeIcon.className.replace(/text-(base|lg|sm|xs|2xl|3xl|4xl|5xl)/g, '').trim();
+    return `<i class="${classes} text-[11px]"></i>`;
+  }
+
+  // 2. Icon thông thường không phải watermark absolute
+  const generalIcon = card.querySelector('i.fa-solid:not(.absolute), i.fa-regular:not(.absolute), i.fa-brands:not(.absolute)');
+  if (generalIcon) {
+    const classes = generalIcon.className.replace(/text-(base|lg|sm|xs|2xl|3xl|4xl|5xl)/g, '').trim();
+    return `<i class="${classes} text-[11px]"></i>`;
+  }
+
+  return '<i class="fa-solid fa-coins text-sky-500 text-[11px]"></i>';
+}
+
+/**
+ * Trích xuất ngữ cảnh Card chỉ số từ phần tử DOM mục tiêu
+ */
+function getKpiCardContext(target) {
+  if (!target || target === document.body || target === document.documentElement) return null;
+
+  // 1. Tìm container Card cha
+  let card = target.closest ? target.closest('[data-kpi-card="true"], .kpi-card, [data-kpi-card-target]') : null;
+  if (!card && target.closest) {
+    const candidate = target.closest('[class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]');
+    if (candidate && candidate.querySelector('.kpi-card-value, [data-kpi-raw]')) {
+      card = candidate;
+    }
+  }
+
+  // 2. Tìm phần tử hiển thị con số bên trong Card
+  let valEl = null;
+  if (card) {
+    const targetId = card.getAttribute('data-kpi-card-target');
+    if (targetId) valEl = document.getElementById(targetId);
+    if (!valEl) valEl = card.querySelector('.kpi-card-value, [data-kpi-raw]');
+  } else {
+    valEl = target.closest ? target.closest('.kpi-card-value, [data-kpi-raw]') : null;
+    if (valEl) {
+      card = valEl.closest ? valEl.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
+    }
+  }
+
+  if (!card || !valEl) return null;
+
+  // Lấy rawValue (số nguyên gốc từ hệ thống)
+  let rawVal = null;
+  if (valEl.hasAttribute('data-kpi-raw')) {
+    rawVal = parseFloat(valEl.getAttribute('data-kpi-raw'));
+  } else if (card.hasAttribute('data-kpi-raw')) {
+    rawVal = parseFloat(card.getAttribute('data-kpi-raw'));
+  }
+
+  let fullText = valEl.getAttribute('data-kpi-full') || '';
+  let compactText = valEl.getAttribute('data-kpi-compact') || valEl.textContent.trim();
+
+  // Suy luận số nếu rawVal chưa có
+  if (rawVal === null || isNaN(rawVal)) {
+    if (/^[-+]?\d+(\.\d+)?\s*[MB]/i.test(compactText)) {
+      let numText = compactText.replace(/[^\d.MB-]/gi, '');
+      let isNeg = numText.startsWith('-');
+      numText = numText.replace('-', '');
+      let mult = 1e6;
+      if (numText.toUpperCase().endsWith('B')) mult = 1e9;
+      rawVal = parseFloat(numText) * mult * (isNeg ? -1 : 1);
+    } else if (fullText && /\d/.test(fullText)) {
+      const cleanNum = fullText.replace(/[^\d-]/g, '');
+      if (cleanNum) rawVal = parseFloat(cleanNum);
+    }
+  }
+
+  // QUY TẮC ĐẶC TẢ NGHIỆP VỤ:
+  // "Chỉ hiển thị tooltip số chi tiết khi giá trị đã bị rút gọn (rawValue >= 1.000.000);
+  // nếu số nhỏ hơn 1.000.000 thì bản thân Card đã hiển thị số đầy đủ nên không cần bật tooltip dư thừa."
+  if (rawVal === null || isNaN(rawVal) || Math.abs(rawVal) < 1000000) {
+    return null;
+  }
+
+  // Định dạng chuẩn tiền tệ Việt Nam (1.870.000 đ, 1.250.000.000 đ)
+  if (!fullText) {
+    const isNeg = rawVal < 0;
+    fullText = (isNeg ? '-' : '') + formatMoney(Math.abs(rawVal)) + ' đ';
+  }
+
+  const label = extractKpiCardLabel(card, valEl);
+  const iconHTML = extractKpiCardIconHTML(card);
+
+  return {
+    card,
+    valEl,
+    rawVal,
+    fullText,
+    compactText,
+    label,
+    iconHTML
+  };
+}
+
+/**
+ * Hiển thị Popover sáng màu chứa Icon + Tên chỉ số + Số tiền đầy đủ
+ */
+function showKpiTooltip(ctx) {
+  if (!ctx) return;
+  if (!techeraKpiTooltipEl) initTecheraKpiTooltip();
+  if (!techeraKpiTooltipEl) return;
+
+  if (techeraKpiHideTimeout) {
+    clearTimeout(techeraKpiHideTimeout);
+    techeraKpiHideTimeout = null;
+  }
+
+  const valEl = document.getElementById('techeraKpiTooltipValue');
+  const labelEl = document.getElementById('techeraKpiTooltipLabel');
+  const iconSpan = document.getElementById('techeraKpiTooltipIcon');
+
+  if (valEl) valEl.innerText = ctx.fullText;
+  if (labelEl) labelEl.innerText = ctx.label;
+  if (iconSpan && ctx.iconHTML) iconSpan.innerHTML = ctx.iconHTML;
+
+  // Xóa title mặc định của trình duyệt để ngăn chặn xung đột
+  if (ctx.valEl && ctx.valEl.hasAttribute('title')) ctx.valEl.removeAttribute('title');
+  if (ctx.card && ctx.card.hasAttribute('title')) ctx.card.removeAttribute('title');
+
+  techeraKpiActiveTarget = ctx.card;
+  techeraKpiTooltipEl.style.display = 'block';
+
+  // Tính toán vị trí hiển thị popover và mũi nhọn (arrow)
+  const cardRect = ctx.card.getBoundingClientRect();
+  const valRect = ctx.valEl.getBoundingClientRect();
+  const tooltipRect = techeraKpiTooltipEl.getBoundingClientRect();
+  const arrowEl = document.getElementById('techeraKpiTooltipArrow');
+
+  // Căn giữa theo phần tử con số
+  let left = valRect.left + valRect.width / 2 - tooltipRect.width / 2;
+  const minLeft = 12;
+  const maxLeft = (window.innerWidth || 1024) - tooltipRect.width - 12;
+  const clampedLeft = Math.max(minLeft, Math.min(left, maxLeft));
+
+  // Căn chỉnh mũi nhọn luôn trỏ thẳng vào giữa phần tử hiển thị con số
+  if (arrowEl) {
+    let arrowOffset = (valRect.left + valRect.width / 2) - clampedLeft;
+    arrowOffset = Math.max(16, Math.min(arrowOffset, tooltipRect.width - 16));
+    arrowEl.style.left = `${arrowOffset}px`;
+    arrowEl.style.marginLeft = '-5px';
+  }
+
+  // Đặt popover nằm phía trên hẳn toàn bộ Card (cách mép trên Card 8px) để không che lấp nhãn và icon bên trong
+  let top = cardRect.top - tooltipRect.height - 8;
+  let arrowDown = true;
+
+  // Tự động đảo chiều xuống dưới nếu sát mép trên màn hình
+  if (top < 10) {
+    top = cardRect.bottom + 8;
+    arrowDown = false;
+  }
+
+  if (arrowEl) {
+    arrowEl.className = arrowDown ? 'techera-kpi-arrow techera-kpi-arrow-down' : 'techera-kpi-arrow techera-kpi-arrow-up';
+  }
+
+  techeraKpiTooltipEl.style.left = `${clampedLeft}px`;
+  techeraKpiTooltipEl.style.top = `${top}px`;
+
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(() => {
+      techeraKpiTooltipEl?.classList.add('visible');
+    });
+  } else {
+    techeraKpiTooltipEl?.classList.add('visible');
+  }
+}
+
+/**
+ * Ẩn popover với độ trễ nhẹ mượt mà
+ */
+function hideKpiTooltip(delay = 80) {
+  if (techeraKpiActiveTarget) {
+    techeraKpiActiveTarget = null;
+  }
+
+  if (techeraKpiTooltipEl) {
+    techeraKpiTooltipEl.classList.remove('visible');
+    if (techeraKpiHideTimeout) clearTimeout(techeraKpiHideTimeout);
+
+    if (delay === 0) {
+      techeraKpiTooltipEl.style.display = 'none';
+    } else {
+      techeraKpiHideTimeout = setTimeout(() => {
+        if (techeraKpiTooltipEl && !techeraKpiTooltipEl.classList.contains('visible')) {
+          techeraKpiTooltipEl.style.display = 'none';
+        }
+      }, delay);
+    }
+  }
+}
+
+/**
+ * Xử lý sự kiện rê chuột (hover) trên toàn bộ vùng Card chỉ số
+ */
+function handleKpiTooltipMouseOver(e) {
+  const target = e.target;
+  if (!target) return;
+
+  // Bỏ qua các phần tử nhập liệu, nút bấm, dropdown bên trong Card
+  if (target.closest('button, a, input, select, textarea, [data-dropdown-toggle], .flatpickr-calendar')) {
+    hideKpiTooltip();
+    return;
+  }
+
+  const ctx = getKpiCardContext(target);
+  if (!ctx) {
+    hideKpiTooltip();
+    return;
+  }
+
+  // Nếu chuột di chuyển giữa các phần tử con trong cùng một Card thì giữ nguyên popover không chớp nháy
+  if (techeraKpiActiveTarget && (techeraKpiActiveTarget === ctx.card || techeraKpiActiveTarget === ctx.valEl)) {
+    if (techeraKpiHideTimeout) {
+      clearTimeout(techeraKpiHideTimeout);
+      techeraKpiHideTimeout = null;
+    }
+    return;
+  }
+
+  showKpiTooltip(ctx);
+}
+
+/**
+ * Xử lý sự kiện rời chuột (mouseout) khỏi vùng Card chỉ số
+ */
+function handleKpiTooltipMouseOut(e) {
+  const relatedTarget = e.relatedTarget;
+  if (techeraKpiActiveTarget && relatedTarget && techeraKpiActiveTarget.contains(relatedTarget)) {
+    return; // Vẫn đang ở bên trong Card
+  }
+  hideKpiTooltip();
+}
+
+/**
+ * Xử lý chạm (tap) trên Mobile (< 1024px)
+ */
+function handleKpiTouchStart(e) {
+  const target = e.target;
+  if (!target) return;
+
+  if (target.closest('button, a, input, select, textarea, [data-dropdown-toggle], .flatpickr-calendar')) {
+    hideKpiTooltip(0);
+    return;
+  }
+
+  const ctx = getKpiCardContext(target);
+  if (ctx) {
+    if (techeraKpiActiveTarget === (ctx.card || ctx.valEl) && techeraKpiTooltipEl?.classList.contains('visible')) {
+      hideKpiTooltip(0);
+    } else {
+      showKpiTooltip(ctx);
+    }
+  } else {
+    // Chạm ra ngoài Card: tự động ẩn popover
+    hideKpiTooltip(0);
+  }
 }
 
 let techeraKpiToastTimeout = null;
@@ -1331,13 +1695,11 @@ function toggleKpiElementValue(el) {
   if (!el) return false;
   let fullVal = el.getAttribute('data-kpi-full');
   let compactVal = el.getAttribute('data-kpi-compact');
+  let rawVal = el.getAttribute('data-kpi-raw');
 
-  if (!fullVal) {
-    const data = getKpiTooltipData(el);
-    if (data && data.fullText) {
-      fullVal = data.fullText;
-      el.setAttribute('data-kpi-full', fullVal);
-    }
+  if (!fullVal && rawVal) {
+    const num = parseFloat(rawVal);
+    if (!isNaN(num)) fullVal = `${formatMoney(Math.abs(num))} đ`;
   }
 
   if (!compactVal) {
@@ -1354,12 +1716,10 @@ function toggleKpiElementValue(el) {
   if (isExpanded) {
     el.innerText = compactVal || fullVal;
     el.classList.remove('kpi-expanded');
-    el.setAttribute('title', `${fullVal} • Bấm để xem số đầy đủ`);
     showKpiToast(compactVal, false);
   } else {
     el.innerText = fullVal;
     el.classList.add('kpi-expanded');
-    el.setAttribute('title', `${compactVal} • Bấm để thu gọn số`);
     showKpiToast(fullVal, true);
   }
 
@@ -1368,12 +1728,8 @@ function toggleKpiElementValue(el) {
   void el.offsetWidth; // force reflow
   el.classList.add('kpi-pulse');
 
-  // Đóng tooltip trôi nổi để không che mất con số đã mở rộng
-  if (techeraKpiTooltipEl) {
-    techeraKpiTooltipEl.classList.remove('visible');
-    techeraKpiTooltipEl.style.display = 'none';
-  }
-
+  // Đóng popover trôi nổi để không che mất con số đã mở rộng
+  hideKpiTooltip(0);
   return true;
 }
 
@@ -1383,6 +1739,7 @@ function handleKpiClick(e) {
 
   // Bỏ qua nếu bấm vào các phần tử tương tác khác (nút bấm, liên kết, ô nhập liệu, dropdown, bộ chọn ngày)
   if (target.closest('button, a, input, select, textarea, [role="button"], [data-dropdown-toggle], .dropdown-menu, .flatpickr-calendar, .badge-action')) {
+    hideKpiTooltip(0);
     return;
   }
 
@@ -1405,7 +1762,7 @@ function handleKpiClick(e) {
   }
 
   // 3. Bấm vào vùng card chứa chỉ số (Card KPI hoặc container bo góc có chứa chỉ số)
-  const card = target.closest('.kpi-card, [data-kpi-card-target], [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]');
+  const card = target.closest('.kpi-card, [data-kpi-card-target], [data-kpi-card="true"], [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]');
   if (card) {
     let targetEl = null;
     const targetId = card.getAttribute('data-kpi-card-target');
@@ -1419,167 +1776,6 @@ function handleKpiClick(e) {
     if (targetEl && toggleKpiElementValue(targetEl)) {
       e.stopPropagation();
     }
-  }
-}
-
-function getKpiTooltipData(target) {
-  if (!target || target === document.body || target === document.documentElement) return null;
-
-  // 1. Direct element with data-kpi-full
-  if (target.hasAttribute && target.hasAttribute('data-kpi-full')) {
-    return {
-      element: target,
-      fullText: target.getAttribute('data-kpi-full')
-    };
-  }
-
-  // 2. Direct element with cursor-help / title with currency or numbers
-  const titleAttr = target.getAttribute ? (target.getAttribute('title') || (target.dataset ? target.dataset.techeraStoredTitle : '')) : '';
-  if (titleAttr && (titleAttr.includes('đ') || /\d/.test(titleAttr))) {
-    const isKpi = target.classList?.contains('cursor-help') ||
-                  target.classList?.contains('cursor-pointer') ||
-                  target.classList?.contains('kpi-card-value') ||
-                  /kpi|card|total|rev|profit|balance|expense|income/i.test(target.id || '') ||
-                  (target.closest && target.closest('[class*="rounded-2xl"], [class*="rounded-3xl"]'));
-    if (isKpi) {
-      return {
-        element: target,
-        fullText: titleAttr
-      };
-    }
-  }
-
-  // 3. Inside an element with data-kpi-full
-  const parentWithData = target.closest ? target.closest('[data-kpi-full]') : null;
-  if (parentWithData) {
-    return {
-      element: parentWithData,
-      fullText: parentWithData.getAttribute('data-kpi-full')
-    };
-  }
-
-  // 4. Inside an element with cursor-help & title
-  const parentWithTitle = target.closest ? target.closest('.cursor-help, .cursor-pointer, .kpi-card-value') : null;
-  if (parentWithTitle) {
-    const pTitle = parentWithTitle.getAttribute('title') || (parentWithTitle.dataset ? parentWithTitle.dataset.techeraStoredTitle : '');
-    if (pTitle) {
-      return {
-        element: parentWithTitle,
-        fullText: pTitle
-      };
-    }
-  }
-
-  // 5. Shortened currency pattern like '6.4M', '254.35M', '1.45B', '500M'
-  const textContent = (target.textContent || '').trim();
-  if (/^[-+]?\d+(\.\d+)?\s*[MB]$/i.test(textContent) || /^[-+]?\d+(\.\d+)?\s*[MB]\s*đ?$/i.test(textContent)) {
-    let numText = textContent.replace(/[^\d.MB-]/gi, '');
-    let isNeg = numText.startsWith('-');
-    numText = numText.replace('-', '');
-    let mult = 1e6;
-    if (numText.toUpperCase().endsWith('B')) mult = 1e9;
-    const rawVal = parseFloat(numText) * mult;
-    if (!isNaN(rawVal)) {
-      return {
-        element: target,
-        fullText: (isNeg ? '-' : '') + formatMoney(rawVal) + ' đ'
-      };
-    }
-  }
-
-  return null;
-}
-
-function handleKpiTooltipMouseOver(e) {
-  const data = getKpiTooltipData(e.target);
-  if (!data || !data.fullText) return;
-
-  const targetEl = data.element;
-  techeraKpiActiveTarget = targetEl;
-
-  if (techeraKpiHideTimeout) {
-    clearTimeout(techeraKpiHideTimeout);
-    techeraKpiHideTimeout = null;
-  }
-
-  // Temporarily store & clear native title to prevent slow default browser tooltip clash
-  if (targetEl.hasAttribute && targetEl.hasAttribute('title')) {
-    if (!targetEl.dataset) targetEl.dataset = {};
-    targetEl.dataset.techeraStoredTitle = targetEl.getAttribute('title');
-    targetEl.removeAttribute('title');
-  }
-
-  const valEl = document.getElementById('techeraKpiTooltipValue');
-  const labelEl = document.getElementById('techeraKpiTooltipLabel');
-  const hintEl = document.getElementById('techeraKpiTooltipActionHint');
-
-  if (valEl) valEl.innerText = data.fullText;
-  if (labelEl) labelEl.innerText = 'Số gốc chi tiết';
-
-  if (hintEl) {
-    const isExpanded = targetEl.classList?.contains('kpi-expanded');
-    hintEl.innerHTML = isExpanded 
-      ? '<i class="fa-solid fa-compress text-[8px] text-amber-400"></i> <span>Bấm để thu gọn số</span>'
-      : '<i class="fa-solid fa-hand-pointer text-[8px] text-sky-400"></i> <span>Bấm để hiển thị trực tiếp</span>';
-  }
-
-  if (!techeraKpiTooltipEl) initTecheraKpiTooltip();
-  if (!techeraKpiTooltipEl) return;
-
-  techeraKpiTooltipEl.style.display = 'block';
-
-  // Position calculation
-  const rect = targetEl.getBoundingClientRect();
-  const tooltipRect = techeraKpiTooltipEl.getBoundingClientRect();
-  const arrowEl = document.getElementById('techeraKpiTooltipArrow');
-
-  let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
-  // Viewport bounds
-  if (left < 10) left = 10;
-  if (typeof window !== 'undefined' && left + tooltipRect.width > window.innerWidth - 10) {
-    left = window.innerWidth - tooltipRect.width - 10;
-  }
-
-  let top = rect.top - tooltipRect.height - 10;
-  let arrowDown = true;
-
-  // If clipped at top, place below
-  if (top < 10) {
-    top = rect.bottom + 10;
-    arrowDown = false;
-  }
-
-  if (arrowEl) {
-    arrowEl.className = arrowDown ? 'techera-kpi-arrow techera-kpi-arrow-down' : 'techera-kpi-arrow techera-kpi-arrow-up';
-  }
-
-  techeraKpiTooltipEl.style.left = `${left}px`;
-  techeraKpiTooltipEl.style.top = `${top}px`;
-
-  if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(() => {
-      techeraKpiTooltipEl?.classList.add('visible');
-    });
-  } else {
-    techeraKpiTooltipEl?.classList.add('visible');
-  }
-}
-
-function handleKpiTooltipMouseOut(e) {
-  if (techeraKpiActiveTarget) {
-    if (techeraKpiActiveTarget.dataset && techeraKpiActiveTarget.dataset.techeraStoredTitle) {
-      techeraKpiActiveTarget.setAttribute('title', techeraKpiActiveTarget.dataset.techeraStoredTitle);
-    }
-    techeraKpiActiveTarget = null;
-  }
-
-  if (techeraKpiTooltipEl) {
-    techeraKpiTooltipEl.classList.remove('visible');
-    techeraKpiHideTimeout = setTimeout(() => {
-      if (techeraKpiTooltipEl && !techeraKpiTooltipEl.classList.contains('visible')) {
-        techeraKpiTooltipEl.style.display = 'none';
-      }
-    }, 150);
   }
 }
 
@@ -1603,3 +1799,6 @@ window.initTecheraKpiTooltip = initTecheraKpiTooltip;
 window.toggleKpiElementValue = toggleKpiElementValue;
 window.autoRegisterKpiCardElements = autoRegisterKpiCardElements;
 window.showKpiToast = showKpiToast;
+window.getKpiCardContext = getKpiCardContext;
+window.showKpiTooltip = showKpiTooltip;
+window.hideKpiTooltip = hideKpiTooltip;
