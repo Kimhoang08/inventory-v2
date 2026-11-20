@@ -684,7 +684,6 @@
     }
 
     function applyCashFlowFilters() {
-      const universalSearchEl = document.getElementById('cfUniversalSearch');
       const searchEl = document.getElementById('cfFilterSearch');
       const groupEl = document.getElementById('cfFilterGroup');
       const typeEl = document.getElementById('cfFilterType');
@@ -692,7 +691,7 @@
       const subTypeEl = document.getElementById('cfFilterSubType');
       const statusEl = document.getElementById('cfFilterStatus');
 
-      const q = (universalSearchEl?.value || searchEl?.value || '').toLowerCase().trim();
+      const q = (searchEl?.value || '').toLowerCase().trim();
       const group = groupEl ? groupEl.value : 'ALL';
       const type = typeEl ? typeEl.value : 'ALL';
       const channel = channelEl ? channelEl.value : 'ALL';
