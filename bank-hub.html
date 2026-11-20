@@ -134,20 +134,20 @@
         </div>
       </section>
 
-      <!-- Bộ lọc Sao kê Ngân hàng (Thiết kế chuẩn đồng bộ cashflow-filter.css) -->
-      <section class="cf-filter-card space-y-3">
-        <div class="cf-filter-grid">
+      <!-- Bộ lọc Sao kê Ngân hàng (Thiết kế chuẩn đồng bộ system-filter-controls.css) -->
+      <section class="sfc-filter-card">
+        <div class="sfc-filter-grid">
           <div>
-            <label class="cf-filter-label" for="bankHubSearchInput">Tìm kiếm giao dịch</label>
+            <label class="sfc-label" for="bankHubSearchInput">Tìm kiếm giao dịch</label>
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-              <input id="bankHubSearchInput" type="text" placeholder="Mã GD, số TK, nội dung, đại lý..." class="cf-filter-input pl-8" />
+              <input id="bankHubSearchInput" type="text" placeholder="Mã GD, số TK, nội dung, đại lý..." class="sfc-control pl-8" />
             </div>
           </div>
           <div>
-            <label class="cf-filter-label" for="bankHubGatewaySelect">Cổng thanh toán</label>
-            <select id="bankHubGatewaySelect" class="cf-filter-select cursor-pointer">
-              <option value="ALL">Tất cả cổng thanh toán (All)</option>
+            <label class="sfc-label" for="bankHubGatewaySelect">Cổng thanh toán</label>
+            <select id="bankHubGatewaySelect" class="sfc-control cursor-pointer">
+              <option value="ALL">Tất cả</option>
               <option value="Vietcombank 247">Vietcombank 247</option>
               <option value="MB Bank API">MB Bank API</option>
               <option value="Sacombank">Sacombank</option>
@@ -156,27 +156,32 @@
             </select>
           </div>
           <div>
-            <label class="cf-filter-label" for="bankHubPartyTypeSelect">Phân loại đối tượng</label>
-            <select id="bankHubPartyTypeSelect" class="cf-filter-select cursor-pointer">
-              <option value="ALL">Tất cả đối tượng</option>
+            <label class="sfc-label" for="bankHubPartyTypeSelect">Phân loại đối tượng</label>
+            <select id="bankHubPartyTypeSelect" class="sfc-control cursor-pointer">
+              <option value="ALL">Tất cả</option>
               <option value="AGENCY">Đại lý (B2B)</option>
               <option value="RETAIL">Khách lẻ</option>
             </select>
           </div>
           <div>
-            <label class="cf-filter-label" for="bankHubTimeRangeSelect">Khoảng thời gian</label>
-            <select id="bankHubTimeRangeSelect" class="cf-filter-select cursor-pointer">
-              <option value="MONTH">Tháng 11/2026</option>
-              <option value="TODAY">Hôm nay (18/11/2026)</option>
-              <option value="ALL">Toàn thời gian</option>
-            </select>
+            <label class="sfc-label" for="bankHubTimeRangeSelect">Khoảng thời gian</label>
+            <div class="flex items-center gap-2">
+              <select id="bankHubTimeRangeSelect" class="sfc-control cursor-pointer">
+                <option value="ALL">Tất cả</option>
+                <option value="MONTH">Tháng 11/2026</option>
+                <option value="TODAY">Hôm nay (18/11/2026)</option>
+              </select>
+              <button type="button" onclick="resetBankHubFilters()" class="sfc-reset-icon-btn" title="Đặt lại bộ lọc" aria-label="Đặt lại bộ lọc">
+                <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Bảng Báo cáo Giao dịch Bankhub 9 cột chuẩn (Thay thế hoàn toàn bảng cũ) -->
+      <!-- Bảng Báo cáo Giao dịch Bankhub 9 cột chuẩn + Thao tác (Đồng bộ system-filter-controls.css) -->
       <section class="cf-table-card">
-        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+        <div class="sfc-table-toolbar flex-wrap gap-3 sm:items-center justify-between border-b border-slate-100 bg-white">
           <div>
             <div class="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-2">
               <span>Báo cáo Giao dịch Bankhub (TOPUP)</span>
@@ -185,11 +190,15 @@
             <p class="text-xs text-slate-500 mt-0.5">Theo dõi lịch sử giao dịch nạp tiền tự động qua hệ thống Bankhub &amp; các cổng thanh toán ngân hàng</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="exportBankhubExcel()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+            <button type="button" onclick="toggleColumnCustomizer()" class="sfc-column-btn" title="Tùy chỉnh cột">
+              <i class="fa-solid fa-table-columns text-slate-500"></i>
+              <span>Tùy chỉnh cột</span>
+            </button>
+            <button type="button" onclick="exportBankhubExcel()" class="sfc-btn-secondary" title="Xuất file Excel">
               <i class="fa-solid fa-file-excel text-emerald-600"></i>
               <span>Xuất Excel</span>
             </button>
-            <button type="button" onclick="refreshBankhubData()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+            <button type="button" onclick="refreshBankhubData()" class="sfc-btn-secondary" title="Làm mới dữ liệu">
               <i class="fa-solid fa-arrows-rotate text-slate-500"></i>
               <span>Làm mới</span>
             </button>
@@ -197,7 +206,7 @@
         </div>
 
         <div class="cf-table-scroll">
-          <table class="cf-table min-w-[1300px] w-full text-left border-collapse text-xs">
+          <table class="cf-table min-w-[1360px] w-full text-left border-collapse text-xs">
             <thead class="cf-thead">
               <tr>
                 <th class="w-12 text-center">STT</th>
@@ -210,6 +219,7 @@
                 <th class="whitespace-nowrap">Mã tham chiếu</th>
                 <th class="whitespace-nowrap">Nội dung</th>
                 <th class="whitespace-nowrap text-right pr-5">Số tiền</th>
+                <th class="whitespace-nowrap text-center w-28 pr-4">Thao tác</th>
               </tr>
             </thead>
             <tbody id="bankhubTableBody" class="divide-y divide-slate-100">

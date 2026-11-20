@@ -1162,11 +1162,12 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
         id="${prefix}_btnDateTrigger"
         type="button"
         onclick="${prefix}_toggleDatePopover(event)"
-        class="w-full sm:w-auto min-w-[210px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-white text-slate-800 flex items-center justify-between gap-2.5 cursor-pointer hover:border-slate-300 transition-colors text-left shadow-2xs"
+        class="sfc-daterange-trigger w-full sm:w-auto min-w-[210px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-white text-slate-800 flex items-center justify-between gap-2.5 cursor-pointer hover:border-slate-300 transition-colors text-left shadow-2xs"
       >
         <span class="inline-flex items-center gap-2 truncate">
-          <i class="fa-regular fa-calendar text-slate-400 text-xs shrink-0"></i>
-          <span id="${prefix}_dateDisplayText">${label}</span>
+          <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">THỜI GIAN:</span>
+          <i class="fa-regular fa-calendar text-amber-500 text-xs shrink-0"></i>
+          <span id="${prefix}_dateDisplayText" class="text-slate-800 font-semibold">${label}</span>
         </span>
         <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
       </button>
@@ -1176,7 +1177,7 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
       <div
         id="${prefix}_popoverDateRange"
         onclick="event.stopPropagation()"
-        class="hidden absolute top-full ${alignClass} w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3.5 transition-all text-left ring-1 ring-slate-900/5"
+        class="sfc-daterange-popover hidden absolute top-full ${alignClass} w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3.5 transition-all text-left ring-1 ring-slate-900/5"
       >
         <!-- 1. Header -->
         <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
@@ -1198,19 +1199,19 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
 
         <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
-          <button type="button" id="${prefix}_btnPreset_7days" onclick="${prefix}_selectPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+          <button type="button" id="${prefix}_btnPreset_7days" onclick="${prefix}_selectPreset(event, '7_days')" class="sfc-preset-chip preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
             7 ngày
           </button>
-          <button type="button" id="${prefix}_btnPreset_30days" onclick="${prefix}_selectPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+          <button type="button" id="${prefix}_btnPreset_30days" onclick="${prefix}_selectPreset(event, '30_days')" class="sfc-preset-chip preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
             30 ngày
           </button>
-          <button type="button" id="${prefix}_btnPreset_this_month" onclick="${prefix}_selectPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+          <button type="button" id="${prefix}_btnPreset_this_month" onclick="${prefix}_selectPreset(event, 'this_month')" class="sfc-preset-chip preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
             Tháng này
           </button>
-          <button type="button" id="${prefix}_btnPreset_quarter" onclick="${prefix}_selectPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+          <button type="button" id="${prefix}_btnPreset_quarter" onclick="${prefix}_selectPreset(event, 'quarter')" class="sfc-preset-chip preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
             Quý
           </button>
-          <button type="button" id="${prefix}_btnPreset_custom" onclick="${prefix}_selectPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+          <button type="button" id="${prefix}_btnPreset_custom" onclick="${prefix}_selectPreset(event, 'custom')" class="sfc-preset-chip preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
             <span>Tùy chỉnh</span>
             <span id="${prefix}_customDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
           </button>
@@ -1248,10 +1249,10 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
 
         <!-- 6. Chân Dropdown (Footer Actions) -->
         <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
-          <button type="button" onclick="${prefix}_cancel(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+          <button type="button" onclick="${prefix}_cancel(event)" class="sfc-btn-secondary px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
             Hủy
           </button>
-          <button type="button" onclick="${prefix}_apply(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+          <button type="button" onclick="${prefix}_apply(event)" class="sfc-btn-primary px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
             Áp dụng
           </button>
         </div>

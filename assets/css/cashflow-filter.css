@@ -1,22 +1,25 @@
+@charset "UTF-8";
+@import url("./system-filter-controls.css");
 /* ==========================================================================
    TECHERA B2B PORTAL - CASHFLOW FILTER COMPONENT STYLESHEET
-   File Style chuẩn đồng bộ cho Khối Bộ lọc tra cứu đa điều kiện
-   Dùng chung cho: Lịch sử Dòng tiền, Bank Hub, Báo cáo xuất vé...
+   Được đồng bộ kế thừa từ system-filter-controls.css chuẩn hệ thống
    ========================================================================== */
 
+
+/* Backward compatibility aliases */
 .cf-filter-card {
-  background-color: #ffffff;
-  border-radius: 1rem; /* rounded-2xl */
-  border: 1px solid rgba(226, 232, 240, 0.9); /* border-slate-200/90 */
-  padding: 1rem 1.25rem; /* p-4 sm:p-5 */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* shadow-2xs */
+  background-color: var(--sfc-bg, #ffffff);
+  border-radius: 16px;
+  border: 1px solid var(--sfc-border, #e2e8f0);
+  padding: 16px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
 .cf-filter-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 0.75rem; /* gap-3 */
-  font-size: 0.75rem; /* text-xs */
+  gap: 14px;
+  align-items: flex-end;
 }
 
 @media (min-width: 640px) {
@@ -31,39 +34,57 @@
   }
 }
 
+@media (min-width: 1280px) {
+  .cf-filter-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .cf-filter-label {
   display: block;
   font-size: 11px;
   font-weight: 700;
-  color: #64748b; /* text-slate-500 */
+  color: var(--sfc-text-muted, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.05em; /* tracking-wider */
-  margin-bottom: 0.375rem; /* mb-1.5 */
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
 }
 
 .cf-filter-input,
 .cf-filter-select {
   width: 100%;
-  padding: 0.5rem 0.75rem; /* py-2 px-3 */
-  border-radius: 0.75rem; /* rounded-xl */
-  border: 1px solid #e2e8f0; /* border-slate-200 */
-  font-size: 0.75rem; /* text-xs */
-  font-weight: 600;
-  color: #1e293b; /* text-slate-800 */
-  background-color: rgba(248, 250, 252, 0.7); /* bg-slate-50/70 */
-  transition: all 0.15s ease-in-out;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  border-radius: var(--sfc-radius-control, 10px);
+  border: 1px solid var(--sfc-border-hover, #cbd5e1);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--sfc-text-primary, #0f172a);
+  background-color: var(--sfc-bg, #ffffff);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.cf-filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  cursor: pointer;
 }
 
 .cf-filter-input:hover,
 .cf-filter-select:hover {
   background-color: #ffffff;
-  border-color: #cbd5e1;
+  border-color: #94a3b8;
 }
 
 .cf-filter-input:focus,
 .cf-filter-select:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: #f97316; /* brand-500 */
-  box-shadow: 0 0 0 1px #f97316;
+  border-color: var(--sfc-focus, #2563eb);
+  box-shadow: 0 0 0 3px var(--sfc-focus-ring, rgba(37, 99, 235, 0.14));
 }

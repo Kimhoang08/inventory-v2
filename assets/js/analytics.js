@@ -124,7 +124,7 @@ window.reportOrdersDataset = reportOrdersDataset;
         staffBtn.disabled = (staffOpts.length === 1 && staffOpts[0] === '-');
       }
       if (staffLabel) {
-        staffLabel.innerText = st.staff === 'ALL' ? 'Tất cả nhân viên' : (st.staff === '-' ? '- (Không áp dụng)' : st.staff);
+        staffLabel.innerText = st.staff === 'ALL' ? 'Tất cả' : (st.staff === '-' ? '- (Không áp dụng)' : st.staff);
       }
 
       // Sync Site state (depends on Corp)
@@ -134,7 +134,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       }
       const siteLabel = document.getElementById(`${prefix}SiteLabel`);
       if (siteLabel) {
-        siteLabel.innerText = st.site === 'ALL' ? 'Tất cả khu du lịch' : st.site;
+        siteLabel.innerText = st.site === 'ALL' ? 'Tất cả' : st.site;
       }
 
       // Sync Date tags + inputs
@@ -187,7 +187,7 @@ window.reportOrdersDataset = reportOrdersDataset;
 
       const filtered = rawOptions.filter(opt => {
         const display = opt === 'ALL'
-          ? (fieldKey === 'staff' ? 'Tất cả nhân viên' : 'Tất cả khu du lịch')
+          ? 'Tất cả'
           : opt;
         return display.toLowerCase().includes(query);
       });
@@ -200,7 +200,7 @@ window.reportOrdersDataset = reportOrdersDataset;
       listEl.innerHTML = filtered.map(opt => {
         const selected = st[fieldKey] === opt;
         const label = opt === 'ALL'
-          ? (fieldKey === 'staff' ? 'Tất cả nhân viên' : 'Tất cả khu du lịch')
+          ? 'Tất cả'
           : opt;
         const safeOpt = opt.replace(/'/g, "\\'");
         return `

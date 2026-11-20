@@ -607,7 +607,7 @@
   function populateCorpAndSiteFilters() {
     const corpSelect = document.getElementById('refundCorpFilter');
     if (corpSelect) {
-      let corpHtml = '<option value="ALL">Tất cả tập đoàn</option>';
+      let corpHtml = '<option value="ALL">Tất cả</option>';
       Object.keys(REFUND_CORP_SITES).forEach(corp => {
         corpHtml += `<option value="${corp}">${corp}</option>`;
       });
@@ -621,7 +621,7 @@
   function updateSiteDropdown(selectedCorp) {
     filterSite = 'ALL';
     const txt = document.getElementById('selectedSiteText');
-    if (txt) txt.textContent = 'Tất cả khu du lịch';
+    if (txt) txt.textContent = 'Tất cả';
     filterSiteOptions('');
   }
     // 6.1 BỘ LỌC ĐẠI LÝ (SEARCHABLE DROPDOWN CÓ SEARCH BÊN TRONG & XÓA NHANH)
@@ -651,7 +651,7 @@
 
     const q = (query || '').toLowerCase().trim();
     const allAgencies = [
-      { code: 'ALL', name: 'Tất cả đại lý', mst: '' },
+      { code: 'ALL', name: 'Tất cả', mst: '' },
       ...REFUND_AGENCIES
     ];
 
@@ -683,10 +683,10 @@
   }
 
   function selectAgencyFilter(agencyVal, agencyLabel) {
-    filterAgency = (agencyVal === 'Tất cả đại lý' || agencyVal === 'ALL') ? 'ALL' : agencyVal;
+    filterAgency = (agencyVal === 'Tất cả' || agencyVal === 'Tất cả đại lý' || agencyVal === 'ALL') ? 'ALL' : agencyVal;
     const txt = document.getElementById('selectedAgencyText');
     const clearBtn = document.getElementById('btnClearAgencyFilter');
-    if (txt) txt.textContent = (filterAgency === 'ALL') ? 'Tất cả đại lý' : agencyLabel;
+    if (txt) txt.textContent = (filterAgency === 'ALL') ? 'Tất cả' : agencyLabel;
     if (clearBtn) {
       if (filterAgency !== 'ALL') clearBtn.classList.remove('hidden');
       else clearBtn.classList.add('hidden');
@@ -701,7 +701,7 @@
     const searchInput = document.getElementById('searchAgencyFilterInput');
     if (searchInput) searchInput.value = '';
     filterAgencyOptions('');
-    selectAgencyFilter('ALL', 'Tất cả đại lý');
+    selectAgencyFilter('ALL', 'Tất cả');
   }
 
   // 6.2 BỘ LỌC KHU DU LỊCH (SEARCHABLE DROPDOWN CÓ SEARCH BÊN TRONG & XÓA NHANH)
@@ -730,7 +730,7 @@
     if (!list) return;
 
     const q = (query || '').toLowerCase().trim();
-    let availableSites = [{ corp: '', name: 'Tất cả khu du lịch' }];
+    let availableSites = [{ corp: '', name: 'Tất cả' }];
 
     if (filterCorp === 'ALL') {
       Object.entries(REFUND_CORP_SITES).forEach(([c, sites]) => {
@@ -751,11 +751,11 @@
     }
 
     list.innerHTML = filtered.map(item => {
-      const isSelected = (filterSite === item.name || (filterSite === 'ALL' && item.name === 'Tất cả khu du lịch'));
+      const isSelected = (filterSite === item.name || (filterSite === 'ALL' && item.name === 'Tất cả'));
       return `
         <button
           type="button"
-          onclick="selectSiteFilter('${item.name === 'Tất cả khu du lịch' ? 'ALL' : item.name}', '${item.name}')"
+          onclick="selectSiteFilter('${item.name === 'Tất cả' ? 'ALL' : item.name}', '${item.name}')"
           class="w-full px-3 py-2 rounded-xl text-left transition-colors flex items-center justify-between cursor-pointer ${
             isSelected ? 'bg-rose-50 border border-rose-200 text-rose-800 font-bold' : 'hover:bg-slate-50 text-slate-700 font-medium'
           }"
@@ -768,10 +768,10 @@
   }
 
   function selectSiteFilter(siteVal, siteLabel) {
-    filterSite = (siteVal === 'Tất cả khu du lịch' || siteVal === 'ALL') ? 'ALL' : siteVal;
+    filterSite = (siteVal === 'Tất cả' || siteVal === 'Tất cả khu du lịch' || siteVal === 'ALL') ? 'ALL' : siteVal;
     const txt = document.getElementById('selectedSiteText');
     const clearBtn = document.getElementById('btnClearSiteFilter');
-    if (txt) txt.textContent = (filterSite === 'ALL') ? 'Tất cả khu du lịch' : siteLabel;
+    if (txt) txt.textContent = (filterSite === 'ALL') ? 'Tất cả' : siteLabel;
     if (clearBtn) {
       if (filterSite !== 'ALL') clearBtn.classList.remove('hidden');
       else clearBtn.classList.add('hidden');
@@ -786,7 +786,7 @@
     const searchInput = document.getElementById('searchSiteFilterInput');
     if (searchInput) searchInput.value = '';
     filterSiteOptions('');
-    selectSiteFilter('ALL', 'Tất cả khu du lịch');
+    selectSiteFilter('ALL', 'Tất cả');
   }
 
   // 6.3 BỘ LỌC TRẠNG THÁI CON TẠI TAB ĐÃ XỬ LÝ (THÀNH CÔNG / TỪ CHỐI)
@@ -3501,9 +3501,9 @@ Yêu cầu hoàn vé ${createRequestCode} (${ticketItems.length} vé) đã đư�
     filterSite = 'ALL';
 
     const agTxt = document.getElementById('selectedAgencyText');
-    if (agTxt) agTxt.textContent = 'Tất cả đại lý';
+    if (agTxt) agTxt.textContent = 'Tất cả';
     const stTxt = document.getElementById('selectedSiteText');
-    if (stTxt) stTxt.textContent = 'Tất cả khu du lịch';
+    if (stTxt) stTxt.textContent = 'Tất cả';
 
     const agSearchInput = document.getElementById('searchAgencyFilterInput');
     if (agSearchInput) agSearchInput.value = '';

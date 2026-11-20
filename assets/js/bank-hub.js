@@ -407,7 +407,7 @@ function renderBankHubTableRows(items, startIndex) {
   if (items.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="10" class="px-6 py-12 text-center text-slate-400">
+        <td colspan="11" class="px-6 py-12 text-center text-slate-400">
           <div class="flex flex-col items-center justify-center gap-2">
             <i class="fa-solid fa-receipt text-3xl text-slate-300"></i>
             <span class="font-bold text-xs text-slate-500">Không tìm thấy giao dịch nạp tiền Bankhub nào phù hợp</span>
@@ -536,6 +536,21 @@ function renderBankHubTableRows(items, startIndex) {
         <td class="cf-cell whitespace-nowrap text-right pr-5">
           <span class="font-mono font-black text-emerald-600 text-[13px] tracking-tight whitespace-nowrap">+${formattedAmount} đ</span>
         </td>
+
+        <!-- 11. Thao tác chuẩn system-filter-controls -->
+        <td class="cf-cell text-center whitespace-nowrap pr-4">
+          <div class="sfc-row-actions justify-center">
+            <button type="button" onclick="viewBankHubDetail('${item.txCode}')" class="sfc-action-icon" title="Xem chi tiết" aria-label="Xem chi tiết">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+            <button type="button" onclick="editBankHubTransaction('${item.txCode}')" class="sfc-action-icon" title="Chỉnh sửa" aria-label="Chỉnh sửa">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <button type="button" onclick="deleteBankHubTransaction('${item.txCode}')" class="sfc-action-icon sfc-action-icon--danger" title="Xoá" aria-label="Xoá">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        </td>
       </tr>
     `;
   }).join('');
@@ -592,8 +607,10 @@ function goToBankHubPage(page) {
   applyBankHubFilters();
 }
 
+let bankHubSearchDebounceTimer = null;
+
 /**
- * Gắn sự kiện cho các ô lọc
+ * Gán sự kiện cho các ô lọc (Hỗ trợ Debounce 280ms cho ô tìm kiếm và Real-time Instant Filter khi chọn dropdown)
  */
 function bindBankHubFilterEvents() {
   const searchInput = document.getElementById('bankHubSearchInput');
@@ -601,7 +618,10 @@ function bindBankHubFilterEvents() {
     searchInput.addEventListener('input', (e) => {
       bankHubFilterState.keyword = e.target.value;
       bankHubFilterState.page = 1;
-      applyBankHubFilters();
+      if (bankHubSearchDebounceTimer) clearTimeout(bankHubSearchDebounceTimer);
+      bankHubSearchDebounceTimer = setTimeout(() => {
+        applyBankHubFilters();
+      }, 280);
     });
   }
 
@@ -634,8 +654,143 @@ function bindBankHubFilterEvents() {
 }
 
 /**
- * Xuất Excel/CSV danh sách nạp tiền Bankhub
+ * Đặt lại toàn bộ bộ lọc về trạng thái mặc định "Tất cả"
  */
+function resetBankHubFilters() {
+  bankHubFilterState.keyword = '';
+  bankHubFilterState.gateway = 'ALL';
+  bankHubFilterState.partyType = 'ALL';
+  bankHubFilterState.timeRange = 'ALL';
+  bankHubFilterState.page = 1;
+
+  const searchInput = document.getElementById('bankHubSearchInput');
+  if (searchInput) searchInput.value = '';
+  const gatewaySelect = document.getElementById('bankHubGatewaySelect');
+  if (gatewaySelect) gatewaySelect.value = 'ALL';
+  const partyTypeSelect = document.getElementById('bankHubPartyTypeSelect');
+  if (partyTypeSelect) partyTypeSelect.value = 'ALL';
+  const timeRangeSelect = document.getElementById('bankHubTimeRangeSelect');
+  if (timeRangeSelect) timeRangeSelect.value = 'ALL';
+
+  applyBankHubFilters();
+
+  if (typeof showToast === 'function') {
+    showToast('Đặt lại bộ lọc', 'Đã khôi phục các điều kiện lọc về mặc định', 'info');
+  }
+}
+
+/**
+ * Xem chi tiết giao dịch Bankhub (Thao tác Icon 👁)
+ */
+function viewBankHubDetail(txCode) {
+  const item = BANK_HUB_DATASET.find(x => x.txCode === txCode);
+  if (!item) return;
+
+  const modalHtml = `
+    <div id="bankHubDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-150">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm">Chi tiết giao dịch Bankhub</h3>
+              <p class="text-[11px] text-slate-400 font-mono">${item.txCode}</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeBankHubDetailModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="py-4 space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+            <div>
+              <span class="text-slate-400 font-bold text-[10px] uppercase block">Số tiền nạp</span>
+              <span class="font-mono font-extrabold text-emerald-600 text-base">+${typeof formatMoney === 'function' ? formatMoney(item.amount) : item.amount.toLocaleString('vi-VN')} đ</span>
+            </div>
+            <div>
+              <span class="text-slate-400 font-bold text-[10px] uppercase block">Trạng thái đối soát</span>
+              <span class="inline-flex items-center gap-1 text-emerald-700 font-bold"><i class="fa-solid fa-circle-check text-xs"></i> Khớp lệnh tự động 100%</span>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Thời gian giao dịch:</span>
+              <span class="font-mono font-semibold text-slate-800">${item.date}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Đối tượng:</span>
+              <span class="font-bold text-slate-800">${item.partyName} (${item.partyType === 'AGENCY' ? 'Đại lý' : 'Khách lẻ'})</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Cổng / Ngân hàng:</span>
+              <span class="font-semibold text-slate-800">${item.gateway}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Số tài khoản:</span>
+              <span class="font-mono font-bold text-slate-800">${item.accountNumber}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Tên tài khoản:</span>
+              <span class="font-semibold text-slate-800">${item.accountName || '-'}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">Mã tham chiếu NH:</span>
+              <span class="font-mono text-slate-700">${item.refCode}</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-slate-500 font-medium">Cú pháp nội dung:</span>
+              <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${item.content}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeBankHubDetailModal()" class="sfc-btn-primary">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const existing = document.getElementById('bankHubDetailModal');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeBankHubDetailModal() {
+  const el = document.getElementById('bankHubDetailModal');
+  if (el) el.remove();
+}
+
+function editBankHubTransaction(txCode) {
+  if (typeof showToast === 'function') {
+    showToast('Chỉnh sửa giao dịch', `Mở form cập nhật đối soát cho mã ${txCode}`, 'info');
+  } else {
+    alert(`Mở form cập nhật đối soát cho mã ${txCode}`);
+  }
+}
+
+function deleteBankHubTransaction(txCode) {
+  if (confirm(`Bạn có chắc chắn muốn xoá/thu hồi giao dịch đối soát ${txCode}?`)) {
+    if (typeof showToast === 'function') {
+      showToast('Xoá giao dịch', `Đã xoá giao dịch ${txCode}`, 'warning');
+    }
+  }
+}
+
+function toggleColumnCustomizer() {
+  if (typeof showToast === 'function') {
+    showToast('Tùy chỉnh cột', 'Mở bảng thiết lập ẩn/hiện cột bảng báo cáo', 'info');
+  } else {
+    alert('Mở bảng thiết lập ẩn/hiện cột');
+  }
+}
+
 function exportBankhubExcel() {
   const data = getFilteredBankHubData();
   if (data.length === 0) {

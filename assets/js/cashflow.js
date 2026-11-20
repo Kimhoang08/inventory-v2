@@ -574,7 +574,7 @@
       const group = groupEl.value;
       const prevVal = typeEl.value;
 
-      let optionsHtml = `<option value="ALL">Tất cả loại phiếu</option>`;
+      let optionsHtml = `<option value="ALL">Tất cả</option>`;
       const activeCats = (cashFlowCategories || []).filter(c => c.status === 'ACTIVE');
 
       if (group === 'Thu') {
@@ -619,7 +619,7 @@
       const ch = channelEl.value;
       const prevVal = subTypeEl.value;
 
-      let opts = `<option value="ALL">Tất cả Loại thuộc kênh</option>`;
+      let opts = `<option value="ALL">Tất cả</option>`;
       if (ch === 'Website') {
         opts += `
           <option value="Khách lẻ (B2C)">Khách lẻ (B2C)</option>
