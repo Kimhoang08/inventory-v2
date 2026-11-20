@@ -1,0 +1,69 @@
+/* ==========================================================================
+   TECHERA B2B PORTAL - CASHFLOW FILTER COMPONENT STYLESHEET
+   File Style chuẩn đồng bộ cho Khối Bộ lọc tra cứu đa điều kiện
+   Dùng chung cho: Lịch sử Dòng tiền, Bank Hub, Báo cáo xuất vé...
+   ========================================================================== */
+
+.cf-filter-card {
+  background-color: #ffffff;
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid rgba(226, 232, 240, 0.9); /* border-slate-200/90 */
+  padding: 1rem 1.25rem; /* p-4 sm:p-5 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* shadow-2xs */
+}
+
+.cf-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.75rem; /* gap-3 */
+  font-size: 0.75rem; /* text-xs */
+}
+
+@media (min-width: 640px) {
+  .cf-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .cf-filter-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.cf-filter-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b; /* text-slate-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* tracking-wider */
+  margin-bottom: 0.375rem; /* mb-1.5 */
+}
+
+.cf-filter-input,
+.cf-filter-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem; /* py-2 px-3 */
+  border-radius: 0.75rem; /* rounded-xl */
+  border: 1px solid #e2e8f0; /* border-slate-200 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  color: #1e293b; /* text-slate-800 */
+  background-color: rgba(248, 250, 252, 0.7); /* bg-slate-50/70 */
+  transition: all 0.15s ease-in-out;
+}
+
+.cf-filter-input:hover,
+.cf-filter-select:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.cf-filter-input:focus,
+.cf-filter-select:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: #f97316; /* brand-500 */
+  box-shadow: 0 0 0 1px #f97316;
+}

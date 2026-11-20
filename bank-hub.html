@@ -10,6 +10,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/cashflow-table.css?v=2.7.0" />
+  <link rel="stylesheet" href="assets/css/cashflow-filter.css?v=2.7.0" />
   <link rel="stylesheet" href="assets/css/main.css?v=2.7.0" />
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -75,6 +77,7 @@
 
       <!-- 4 KPI Cards -->
       <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Dòng tiền nạp tháng -->
         <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
@@ -82,12 +85,13 @@
             </div>
             <div>
               <div class="text-[11px] font-bold text-slate-500">Dòng tiền nạp tháng</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5 cursor-pointer kpi-card-value" title="Bấm để xem số chi tiết đầy đủ" data-kpi-compact="1.25B" data-kpi-full="1.250.000.000 đ">1.25B</div>
+              <div id="bankHubKpiTotalAmount" class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5 cursor-pointer kpi-card-value" title="1.250.000.000 đ • Bấm để hiển thị số đầy đủ" data-kpi-compact="1.25B" data-kpi-full="1.250.000.000 đ">1.25B</div>
             </div>
           </div>
           <i class="fa-solid fa-coins absolute -right-2 -bottom-2 text-emerald-500/10 text-5xl pointer-events-none select-none"></i>
         </div>
 
+        <!-- Card 2: Giao dịch khớp lệnh -->
         <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -95,128 +99,133 @@
             </div>
             <div>
               <div class="text-[11px] font-bold text-slate-500">Giao dịch khớp lệnh</div>
-              <div class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">342 lệnh</div>
+              <div id="bankHubKpiMatchedCount" class="text-xl font-extrabold text-slate-900 leading-tight mt-0.5">342 lệnh</div>
             </div>
           </div>
           <i class="fa-solid fa-arrow-right-arrow-left absolute -right-2 -bottom-2 text-blue-500/10 text-5xl pointer-events-none select-none"></i>
         </div>
 
+        <!-- Card 3: Nạp từ Đại lý (B2B) -->
         <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-bullseye text-base"></i>
+              <i class="fa-solid fa-wallet text-base"></i>
             </div>
             <div>
-              <div class="text-[11px] font-bold text-slate-500">Tỷ lệ khớp lệnh</div>
-              <div class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5">100%</div>
+              <div class="text-[11px] font-bold text-slate-500">Nạp từ Đại lý (B2B)</div>
+              <div id="bankHubKpiAgencyAmount" class="text-xl font-extrabold text-amber-700 leading-tight mt-0.5 cursor-pointer kpi-card-value" title="1.150.000.000 đ • Bấm để hiển thị số đầy đủ" data-kpi-compact="1.15B" data-kpi-full="1.150.000.000 đ">1.15B</div>
             </div>
           </div>
-          <i class="fa-solid fa-bullseye absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
+          <i class="fa-solid fa-wallet absolute -right-2 -bottom-2 text-amber-500/10 text-5xl pointer-events-none select-none"></i>
         </div>
 
+        <!-- Card 4: Nạp từ Khách lẻ (B2C) -->
         <div class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-stopwatch text-base"></i>
+              <i class="fa-solid fa-users text-base"></i>
             </div>
             <div>
-              <div class="text-[11px] font-bold text-slate-500">Tốc độ xử lý TB</div>
-              <div class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5">1.8 giây</div>
+              <div class="text-[11px] font-bold text-slate-500">Nạp từ Khách lẻ (B2C)</div>
+              <div id="bankHubKpiRetailAmount" class="text-xl font-extrabold text-purple-700 leading-tight mt-0.5 cursor-pointer kpi-card-value" title="100.000.000 đ • Bấm để hiển thị số đầy đủ" data-kpi-compact="100M" data-kpi-full="100.000.000 đ">100M</div>
             </div>
           </div>
-          <i class="fa-solid fa-stopwatch absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
+          <i class="fa-solid fa-users absolute -right-2 -bottom-2 text-purple-500/10 text-5xl pointer-events-none select-none"></i>
         </div>
       </section>
 
-      <!-- Bộ lọc Sao kê Ngân hàng (Thiết kế chuẩn đồng bộ) -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+      <!-- Bộ lọc Sao kê Ngân hàng (Thiết kế chuẩn đồng bộ cashflow-filter.css) -->
+      <section class="cf-filter-card space-y-3">
+        <div class="cf-filter-grid">
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm giao dịch</label>
+            <label class="cf-filter-label" for="bankHubSearchInput">Tìm kiếm giao dịch</label>
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-              <input type="text" placeholder="Mã GD, số tài khoản, nội dung..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400" />
+              <input id="bankHubSearchInput" type="text" placeholder="Mã GD, số TK, nội dung, đại lý..." class="cf-filter-input pl-8" />
             </div>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ngân hàng thụ hưởng</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-              <option value="ALL">Tất cả ngân hàng (All)</option>
-              <option value="VCB">Vietcombank (Hội sở chính)</option>
-              <option value="MB">MB Bank (Quân đội)</option>
-              <option value="TCB">Techcombank</option>
-              <option value="ACB">ACB Á Châu</option>
+            <label class="cf-filter-label" for="bankHubGatewaySelect">Cổng thanh toán</label>
+            <select id="bankHubGatewaySelect" class="cf-filter-select cursor-pointer">
+              <option value="ALL">Tất cả cổng thanh toán (All)</option>
+              <option value="Vietcombank 247">Vietcombank 247</option>
+              <option value="MB Bank API">MB Bank API</option>
+              <option value="Sacombank">Sacombank</option>
+              <option value="VietinBank OpenBanking">VietinBank OpenBanking</option>
+              <option value="ACB FastPay">ACB FastPay</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái đối soát</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-              <option value="ALL">Tất cả trạng thái</option>
-              <option value="MATCHED">Khớp lệnh tự động 100%</option>
-              <option value="MANUAL">Đã khớp thủ công</option>
-              <option value="PENDING">Chờ đối soát IPN</option>
+            <label class="cf-filter-label" for="bankHubPartyTypeSelect">Phân loại đối tượng</label>
+            <select id="bankHubPartyTypeSelect" class="cf-filter-select cursor-pointer">
+              <option value="ALL">Tất cả đối tượng</option>
+              <option value="AGENCY">Đại lý (B2B)</option>
+              <option value="RETAIL">Khách lẻ</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khoảng thời gian</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-              <option value="TODAY">Hôm nay (18/11/2026)</option>
-              <option value="7DAYS">7 ngày gần nhất</option>
+            <label class="cf-filter-label" for="bankHubTimeRangeSelect">Khoảng thời gian</label>
+            <select id="bankHubTimeRangeSelect" class="cf-filter-select cursor-pointer">
               <option value="MONTH">Tháng 11/2026</option>
+              <option value="TODAY">Hôm nay (18/11/2026)</option>
+              <option value="ALL">Toàn thời gian</option>
             </select>
           </div>
         </div>
       </section>
 
-      <!-- Bảng sao kê giao dịch ngân hàng thời gian thực -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-          <div class="font-extrabold text-sm text-slate-900">Nhật ký Giao dịch Khớp lệnh Ngân hàng Tự động</div>
-          <span class="text-xs text-slate-400">Thời gian thực • Webhook IPN</span>
+      <!-- Bảng Báo cáo Giao dịch Bankhub 9 cột chuẩn (Thay thế hoàn toàn bảng cũ) -->
+      <section class="cf-table-card">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
+          <div>
+            <div class="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Báo cáo Giao dịch Bankhub (TOPUP)</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">Webhook IPN 24/7</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">Theo dõi lịch sử giao dịch nạp tiền tự động qua hệ thống Bankhub &amp; các cổng thanh toán ngân hàng</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="exportBankhubExcel()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+              <i class="fa-solid fa-file-excel text-emerald-600"></i>
+              <span>Xuất Excel</span>
+            </button>
+            <button type="button" onclick="refreshBankhubData()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+              <i class="fa-solid fa-arrows-rotate text-slate-500"></i>
+              <span>Làm mới</span>
+            </button>
+          </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+
+        <div class="cf-table-scroll">
+          <table class="cf-table min-w-[1300px] w-full text-left border-collapse text-xs">
+            <thead class="cf-thead">
               <tr>
-                <th class="px-4 py-3">Mã GD Ngân hàng</th>
-                <th class="px-4 py-3">Thời gian</th>
-                <th class="px-4 py-3">Cổng ngân hàng</th>
-                <th class="px-4 py-3 text-right">Số tiền nhận</th>
-                <th class="px-4 py-3">Nội dung chuyển khoản</th>
-                <th class="px-4 py-3">Tài khoản thụ hưởng</th>
-                <th class="px-4 py-3 text-center">Trạng thái</th>
+                <th class="w-12 text-center">STT</th>
+                <th class="whitespace-nowrap">Ngày giao dịch</th>
+                <th class="whitespace-nowrap">Mã GD (Bankhub)</th>
+                <th class="whitespace-nowrap">Khách Hàng / Đại Lý</th>
+                <th class="whitespace-nowrap">Cổng thanh toán</th>
+                <th class="whitespace-nowrap">Số TK</th>
+                <th class="whitespace-nowrap">Tên tài khoản</th>
+                <th class="whitespace-nowrap">Mã tham chiếu</th>
+                <th class="whitespace-nowrap">Nội dung</th>
+                <th class="whitespace-nowrap text-right pr-5">Số tiền</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">VCB-9841289</td>
-                <td class="px-4 py-3.5 text-slate-500">18/11/2026 09:17</td>
-                <td class="px-4 py-3.5 font-semibold text-slate-700">Vietcombank 247</td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+10.000.000 đ</td>
-                <td class="px-4 py-3.5 font-mono text-slate-800">NAPVI TA089</td>
-                <td class="px-4 py-3.5 font-medium text-slate-700">Ví Đại lý HuyEra</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">MB-4512903</td>
-                <td class="px-4 py-3.5 text-slate-500">18/11/2026 09:02</td>
-                <td class="px-4 py-3.5 font-semibold text-slate-700">MB Bank API</td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+4.704.000 đ</td>
-                <td class="px-4 py-3.5 font-mono text-slate-800">THANHTOAN TEC-00000277</td>
-                <td class="px-4 py-3.5 font-medium text-slate-700">Đơn hàng Ba Na Hills</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5 font-mono font-bold text-blue-700">VCB-9840112</td>
-                <td class="px-4 py-3.5 text-slate-500">18/11/2026 08:30</td>
-                <td class="px-4 py-3.5 font-semibold text-slate-700">Vietcombank 247</td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">+25.000.000 đ</td>
-                <td class="px-4 py-3.5 font-mono text-slate-800">NAPVI TA-BAMIEN</td>
-                <td class="px-4 py-3.5 font-medium text-slate-700">Ví Cty Ba Miền HCM</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Khớp lệnh tức thì</span></td>
-              </tr>
+            <tbody id="bankhubTableBody" class="divide-y divide-slate-100">
+              <!-- Render động qua bank-hub.js -->
             </tbody>
           </table>
+        </div>
+
+        <!-- Phân trang Pagination -->
+        <div class="px-4 py-3 border-t border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div id="bankhubPaginationInfo" class="text-slate-500 font-medium">
+            Đang hiển thị <span class="font-bold text-slate-800">1 - 10</span> / <span class="font-bold text-slate-800">16</span> giao dịch
+          </div>
+          <div id="bankhubPaginationControls" class="flex items-center gap-1">
+            <!-- Buttons phân trang -->
+          </div>
         </div>
       </section>
 
@@ -231,6 +240,7 @@
   <script src="database/db-store.js"></script>
   <script src="assets/js/utils.js?v=2.7.0"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
+  <script src="assets/js/bank-hub.js?v=2.7.0"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       renderSharedShell({ activePage: 'bank-hub', pageTitle: 'Bank Hub' });
