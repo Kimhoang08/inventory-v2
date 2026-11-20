@@ -10,6 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/system-filter-controls.css?v=2.8.0" />
+  <link rel="stylesheet" href="assets/css/cashflow-table.css?v=2.7.0" />
+  <link rel="stylesheet" href="assets/css/cashflow-filter.css?v=2.7.0" />
   <link rel="stylesheet" href="assets/css/main.css?v=2.7.0" />
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -107,109 +110,120 @@
         </div>
       </section>
 
-      <!-- Bộ lọc Hóa đơn VAT (Thiết kế chuẩn đồng bộ) -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tìm kiếm hóa đơn</label>
+      <!-- 1. Khối Tìm kiếm & Bộ lọc (Không có nút "Lọc" - Đồng bộ system-filter-controls.css) -->
+      <section class="sfc-filter-card">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+          
+          <!-- Tìm kiếm (lg:col-span-3) -->
+          <div class="col-span-1 sm:col-span-2 lg:col-span-3">
+            <label class="sfc-label" for="vatSearchInput">Tìm kiếm</label>
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-              <input type="text" placeholder="Số HĐ, MST, tên công ty..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400" />
+              <input
+                type="text"
+                id="vatSearchInput"
+                oninput="onVatSearchInput()"
+                placeholder="Mã hoá đơn, mã đơn, tenant..."
+                class="sfc-control pl-8"
+              />
             </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái phát hành</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+
+          <!-- Trạng thái (lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
+            <label class="sfc-label" for="vatStatusSelect">Trạng thái</label>
+            <select id="vatStatusSelect" onchange="applyVatFilters()" class="sfc-control cursor-pointer">
               <option value="ALL">Tất cả</option>
-              <option value="SIGNED">Đã ký điện tử VNPT</option>
-              <option value="PENDING">Chờ ký số</option>
-              <option value="CANCELLED">Đã hủy bỏ</option>
+              <option value="DRAFT">DRAFT (Nháp)</option>
+              <option value="ISSUED">ISSUED (Đã phát hành)</option>
             </select>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Thuế suất VAT</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+
+          <!-- Provider (lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
+            <label class="sfc-label" for="vatProviderSelect">Provider</label>
+            <select id="vatProviderSelect" onchange="applyVatFilters()" class="sfc-control cursor-pointer">
               <option value="ALL">Tất cả</option>
-              <option value="8">VAT 8% (Ưu đãi du lịch)</option>
-              <option value="10">VAT 10% (Tiêu chuẩn)</option>
-              <option value="0">VAT 0%</option>
+              <option value="VIETTEL">VIETTEL</option>
+              <option value="MISA">MISA</option>
+              <option value="S3">S3</option>
             </select>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kỳ phát hành</label>
-            <select class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
-              <option value="THIS_MONTH">Tháng 11/2026 (Hiện tại)</option>
-              <option value="LAST_MONTH">Tháng 10/2026</option>
-              <option value="Q4">Quý 4/2026</option>
-            </select>
+
+          <!-- Ngày tạo hoá đơn (2 đầu Start date & End date) + Nút Làm mới (lg:col-span-5) -->
+          <div class="col-span-1 sm:col-span-2 lg:col-span-5">
+            <label class="sfc-label">Ngày tạo hoá đơn</label>
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1 min-w-0 flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl border border-slate-300 bg-white hover:border-slate-400 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 shadow-2xs h-[40px] transition-colors">
+                <input
+                  type="date"
+                  id="vatStartDate"
+                  onchange="applyVatFilters()"
+                  class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none cursor-pointer flex-1 min-w-0"
+                  title="Từ ngày (Start date)"
+                />
+                <span class="text-slate-400 text-xs shrink-0 px-0.5">-</span>
+                <input
+                  type="date"
+                  id="vatEndDate"
+                  onchange="applyVatFilters()"
+                  class="text-xs font-semibold text-slate-700 bg-transparent focus:outline-none cursor-pointer flex-1 min-w-0"
+                  title="Đến ngày (End date)"
+                />
+                <i class="fa-regular fa-calendar text-amber-500 text-xs shrink-0 pointer-events-none ml-1"></i>
+              </div>
+              <button
+                type="button"
+                onclick="resetVatFilters()"
+                class="sfc-reset-icon-btn shrink-0"
+                title="Làm mới bộ lọc (Đặt lại mặc định)"
+                aria-label="Làm mới bộ lọc"
+              >
+                <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Bảng Danh sách Hoá đơn VAT -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-          <div class="font-extrabold text-sm text-slate-900">Danh sách Hoá đơn VAT đã Xuất</div>
-          <span class="text-xs text-slate-400">Dữ liệu đồng bộ e-Invoice VNPT</span>
+      <!-- 2. Bảng Danh sách Hoá đơn VAT 8 cột chuẩn -->
+      <section class="cf-table-card">
+        <div class="sfc-table-toolbar flex-wrap gap-3 sm:items-center justify-between border-b border-slate-100 bg-white">
+          <div>
+            <div class="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Danh sách Hoá đơn VAT Điện tử (e-Invoice)</span>
+              <span id="vatTableBadgeCount" class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200">8 hóa đơn</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">Theo dõi lịch sử phát hành hóa đơn VAT, mã lô đối soát và trạng thái tích hợp cổng e-Invoice</p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap shrink-0">
+            <button type="button" onclick="exportVatExcel()" class="sfc-btn-secondary" title="Xuất file Excel">
+              <i class="fa-solid fa-file-excel text-emerald-600"></i>
+              <span>Xuất Excel</span>
+            </button>
+            <button type="button" onclick="refreshVatData()" class="sfc-btn-secondary" title="Làm mới dữ liệu">
+              <i class="fa-solid fa-arrows-rotate text-slate-500"></i>
+              <span>Làm mới</span>
+            </button>
+          </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+
+        <div class="cf-table-scroll">
+          <table class="cf-table min-w-[1080px] w-full text-left border-collapse text-xs">
+            <thead class="cf-thead">
               <tr>
-                <th class="px-4 py-3">Số HĐ / Ngày ký</th>
-                <th class="px-4 py-3">Khách hàng / Mã số thuế</th>
-                <th class="px-4 py-3">Đơn hàng liên kết</th>
-                <th class="px-4 py-3 text-right">Tiền trước thuế</th>
-                <th class="px-4 py-3 text-right">Thuế VAT (8%)</th>
-                <th class="px-4 py-3 text-right">Tổng thanh toán</th>
-                <th class="px-4 py-3 text-center">Trạng thái</th>
-                <th class="px-4 py-3 text-right">Thao tác</th>
+                <th class="cf-th min-w-[220px]">MÃ HOÁ ĐƠN</th>
+                <th class="cf-th min-w-[150px]">TENANT</th>
+                <th class="cf-th min-w-[110px]">PROVIDER</th>
+                <th class="cf-th text-center min-w-[120px]">TRẠNG THÁI</th>
+                <th class="cf-th font-mono min-w-[80px]">HTTP</th>
+                <th class="cf-th min-w-[160px]">NGÀY TẠO</th>
+                <th class="cf-th min-w-[140px]">LỖI</th>
+                <th class="cf-th text-right min-w-[180px]">THAO TÁC</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5">
-                  <strong class="font-mono text-purple-700 block text-xs">HD-2026-00412</strong>
-                  <span class="text-[11px] text-slate-400">18/11/2026 09:15</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <strong class="text-slate-800 block">CÔNG TY TNHH DVDL BA MIEN HCM</strong>
-                  <span class="text-[11px] text-slate-500 font-mono">MST: 0314567890</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <span class="font-mono font-bold text-slate-700">ORD-2611-001</span>
-                  <div class="text-[11px] text-slate-400">Ba Na Hills • 4 vé</div>
-                </td>
-                <td class="px-4 py-3.5 text-right font-bold text-slate-700">4.355.556 đ</td>
-                <td class="px-4 py-3.5 text-right font-semibold text-slate-600">348.444 đ</td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-slate-900">4.704.000 đ</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Đã ký số</span></td>
-                <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Tải PDF', 'Đang tải file PDF hoá đơn điện tử HD-2026-00412...')" class="px-2.5 py-1 rounded-lg border border-purple-200 text-purple-700 hover:bg-purple-50 font-bold text-[11px] cursor-pointer">Tải PDF</button>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="px-4 py-3.5">
-                  <strong class="font-mono text-purple-700 block text-xs">HD-2026-00411</strong>
-                  <span class="text-[11px] text-slate-400">18/11/2026 08:40</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <strong class="text-slate-800 block">DU LỊCH VIỆT HOLIDAY</strong>
-                  <span class="text-[11px] text-slate-500 font-mono">MST: 0319888777</span>
-                </td>
-                <td class="px-4 py-3.5">
-                  <span class="font-mono font-bold text-slate-700">ORD-2611-004</span>
-                  <div class="text-[11px] text-slate-400">VinWonders Phú Quốc • 5 vé</div>
-                </td>
-                <td class="px-4 py-3.5 text-right font-bold text-slate-700">5.925.926 đ</td>
-                <td class="px-4 py-3.5 text-right font-semibold text-slate-600">474.074 đ</td>
-                <td class="px-4 py-3.5 text-right font-extrabold text-slate-900">6.400.000 đ</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Đã ký số</span></td>
-                <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Tải PDF', 'Đang tải file PDF hoá đơn điện tử HD-2026-00411...')" class="px-2.5 py-1 rounded-lg border border-purple-200 text-purple-700 hover:bg-purple-50 font-bold text-[11px] cursor-pointer">Tải PDF</button>
-                </td>
-              </tr>
+            <tbody id="vatTableBody" class="cf-tbody divide-y divide-slate-100">
+              <!-- Rendered dynamically by JavaScript -->
             </tbody>
           </table>
         </div>
@@ -231,5 +245,619 @@
       renderSharedShell({ activePage: 'vat-invoices', pageTitle: 'Hoá đơn VAT' });
     });
   </script>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 1: DANH SÁCH ĐƠN HÀNG LIÊN QUAN (XEM ĐƠN) -->
+  <!-- ==================================================================== -->
+  <div
+    id="modalRelatedOrders"
+    onclick="if(event.target===this) closeRelatedOrdersModal()"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+  >
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-8">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+        <div>
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-blue-600"></i>
+            <span>Danh sách Đơn hàng liên quan</span>
+          </h3>
+          <p id="modalRelatedOrdersSubtitle" class="text-xs text-slate-500 mt-0.5">Mã hoá đơn: BATCH-05B09209A408438E</p>
+        </div>
+        <button
+          type="button"
+          onclick="closeRelatedOrdersModal()"
+          class="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer shrink-0 -mr-1"
+          aria-label="Đóng"
+        >
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- Body: Table of Orders -->
+      <div class="p-5 overflow-x-auto max-h-[60vh]">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <tr>
+              <th class="px-3 py-2.5">MÃ ĐƠN HÀNG</th>
+              <th class="px-3 py-2.5">KHÁCH HÀNG / ĐẠI LÝ</th>
+              <th class="px-3 py-2.5">ĐIỂM ĐẾN / KHU VUI CHƠI</th>
+              <th class="px-3 py-2.5 text-right">TỔNG TIỀN</th>
+            </tr>
+          </thead>
+          <tbody id="modalRelatedOrdersBody" class="divide-y divide-slate-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end">
+        <button
+          type="button"
+          onclick="closeRelatedOrdersModal()"
+          class="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+        >
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL 2: XEM NHÁP HOÁ ĐƠN VAT (DRAFT PREVIEW) -->
+  <!-- ==================================================================== -->
+  <div
+    id="modalDraftInvoicePreview"
+    onclick="if(event.target===this) closeDraftInvoiceModal()"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+  >
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-8">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-amber-50/60">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-black">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Bản Nháp Hoá Đơn Điện Tử</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">DRAFT</span>
+            </h3>
+            <p id="draftModalSubtitle" class="text-xs text-slate-500 font-mono">HD: ORDER20261023BBU000026</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onclick="closeDraftInvoiceModal()"
+          class="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer shrink-0 -mr-1"
+          aria-label="Đóng"
+        >
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- Preview Body -->
+      <div class="p-6 space-y-4 text-xs">
+        <!-- Thông tin đơn vị bán -->
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">ĐƠN VỊ PHÁT HÀNH</div>
+          <div class="font-extrabold text-slate-900">CÔNG TY TNHH TECHERA</div>
+          <div class="text-slate-600 font-mono">MST: 0317899999 • Ký hiệu: 1C26TTR</div>
+        </div>
+
+        <!-- Thông tin người mua -->
+        <div id="draftBuyerInfo" class="p-3.5 rounded-xl border border-slate-200 space-y-1">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">KHÁCH HÀNG / ĐƠN VỊ MUA HÀNG</div>
+          <div id="draftBuyerName" class="font-bold text-slate-900">Công ty Cổ phần Lữ hành Quốc tế</div>
+          <div class="text-slate-600">Đơn hàng xuất gộp: <span id="draftOrdersList" class="font-mono font-bold text-blue-700">ORD-2611-005</span></div>
+        </div>
+
+        <!-- Bảng tổng hợp số tiền -->
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <div class="p-3 bg-slate-50 border-b border-slate-200 font-bold text-slate-700 flex justify-between">
+            <span>Mô tả dịch vụ</span>
+            <span>Thành tiền</span>
+          </div>
+          <div class="p-3.5 space-y-2 text-slate-700">
+            <div class="flex justify-between">
+              <span>Vé tham quan khu vui chơi & du lịch (VAT 8%)</span>
+              <span id="draftSubtotal" class="font-semibold text-slate-900">8.240.741 đ</span>
+            </div>
+            <div class="flex justify-between text-slate-500">
+              <span>Thuế GTGT (VAT 8%)</span>
+              <span id="draftVat" class="font-semibold text-slate-900">659.259 đ</span>
+            </div>
+            <div class="pt-2 border-t border-slate-200 flex justify-between font-extrabold text-slate-900 text-sm">
+              <span>Tổng thanh toán</span>
+              <span id="draftTotal" class="text-blue-700">8.900.000 đ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button
+          type="button"
+          onclick="closeDraftInvoiceModal()"
+          class="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+        >
+          Đóng
+        </button>
+        <button
+          type="button"
+          id="btnDraftModalIssue"
+          onclick="issueFromDraftModal()"
+          class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer inline-flex items-center gap-1.5"
+        >
+          <span>Phát hành hóa đơn</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- JAVASCRIPT: LOGIC BỘ LỌC TỰ ĐỘNG & BẢNG HOÁ ĐƠN VAT -->
+  <!-- ==================================================================== -->
+  <script>
+    const VAT_INVOICES_DATA = [
+      {
+        id: 'BATCH-05B09209A408438E',
+        tenant: 'VEVUIVE_STAGING',
+        provider: 'VIETTEL',
+        status: 'ISSUED',
+        httpStatus: 201,
+        createdAt: '15:09:34 17/11/2026',
+        dateOnly: '2026-11-17',
+        error: '-',
+        ordersCount: 3,
+        orders: [
+          { code: 'ORD-2611-001', customer: 'CÔNG TY TNHH DVDL BA MIEN HCM', site: 'Sun World Ba Na Hills', amount: '4.704.000 đ' },
+          { code: 'ORD-2611-002', customer: 'Nguyễn Văn Hùng', site: 'VinWonders Nha Trang', amount: '1.850.000 đ' },
+          { code: 'ORD-2611-003', customer: 'Trần Thị Mai', site: 'Fansipan Legend', amount: '2.150.000 đ' }
+        ]
+      },
+      {
+        id: 'TEC-00002642',
+        tenant: 'VEVUIVE_STAGING',
+        provider: 'MISA',
+        status: 'ISSUED',
+        httpStatus: 200,
+        createdAt: '11:42:10 18/11/2026',
+        dateOnly: '2026-11-18',
+        error: '-',
+        ordersCount: 1,
+        orders: [
+          { code: 'ORD-2611-004', customer: 'DU LỊCH VIỆT HOLIDAY', site: 'VinWonders Phú Quốc', amount: '6.400.000 đ' }
+        ]
+      },
+      {
+        id: 'ORDER20261023BBU000026',
+        tenant: 'TECHERA_PROD',
+        provider: 'S3',
+        status: 'DRAFT',
+        httpStatus: 201,
+        createdAt: '09:15:20 18/11/2026',
+        dateOnly: '2026-11-18',
+        error: '-',
+        ordersCount: 1,
+        orders: [
+          { code: 'ORD-2611-005', customer: 'Công ty Cổ phần Lữ hành Quốc tế', site: 'Bà Đen Mountain', amount: '8.900.000 đ' }
+        ]
+      },
+      {
+        id: 'BATCH-77A12891C501192A',
+        tenant: 'SUNWORLD_B2B',
+        provider: 'VIETTEL',
+        status: 'DRAFT',
+        httpStatus: 201,
+        createdAt: '16:30:15 16/11/2026',
+        dateOnly: '2026-11-16',
+        error: '-',
+        ordersCount: 4,
+        orders: [
+          { code: 'ORD-2611-006', customer: 'Đại lý Golden Travel', site: 'Sun World Hạ Long', amount: '5.200.000 đ' },
+          { code: 'ORD-2611-007', customer: 'Đại lý Golden Travel', site: 'Sun World Cát Bà', amount: '3.600.000 đ' },
+          { code: 'ORD-2611-008', customer: 'Đại lý Golden Travel', site: 'Hòn Thơm Phú Quốc', amount: '4.800.000 đ' },
+          { code: 'ORD-2611-009', customer: 'Đại lý Golden Travel', site: 'Fansipan Legend', amount: '3.100.000 đ' }
+        ]
+      },
+      {
+        id: 'TEC-00002643',
+        tenant: 'VEVUIVE_STAGING',
+        provider: 'MISA',
+        status: 'ISSUED',
+        httpStatus: 200,
+        createdAt: '10:20:45 15/11/2026',
+        dateOnly: '2026-11-15',
+        error: '-',
+        ordersCount: 1,
+        orders: [
+          { code: 'ORD-2611-010', customer: 'Đại lý Saigon Tourist B2B', site: 'Sun World Ba Na Hills', amount: '12.500.000 đ' }
+        ]
+      },
+      {
+        id: 'BATCH-99C34211D802283F',
+        tenant: 'TECHERA_PROD',
+        provider: 'S3',
+        status: 'DRAFT',
+        httpStatus: 400,
+        createdAt: '14:05:12 14/11/2026',
+        dateOnly: '2026-11-14',
+        error: 'ERR_TIMEOUT',
+        ordersCount: 2,
+        orders: [
+          { code: 'ORD-2611-011', customer: 'Khách lẻ Hoàng Gia', site: 'VinWonders Nam Hội An', amount: '2.800.000 đ' },
+          { code: 'ORD-2611-012', customer: 'Khách lẻ Hoàng Gia', site: 'Vinpearl Safari Phú Quốc', amount: '1.950.000 đ' }
+        ]
+      },
+      {
+        id: 'TEC-00002644',
+        tenant: 'VEVUIVE_STAGING',
+        provider: 'VIETTEL',
+        status: 'ISSUED',
+        httpStatus: 200,
+        createdAt: '08:45:30 14/11/2026',
+        dateOnly: '2026-11-14',
+        error: '-',
+        ordersCount: 1,
+        orders: [
+          { code: 'ORD-2611-013', customer: 'Công ty Du lịch Biển Đông', site: 'Sun World Ba Na Hills', amount: '7.850.000 đ' }
+        ]
+      },
+      {
+        id: 'BATCH-11D56782E903394G',
+        tenant: 'SUNWORLD_B2B',
+        provider: 'MISA',
+        status: 'ISSUED',
+        httpStatus: 200,
+        createdAt: '17:12:05 13/11/2026',
+        dateOnly: '2026-11-13',
+        error: '-',
+        ordersCount: 6,
+        orders: [
+          { code: 'ORD-2611-014', customer: 'Đại lý Việt Sun Travel', site: 'Sun World Ba Na Hills', amount: '3.400.000 đ' },
+          { code: 'ORD-2611-015', customer: 'Đại lý Việt Sun Travel', site: 'Bà Đen Mountain', amount: '2.800.000 đ' },
+          { code: 'ORD-2611-016', customer: 'Đại lý Việt Sun Travel', site: 'Sun World Hạ Long', amount: '4.200.000 đ' },
+          { code: 'ORD-2611-017', customer: 'Đại lý Việt Sun Travel', site: 'Fansipan Legend', amount: '5.100.000 đ' },
+          { code: 'ORD-2611-018', customer: 'Đại lý Việt Sun Travel', site: 'Hòn Thơm Phú Quốc', amount: '3.900.000 đ' },
+          { code: 'ORD-2611-019', customer: 'Đại lý Việt Sun Travel', site: 'Sun World Ba Na Hills', amount: '6.500.000 đ' }
+        ]
+      }
+    ];
+
+    let currentVatInvoices = [...VAT_INVOICES_DATA];
+    let vatSearchDebounceTimer = null;
+    let currentPreviewInvoiceId = null;
+
+    function onVatSearchInput() {
+      clearTimeout(vatSearchDebounceTimer);
+      vatSearchDebounceTimer = setTimeout(() => {
+        applyVatFilters();
+      }, 280);
+    }
+
+    function applyVatFilters() {
+      const searchInput = document.getElementById('vatSearchInput');
+      const statusSelect = document.getElementById('vatStatusSelect');
+      const providerSelect = document.getElementById('vatProviderSelect');
+      const startDateInput = document.getElementById('vatStartDate');
+      const endDateInput = document.getElementById('vatEndDate');
+
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const status = statusSelect ? statusSelect.value : 'ALL';
+      const provider = providerSelect ? providerSelect.value : 'ALL';
+      const startDate = startDateInput ? startDateInput.value : '';
+      const endDate = endDateInput ? endDateInput.value : '';
+
+      const filtered = currentVatInvoices.filter(inv => {
+        // 1. Search Query
+        if (query) {
+          const matchId = inv.id.toLowerCase().includes(query);
+          const matchTenant = inv.tenant.toLowerCase().includes(query);
+          const matchOrders = inv.orders.some(o => 
+            o.code.toLowerCase().includes(query) || o.customer.toLowerCase().includes(query)
+          );
+          if (!matchId && !matchTenant && !matchOrders) return false;
+        }
+
+        // 2. Status
+        if (status !== 'ALL' && inv.status !== status) return false;
+
+        // 3. Provider
+        if (provider !== 'ALL' && inv.provider !== provider) return false;
+
+        // 4. Date Range
+        if (startDate && inv.dateOnly < startDate) return false;
+        if (endDate && inv.dateOnly > endDate) return false;
+
+        return true;
+      });
+
+      renderVatTable(filtered);
+    }
+
+    function resetVatFilters() {
+      const searchInput = document.getElementById('vatSearchInput');
+      const statusSelect = document.getElementById('vatStatusSelect');
+      const providerSelect = document.getElementById('vatProviderSelect');
+      const startDateInput = document.getElementById('vatStartDate');
+      const endDateInput = document.getElementById('vatEndDate');
+
+      if (searchInput) searchInput.value = '';
+      if (statusSelect) statusSelect.value = 'ALL';
+      if (providerSelect) providerSelect.value = 'ALL';
+      if (startDateInput) startDateInput.value = '';
+      if (endDateInput) endDateInput.value = '';
+
+      applyVatFilters();
+
+      if (typeof showToast === 'function') {
+        showToast('Đặt lại bộ lọc', 'Đã khôi phục các điều kiện lọc về mặc định.');
+      }
+    }
+
+    function getProviderBadge(provider) {
+      switch (provider) {
+        case 'VIETTEL':
+          return '<span class="px-2.5 py-0.5 rounded-full font-bold text-[10.5px] bg-rose-50 text-rose-700 border border-rose-200">VIETTEL</span>';
+        case 'MISA':
+          return '<span class="px-2.5 py-0.5 rounded-full font-bold text-[10.5px] bg-blue-50 text-blue-700 border border-blue-200">MISA</span>';
+        case 'S3':
+          return '<span class="px-2.5 py-0.5 rounded-full font-bold text-[10.5px] bg-purple-50 text-purple-700 border border-purple-200">S3</span>';
+        default:
+          return `<span class="px-2.5 py-0.5 rounded-full font-bold text-[10.5px] bg-slate-100 text-slate-700 border border-slate-200">${provider}</span>`;
+      }
+    }
+
+    function getStatusBadge(status) {
+      if (status === 'ISSUED') {
+        return '<span class="px-2.5 py-1 rounded-full font-bold text-[10.5px] bg-emerald-50 text-emerald-700 border border-emerald-200">ISSUED</span>';
+      }
+      return '<span class="px-2.5 py-1 rounded-full font-bold text-[10.5px] bg-amber-50 text-amber-700 border border-amber-200">DRAFT</span>';
+    }
+
+    function renderVatTable(invoices) {
+      const tbody = document.getElementById('vatTableBody');
+      const badgeCount = document.getElementById('vatTableBadgeCount');
+      if (badgeCount) badgeCount.innerText = `${invoices.length} hóa đơn`;
+
+      if (!tbody) return;
+
+      if (invoices.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+              <i class="fa-solid fa-file-circle-xmark text-3xl mb-2 block text-slate-300"></i>
+              <div class="font-bold text-slate-600 text-sm">Không tìm thấy hoá đơn VAT phù hợp</div>
+              <p class="text-xs text-slate-400 mt-0.5">Vui lòng thử điều chỉnh lại từ khóa hoặc khoảng ngày tìm kiếm</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = invoices.map(inv => {
+        const providerBadge = getProviderBadge(inv.provider);
+        const statusBadge = getStatusBadge(inv.status);
+        const errorHtml = inv.error === '-' 
+          ? '<span class="text-slate-400">-</span>' 
+          : `<span class="font-mono text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">${inv.error}</span>`;
+
+        let actionHtml = '';
+        if (inv.status === 'DRAFT') {
+          actionHtml = `
+            <div class="inline-flex items-center gap-1.5 justify-end">
+              <button
+                type="button"
+                onclick="viewDraftInvoice('${inv.id}')"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer shadow-2xs transition-colors"
+                title="Xem nháp hóa đơn"
+              >
+                <i class="fa-regular fa-eye text-xs text-slate-500"></i>
+                <span>Xem nháp</span>
+              </button>
+              <button
+                type="button"
+                onclick="issueVatInvoice('${inv.id}')"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors"
+                title="Phát hành hóa đơn điện tử"
+              >
+                <span>Phát hành</span>
+              </button>
+            </div>
+          `;
+        } else {
+          actionHtml = `
+            <div class="inline-flex items-center justify-end">
+              <button
+                type="button"
+                onclick="downloadVatPdf('${inv.id}')"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer shadow-2xs transition-colors"
+                title="Tải hóa đơn điện tử PDF"
+              >
+                <i class="fa-solid fa-download text-xs text-slate-500"></i>
+                <span>Tải PDF</span>
+              </button>
+            </div>
+          `;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <!-- 1. MÃ HOÁ ĐƠN -->
+            <td class="cf-td">
+              <div class="font-mono font-bold text-slate-900 text-xs tracking-tight">${inv.id}</div>
+              <button
+                type="button"
+                onclick="openRelatedOrdersModal('${inv.id}')"
+                class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer inline-flex items-center gap-1 mt-0.5"
+                title="Xem danh sách ${inv.ordersCount} đơn hàng liên quan"
+              >
+                <i class="fa-solid fa-list-check text-[10px]"></i>
+                <span>Xem đơn (${inv.ordersCount})</span>
+              </button>
+            </td>
+
+            <!-- 2. TENANT -->
+            <td class="cf-td">
+              <span class="font-mono font-bold text-slate-700 text-xs">${inv.tenant}</span>
+            </td>
+
+            <!-- 3. PROVIDER -->
+            <td class="cf-td">${providerBadge}</td>
+
+            <!-- 4. TRẠNG THÁI -->
+            <td class="cf-td text-center">${statusBadge}</td>
+
+            <!-- 5. HTTP -->
+            <td class="cf-td font-mono font-bold text-xs text-slate-700 tabular-nums">${inv.httpStatus}</td>
+
+            <!-- 6. NGÀY TẠO -->
+            <td class="cf-td text-slate-600 text-xs font-medium whitespace-nowrap">${inv.createdAt}</td>
+
+            <!-- 7. LỖI -->
+            <td class="cf-td">${errorHtml}</td>
+
+            <!-- 8. THAO TÁC -->
+            <td class="cf-td text-right whitespace-nowrap">${actionHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Modal Xem đơn (n)
+    function openRelatedOrdersModal(invoiceId) {
+      const inv = currentVatInvoices.find(item => item.id === invoiceId);
+      if (!inv) return;
+
+      const subTitle = document.getElementById('modalRelatedOrdersSubtitle');
+      const tbody = document.getElementById('modalRelatedOrdersBody');
+      const modal = document.getElementById('modalRelatedOrders');
+
+      if (subTitle) subTitle.innerText = `Mã hoá đơn: ${inv.id} (${inv.tenant})`;
+      if (tbody) {
+        tbody.innerHTML = inv.orders.map(o => `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="px-3 py-2.5 font-mono font-bold text-blue-700">${o.code}</td>
+            <td class="px-3 py-2.5 font-bold text-slate-800">${o.customer}</td>
+            <td class="px-3 py-2.5 text-slate-600">${o.site}</td>
+            <td class="px-3 py-2.5 text-right font-bold text-slate-900">${o.amount}</td>
+          </tr>
+        `).join('');
+      }
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    function closeRelatedOrdersModal() {
+      const modal = document.getElementById('modalRelatedOrders');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    // Modal Xem nháp
+    function viewDraftInvoice(invoiceId) {
+      const inv = currentVatInvoices.find(item => item.id === invoiceId);
+      if (!inv) return;
+      currentPreviewInvoiceId = invoiceId;
+
+      const modal = document.getElementById('modalDraftInvoicePreview');
+      const subTitle = document.getElementById('draftModalSubtitle');
+      const buyerName = document.getElementById('draftBuyerName');
+      const ordersList = document.getElementById('draftOrdersList');
+
+      if (subTitle) subTitle.innerText = `Mã HĐ: ${inv.id} • Cổng: ${inv.provider}`;
+      if (buyerName && inv.orders.length > 0) buyerName.innerText = inv.orders[0].customer;
+      if (ordersList) ordersList.innerText = inv.orders.map(o => o.code).join(', ');
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    function closeDraftInvoiceModal() {
+      const modal = document.getElementById('modalDraftInvoicePreview');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+      currentPreviewInvoiceId = null;
+    }
+
+    function issueFromDraftModal() {
+      if (currentPreviewInvoiceId) {
+        issueVatInvoice(currentPreviewInvoiceId);
+        closeDraftInvoiceModal();
+      }
+    }
+
+    function issueVatInvoice(invoiceId) {
+      const inv = currentVatInvoices.find(item => item.id === invoiceId);
+      if (!inv) return;
+
+      inv.status = 'ISSUED';
+      inv.httpStatus = 200;
+      inv.error = '-';
+
+      applyVatFilters();
+
+      if (typeof showToast === 'function') {
+        showToast('Phát hành thành công', `Hóa đơn ${invoiceId} đã được ký số và phát hành thành công trên hệ thống.`);
+      }
+    }
+
+    function downloadVatPdf(invoiceId) {
+      if (typeof showToast === 'function') {
+        showToast('Tải PDF', `Đang tải tệp PDF hoá đơn điện tử ${invoiceId}.pdf...`);
+      }
+    }
+
+    function exportVatExcel() {
+      if (typeof showToast === 'function') {
+        showToast('Xuất Excel', 'Đã xuất danh sách hoá đơn VAT ra tệp Excel.');
+      }
+    }
+
+    function refreshVatData() {
+      applyVatFilters();
+      if (typeof showToast === 'function') {
+        showToast('Làm mới', 'Dữ liệu hoá đơn VAT đã được cập nhật mới nhất.');
+      }
+    }
+
+    // Đóng modal khi bấm phím Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeRelatedOrdersModal();
+        closeDraftInvoiceModal();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyVatFilters();
+    });
+
+    window.onVatSearchInput = onVatSearchInput;
+    window.applyVatFilters = applyVatFilters;
+    window.resetVatFilters = resetVatFilters;
+    window.openRelatedOrdersModal = openRelatedOrdersModal;
+    window.closeRelatedOrdersModal = closeRelatedOrdersModal;
+    window.viewDraftInvoice = viewDraftInvoice;
+    window.closeDraftInvoiceModal = closeDraftInvoiceModal;
+    window.issueFromDraftModal = issueFromDraftModal;
+    window.issueVatInvoice = issueVatInvoice;
+    window.downloadVatPdf = downloadVatPdf;
+    window.exportVatExcel = exportVatExcel;
+    window.refreshVatData = refreshVatData;
+  </script>
+
 </body>
 </html>
