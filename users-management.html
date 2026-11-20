@@ -104,11 +104,10 @@
           <table class="w-full text-left border-collapse text-xs">
             <thead class="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
               <tr>
-                <th class="px-4 py-3">Họ và tên / Email</th>
-                <th class="px-4 py-3">Vai trò phân quyền</th>
-                <th class="px-4 py-3">Bộ phận / Đơn vị</th>
+                <th class="px-4 py-3">Họ và tên</th>
+                <th class="px-4 py-3">Email</th>
                 <th class="px-4 py-3">Số điện thoại</th>
-                <th class="px-4 py-3">Lần đăng nhập cuối</th>
+                <th class="px-4 py-3">Vai trò</th>
                 <th class="px-4 py-3 text-center">Trạng thái</th>
                 <th class="px-4 py-3 text-right">Thao tác</th>
               </tr>
@@ -116,81 +115,81 @@
             <tbody id="usersTableBody" class="divide-y divide-slate-100">
               <tr class="hover:bg-slate-50/80 transition-colors">
                 <td class="px-4 py-3.5 flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-extrabold flex items-center justify-center text-xs">NL</div>
-                  <div>
-                    <strong class="text-slate-900 block font-bold text-xs">Nguyễn Diệu Linh</strong>
-                    <span class="text-[11px] text-slate-400">admin@techera.vn</span>
-                  </div>
+                  <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-extrabold flex items-center justify-center text-xs shrink-0">NL</div>
+                  <strong class="text-slate-900 font-bold text-xs">Nguyễn Diệu Linh</strong>
                 </td>
+                <td class="px-4 py-3.5 text-slate-600 font-medium">admin@techera.vn</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 111 222</td>
                 <td class="px-4 py-3.5">
                   <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Super Admin</span>
                 </td>
-                <td class="px-4 py-3.5 text-slate-600">Ban Giám Đốc</td>
-                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 111 222</td>
-                <td class="px-4 py-3.5 text-slate-400 text-[11px]">Vừa xong • 18/11</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-center">
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span>
+                </td>
                 <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user admin@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                  <button type="button" onclick="editUser('admin@techera.vn', 'Nguyễn Diệu Linh', '0909 111 222', 'Super Admin', true)" class="sfc-action-icon" title="Chỉnh sửa">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
                 </td>
               </tr>
 
               <tr class="hover:bg-slate-50/80 transition-colors">
                 <td class="px-4 py-3.5 flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-xs">KH</div>
-                  <div>
-                    <strong class="text-slate-900 block font-bold text-xs">Nguyễn Thị Kim Hoàng</strong>
-                    <span class="text-[11px] text-slate-400">hoang.sale@techera.vn</span>
-                  </div>
+                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-xs shrink-0">KH</div>
+                  <strong class="text-slate-900 font-bold text-xs">Nguyễn Thị Kim Hoàng</strong>
                 </td>
+                <td class="px-4 py-3.5 text-slate-600 font-medium">hoang.sale@techera.vn</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 333 444</td>
                 <td class="px-4 py-3.5">
                   <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Trưởng phòng KD</span>
                 </td>
-                <td class="px-4 py-3.5 text-slate-600">Ban Kinh Doanh</td>
-                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 333 444</td>
-                <td class="px-4 py-3.5 text-slate-400 text-[11px]">10 phút trước</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-center">
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span>
+                </td>
                 <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user hoang.sale@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                  <button type="button" onclick="editUser('hoang.sale@techera.vn', 'Nguyễn Thị Kim Hoàng', '0909 333 444', 'Trưởng phòng KD', true)" class="sfc-action-icon" title="Chỉnh sửa">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
                 </td>
               </tr>
 
               <tr class="hover:bg-slate-50/80 transition-colors">
                 <td class="px-4 py-3.5 flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center text-xs">LT</div>
-                  <div>
-                    <strong class="text-slate-900 block font-bold text-xs">Lê Văn Tuấn</strong>
-                    <span class="text-[11px] text-slate-400">ketoan@techera.vn</span>
-                  </div>
+                  <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-extrabold flex items-center justify-center text-xs shrink-0">LT</div>
+                  <strong class="text-slate-900 font-bold text-xs">Lê Văn Tuấn</strong>
                 </td>
+                <td class="px-4 py-3.5 text-slate-600 font-medium">ketoan@techera.vn</td>
+                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 555 666</td>
                 <td class="px-4 py-3.5">
                   <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Kế toán Vé &amp; VAT</span>
                 </td>
-                <td class="px-4 py-3.5 text-slate-600">Ban Tài Chính</td>
-                <td class="px-4 py-3.5 text-slate-600 font-mono">0909 555 666</td>
-                <td class="px-4 py-3.5 text-slate-400 text-[11px]">1 giờ trước</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5 text-center">
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span>
+                </td>
                 <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user ketoan@techera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                  <button type="button" onclick="editUser('ketoan@techera.vn', 'Lê Văn Tuấn', '0909 555 666', 'Kế toán Vé &amp; VAT', true)" class="sfc-action-icon" title="Chỉnh sửa">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
                 </td>
               </tr>
 
               <tr class="hover:bg-slate-50/80 transition-colors">
                 <td class="px-4 py-3.5 flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-extrabold flex items-center justify-center text-xs">HE</div>
-                  <div>
-                    <strong class="text-slate-900 block font-bold text-xs">Đại lý HuyEra B2B</strong>
-                    <span class="text-[11px] text-slate-400">booking@huyera.vn</span>
-                  </div>
+                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-extrabold flex items-center justify-center text-xs shrink-0">HE</div>
+                  <strong class="text-slate-900 font-bold text-xs">Đại lý HuyEra B2B</strong>
                 </td>
-                <td class="px-4 py-3.5">
-                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đại lý Cấp 1</span>
-                </td>
-                <td class="px-4 py-3.5 text-slate-600">Đối tác TA-089</td>
+                <td class="px-4 py-3.5 text-slate-600 font-medium">booking@huyera.vn</td>
                 <td class="px-4 py-3.5 text-slate-600 font-mono">0909 888 777</td>
-                <td class="px-4 py-3.5 text-slate-400 text-[11px]">Hôm nay 09:05</td>
-                <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span></td>
+                <td class="px-4 py-3.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đại lý B2B</span>
+                </td>
+                <td class="px-4 py-3.5 text-center">
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span>
+                </td>
                 <td class="px-4 py-3.5 text-right">
-                  <button type="button" onclick="showToast('Khóa/Mở tài khoản', 'Cấu hình quyền đại lý booking@huyera.vn')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+                  <button type="button" onclick="editUser('booking@huyera.vn', 'Đại lý HuyEra B2B', '0909 888 777', 'Đại lý B2B', true)" class="sfc-action-icon" title="Chỉnh sửa">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -382,6 +381,14 @@
     function openNewUserModal() {
       const modal = document.getElementById('modalNewUser');
       const form = document.getElementById('formNewUser');
+      const titleEl = document.querySelector('#modalNewUser h3');
+      const subEl = document.querySelector('#modalNewUser p');
+      const submitBtn = document.getElementById('btnSubmitNewUser');
+
+      if (titleEl) titleEl.innerText = 'Thông tin tài khoản mới';
+      if (subEl) subEl.innerText = 'Nhập các thông tin cần thiết để khởi tạo tài khoản trên hệ thống.';
+      if (submitBtn) submitBtn.innerText = 'Tạo tài khoản';
+
       if (form) {
         form.reset();
         const pwdInput = document.getElementById('newUserPassword');
@@ -510,18 +517,16 @@
         tr.innerHTML = `
           <td class="px-4 py-3.5 flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-xs shrink-0">${initials}</div>
-            <div>
-              <strong class="text-slate-900 block font-bold text-xs">${name}</strong>
-              <span class="text-[11px] text-slate-400">${email}</span>
-            </div>
+            <strong class="text-slate-900 font-bold text-xs">${name}</strong>
           </td>
-          <td class="px-4 py-3.5">${roleBadge}</td>
-          <td class="px-4 py-3.5 text-slate-600">${dept}</td>
+          <td class="px-4 py-3.5 text-slate-600 font-medium">${email}</td>
           <td class="px-4 py-3.5 text-slate-600 font-mono">${phone}</td>
-          <td class="px-4 py-3.5 text-slate-400 text-[11px]">Vừa tạo</td>
+          <td class="px-4 py-3.5">${roleBadge}</td>
           <td class="px-4 py-3.5 text-center">${statusBadge}</td>
           <td class="px-4 py-3.5 text-right">
-            <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user ${email}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+            <button type="button" onclick="editUser('${email}', '${name}', '${phone}', '${role}', ${isActive})" class="sfc-action-icon" title="Chỉnh sửa">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
           </td>
         `;
 
@@ -560,6 +565,30 @@
     window.toggleNewUserPasswordVisibility = toggleNewUserPasswordVisibility;
     window.submitNewUserForm = submitNewUserForm;
     window.filterUsersTable = filterUsersTable;
+    function editUser(email, name, phone, role, isActive) {
+      openNewUserModal();
+      const titleEl = document.querySelector('#modalNewUser h3');
+      const subEl = document.querySelector('#modalNewUser p');
+      const submitBtn = document.getElementById('btnSubmitNewUser');
+
+      if (titleEl) titleEl.innerText = 'Chỉnh sửa tài khoản';
+      if (subEl) subEl.innerText = 'Cập nhật thông tin tài khoản người dùng trên hệ thống.';
+      if (submitBtn) submitBtn.innerText = 'Lưu thay đổi';
+
+      const nameInput = document.getElementById('newUserName');
+      const emailInput = document.getElementById('newUserEmail');
+      const phoneInput = document.getElementById('newUserPhone');
+      const roleInput = document.getElementById('newUserRole');
+      const statusInput = document.getElementById('newUserStatus');
+
+      if (nameInput) nameInput.value = name || '';
+      if (emailInput) emailInput.value = email || '';
+      if (phoneInput) phoneInput.value = phone || '';
+      if (roleInput) roleInput.value = role || '';
+      if (statusInput) statusInput.checked = (isActive !== false);
+    }
+    window.editUser = editUser;
+
   </script>
 
 </body>
