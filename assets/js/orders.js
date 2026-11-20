@@ -1,3 +1,12 @@
+let ordersSearchDebounceTimer = null;
+function onOrdersSearchInput() {
+  clearTimeout(ordersSearchDebounceTimer);
+  ordersSearchDebounceTimer = setTimeout(() => {
+    applyOrdersListFilters();
+  }, 280);
+}
+window.onOrdersSearchInput = onOrdersSearchInput;
+
 // ============================================================================
 // ORDERS LIST ENGINE: VERTICAL SCROLL LAYOUT & ADVANCED FILTERS (orders.html)
 // ============================================================================
@@ -413,15 +422,23 @@ function toggleDateRangePickerPopover(event) {
     updateDateRangePresetPills();
     renderCalendarView();
     popover.classList.remove('hidden');
+    const backdrop = document.getElementById('dateRangePickerBackdrop');
+    if (backdrop) backdrop.classList.remove('hidden');
   } else {
     popover.classList.add('hidden');
+    const backdrop = document.getElementById('dateRangePickerBackdrop');
+    if (backdrop) backdrop.classList.add('hidden');
   }
 }
 
 function closeDateRangePickerPopover() {
   const popover = document.getElementById('popoverDateRangePicker');
+  const backdrop = document.getElementById('dateRangePickerBackdrop');
   if (popover) {
     popover.classList.add('hidden');
+  }
+  if (backdrop) {
+    backdrop.classList.add('hidden');
   }
 }
 
@@ -652,33 +669,21 @@ function renderOrdersListView() {
   const elComp = document.getElementById('kpiCompletedOrders');
   if (elComp) {
     const compVal = formatMoney(completedOrders.length);
-    const tip = `${formatMoney(completedOrders.length)} đơn hàng hoàn tất`;
-    elComp.setAttribute('data-kpi-compact', compVal);
-    elComp.setAttribute('data-kpi-full', tip);
-    elComp.classList.add('cursor-pointer', 'kpi-card-value');
-    if (elComp.classList.contains('kpi-expanded')) {
-      elComp.innerText = tip;
-      elComp.setAttribute('title', 'Bấm để thu gọn số');
-    } else {
-      elComp.innerText = compVal;
-      elComp.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
-    }
+    elComp.innerText = compVal;
+    elComp.removeAttribute('data-kpi-compact');
+    elComp.removeAttribute('data-kpi-full');
+    elComp.removeAttribute('title');
+    elComp.classList.remove('cursor-pointer', 'kpi-card-value', 'kpi-expanded', 'kpi-shortened');
   }
 
   const elProc = document.getElementById('kpiProcessingOrders');
   if (elProc) {
     const procVal = formatMoney(processingOrders.length);
-    const tip = `${formatMoney(processingOrders.length)} đơn hàng đang xử lý`;
-    elProc.setAttribute('data-kpi-compact', procVal);
-    elProc.setAttribute('data-kpi-full', tip);
-    elProc.classList.add('cursor-pointer', 'kpi-card-value');
-    if (elProc.classList.contains('kpi-expanded')) {
-      elProc.innerText = tip;
-      elProc.setAttribute('title', 'Bấm để thu gọn số');
-    } else {
-      elProc.innerText = procVal;
-      elProc.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
-    }
+    elProc.innerText = procVal;
+    elProc.removeAttribute('data-kpi-compact');
+    elProc.removeAttribute('data-kpi-full');
+    elProc.removeAttribute('title');
+    elProc.classList.remove('cursor-pointer', 'kpi-card-value', 'kpi-expanded', 'kpi-shortened');
   }
 
   if (typeof setKpiCardValue === 'function') {

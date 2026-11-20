@@ -1298,12 +1298,65 @@ function initTecheraKpiTooltip() {
   autoRegisterKpiCardElements();
 }
 
+
+/**
+ * Kiểm tra xem một phần tử KPI có phải là CHỈ SỐ TIỀN TỆ (MONEY) hay không.
+ * Các chỉ số là SỐ LƯỢNG (đơn hàng, vé, đại lý, lượt, giao dịch...) KHÔNG áp dụng tooltip/click.
+ */
+function isKpiCurrency(valEl, card, label, fullVal, compactVal, rawVal) {
+  if (valEl) {
+    if (valEl.getAttribute('data-kpi-type') === 'quantity') return false;
+    if (valEl.getAttribute('data-kpi-type') === 'currency') return true;
+    if (valEl.hasAttribute('data-kpi-currency')) return true;
+  }
+  if (card) {
+    if (card.getAttribute('data-kpi-type') === 'quantity') return false;
+    if (card.getAttribute('data-kpi-type') === 'currency') return true;
+  }
+
+  const full = (fullVal || (valEl ? valEl.getAttribute('data-kpi-full') : '') || '').trim();
+  const compact = (compactVal || (valEl ? valEl.getAttribute('data-kpi-compact') : '') || (valEl ? (valEl.innerText || valEl.textContent) : '') || '').trim();
+  const lbl = (label || (card ? card.getAttribute('data-kpi-label') : '') || '').toLowerCase();
+
+  // 1. Chứa đơn vị tiền tệ rõ ràng: đ, ₫, VND, VNĐ, $
+  if (/([đ₫]|vnd|vnđ|\$)/i.test(full) || /([đ₫]|vnd|vnđ|\$)/i.test(compact)) {
+    return true;
+  }
+
+  // 2. Chứa hậu tố rút gọn tiền tệ M hoặc B (hàng triệu, hàng tỷ) mà không chứa từ khóa đơn vị số lượng
+  if (/^[-+]?\d+(\.\d+)?\s*[MB]$/i.test(compact)) {
+    if (/(đơn|đơn hàng|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm)/i.test(lbl)) {
+      return false;
+    }
+    return true;
+  }
+
+  // 3. Nhãn đặc trưng cho tiền tệ/tài chính
+  if (/(doanh thu|chi phí|dòng tiền|số dư|lợi nhuận|tiền|thuế|vat|thu nhập|công nợ|nạp ví|tổng tiền|giá trị)/i.test(lbl)) {
+    if (/(đơn|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm)/i.test(compact) ||
+        /(đơn|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm)/i.test(full)) {
+      return false;
+    }
+    return true;
+  }
+
+  // 4. Nếu rõ ràng là đơn vị số lượng -> KHÔNG PHẢI TIỀN
+  if (/(đơn|đơn hàng|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm|số lượng|count|hoàn tất|đang xử lý|đã hủy|thất bại|active)/i.test(lbl) ||
+      /(đơn|đơn hàng|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm)/i.test(compact) ||
+      /(đơn|đơn hàng|vé|đại lý|khách|giao dịch|gd|lệnh|người|lượt|item|tài khoản|sản phẩm)/i.test(full)) {
+    return false;
+  }
+
+  return false;
+}
+window.isKpiCurrency = isKpiCurrency;
 /**
  * Tự động đăng ký các Card chỉ số và con số rút gọn trong DOM
+ * CHỈ áp dụng cho các Card liên quan đến SỐ TIỀN (MONEY), bỏ qua các card dạng SỐ LƯỢNG.
  */
 function autoRegisterKpiCardElements() {
   if (typeof document === 'undefined') return;
-  // Chỉ chọn các phần tử con số thực sự mang class .kpi-card-value
+  // Quét các phần tử mang class .kpi-card-value
   const elements = document.querySelectorAll('.kpi-card-value');
   elements.forEach(el => {
     let rawVal = el.getAttribute('data-kpi-raw');
@@ -1334,6 +1387,21 @@ function autoRegisterKpiCardElements() {
       }
     }
 
+    const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
+    const cardLabel = extractKpiCardLabel(parentCard, el);
+
+    // NẾU LÀ CARD SỐ LƯỢNG (KHÔNG PHẢI TIỀN): GỠ BỎ HOÀN TOÀN TƯƠNG TÁC
+    if (!isKpiCurrency(el, parentCard, cardLabel, full, compact, rawVal)) {
+      el.classList.remove('kpi-shortened', 'cursor-pointer', 'kpi-card-value', 'kpi-expanded');
+      el.removeAttribute('title');
+      if (parentCard) {
+        parentCard.removeAttribute('data-kpi-card');
+        parentCard.removeAttribute('data-kpi-card-target');
+        parentCard.removeAttribute('title');
+      }
+      return;
+    }
+
     const num = parseFloat(rawVal);
     const isShortened = !isNaN(num) && Math.abs(num) >= 1000000;
     if (isShortened) {
@@ -1344,7 +1412,6 @@ function autoRegisterKpiCardElements() {
     el.removeAttribute('title');
 
     // Đăng ký cho Card cha
-    const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
     if (parentCard && parentCard !== el) {
       if (!el.id) {
         el.id = 'kpi_val_' + Math.random().toString(36).substr(2, 9);
@@ -1352,7 +1419,6 @@ function autoRegisterKpiCardElements() {
       parentCard.setAttribute('data-kpi-card', 'true');
       parentCard.setAttribute('data-kpi-card-target', el.id);
       if (!isNaN(num)) parentCard.setAttribute('data-kpi-raw', num);
-      const cardLabel = extractKpiCardLabel(parentCard, el);
       if (cardLabel) parentCard.setAttribute('data-kpi-label', cardLabel);
       parentCard.removeAttribute('title');
     }
@@ -1475,9 +1541,15 @@ function getKpiCardContext(target) {
     }
   }
 
-  // QUY TẮC ĐẶC TẢ NGHIỆP VỤ:
-  // "Chỉ hiển thị tooltip số chi tiết khi giá trị đã bị rút gọn (rawValue >= 1.000.000);
-  // nếu số nhỏ hơn 1.000.000 thì bản thân Card đã hiển thị số đầy đủ nên không cần bật tooltip dư thừa."
+  // QUY TẮC NGHIỆP VỤ:
+  // Chỉ áp dụng tooltip cho card LIÊN QUAN ĐẾN SỐ TIỀN (MONEY), card số lượng bỏ qua.
+  const label = extractKpiCardLabel(card, valEl);
+  if (!isKpiCurrency(valEl, card, label, fullText, compactText, rawVal)) {
+    return null;
+  }
+
+  // Chỉ hiển thị tooltip số chi tiết khi giá trị đã bị rút gọn (rawValue >= 1.000.000);
+  // nếu số nhỏ hơn 1.000.000 thì bản thân Card đã hiển thị số đầy đủ nên không cần bật tooltip dư thừa.
   if (rawVal === null || isNaN(rawVal) || Math.abs(rawVal) < 1000000) {
     return null;
   }
@@ -1488,7 +1560,6 @@ function getKpiCardContext(target) {
     fullText = (isNeg ? '-' : '') + formatMoney(Math.abs(rawVal)) + ' đ';
   }
 
-  const label = extractKpiCardLabel(card, valEl);
   const iconHTML = extractKpiCardIconHTML(card);
 
   return {
@@ -1694,6 +1765,9 @@ function showKpiToast(message, isExpanded = true) {
 
 function toggleKpiElementValue(el) {
   if (!el) return false;
+  // Chỉ cho phép toggle hiển thị số đầy đủ với card SỐ TIỀN
+  const parentCard = el.closest ? el.closest('.kpi-card, [data-kpi-card="true"], [class*="rounded-2xl"], [class*="rounded-3xl"], [class*="rounded-xl"]') : null;
+  if (!isKpiCurrency(el, parentCard)) return false;
   let fullVal = el.getAttribute('data-kpi-full');
   let compactVal = el.getAttribute('data-kpi-compact');
   let rawVal = el.getAttribute('data-kpi-raw');

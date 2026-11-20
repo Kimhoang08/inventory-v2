@@ -11,6 +11,8 @@
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="assets/css/main.css?v=2.7.0" />
+    <link rel="stylesheet" href="assets/css/system-filter-controls.css?v=2.8.0" />
+  <link rel="stylesheet" href="assets/css/cashflow-filter.css?v=2.7.0" />
   <link rel="stylesheet" href="assets/css/cashflow-table.css" />
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -29,172 +31,51 @@
         </a>
       </div>
 
-      <!-- KHỐI 1: Khối Bộ lọc Tìm kiếm đa điều kiện (Filter & Search Card) -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-3.5">
-        <!-- Thanh tìm kiếm từ khóa full-width -->
-        <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-          <input
-            id="ordersSearchInput"
-            type="text"
-            onkeydown="if(event.key==='Enter') applyOrdersListFilters()"
-            placeholder="Tìm theo mã đơn hàng, tên khách h..."
-            class="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50/50 text-slate-800"
-          />
-        </div>
-
-        <!-- Lưới điều kiện lọc (Filter Inputs Grid) -->
-        <div class="space-y-3">
-          <!-- Hàng 1 (Chia 2 cột 50% : 50%): Trạng thái xử lý & Trạng thái thanh toán -->
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="ordersStatusFilter" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái xử lý</label>
-              <select id="ordersStatusFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50/70 hover:bg-white text-slate-800 focus:outline-none focus:border-blue-500 cursor-pointer">
-                <option value="ALL">Tất cả</option>
-                <option value="Đã xác nhận">Đã xác nhận</option>
-                <option value="Đã xuất vé">Đã xuất vé</option>
-                <option value="Thất bại">Thất bại</option>
-                <option value="Đang xử lý">Đang xử lý</option>
-                <option value="Đã hủy">Đã hủy</option>
-                <option value="Nháp">Nháp</option>
-                <option value="Đã hoàn tiền">Đã hoàn tiền</option>
-              </select>
-            </div>
-            <div>
-              <label for="ordersPaymentStatusFilter" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Trạng thái thanh toán</label>
-              <select id="ordersPaymentStatusFilter" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50/70 hover:bg-white text-slate-800 focus:outline-none focus:border-blue-500 cursor-pointer">
-                <option value="ALL">Tất cả</option>
-                <option value="Thành công">Thành công</option>
-                <option value="Thất bại">Thất bại</option>
-                <option value="Đã hủy">Đã hủy</option>
-                <option value="Đang chờ">Đang chờ</option>
-                <option value="Đã hoàn tiền">Đã hoàn tiền</option>
-                <option value="Đang hoàn tiền">Đang hoàn tiền</option>
-              </select>
+      <!-- KHỐI 1: Bộ lọc Danh sách Đơn hàng (Thiết kế chuẩn đồng bộ Lịch sử Dòng tiền & system-filter-controls.css) -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3.5">
+        <!-- Hàng 1: Tìm kiếm & 4 Bộ lọc cơ sở (Desktop: 12 cột, Mobile: grid 2 cột) -->
+        <div class="grid grid-cols-2 lg:grid-cols-12 gap-3">
+          <!-- Ô tìm kiếm (Mobile: col-span-2, Desktop: lg:col-span-3) -->
+          <div class="col-span-2 lg:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" for="ordersSearchInput">Tìm kiếm đơn hàng</label>
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              <input
+                id="ordersSearchInput"
+                type="text"
+                oninput="onOrdersSearchInput()"
+                placeholder="Mã đơn hàng, tên khách, SĐT..."
+                class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400"
+              />
             </div>
           </div>
 
-          <!-- Hàng 2 (Full-width): Bộ chọn khoảng ngày (Date Range Picker) -->
-          <div class="relative">
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Khoảng ngày</label>
-            <button
-              id="btnDateRangePickerTrigger"
-              type="button"
-              onclick="toggleDateRangePickerPopover(event)"
-              class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50/70 hover:bg-white text-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-300 transition-colors text-left"
-            >
-              <span id="dateRangePickerDisplayText">01/11/2026 - 18/11/2026</span>
-              <i class="fa-regular fa-calendar text-slate-400 text-xs"></i>
-            </button>
-
-            <!-- Popover Dropdown Chọn khoảng ngày -->
-            <div id="popoverDateRangePicker" onclick="event.stopPropagation()" class="hidden absolute top-full left-0 right-0 sm:right-auto sm:w-[360px] md:w-[380px] mt-1.5 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.14)] p-4 space-y-3.5 transition-all">
-              <!-- 1. Header -->
-              <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
-                <span id="dateRangePickerHeaderStatus" class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="dateRangePickerActiveTagLabel" class="font-bold text-blue-600">Tháng này</span></span>
-              </div>
-
-              <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                  <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
-                  <span id="displayRangeStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
-                </div>
-                <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                  <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
-                  <span id="displayRangeEndDate" class="font-black text-slate-800 text-xs tracking-tight">18/11/2026</span>
-                </div>
-              </div>
-
-              <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
-              <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
-                <button type="button" id="btnPresetTag_7days" onclick="selectDateRangeTagPreset(event, '7_days')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
-                  7 ngày
-                </button>
-                <button type="button" id="btnPresetTag_30days" onclick="selectDateRangeTagPreset(event, '30_days')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
-                  30 ngày
-                </button>
-                <button type="button" id="btnPresetTag_this_month" onclick="selectDateRangeTagPreset(event, 'this_month')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
-                  Tháng này
-                </button>
-                <button type="button" id="btnPresetTag_quarter" onclick="selectDateRangeTagPreset(event, 'quarter')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
-                  Quý
-                </button>
-                <button type="button" id="btnPresetTag_custom" onclick="selectDateRangeTagPreset(event, 'custom')" class="preset-tag-btn px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
-                  <span>Tùy chỉnh</span>
-                  <span id="customPresetDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
-                </button>
-              </div>
-
-              <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
-              <div class="pt-2 border-t border-slate-100 space-y-2">
-                <!-- Điều hướng tháng -->
-                <div class="flex items-center justify-between px-1">
-                  <button type="button" onclick="navigateCalendarMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
-                    <i class="fa-solid fa-chevron-left"></i>
-                  </button>
-                  <span id="calendarCurrentMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
-                  <button type="button" onclick="navigateCalendarMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
-                    <i class="fa-solid fa-chevron-right"></i>
-                  </button>
-                </div>
-
-                <!-- Thứ trong tuần -->
-                <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
-                  <span>T2</span>
-                  <span>T3</span>
-                  <span>T4</span>
-                  <span>T5</span>
-                  <span>T6</span>
-                  <span>T7</span>
-                  <span>CN</span>
-                </div>
-
-                <!-- Lưới ngày -->
-                <div id="calendarDaysGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
-                  <!-- Dynamically rendered days -->
-                </div>
-              </div>
-
-              <!-- 6. Chân Dropdown (Footer Actions) -->
-              <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
-                <button type="button" onclick="cancelDateRangePicker(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
-                  Hủy
-                </button>
-                <button type="button" onclick="applyDateRangePickerSelection(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
-                  Áp dụng
-                </button>
-              </div>
-            </div>
+          <!-- (1) Kênh bán (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" for="ordersChannelFilter">Kênh bán</label>
+            <select id="ordersChannelFilter" onchange="applyOrdersListFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả</option>
+              <option value="Website">Website</option>
+              <option value="Đại lý">Đại lý (TA)</option>
+              <option value="Nội bộ">Nội bộ</option>
+            </select>
           </div>
 
-          <!-- Hàng 3 (Chia 2 cột 50% : 50%): Kênh bán & Tập đoàn -->
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="ordersChannelFilter" class="block text-[11px] font-bold text-slate-500 mb-1">Kênh bán</label>
-              <select id="ordersChannelFilter" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white text-slate-800 focus:outline-none focus:border-blue-500">
-                <option value="ALL">Tất cả</option>
-                <option value="Website">Website</option>
-                <option value="Đại lý">Đại lý (TA)</option>
-                <option value="Nội bộ">Nội bộ</option>
-              </select>
-            </div>
-            <div>
-              <label for="ordersCorpFilter" class="block text-[11px] font-bold text-slate-500 mb-1">Tập đoàn</label>
-              <select id="ordersCorpFilter" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white text-slate-800 focus:outline-none focus:border-blue-500">
-                <option value="ALL">Tất cả</option>
-                <option value="Sun World">Sun World</option>
-                <option value="VinWonders">VinWonders</option>
-                <option value="Khác">Khác</option>
-              </select>
-            </div>
+          <!-- (2) Tập đoàn (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" for="ordersCorpFilter">Tập đoàn</label>
+            <select id="ordersCorpFilter" onchange="applyOrdersListFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả</option>
+              <option value="Sun World">Sun World</option>
+              <option value="VinWonders">VinWonders</option>
+              <option value="Khác">Khác</option>
+            </select>
           </div>
 
-          <!-- Hàng 4 (Full-width): Khu vực -->
-          <div>
-            <label for="ordersRegionFilter" class="block text-[11px] font-bold text-slate-500 mb-1">Khu vực</label>
-            <select id="ordersRegionFilter" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white text-slate-800 focus:outline-none focus:border-blue-500">
+          <!-- (3) Khu vực (Mobile: col-span-1, Desktop: lg:col-span-2) -->
+          <div class="col-span-1 lg:col-span-2">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" for="ordersRegionFilter">Khu vực</label>
+            <select id="ordersRegionFilter" onchange="applyOrdersListFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
               <option value="ALL">Tất cả</option>
               <option value="Đà Nẵng">Đà Nẵng</option>
               <option value="Kiên Giang">Kiên Giang (Phú Quốc)</option>
@@ -207,21 +88,156 @@
             </select>
           </div>
 
-          <!-- Cụm nút hành động (2 nút 50% : 50%) -->
-          <div class="grid grid-cols-2 gap-3 pt-1">
-            <button
-              type="button"
-              onclick="applyOrdersListFilters()"
-              class="w-full py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-blue-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer text-center"
-            >
-              Áp dụng
-            </button>
+          <!-- (4) Trạng thái thanh toán (Mobile: col-span-1, Desktop: lg:col-span-3) -->
+          <div class="col-span-1 lg:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" for="ordersPaymentStatusFilter">Trạng thái thanh toán</label>
+            <select id="ordersPaymentStatusFilter" onchange="applyOrdersListFilters()" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer">
+              <option value="ALL">Tất cả</option>
+              <option value="Thành công">Thành công</option>
+              <option value="Thất bại">Thất bại</option>
+              <option value="Đã hủy">Đã hủy</option>
+              <option value="Đang chờ">Đang chờ</option>
+              <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+              <option value="Đang hoàn tiền">Đang hoàn tiền</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hàng 2: Trạng thái xử lý, Khoảng thời gian và Nút Đặt lại bộ lọc (Đồng bộ chuẩn Lịch sử Dòng tiền) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-4 w-full sm:w-auto">
+            <!-- (5) Trạng thái xử lý -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Trạng thái:</span>
+              <select id="ordersStatusFilter" onchange="applyOrdersListFilters()" class="w-full sm:w-auto px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 cursor-pointer h-[34px]">
+                <option value="ALL">Tất cả</option>
+                <option value="Đã xác nhận">Đã xác nhận</option>
+                <option value="Đã xuất vé">Đã xuất vé</option>
+                <option value="Thất bại">Thất bại</option>
+                <option value="Đang xử lý">Đang xử lý</option>
+                <option value="Đã hủy">Đã hủy</option>
+                <option value="Nháp">Nháp</option>
+                <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+              </select>
+            </div>
+
+            <!-- (6) Bộ lọc Thời gian chuẩn (Dropdown Popover đồng bộ hệ thống) -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">Thời gian:</span>
+              <div class="relative date-range-picker-wrap w-full sm:w-auto">
+                <!-- Trigger Button -->
+                <button
+                  id="btnDateRangePickerTrigger"
+                  type="button"
+                  onclick="toggleDateRangePickerPopover(event)"
+                  class="w-full sm:w-auto px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white hover:bg-slate-50 flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2 cursor-pointer transition-colors shadow-2xs focus:outline-none h-[34px]"
+                >
+                  <i class="fa-regular fa-calendar text-brand-500 text-xs shrink-0"></i>
+                  <span id="dateRangePickerDisplayText" class="truncate text-xs font-bold">01/11/2026 - 18/11/2026</span>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0"></i>
+                </button>
+
+                <!-- Backdrop che mờ nền trên mobile -->
+                <div id="dateRangePickerBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden sm:hidden" onclick="cancelDateRangePicker(event)"></div>
+
+                <!-- Popover Dropdown (Hiển thị bung mở ngay bên dưới ô kích hoạt Thời gian) -->
+                <div
+                  id="popoverDateRangePicker"
+                  onclick="event.stopPropagation()"
+                  class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-1.5 w-[calc(100vw-1.5rem)] sm:w-[360px] md:w-[380px] max-w-[360px] bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.22)] p-4 space-y-3 z-50 text-left animate-in fade-in zoom-in-95 duration-150 ring-1 ring-slate-900/5"
+                >
+                  <!-- 1. Header -->
+                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-900">Chọn khoảng thời gian</span>
+                    <span id="dateRangePickerHeaderStatus" class="text-[11px] font-semibold text-slate-500">Đang chọn: <span id="dateRangePickerActiveTagLabel" class="font-bold text-blue-600">Tháng này</span></span>
+                  </div>
+
+                  <!-- 2. Ô hiển thị Khoảng ngày (Từ ngày - Đến ngày) -->
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">TỪ NGÀY</span>
+                      <span id="displayRangeStartDate" class="font-black text-slate-800 text-xs tracking-tight">01/11/2026</span>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">ĐẾN NGÀY</span>
+                      <span id="displayRangeEndDate" class="font-black text-slate-800 text-xs tracking-tight">18/11/2026</span>
+                    </div>
+                  </div>
+
+                  <!-- 3. Nút Chọn nhanh (Preset Tags / Pills) -->
+                  <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+                    <button type="button" id="btnPresetTag_7days" onclick="selectDateRangeTagPreset(event, '7_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      7 ngày
+                    </button>
+                    <button type="button" id="btnPresetTag_30days" onclick="selectDateRangeTagPreset(event, '30_days')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      30 ngày
+                    </button>
+                    <button type="button" id="btnPresetTag_this_month" onclick="selectDateRangeTagPreset(event, 'this_month')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs cursor-pointer whitespace-nowrap transition-all">
+                      Tháng này
+                    </button>
+                    <button type="button" id="btnPresetTag_quarter" onclick="selectDateRangeTagPreset(event, 'quarter')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all">
+                      Quý
+                    </button>
+                    <button type="button" id="btnPresetTag_custom" onclick="selectDateRangeTagPreset(event, 'custom')" class="preset-tag-btn px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer whitespace-nowrap transition-all flex items-center gap-1.5">
+                      <span>Tùy chỉnh</span>
+                      <span id="customPresetDot" class="w-1.5 h-1.5 rounded-full bg-blue-600 hidden"></span>
+                    </button>
+                  </div>
+
+                  <!-- 4 & 5. Khối Lịch & Khoảng chọn (Calendar Grid) -->
+                  <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <!-- Điều hướng tháng -->
+                    <div class="flex items-center justify-between px-1">
+                      <button type="button" onclick="navigateCalendarMonth(event, -1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng trước">
+                        <i class="fa-solid fa-chevron-left"></i>
+                      </button>
+                      <span id="calendarCurrentMonthTitle" class="text-xs font-black text-slate-800">Tháng 11, 2026</span>
+                      <button type="button" onclick="navigateCalendarMonth(event, 1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-xs transition-colors cursor-pointer" aria-label="Tháng sau">
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </div>
+
+                    <!-- Thứ trong tuần -->
+                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 py-1">
+                      <span>T2</span>
+                      <span>T3</span>
+                      <span>T4</span>
+                      <span>T5</span>
+                      <span>T6</span>
+                      <span>T7</span>
+                      <span>CN</span>
+                    </div>
+
+                    <!-- Lưới ngày -->
+                    <div id="calendarDaysGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs font-medium">
+                      <!-- Dynamically rendered days -->
+                    </div>
+                  </div>
+
+                  <!-- 6. Chân Dropdown (Footer Actions) -->
+                  <div class="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-100">
+                    <button type="button" onclick="cancelDateRangePicker(event)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+                      Hủy
+                    </button>
+                    <button type="button" onclick="applyDateRangePickerSelection(event)" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
+                      Áp dụng
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nút Đặt lại bộ lọc (Reset Filter Button) -->
+          <div class="flex items-center gap-2">
             <button
               type="button"
               onclick="resetOrdersListFilters()"
-              class="w-full py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs transition-colors cursor-pointer text-center"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-rose-600 font-bold text-xs shadow-2xs transition-all cursor-pointer h-[34px]"
+              title="Đặt lại tất cả bộ lọc"
             >
-              Xóa
+              <i class="fa-solid fa-rotate-right text-[11px]"></i>
+              <span class="hidden sm:inline">Đặt lại bộ lọc</span>
             </button>
           </div>
         </div>
