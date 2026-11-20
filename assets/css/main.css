@@ -120,17 +120,42 @@ input[type=number] {
    ========================================================================== */
 .cursor-help,
 .kpi-card-value {
-  cursor: help !important;
+  cursor: pointer !important;
   position: relative;
-  text-decoration: underline dotted rgba(148, 163, 184, 0.6);
+  user-select: none;
+  text-decoration: underline dotted rgba(148, 163, 184, 0.45);
   text-underline-offset: 4px;
-  transition: all 0.15s ease-in-out;
+  transition: transform 0.15s ease, filter 0.15s ease, font-size 0.15s ease;
 }
 
 .cursor-help:hover,
 .kpi-card-value:hover {
   text-decoration-color: currentColor;
-  filter: brightness(1.1);
+  filter: brightness(1.12);
+}
+
+.kpi-card-value:active {
+  transform: scale(0.97);
+}
+
+/* Khi con số được mở rộng đầy đủ (full chi tiết) */
+.kpi-card-value.kpi-expanded {
+  font-size: 0.8em !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.025em !important;
+  white-space: nowrap;
+  text-decoration-style: solid;
+  text-decoration-color: rgba(56, 189, 248, 0.55);
+}
+
+@keyframes kpiPulseAnim {
+  0% { transform: scale(0.96); }
+  50% { transform: scale(1.035); }
+  100% { transform: scale(1); }
+}
+
+.kpi-pulse {
+  animation: kpiPulseAnim 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Floating Instant Tooltip Box */

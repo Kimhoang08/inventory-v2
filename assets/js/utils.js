@@ -55,7 +55,7 @@ function formatCompactVndShort(amount) {
 }
 
 /**
- * Gán giá trị rút gọn cho phần tử Card chỉ số, giữ nguyên số gốc trên tooltip/title khi hover
+ * Gán giá trị rút gọn cho phần tử Card chỉ số, giữ nguyên số gốc trên tooltip/title khi hover và hỗ trợ bấm để xem số đầy đủ
  * @param {HTMLElement|string} elOrId - Phần tử DOM hoặc ID
  * @param {number} amount - Số tiền gốc
  * @param {string} [prefix=''] - Tiền tố (ví dụ '+', '-')
@@ -70,16 +70,27 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
   const displayVal = prefix ? `${prefix}${compact}` : compact;
   const tooltipVal = prefix ? `${prefix}${fullText}` : fullText;
 
-  el.innerText = displayVal;
-  el.setAttribute('title', tooltipVal);
+  el.setAttribute('data-kpi-compact', displayVal);
   el.setAttribute('data-kpi-full', tooltipVal);
   el.setAttribute('data-kpi-raw', num);
-  el.classList.add('cursor-help', 'kpi-card-value');
+  el.classList.add('cursor-pointer', 'kpi-card-value');
 
-  // Gán thêm data-kpi-full cho card cha để hover bất kỳ đâu trên card cũng hiện số chi tiết
+  // Nếu người dùng đang mở rộng số chi tiết, giữ nguyên hiển thị số đầy đủ
+  if (el.classList.contains('kpi-expanded')) {
+    el.innerText = tooltipVal;
+    el.setAttribute('title', 'Bấm để thu gọn số');
+  } else {
+    el.innerText = displayVal;
+    el.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+  }
+
+  // Gán thêm data-kpi-full cho card cha để hover hoặc click bất kỳ đâu trên card cũng xem được số chi tiết
   const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"]') : null;
   if (parentCard) {
-    parentCard.setAttribute('data-kpi-card-target', el.id || '');
+    if (!el.id) {
+      el.id = 'kpi_val_' + Math.random().toString(36).substr(2, 9);
+    }
+    parentCard.setAttribute('data-kpi-card-target', el.id);
     if (!parentCard.hasAttribute('title') || (parentCard.getAttribute('title') || '').includes('đ')) {
       parentCard.setAttribute('data-kpi-full', tooltipVal);
     }
@@ -87,7 +98,7 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
 }
 
 /**
- * Tạo chuỗi HTML rút gọn cho Card chỉ số kèm tooltip số gốc
+ * Tạo chuỗi HTML rút gọn cho Card chỉ số kèm tooltip số gốc và hỗ trợ click hiển thị số đầy đủ
  */
 function renderKpiValueMarkup(amount, prefix = '') {
   const num = Number(amount) || 0;
@@ -96,7 +107,7 @@ function renderKpiValueMarkup(amount, prefix = '') {
   const fullText = (num < 0 ? `-${full}` : full);
   const display = prefix ? `${prefix}${compact}` : compact;
   const title = prefix ? `${prefix}${fullText}` : fullText;
-  return `<span title="${title}" data-kpi-full="${title}" class="cursor-help kpi-card-value">${display}</span>`;
+  return `<span title="Bấm để xem số chi tiết đầy đủ" data-kpi-compact="${display}" data-kpi-full="${title}" class="cursor-pointer kpi-card-value">${display}</span>`;
 }
 
 function removeVietnameseTones(str) {
@@ -1237,7 +1248,8 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
 }
 
 // ============================================================================
-// INSTANT GLOBAL KPI TOOLTIP ENGINE (HIỂN THỊ SỐ CHI TIẾT TỨC THÌ KHI HOVER CARD)
+// INSTANT GLOBAL KPI TOOLTIP & CLICK-TO-EXPAND ENGINE
+// (HIỂN THỊ SỐ CHI TIẾT TỨC THÌ KHI HOVER HOẶC BẤM TRỰC TIẾP VÀO CARD/CON SỐ)
 // ============================================================================
 let techeraKpiTooltipEl = null;
 let techeraKpiActiveTarget = null;
@@ -1255,6 +1267,10 @@ function initTecheraKpiTooltip() {
         <span id="techeraKpiTooltipLabel">Số gốc chi tiết</span>
       </div>
       <div class="techera-kpi-bubble-value" id="techeraKpiTooltipValue">0 đ</div>
+      <div class="text-[9.5px] text-slate-400 font-normal mt-1 flex items-center justify-center gap-1 opacity-85" id="techeraKpiTooltipActionHint">
+        <i class="fa-solid fa-hand-pointer text-[8px] text-sky-400"></i>
+        <span>Bấm để hiển thị trực tiếp</span>
+      </div>
     </div>
     <div class="techera-kpi-arrow techera-kpi-arrow-down" id="techeraKpiTooltipArrow"></div>
   `;
@@ -1263,6 +1279,111 @@ function initTecheraKpiTooltip() {
   // Global event delegation for instant hover
   document.addEventListener('mouseover', handleKpiTooltipMouseOver, { passive: true });
   document.addEventListener('mouseout', handleKpiTooltipMouseOut, { passive: true });
+
+  // Global click event to toggle full / compact number on KPI cards
+  document.addEventListener('click', handleKpiClick);
+
+  // Tự động gắn cờ cursor và chuẩn bị dữ liệu rút gọn
+  autoRegisterKpiCardElements();
+}
+
+function autoRegisterKpiCardElements() {
+  if (typeof document === 'undefined') return;
+  const elements = document.querySelectorAll('.kpi-card-value, [data-kpi-full]');
+  elements.forEach(el => {
+    if (!el.getAttribute('data-kpi-compact')) {
+      const txt = (el.innerText || el.textContent || '').trim();
+      const full = el.getAttribute('data-kpi-full');
+      if (txt && txt !== full) {
+        el.setAttribute('data-kpi-compact', txt);
+      }
+    }
+    el.classList.add('cursor-pointer');
+  });
+}
+
+function toggleKpiElementValue(el) {
+  if (!el) return false;
+  let fullVal = el.getAttribute('data-kpi-full');
+  let compactVal = el.getAttribute('data-kpi-compact');
+
+  if (!fullVal) {
+    const data = getKpiTooltipData(el);
+    if (data && data.fullText) {
+      fullVal = data.fullText;
+      el.setAttribute('data-kpi-full', fullVal);
+    }
+  }
+
+  if (!compactVal) {
+    compactVal = (el.innerText || el.textContent || '').trim();
+    if (compactVal && compactVal !== fullVal) {
+      el.setAttribute('data-kpi-compact', compactVal);
+    }
+  }
+
+  // Nếu không có số đầy đủ hoặc số đầy đủ giống y nguyên số hiển thị thì không toggle
+  if (!fullVal || fullVal === compactVal) return false;
+
+  const isExpanded = el.classList.contains('kpi-expanded');
+  if (isExpanded) {
+    el.innerText = compactVal || fullVal;
+    el.classList.remove('kpi-expanded');
+    el.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+  } else {
+    el.innerText = fullVal;
+    el.classList.add('kpi-expanded');
+    el.setAttribute('title', 'Bấm để thu gọn số');
+  }
+
+  // Hiệu ứng nhịp nảy (pulse) nhẹ tạo cảm giác phản hồi xúc giác
+  el.classList.remove('kpi-pulse');
+  void el.offsetWidth; // force reflow
+  el.classList.add('kpi-pulse');
+
+  // Đóng tooltip trôi nổi để không che mất con số đã mở rộng
+  if (techeraKpiTooltipEl) {
+    techeraKpiTooltipEl.classList.remove('visible');
+    techeraKpiTooltipEl.style.display = 'none';
+  }
+
+  return true;
+}
+
+function handleKpiClick(e) {
+  const target = e.target;
+  if (!target) return;
+
+  // Bỏ qua nếu bấm vào các phần tử tương tác khác (nút bấm, liên kết, ô nhập liệu, dropdown, bộ chọn ngày)
+  if (target.closest('button, a, input, select, textarea, [role="button"], [data-dropdown-toggle], .dropdown-menu, .flatpickr-calendar, .badge-action')) {
+    return;
+  }
+
+  // 1. Bấm trực tiếp vào con số KPI (.kpi-card-value hoặc phần tử mang data-kpi-full)
+  const directKpiEl = target.closest('.kpi-card-value, [data-kpi-full]');
+  if (directKpiEl) {
+    if (toggleKpiElementValue(directKpiEl)) {
+      e.stopPropagation();
+      return;
+    }
+  }
+
+  // 2. Bấm vào vùng card chứa chỉ số (Card KPI hoặc container bo góc có chứa chỉ số)
+  const card = target.closest('.kpi-card, [data-kpi-card-target], [class*="rounded-2xl"], [class*="rounded-3xl"]');
+  if (card) {
+    let targetEl = null;
+    const targetId = card.getAttribute('data-kpi-card-target');
+    if (targetId) {
+      targetEl = document.getElementById(targetId);
+    }
+    if (!targetEl) {
+      targetEl = card.querySelector('.kpi-card-value, [data-kpi-full]');
+    }
+
+    if (targetEl && toggleKpiElementValue(targetEl)) {
+      e.stopPropagation();
+    }
+  }
 }
 
 function getKpiTooltipData(target) {
@@ -1280,6 +1401,7 @@ function getKpiTooltipData(target) {
   const titleAttr = target.getAttribute ? (target.getAttribute('title') || (target.dataset ? target.dataset.techeraStoredTitle : '')) : '';
   if (titleAttr && (titleAttr.includes('đ') || /\d/.test(titleAttr))) {
     const isKpi = target.classList?.contains('cursor-help') ||
+                  target.classList?.contains('cursor-pointer') ||
                   target.classList?.contains('kpi-card-value') ||
                   /kpi|card|total|rev|profit|balance|expense|income/i.test(target.id || '') ||
                   (target.closest && target.closest('[class*="rounded-2xl"], [class*="rounded-3xl"]'));
@@ -1301,7 +1423,7 @@ function getKpiTooltipData(target) {
   }
 
   // 4. Inside an element with cursor-help & title
-  const parentWithTitle = target.closest ? target.closest('.cursor-help, .kpi-card-value') : null;
+  const parentWithTitle = target.closest ? target.closest('.cursor-help, .cursor-pointer, .kpi-card-value') : null;
   if (parentWithTitle) {
     const pTitle = parentWithTitle.getAttribute('title') || (parentWithTitle.dataset ? parentWithTitle.dataset.techeraStoredTitle : '');
     if (pTitle) {
@@ -1353,8 +1475,17 @@ function handleKpiTooltipMouseOver(e) {
 
   const valEl = document.getElementById('techeraKpiTooltipValue');
   const labelEl = document.getElementById('techeraKpiTooltipLabel');
+  const hintEl = document.getElementById('techeraKpiTooltipActionHint');
+
   if (valEl) valEl.innerText = data.fullText;
   if (labelEl) labelEl.innerText = 'Số gốc chi tiết';
+
+  if (hintEl) {
+    const isExpanded = targetEl.classList?.contains('kpi-expanded');
+    hintEl.innerHTML = isExpanded 
+      ? '<i class="fa-solid fa-compress text-[8px] text-amber-400"></i> <span>Bấm để thu gọn số</span>'
+      : '<i class="fa-solid fa-hand-pointer text-[8px] text-sky-400"></i> <span>Bấm để hiển thị trực tiếp</span>';
+  }
 
   if (!techeraKpiTooltipEl) initTecheraKpiTooltip();
   if (!techeraKpiTooltipEl) return;
@@ -1418,9 +1549,13 @@ function handleKpiTooltipMouseOut(e) {
 
 if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTecheraKpiTooltip);
+    document.addEventListener('DOMContentLoaded', () => {
+      initTecheraKpiTooltip();
+      autoRegisterKpiCardElements();
+    });
   } else {
     initTecheraKpiTooltip();
+    autoRegisterKpiCardElements();
   }
 }
 
@@ -1429,3 +1564,5 @@ window.formatKpiCurrency = formatKpiCurrency;
 window.setKpiCardValue = setKpiCardValue;
 window.renderKpiValueMarkup = renderKpiValueMarkup;
 window.initTecheraKpiTooltip = initTecheraKpiTooltip;
+window.toggleKpiElementValue = toggleKpiElementValue;
+window.autoRegisterKpiCardElements = autoRegisterKpiCardElements;

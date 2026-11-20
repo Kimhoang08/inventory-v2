@@ -195,15 +195,23 @@ window.reportOrdersDataset = reportOrdersDataset;
         const valEl = document.getElementById(valId);
         const trendEl = document.getElementById(trendId);
         if (valEl) {
-          valEl.innerText = item.value;
           if (item.fullValue) {
-            valEl.setAttribute('title', item.fullValue);
+            valEl.setAttribute('data-kpi-compact', item.value);
             valEl.setAttribute('data-kpi-full', item.fullValue);
-            valEl.classList.add('cursor-help', 'kpi-card-value');
+            valEl.classList.add('cursor-pointer', 'kpi-card-value');
+            if (valEl.classList.contains('kpi-expanded')) {
+              valEl.innerText = item.fullValue;
+              valEl.setAttribute('title', 'Bấm để thu gọn số');
+            } else {
+              valEl.innerText = item.value;
+              valEl.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+            }
           } else {
+            valEl.innerText = item.value;
             valEl.removeAttribute('title');
             valEl.removeAttribute('data-kpi-full');
-            valEl.classList.remove('cursor-help', 'kpi-card-value');
+            valEl.removeAttribute('data-kpi-compact');
+            valEl.classList.remove('cursor-pointer', 'cursor-help', 'kpi-card-value', 'kpi-expanded');
           }
         }
         if (trendEl) trendEl.innerHTML = renderKpiTrendHtml(item);

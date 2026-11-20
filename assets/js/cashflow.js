@@ -737,10 +737,17 @@
       const countEl = document.getElementById('cfKpiTotalCount');
       if (countEl) {
         const fullCountText = `${formatMoney(cashFlowFilteredDataset.length)} giao dịch`;
-        countEl.innerText = formatMoney(cashFlowFilteredDataset.length) + ' GD';
-        countEl.setAttribute('title', fullCountText);
+        const compactCountText = formatMoney(cashFlowFilteredDataset.length) + ' GD';
+        countEl.setAttribute('data-kpi-compact', compactCountText);
         countEl.setAttribute('data-kpi-full', fullCountText);
-        countEl.classList.add('cursor-help', 'kpi-card-value');
+        countEl.classList.add('cursor-pointer', 'kpi-card-value');
+        if (countEl.classList.contains('kpi-expanded')) {
+          countEl.innerText = fullCountText;
+          countEl.setAttribute('title', 'Bấm để thu gọn số');
+        } else {
+          countEl.innerText = compactCountText;
+          countEl.setAttribute('title', 'Bấm để xem số chi tiết đầy đủ');
+        }
       }
 
       // 2. Tổng thu: Thực thu từ giao dịch Thu ở trạng thái Thành công
