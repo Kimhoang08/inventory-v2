@@ -10,6 +10,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/system-filter-controls.css?v=2.8.0" />
+  <link rel="stylesheet" href="assets/css/cashflow-table.css?v=2.7.0" />
   <link rel="stylesheet" href="assets/css/main.css?v=2.7.0" />
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
@@ -27,7 +29,7 @@
             <i class="fa-solid fa-shield-halved text-xs"></i>
             <span>Ma trận RBAC</span>
           </a>
-          <button type="button" onclick="showToast('Thêm người dùng', 'Mở biểu mẫu tạo tài khoản người dùng nội bộ/đại lý.')" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-sm transition-colors cursor-pointer">
+          <button type="button" onclick="openNewUserModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-sm transition-colors cursor-pointer" id="btnOpenNewUserModal">
             <i class="fa-solid fa-plus text-[11px]"></i>
             <span>+ Thêm người dùng</span>
           </button>
@@ -95,7 +97,7 @@
           <div class="font-extrabold text-sm text-slate-900">Danh sách Người dùng &amp; Phân quyền</div>
           <div class="relative w-full sm:w-72">
             <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-            <input type="text" placeholder="Tìm tên, email, vai trò..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400" />
+            <input type="text" id="usersSearchInput" oninput="filterUsersTable()" placeholder="Tìm tên, email, vai trò..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-white focus:outline-none focus:border-brand-500 placeholder:text-slate-400" />
           </div>
         </div>
         <div class="overflow-x-auto">
@@ -111,7 +113,7 @@
                 <th class="px-4 py-3 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody id="usersTableBody" class="divide-y divide-slate-100">
               <tr class="hover:bg-slate-50/80 transition-colors">
                 <td class="px-4 py-3.5 flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-extrabold flex items-center justify-center text-xs">NL</div>
@@ -212,5 +214,353 @@
       renderSharedShell({ activePage: 'users-management', pageTitle: 'Quản lý Tài khoản Người dùng' });
     });
   </script>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: THÔNG TIN TÀI KHOẢN MỚI -->
+  <!-- ==================================================================== -->
+  <div
+    id="modalNewUser"
+    onclick="if(event.target===this) closeNewUserModal()"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+  >
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-8">
+      
+      <!-- 1. Header Modal -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 tracking-tight">Thông tin tài khoản mới</h3>
+          <p class="text-xs text-slate-500 mt-1">Nhập các thông tin cần thiết để khởi tạo tài khoản trên hệ thống.</p>
+        </div>
+        <button
+          type="button"
+          onclick="closeNewUserModal()"
+          class="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer shrink-0 -mr-1"
+          aria-label="Đóng modal"
+        >
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- 2. Body Modal Form -->
+      <form id="formNewUser" onsubmit="submitNewUserForm(event)" class="p-6 space-y-4">
+        
+        <!-- Dòng 1 (2 cột): Họ và tên (*) & Email (*) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5" for="newUserName">
+              Họ và tên <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="newUserName"
+              name="fullName"
+              required
+              placeholder="Ví dụ: Nguyễn Văn A"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-colors"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5" for="newUserEmail">
+              Email <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="newUserEmail"
+              name="email"
+              required
+              placeholder="email@example.com"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-colors"
+            />
+          </div>
+        </div>
+
+        <!-- Dòng 2 (2 cột): Mật khẩu & Số điện thoại (*) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5" for="newUserPassword">
+              Mật khẩu
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="newUserPassword"
+                name="password"
+                value="Abc@12345"
+                placeholder="••••••••••"
+                class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-colors font-mono tracking-wider"
+              />
+              <button
+                type="button"
+                onclick="toggleNewUserPasswordVisibility(this)"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1.5 transition-colors"
+                title="Bật/tắt hiển thị mật khẩu"
+                aria-label="Bật/tắt hiển thị mật khẩu"
+              >
+                <i class="fa-regular fa-eye-slash text-xs"></i>
+              </button>
+            </div>
+            <span class="block text-[11px] text-slate-400 mt-1">Mặc định: Abc@12345</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5" for="newUserPhone">
+              Số điện thoại <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="tel"
+              id="newUserPhone"
+              name="phone"
+              required
+              placeholder="0987 654 321"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-colors font-mono"
+            />
+          </div>
+        </div>
+
+        <!-- Dòng 3 (1 cột / Full chiều ngang): Vai trò (*) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5" for="newUserRole">
+            Vai trò <span class="text-rose-500">*</span>
+          </label>
+          <select
+            id="newUserRole"
+            name="role"
+            required
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-colors cursor-pointer"
+          >
+            <option value="" disabled selected hidden>Chọn vai trò trên hệ thống</option>
+            <option value="Super Admin">Super Admin (Toàn quyền hệ thống)</option>
+            <option value="Trưởng phòng KD">Trưởng phòng KD (Quản lý kinh doanh & đại lý)</option>
+            <option value="Nhân viên KD">Nhân viên KD (Kinh doanh & Bán vé)</option>
+            <option value="Kế toán Vé & VAT">Kế toán Vé &amp; VAT (Tài chính &amp; Hóa đơn)</option>
+            <option value="Đại lý B2B">Đại lý B2B (Tài khoản đối tác đại lý)</option>
+            <option value="CTV B2C">CTV B2C (Cộng tác viên bán lẻ)</option>
+          </select>
+        </div>
+
+        <!-- Khối cấu hình trạng thái kích hoạt: khung nền xám nhạt bo góc tách biệt -->
+        <div class="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 flex items-center justify-between gap-3">
+          <div>
+            <div class="text-xs font-bold text-slate-800">Trạng thái</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Kích hoạt tài khoản ngay khi tạo</div>
+          </div>
+          <!-- Toggle switch (mặc định bật - xanh dương) -->
+          <label class="relative inline-flex items-center cursor-pointer select-none">
+            <input type="checkbox" id="newUserStatus" name="status" checked class="sr-only peer" />
+            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+
+        <!-- Footer Modal: Căn phải với 2 nút Hủy và Tạo tài khoản -->
+        <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+          <button
+            type="button"
+            onclick="closeNewUserModal()"
+            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            id="btnSubmitNewUser"
+            class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+          >
+            Tạo tài khoản
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ========================================================================
+    // QUẢN LÝ MODAL "THÔNG TIN TÀI KHOẢN MỚI" & DANH SÁCH USER
+    // ========================================================================
+
+    function openNewUserModal() {
+      const modal = document.getElementById('modalNewUser');
+      const form = document.getElementById('formNewUser');
+      if (form) {
+        form.reset();
+        const pwdInput = document.getElementById('newUserPassword');
+        if (pwdInput) {
+          pwdInput.type = 'password';
+          pwdInput.value = 'Abc@12345';
+        }
+        const statusToggle = document.getElementById('newUserStatus');
+        if (statusToggle) statusToggle.checked = true;
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+      setTimeout(() => {
+        const nameInput = document.getElementById('newUserName');
+        if (nameInput) nameInput.focus();
+      }, 50);
+    }
+
+    function closeNewUserModal() {
+      const modal = document.getElementById('modalNewUser');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    function toggleNewUserPasswordVisibility(btn) {
+      const pwdInput = document.getElementById('newUserPassword');
+      if (!pwdInput) return;
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        if (btn) btn.innerHTML = '<i class="fa-regular fa-eye text-xs"></i>';
+      } else {
+        pwdInput.type = 'password';
+        if (btn) btn.innerHTML = '<i class="fa-regular fa-eye-slash text-xs"></i>';
+      }
+    }
+
+    // Đóng modal khi bấm Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('modalNewUser');
+        if (modal && !modal.classList.contains('hidden')) {
+          closeNewUserModal();
+        }
+      }
+    });
+
+    function getRoleBadge(role) {
+      switch (role) {
+        case 'Super Admin':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Super Admin</span>';
+        case 'Trưởng phòng KD':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Trưởng phòng KD</span>';
+        case 'Nhân viên KD':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200">Nhân viên KD</span>';
+        case 'Kế toán Vé & VAT':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Kế toán Vé &amp; VAT</span>';
+        case 'Đại lý B2B':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đại lý B2B</span>';
+        case 'CTV B2C':
+          return '<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200">CTV B2C</span>';
+        default:
+          return `<span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${role}</span>`;
+      }
+    }
+
+    function getRoleDepartment(role) {
+      switch (role) {
+        case 'Super Admin': return 'Ban Giám Đốc';
+        case 'Trưởng phòng KD':
+        case 'Nhân viên KD': return 'Ban Kinh Doanh';
+        case 'Kế toán Vé & VAT': return 'Ban Tài Chính';
+        case 'Đại lý B2B': return 'Đối tác Đại lý';
+        case 'CTV B2C': return 'Kênh Bán lẻ CTV';
+        default: return 'Khối Vận Hành';
+      }
+    }
+
+    function getInitials(name) {
+      if (!name) return 'U';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function submitNewUserForm(event) {
+      event.preventDefault();
+      
+      const nameInput = document.getElementById('newUserName');
+      const emailInput = document.getElementById('newUserEmail');
+      const phoneInput = document.getElementById('newUserPhone');
+      const roleInput = document.getElementById('newUserRole');
+      const statusInput = document.getElementById('newUserStatus');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const phone = phoneInput ? phoneInput.value.trim() : '';
+      const role = roleInput ? roleInput.value : '';
+      const isActive = statusInput ? statusInput.checked : true;
+
+      if (!name || !email || !phone || !role) {
+        if (typeof showToast === 'function') {
+          showToast('Thiếu thông tin', 'Vui lòng điền đầy đủ các trường bắt buộc (*).');
+        } else {
+          alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
+        }
+        return;
+      }
+
+      // Tạo hàng mới trong bảng
+      const tbody = document.getElementById('usersTableBody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition-colors animate-in fade-in duration-300';
+        
+        const initials = getInitials(name);
+        const dept = getRoleDepartment(role);
+        const roleBadge = getRoleBadge(role);
+        const statusBadge = isActive 
+          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Hoạt động</span>'
+          : '<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px]">Chờ kích hoạt</span>';
+
+        tr.innerHTML = `
+          <td class="px-4 py-3.5 flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold flex items-center justify-center text-xs shrink-0">${initials}</div>
+            <div>
+              <strong class="text-slate-900 block font-bold text-xs">${name}</strong>
+              <span class="text-[11px] text-slate-400">${email}</span>
+            </div>
+          </td>
+          <td class="px-4 py-3.5">${roleBadge}</td>
+          <td class="px-4 py-3.5 text-slate-600">${dept}</td>
+          <td class="px-4 py-3.5 text-slate-600 font-mono">${phone}</td>
+          <td class="px-4 py-3.5 text-slate-400 text-[11px]">Vừa tạo</td>
+          <td class="px-4 py-3.5 text-center">${statusBadge}</td>
+          <td class="px-4 py-3.5 text-right">
+            <button type="button" onclick="showToast('Phân quyền', 'Chỉnh sửa phân quyền cho user ${email}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] cursor-pointer">Sửa</button>
+          </td>
+        `;
+
+        tbody.insertBefore(tr, tbody.firstChild);
+      }
+
+      // Cập nhật card KPI tổng
+      const kpiCards = document.querySelectorAll('main section.grid > div');
+      if (kpiCards.length > 0) {
+        const totalUsersEl = kpiCards[0].querySelector('.text-xl');
+        if (totalUsersEl) {
+          const currentCount = parseInt(totalUsersEl.innerText) || 18;
+          totalUsersEl.innerText = `${currentCount + 1} Users`;
+        }
+      }
+
+      closeNewUserModal();
+
+      if (typeof showToast === 'function') {
+        showToast('Tạo tài khoản thành công', `Đã khởi tạo tài khoản ${name} (${email}) với vai trò ${role}.`);
+      }
+    }
+
+    function filterUsersTable() {
+      const searchInput = document.getElementById('usersSearchInput');
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#usersTableBody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
+    window.openNewUserModal = openNewUserModal;
+    window.closeNewUserModal = closeNewUserModal;
+    window.toggleNewUserPasswordVisibility = toggleNewUserPasswordVisibility;
+    window.submitNewUserForm = submitNewUserForm;
+    window.filterUsersTable = filterUsersTable;
+  </script>
+
 </body>
 </html>
