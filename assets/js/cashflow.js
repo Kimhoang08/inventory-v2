@@ -735,7 +735,13 @@
     function updateCashFlowKpis() {
       // 1. Tổng giao dịch
       const countEl = document.getElementById('cfKpiTotalCount');
-      if (countEl) countEl.innerText = formatMoney(cashFlowFilteredDataset.length) + ' GD';
+      if (countEl) {
+        const fullCountText = `${formatMoney(cashFlowFilteredDataset.length)} giao dịch`;
+        countEl.innerText = formatMoney(cashFlowFilteredDataset.length) + ' GD';
+        countEl.setAttribute('title', fullCountText);
+        countEl.setAttribute('data-kpi-full', fullCountText);
+        countEl.classList.add('cursor-help', 'kpi-card-value');
+      }
 
       // 2. Tổng thu: Thực thu từ giao dịch Thu ở trạng thái Thành công
       const totalIncome = cashFlowFilteredDataset

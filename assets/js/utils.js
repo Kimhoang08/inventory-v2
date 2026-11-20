@@ -67,9 +67,23 @@ function setKpiCardValue(elOrId, amount, prefix = '') {
   const compact = formatKpiCurrency(num);
   const full = `${formatMoney(Math.abs(num))} đ`;
   const fullText = (num < 0 ? `-${full}` : full);
-  el.innerText = prefix ? `${prefix}${compact}` : compact;
-  el.setAttribute('title', prefix ? `${prefix}${fullText}` : fullText);
-  el.classList.add('cursor-help');
+  const displayVal = prefix ? `${prefix}${compact}` : compact;
+  const tooltipVal = prefix ? `${prefix}${fullText}` : fullText;
+
+  el.innerText = displayVal;
+  el.setAttribute('title', tooltipVal);
+  el.setAttribute('data-kpi-full', tooltipVal);
+  el.setAttribute('data-kpi-raw', num);
+  el.classList.add('cursor-help', 'kpi-card-value');
+
+  // Gán thêm data-kpi-full cho card cha để hover bất kỳ đâu trên card cũng hiện số chi tiết
+  const parentCard = el.closest ? el.closest('.kpi-card, [class*="rounded-2xl"], [class*="rounded-3xl"]') : null;
+  if (parentCard) {
+    parentCard.setAttribute('data-kpi-card-target', el.id || '');
+    if (!parentCard.hasAttribute('title') || (parentCard.getAttribute('title') || '').includes('đ')) {
+      parentCard.setAttribute('data-kpi-full', tooltipVal);
+    }
+  }
 }
 
 /**
@@ -82,7 +96,7 @@ function renderKpiValueMarkup(amount, prefix = '') {
   const fullText = (num < 0 ? `-${full}` : full);
   const display = prefix ? `${prefix}${compact}` : compact;
   const title = prefix ? `${prefix}${fullText}` : fullText;
-  return `<span title="${title}" class="cursor-help">${display}</span>`;
+  return `<span title="${title}" data-kpi-full="${title}" class="cursor-help kpi-card-value">${display}</span>`;
 }
 
 function removeVietnameseTones(str) {
@@ -1222,7 +1236,196 @@ function renderStandardDateRangePickerHTML(prefix, options = {}) {
   `;
 }
 
+// ============================================================================
+// INSTANT GLOBAL KPI TOOLTIP ENGINE (HIỂN THỊ SỐ CHI TIẾT TỨC THÌ KHI HOVER CARD)
+// ============================================================================
+let techeraKpiTooltipEl = null;
+let techeraKpiActiveTarget = null;
+let techeraKpiHideTimeout = null;
+
+function initTecheraKpiTooltip() {
+  if (techeraKpiTooltipEl || typeof document === 'undefined') return;
+
+  techeraKpiTooltipEl = document.createElement('div');
+  techeraKpiTooltipEl.id = 'techeraKpiTooltip';
+  techeraKpiTooltipEl.innerHTML = `
+    <div class="techera-kpi-bubble">
+      <div class="techera-kpi-bubble-label">
+        <i class="fa-solid fa-calculator text-[9px] text-sky-400"></i>
+        <span id="techeraKpiTooltipLabel">Số gốc chi tiết</span>
+      </div>
+      <div class="techera-kpi-bubble-value" id="techeraKpiTooltipValue">0 đ</div>
+    </div>
+    <div class="techera-kpi-arrow techera-kpi-arrow-down" id="techeraKpiTooltipArrow"></div>
+  `;
+  document.body.appendChild(techeraKpiTooltipEl);
+
+  // Global event delegation for instant hover
+  document.addEventListener('mouseover', handleKpiTooltipMouseOver, { passive: true });
+  document.addEventListener('mouseout', handleKpiTooltipMouseOut, { passive: true });
+}
+
+function getKpiTooltipData(target) {
+  if (!target || target === document.body || target === document.documentElement) return null;
+
+  // 1. Direct element with data-kpi-full
+  if (target.hasAttribute && target.hasAttribute('data-kpi-full')) {
+    return {
+      element: target,
+      fullText: target.getAttribute('data-kpi-full')
+    };
+  }
+
+  // 2. Direct element with cursor-help / title with currency or numbers
+  const titleAttr = target.getAttribute ? (target.getAttribute('title') || (target.dataset ? target.dataset.techeraStoredTitle : '')) : '';
+  if (titleAttr && (titleAttr.includes('đ') || /\d/.test(titleAttr))) {
+    const isKpi = target.classList?.contains('cursor-help') ||
+                  target.classList?.contains('kpi-card-value') ||
+                  /kpi|card|total|rev|profit|balance|expense|income/i.test(target.id || '') ||
+                  (target.closest && target.closest('[class*="rounded-2xl"], [class*="rounded-3xl"]'));
+    if (isKpi) {
+      return {
+        element: target,
+        fullText: titleAttr
+      };
+    }
+  }
+
+  // 3. Inside an element with data-kpi-full
+  const parentWithData = target.closest ? target.closest('[data-kpi-full]') : null;
+  if (parentWithData) {
+    return {
+      element: parentWithData,
+      fullText: parentWithData.getAttribute('data-kpi-full')
+    };
+  }
+
+  // 4. Inside an element with cursor-help & title
+  const parentWithTitle = target.closest ? target.closest('.cursor-help, .kpi-card-value') : null;
+  if (parentWithTitle) {
+    const pTitle = parentWithTitle.getAttribute('title') || (parentWithTitle.dataset ? parentWithTitle.dataset.techeraStoredTitle : '');
+    if (pTitle) {
+      return {
+        element: parentWithTitle,
+        fullText: pTitle
+      };
+    }
+  }
+
+  // 5. Shortened currency pattern like '6.4M', '254.35M', '1.45B', '500M'
+  const textContent = (target.textContent || '').trim();
+  if (/^[-+]?\d+(\.\d+)?\s*[MB]$/i.test(textContent) || /^[-+]?\d+(\.\d+)?\s*[MB]\s*đ?$/i.test(textContent)) {
+    let numText = textContent.replace(/[^\d.MB-]/gi, '');
+    let isNeg = numText.startsWith('-');
+    numText = numText.replace('-', '');
+    let mult = 1e6;
+    if (numText.toUpperCase().endsWith('B')) mult = 1e9;
+    const rawVal = parseFloat(numText) * mult;
+    if (!isNaN(rawVal)) {
+      return {
+        element: target,
+        fullText: (isNeg ? '-' : '') + formatMoney(rawVal) + ' đ'
+      };
+    }
+  }
+
+  return null;
+}
+
+function handleKpiTooltipMouseOver(e) {
+  const data = getKpiTooltipData(e.target);
+  if (!data || !data.fullText) return;
+
+  const targetEl = data.element;
+  techeraKpiActiveTarget = targetEl;
+
+  if (techeraKpiHideTimeout) {
+    clearTimeout(techeraKpiHideTimeout);
+    techeraKpiHideTimeout = null;
+  }
+
+  // Temporarily store & clear native title to prevent slow default browser tooltip clash
+  if (targetEl.hasAttribute && targetEl.hasAttribute('title')) {
+    if (!targetEl.dataset) targetEl.dataset = {};
+    targetEl.dataset.techeraStoredTitle = targetEl.getAttribute('title');
+    targetEl.removeAttribute('title');
+  }
+
+  const valEl = document.getElementById('techeraKpiTooltipValue');
+  const labelEl = document.getElementById('techeraKpiTooltipLabel');
+  if (valEl) valEl.innerText = data.fullText;
+  if (labelEl) labelEl.innerText = 'Số gốc chi tiết';
+
+  if (!techeraKpiTooltipEl) initTecheraKpiTooltip();
+  if (!techeraKpiTooltipEl) return;
+
+  techeraKpiTooltipEl.style.display = 'block';
+
+  // Position calculation
+  const rect = targetEl.getBoundingClientRect();
+  const tooltipRect = techeraKpiTooltipEl.getBoundingClientRect();
+  const arrowEl = document.getElementById('techeraKpiTooltipArrow');
+
+  let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+  // Viewport bounds
+  if (left < 10) left = 10;
+  if (typeof window !== 'undefined' && left + tooltipRect.width > window.innerWidth - 10) {
+    left = window.innerWidth - tooltipRect.width - 10;
+  }
+
+  let top = rect.top - tooltipRect.height - 10;
+  let arrowDown = true;
+
+  // If clipped at top, place below
+  if (top < 10) {
+    top = rect.bottom + 10;
+    arrowDown = false;
+  }
+
+  if (arrowEl) {
+    arrowEl.className = arrowDown ? 'techera-kpi-arrow techera-kpi-arrow-down' : 'techera-kpi-arrow techera-kpi-arrow-up';
+  }
+
+  techeraKpiTooltipEl.style.left = `${left}px`;
+  techeraKpiTooltipEl.style.top = `${top}px`;
+
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(() => {
+      techeraKpiTooltipEl?.classList.add('visible');
+    });
+  } else {
+    techeraKpiTooltipEl?.classList.add('visible');
+  }
+}
+
+function handleKpiTooltipMouseOut(e) {
+  if (techeraKpiActiveTarget) {
+    if (techeraKpiActiveTarget.dataset && techeraKpiActiveTarget.dataset.techeraStoredTitle) {
+      techeraKpiActiveTarget.setAttribute('title', techeraKpiActiveTarget.dataset.techeraStoredTitle);
+    }
+    techeraKpiActiveTarget = null;
+  }
+
+  if (techeraKpiTooltipEl) {
+    techeraKpiTooltipEl.classList.remove('visible');
+    techeraKpiHideTimeout = setTimeout(() => {
+      if (techeraKpiTooltipEl && !techeraKpiTooltipEl.classList.contains('visible')) {
+        techeraKpiTooltipEl.style.display = 'none';
+      }
+    }, 150);
+  }
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTecheraKpiTooltip);
+  } else {
+    initTecheraKpiTooltip();
+  }
+}
+
 window.renderStandardDateRangePickerHTML = renderStandardDateRangePickerHTML;
 window.formatKpiCurrency = formatKpiCurrency;
 window.setKpiCardValue = setKpiCardValue;
 window.renderKpiValueMarkup = renderKpiValueMarkup;
+window.initTecheraKpiTooltip = initTecheraKpiTooltip;

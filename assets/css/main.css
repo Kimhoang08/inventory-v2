@@ -114,3 +114,93 @@ input[type=number] {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
+
+/* ==========================================================================
+   KPI CARD VALUES & INSTANT HOVER TOOLTIP
+   ========================================================================== */
+.cursor-help,
+.kpi-card-value {
+  cursor: help !important;
+  position: relative;
+  text-decoration: underline dotted rgba(148, 163, 184, 0.6);
+  text-underline-offset: 4px;
+  transition: all 0.15s ease-in-out;
+}
+
+.cursor-help:hover,
+.kpi-card-value:hover {
+  text-decoration-color: currentColor;
+  filter: brightness(1.1);
+}
+
+/* Floating Instant Tooltip Box */
+#techeraKpiTooltip {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+  transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+}
+
+#techeraKpiTooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.techera-kpi-bubble {
+  background-color: rgba(15, 23, 42, 0.96); /* Slate 900 with backdrop-blur */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.875rem; /* rounded-xl */
+  padding: 0.5rem 0.875rem;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.techera-kpi-bubble-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8; /* slate-400 */
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.techera-kpi-bubble-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #38bdf8; /* sky-400 */
+  letter-spacing: -0.02em;
+}
+
+.techera-kpi-arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: rgba(15, 23, 42, 0.96);
+  transform: rotate(45deg);
+}
+
+.techera-kpi-arrow-down {
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.techera-kpi-arrow-up {
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}

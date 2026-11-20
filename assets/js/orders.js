@@ -650,7 +650,23 @@ function renderOrdersListView() {
     if (el) el.innerText = txt;
   };
   setEl('kpiCompletedOrders', formatMoney(completedOrders.length));
+  const elComp = document.getElementById('kpiCompletedOrders');
+  if (elComp) {
+    const tip = `${formatMoney(completedOrders.length)} đơn hàng hoàn tất`;
+    elComp.setAttribute('title', tip);
+    elComp.setAttribute('data-kpi-full', tip);
+    elComp.classList.add('cursor-help', 'kpi-card-value');
+  }
+
   setEl('kpiProcessingOrders', formatMoney(processingOrders.length));
+  const elProc = document.getElementById('kpiProcessingOrders');
+  if (elProc) {
+    const tip = `${formatMoney(processingOrders.length)} đơn hàng đang xử lý`;
+    elProc.setAttribute('title', tip);
+    elProc.setAttribute('data-kpi-full', tip);
+    elProc.classList.add('cursor-help', 'kpi-card-value');
+  }
+
   if (typeof setKpiCardValue === 'function') {
     setKpiCardValue('kpiActualRevenue', completedRevenue);
     setKpiCardValue('kpiActualProfit', completedProfit);

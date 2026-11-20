@@ -198,10 +198,12 @@ window.reportOrdersDataset = reportOrdersDataset;
           valEl.innerText = item.value;
           if (item.fullValue) {
             valEl.setAttribute('title', item.fullValue);
-            valEl.classList.add('cursor-help');
+            valEl.setAttribute('data-kpi-full', item.fullValue);
+            valEl.classList.add('cursor-help', 'kpi-card-value');
           } else {
             valEl.removeAttribute('title');
-            valEl.classList.remove('cursor-help');
+            valEl.removeAttribute('data-kpi-full');
+            valEl.classList.remove('cursor-help', 'kpi-card-value');
           }
         }
         if (trendEl) trendEl.innerHTML = renderKpiTrendHtml(item);
