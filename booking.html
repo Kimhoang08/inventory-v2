@@ -450,6 +450,51 @@
     </div>
   </div>
 
+  <!-- Modal Xác nhận Chuyển đổi nhóm vé (Single Package Configuration Rule) -->
+  <div id="modalSwitchGroupConfirm" class="hidden fixed inset-0 z-[80] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-200 scale-100">
+      <div class="p-5 sm:p-6 space-y-4">
+        <!-- Header & Icon -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-11 h-11 rounded-2xl bg-[#FFF7ED] border border-orange-200/80 text-[#F25C22] flex items-center justify-center shrink-0 text-lg shadow-2xs">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-base sm:text-lg font-black text-slate-900 truncate">Chuyển đổi nhóm vé</h3>
+              <p class="text-xs text-slate-500 font-medium truncate mt-0.5">Xác nhận chuyển đổi gói dịch vụ</p>
+            </div>
+          </div>
+          <button type="button" onclick="cancelSwitchServiceGroup()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer shrink-0" aria-label="Đóng">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Body Message -->
+        <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200/80 text-xs text-slate-700 leading-relaxed space-y-2">
+          <p id="switchGroupConfirmMessage">
+            Bạn đang chọn số lượng cho nhóm vé [<strong id="switchGroupCurrentName" class="text-slate-900 font-black">-</strong>]. Bạn cần thêm nhóm vé này vào giỏ hàng trước khi chọn nhóm vé khác.
+          </p>
+          <div class="flex items-center gap-2 text-[11px] text-amber-700 font-semibold pt-1 border-t border-slate-200/60">
+            <i class="fa-solid fa-circle-info text-amber-500 shrink-0"></i>
+            <span>Vé đã chọn sẽ được lưu vào Giỏ hàng để bạn không bị mất dữ liệu.</span>
+          </div>
+        </div>
+
+        <!-- CTA Action Buttons -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button type="button" onclick="cancelSwitchServiceGroup()" class="py-2.5 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs cursor-pointer transition-colors text-center">
+            Hủy
+          </button>
+          <button type="button" onclick="confirmSwitchServiceGroup()" class="py-2.5 px-4 rounded-xl bg-[#F25C22] hover:bg-[#d84814] text-white font-extrabold text-xs shadow-md shadow-orange-500/25 active:scale-95 cursor-pointer transition-all text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-cart-plus text-xs"></i>
+            <span>Thêm &amp; Chuyển</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="database/products.db.js"></script>
   <script src="database/crm.db.js"></script>
@@ -458,6 +503,6 @@
   <script src="database/db-store.js"></script>
   <script src="assets/js/utils.js?v=2.7.0"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
-  <script src="assets/js/booking.js?v=2.8.0"></script>
+  <script src="assets/js/booking.js?v=2.8.1"></script>
 </body>
 </html>

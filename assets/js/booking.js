@@ -792,8 +792,92 @@ function applyTwoTierFilterToCards() {
   syncBookingFlowVisibility();
 }
 
+let pendingTargetGroupId = null;
+
+function getCurrentSelectedTicketCount() {
+  let count = 0;
+  for (const k in selectedOrderTickets) {
+    const item = selectedOrderTickets[k];
+    if (item) count += getPackageTotalQty(item);
+  }
+  return count;
+}
+
+function getCurrentServiceGroupName() {
+  const currentGroup = getAvailableServiceGroups().find(g => g.id === activeServiceTab);
+  if (currentGroup && currentGroup.label) return currentGroup.label;
+  const firstId = Object.keys(selectedOrderTickets)[0];
+  if (firstId && ticketPackages[firstId]) {
+    return ticketPackages[firstId].serviceGroupLabel || ticketPackages[firstId].title;
+  }
+  return 'hiện tại';
+}
+
 function selectServiceGroupTab(groupId) {
   if (activeServiceTab === groupId) return;
+
+  const currentCount = getCurrentSelectedTicketCount();
+  if (currentCount >= 1) {
+    // Single Package Configuration Rule: Prompt user to add current group to cart before switching
+    pendingTargetGroupId = groupId;
+    const modal = document.getElementById('modalSwitchGroupConfirm');
+    const nameEl = document.getElementById('switchGroupCurrentName');
+    const groupName = getCurrentServiceGroupName();
+    if (nameEl) nameEl.innerText = groupName;
+    if (modal) {
+      modal.classList.remove('hidden');
+    } else {
+      if (confirm(`Bạn đang chọn số lượng cho nhóm vé [${groupName}]. Bạn cần thêm nhóm vé này vào giỏ hàng trước khi chọn nhóm vé khác.`)) {
+        confirmSwitchServiceGroup();
+      }
+    }
+    return;
+  }
+
+  // If 0 tickets selected, switch freely without prompt
+  executeSwitchServiceGroup(groupId);
+}
+
+function cancelSwitchServiceGroup() {
+  pendingTargetGroupId = null;
+  const modal = document.getElementById('modalSwitchGroupConfirm');
+  if (modal) modal.classList.add('hidden');
+}
+
+function confirmSwitchServiceGroup() {
+  const modal = document.getElementById('modalSwitchGroupConfirm');
+  if (modal) modal.classList.add('hidden');
+
+  const oldGroupName = getCurrentServiceGroupName();
+  const targetId = pendingTargetGroupId;
+  pendingTargetGroupId = null;
+
+  // 1. Sync current order to cart (kèm số lượng & mức chiết khấu đã thiết lập)
+  const synced = syncSelectedOrderToCart();
+
+  // 2. Clear current order state & reset counter to 0
+  packageConfigStates = {};
+  selectedOrderTickets = {};
+  bookingSessionDiscountRate = 0;
+
+  // 3. Switch active to target group
+  if (targetId) {
+    executeSwitchServiceGroup(targetId);
+  } else {
+    renderPackageFilterTabs();
+    renderDirectPackageConfigPanel();
+    renderPaxQuantitySection();
+    syncBookingFlowVisibility();
+    renderOrderTicketsAccordions();
+    recalculateTotals();
+  }
+
+  const targetGroup = getAvailableServiceGroups().find(g => g.id === targetId);
+  const targetName = targetGroup ? targetGroup.label : 'nhóm vé mới';
+  showToast('Đã lưu & Chuyển nhóm vé', `Đã thêm nhóm vé "${oldGroupName}" vào Giỏ hàng và chuyển sang "${targetName}".`, 'success');
+}
+
+function executeSwitchServiceGroup(groupId) {
   activeServiceTab = groupId;
   activeMarketTab = null;
   packageConfigStates = {};
@@ -2187,3 +2271,5 @@ window.switchDrawerPackageRestaurant = switchDrawerPackageRestaurant;
 window.switchDrawerPackageSlot = switchDrawerPackageSlot;
 window.confirmSupplierModalSelection = confirmSupplierModalSelection;
 window.selectPendingModalSupplier = selectPendingModalSupplier;
+window.cancelSwitchServiceGroup = cancelSwitchServiceGroup;
+window.confirmSwitchServiceGroup = confirmSwitchServiceGroup;
