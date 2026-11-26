@@ -433,7 +433,12 @@ function getTierPrice(orderItem, pkg, tier) {
   if (!cfg) return 0;
   const key = getTierPriceKey(tier);
   if (orderItem && typeof orderItem[key] === 'number') return orderItem[key];
-  return cfg.defaultSelling;
+  const rate = (typeof bookingSessionDiscountRate === 'number') ? bookingSessionDiscountRate : 0;
+  if (rate > 0) {
+    const discount = Math.round(cfg.listedPrice * (rate / 100));
+    return Math.max(0, cfg.listedPrice - discount);
+  }
+  return cfg.listedPrice;
 }
 
 function getPackageTotalQty(orderItem) {

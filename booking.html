@@ -221,9 +221,9 @@
               <!-- 2.4. Bảng đối soát dòng tiền -->
               <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
                 <div class="flex justify-between text-slate-500"><span>Tổng giá niêm yết</span><span id="valTotalListed" class="font-bold text-slate-700">0 đ</span></div>
-                <div class="flex justify-between text-slate-500"><span>Giá vốn Đại lý (Net)</span><span id="valTotalPartner" class="font-bold text-slate-700">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Giá vốn Net đối tác</span><span id="valTotalPartner" class="font-bold text-slate-700">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Giảm trực tiếp cho khách</span><span id="valDirectDiscount" class="text-amber-600 font-bold">0 đ</span></div>
-                <div class="flex justify-between text-slate-500"><span>Thu hộ khách hàng</span><span id="valTotalCollected" class="font-bold text-slate-900">0 đ</span></div>
+                <div class="flex justify-between text-slate-500"><span>Tổng tiền thu khách (Public QR)</span><span id="valTotalCollected" class="font-bold text-slate-900">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Chênh lệch giá bán</span><span id="valPriceDifference" class="font-semibold text-slate-700">0 đ</span></div>
                 <div class="flex justify-between items-center text-emerald-700 font-bold pt-1.5 border-t border-dashed border-slate-200">
                   <span>Lợi nhuận Đại lý dự kiến</span>
@@ -234,7 +234,7 @@
                   <span id="walletRemaining" class="font-bold text-slate-700">0 đ</span>
                 </div>
                 <div class="flex justify-between items-baseline pt-2.5 border-t border-slate-200">
-                  <span class="text-xs font-black text-slate-900">Thanh toán Ví Đại lý:</span>
+                  <span class="text-xs font-black text-slate-900">Cần thanh toán đối tác (Ví):</span>
                   <span id="valFinalPayable" class="text-lg font-black text-[#F25C22]">0 đ</span>
                 </div>
               </div>
@@ -330,8 +330,12 @@
             <span>Giá thực nhận / Chiết khấu:</span>
             <span id="mobileDrawerProfitSummary" class="font-bold text-emerald-600">+ 0 đ</span>
           </div>
+          <div class="flex items-center justify-between text-[#64748B]">
+            <span>Số dư Ví còn lại:</span>
+            <span id="mobileDrawerWalletRemaining" class="font-bold text-slate-700">0 đ</span>
+          </div>
           <div class="flex items-baseline justify-between pt-1 border-t border-slate-100">
-            <span class="font-bold text-[#0F172A] text-sm">Cần thanh toán:</span>
+            <span class="font-bold text-[#0F172A] text-sm">Cần thanh toán đối tác (Ví):</span>
             <span id="mobileDrawerFinalPayableFooter" class="text-lg font-black text-[#F25C19]">0 đ</span>
           </div>
         </div>
@@ -390,8 +394,8 @@
   <script src="database/orders.db.js"></script>
   <script src="database/cashflow.db.js"></script>
   <script src="database/db-store.js"></script>
-  <script src="assets/js/utils.js?v=2.7.0"></script>
+  <script src="assets/js/utils.js?v=2.9.1"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
-  <script src="assets/js/booking.js?v=2.8.0"></script>
+  <script src="assets/js/booking.js?v=2.9.1"></script>
 </body>
 </html>

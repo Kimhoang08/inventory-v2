@@ -757,6 +757,11 @@ function getOrInitPackageConfigState(pkg) {
     return selectedOrderTickets[pkg.id];
   }
   if (!packageConfigStates[pkg.id]) {
+    const rate = (typeof bookingSessionDiscountRate === 'number') ? bookingSessionDiscountRate : 0;
+    const calcPrice = (tierCfg) => {
+      if (!tierCfg) return 0;
+      return calculateDiscountedTierPrice(tierCfg.listedPrice, tierCfg.netPrice, rate).sellingPrice;
+    };
     packageConfigStates[pkg.id] = {
       id: pkg.id,
       isExpanded: true,
@@ -765,9 +770,9 @@ function getOrInitPackageConfigState(pkg) {
       adultQty: 0,
       childQty: 0,
       seniorQty: 0,
-      adultSellingPrice: pkg.adult ? pkg.adult.defaultSelling : 0,
-      childSellingPrice: pkg.child ? pkg.child.defaultSelling : 0,
-      seniorSellingPrice: pkg.senior ? pkg.senior.defaultSelling : (pkg.adult ? pkg.adult.defaultSelling : 0)
+      adultSellingPrice: calcPrice(pkg.adult),
+      childSellingPrice: calcPrice(pkg.child),
+      seniorSellingPrice: calcPrice(pkg.senior || pkg.adult)
     };
   }
   return packageConfigStates[pkg.id];
@@ -1086,10 +1091,8 @@ function selectPackageTimeSlot(pkgId, slotId) {
     return;
   }
   orderItem.selectedTimeSlotId = slotId;
-  TICKET_TIER_KEYS.forEach(t => {
-    const effCfg = getEffectivePackageTierConfig(pkg, orderItem, t);
-    if (effCfg) orderItem[getTierPriceKey(t)] = effCfg.defaultSelling;
-  });
+  const currentDiscountRate = (typeof bookingSessionDiscountRate === 'number') ? bookingSessionDiscountRate : 0;
+  applyGlobalDiscountRateToOrderItem(pkg, orderItem, currentDiscountRate);
   if (getPackageTotalQty(orderItem) > validSlot.capacity) {
     orderItem.adultQty = 0; orderItem.childQty = 0; orderItem.seniorQty = 0;
     delete selectedOrderTickets[pkgId];
@@ -1445,10 +1448,8 @@ function switchDrawerPackageSlot(pkgId, slotId) {
     return;
   }
   orderItem.selectedTimeSlotId = slotId;
-  TICKET_TIER_KEYS.forEach(t => {
-    const effCfg = getEffectivePackageTierConfig(pkg, orderItem, t);
-    if (effCfg) orderItem[getTierPriceKey(t)] = effCfg.defaultSelling;
-  });
+  const currentDiscountRate = (typeof bookingSessionDiscountRate === 'number') ? bookingSessionDiscountRate : 0;
+  applyGlobalDiscountRateToOrderItem(pkg, orderItem, currentDiscountRate);
   if (bookingSessionDiscountRate !== null) {
     applyGlobalDiscountRateToOrderItem(pkg, orderItem, bookingSessionDiscountRate);
   }
@@ -1880,13 +1881,32 @@ function recalculateTotals() {
     }
   }
 
-  const shouldDisable = (totalTicketsCount === 0);
+  const mobWalletRemainingEl = document.getElementById('mobileDrawerWalletRemaining');
+  if (mobWalletRemainingEl) {
+    if (remainingBalance >= 0) {
+      mobWalletRemainingEl.innerText = `${formatMoney(remainingBalance)} đ (Đủ điều kiện)`;
+      mobWalletRemainingEl.className = 'font-bold text-slate-900';
+    } else {
+      mobWalletRemainingEl.innerText = `Không đủ (${formatMoney(remainingBalance)} đ)`;
+      mobWalletRemainingEl.className = 'font-bold text-rose-600';
+    }
+  }
+
+  const isWalletInsufficient = (remainingBalance < 0 && totalTicketsCount > 0);
+  const shouldDisable = (totalTicketsCount === 0 || isWalletInsufficient);
   ['btnContinueBooking', 'btnMobileFooterContinue', 'btnMobileDrawerContinue'].forEach(btnId => {
     const btn = document.getElementById(btnId);
     if (!btn) return;
     btn.disabled = shouldDisable;
     btn.classList.toggle('opacity-50', shouldDisable);
     btn.classList.toggle('cursor-not-allowed', shouldDisable);
+    if (isWalletInsufficient) {
+      btn.title = `Số dư ví không đủ để thanh toán giá vốn đối tác (${formatMoney(finalPayable)} đ). Vui lòng nạp thêm tiền vào ví!`;
+    } else if (totalTicketsCount === 0) {
+      btn.title = 'Vui lòng chọn ít nhất 1 vé để tiếp tục';
+    } else {
+      btn.title = '';
+    }
   });
 
   setTxt('mobileFooterTicketsCount', `${totalTicketsCount} vé`);
@@ -2205,8 +2225,9 @@ function handleContinueBooking() {
       return;
     }
   }
-  if (snap.hasFloorError) {
-    showToast('Lỗi giá sàn đối tác', 'Giá thực nhận không được thấp hơn giá sàn đối tác B2B. Vui lòng kiểm tra lại!', 'error');
+  const wallet = TecheraDB.getWallet();
+  if ((wallet.balance || 0) < snap.totalPartner) {
+    showToast('Số dư ví không đủ', `Số dư ví (${formatMoney(wallet.balance || 0)} đ) không đủ để thanh toán giá vốn đối tác (${formatMoney(snap.totalPartner)} đ). Vui lòng nạp thêm tiền vào ví!`, 'error');
     return;
   }
 
