@@ -2285,7 +2285,7 @@ function handleSaveDraft(statusLabel = 'Nháp') {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderSharedShell({ activePage: 'booking', pageTitle: 'Đặt vé chi tiết', showGlobalHeader: false, hasBottomBar: true, hideFloatingCart: true });
+  renderSharedShell({ activePage: 'booking', pageTitle: 'Đặt vé chi tiết', showGlobalHeader: false, hasBottomBar: true, hideFloatingCart: false });
 
   const urlParams = new URLSearchParams(window.location.search);
   const paramDest = urlParams.get('dest');

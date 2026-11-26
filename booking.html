@@ -17,8 +17,22 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-32 lg:pb-14 space-y-6">
 
       <!-- 1. Top Header -->
-      <div class="px-1 pt-1 pb-1">
+      <div class="px-1 pt-1 pb-1 flex items-center justify-between gap-3">
         <h1 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">Chi tiết vé</h1>
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="wallet.html" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-brand-400 text-xs font-bold text-slate-700 shadow-2xs transition-colors">
+            <i class="fa-solid fa-wallet text-brand-500"></i>
+            <span class="js-wallet-balance-text">đ 1.000.000</span>
+          </a>
+          <a href="cart.html" id="detailHeaderCartBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-brand-400 text-xs font-bold text-slate-700 shadow-2xs transition-colors">
+            <i class="fa-solid fa-cart-shopping text-brand-500"></i>
+            <span class="hidden sm:inline">Giỏ hàng</span>
+            <span id="detailHeaderCartBadge" class="header-cart-badge px-1.5 py-0.5 rounded-full bg-brand-500 text-white text-[10px] font-black hidden">0</span>
+          </a>
+          <button type="button" onclick="openAgencyAccountModal()" title="Cài đặt / Hồ sơ đại lý" class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white border border-slate-200 hover:border-brand-400 text-slate-700 hover:text-brand-600 shadow-2xs transition-colors cursor-pointer">
+            <i class="fa-solid fa-gear text-xs"></i>
+          </button>
+        </div>
       </div>
 
       <!-- 2. Card KDL & NCC -->
@@ -396,6 +410,6 @@
   <script src="database/db-store.js"></script>
   <script src="assets/js/utils.js?v=2.9.1"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
-  <script src="assets/js/booking.js?v=2.9.1"></script>
+  <script src="assets/js/booking.js?v=2.9.2"></script>
 </body>
 </html>
