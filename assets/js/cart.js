@@ -198,7 +198,7 @@ function renderBookingCartPage() {
     const pkgCardsHtml = site.pkgGroups.map(pkg => {
       const dateStr = formatDateObjDMY(pkg.usageDate);
       const displayTitle = pkg.serviceGroupLabel || pkg.pkgTitle;
-      const defaultImg = 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?auto=format&fit=crop&w=700&q=80';
+      const defaultImg = 'assets/images/destinations/sunworld-bana.jpg';
 
       // 4. Khối Đối tượng (Pax Breakdown Box)
       const paxRowsHtml = pkg.paxItems.map((item, idx) => {

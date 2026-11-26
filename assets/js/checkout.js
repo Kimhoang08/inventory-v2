@@ -301,7 +301,7 @@ function renderOrderConfirmationPage() {
   const firstCart = cartCheckoutItems[0] || null;
   const dest = TecheraDB.getDestinationById(firstCart ? firstCart.destId : currentSelectedDestinationId);
   let destName = dest ? dest.name : 'Sun World Ba Na Hills';
-  const destImage = dest ? dest.imageUrl : 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?auto=format&fit=crop&w=700&q=80';
+  const destImage = dest ? dest.imageUrl : 'assets/images/destinations/sunworld-bana.jpg';
   const suppliers = getSuppliersForDestination(dest ? dest.id : currentSelectedDestinationId);
   const activeSupId = firstCart ? firstCart.supplierId : currentSelectedSupplierId;
   const sup = suppliers.find(s => s.id === activeSupId) || suppliers[0];

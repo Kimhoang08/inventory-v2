@@ -13,7 +13,7 @@ const destinationsDatabase = [
     fromPrice: 650000,
     hasDiscount: true,
     rating: 4.9,
-    imageUrl: "https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/sunworld-bana.jpg",
     popularIndex: 99
   },
   {
@@ -26,7 +26,7 @@ const destinationsDatabase = [
     fromPrice: 750000,
     hasDiscount: true,
     rating: 4.8,
-    imageUrl: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/sunworld-fansipan.jpg",
     popularIndex: 95
   },
   {
@@ -39,7 +39,7 @@ const destinationsDatabase = [
     fromPrice: 950000,
     hasDiscount: true,
     rating: 4.9,
-    imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/vinwonders-phuquoc.jpg",
     popularIndex: 98
   },
   {
@@ -52,7 +52,7 @@ const destinationsDatabase = [
     fromPrice: 880000,
     hasDiscount: true,
     rating: 4.8,
-    imageUrl: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/vinwonders-nhatrang.jpg",
     popularIndex: 96
   },
   {
@@ -65,7 +65,7 @@ const destinationsDatabase = [
     fromPrice: 350000,
     hasDiscount: true,
     rating: 4.7,
-    imageUrl: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/sunworld-halong.jpg",
     popularIndex: 92
   },
   {
@@ -78,7 +78,7 @@ const destinationsDatabase = [
     fromPrice: 250000,
     hasDiscount: true,
     rating: 4.7,
-    imageUrl: "https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/novaworld-phanthiet.jpg",
     popularIndex: 90
   },
   {
@@ -91,7 +91,7 @@ const destinationsDatabase = [
     fromPrice: 600000,
     hasDiscount: true,
     rating: 4.8,
-    imageUrl: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/vinwonders-namhoian.jpg",
     popularIndex: 94
   },
   {
@@ -104,7 +104,7 @@ const destinationsDatabase = [
     fromPrice: 140000,
     hasDiscount: true,
     rating: 4.6,
-    imageUrl: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/damsen-world.jpg",
     popularIndex: 88
   },
   {
@@ -117,7 +117,7 @@ const destinationsDatabase = [
     fromPrice: 150000,
     hasDiscount: true,
     rating: 4.5,
-    imageUrl: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/suoitien-themepark.jpg",
     popularIndex: 87
   },
   {
@@ -130,7 +130,7 @@ const destinationsDatabase = [
     fromPrice: 250000,
     hasDiscount: true,
     rating: 4.6,
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/ttc-world.jpg",
     popularIndex: 89
   },
   {
@@ -143,7 +143,7 @@ const destinationsDatabase = [
     fromPrice: 600000,
     hasDiscount: true,
     rating: 4.9,
-    imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/sunworld-honthom.jpg",
     popularIndex: 97
   },
   {
@@ -156,7 +156,7 @@ const destinationsDatabase = [
     fromPrice: 200000,
     hasDiscount: true,
     rating: 4.7,
-    imageUrl: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=700&q=80",
+    imageUrl: "assets/images/destinations/offline-asia-park.jpg",
     popularIndex: 91
   }
 ];
