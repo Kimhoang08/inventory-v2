@@ -775,6 +775,9 @@ function getOrInitPackageConfigState(pkg) {
       seniorSellingPrice: calcPrice(pkg.senior || pkg.adult)
     };
   }
+  if (typeof bookingSessionDiscountRate === 'number') {
+    applyGlobalDiscountRateToOrderItem(pkg, packageConfigStates[pkg.id], bookingSessionDiscountRate);
+  }
   return packageConfigStates[pkg.id];
 }
 
@@ -1424,10 +1427,8 @@ function switchDrawerPackageRestaurant(pkgId, restaurantId) {
   } else {
     orderItem.selectedTimeSlotId = null;
   }
-  TICKET_TIER_KEYS.forEach(t => {
-    const effCfg = getEffectivePackageTierConfig(pkg, orderItem, t);
-    if (effCfg) orderItem[getTierPriceKey(t)] = effCfg.defaultSelling;
-  });
+  const currentDiscountRate = (typeof bookingSessionDiscountRate === 'number') ? bookingSessionDiscountRate : 0;
+  applyGlobalDiscountRateToOrderItem(pkg, orderItem, currentDiscountRate);
   if (bookingSessionDiscountRate !== null) {
     applyGlobalDiscountRateToOrderItem(pkg, orderItem, bookingSessionDiscountRate);
   }
@@ -1599,6 +1600,11 @@ function handleGlobalDiscountChange(rawVal, source = 'slider') {
     const orderItem = selectedOrderTickets[k];
     if (pkg && orderItem) applyGlobalDiscountRateToOrderItem(pkg, orderItem, num);
   });
+  Object.keys(packageConfigStates).forEach(k => {
+    const pkg = ticketPackages[k];
+    const orderItem = packageConfigStates[k];
+    if (pkg && orderItem) applyGlobalDiscountRateToOrderItem(pkg, orderItem, num);
+  });
   renderOrderTicketsAccordions();
   recalculateTotals();
 }
@@ -1674,9 +1680,6 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
                    class="w-32 sm:w-36 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-right text-xs sm:text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#F25C19] focus:ring-1 focus:ring-[#F25C19] transition-all"
                    ${!paxEnabled ? 'disabled' : ''} />
             <span class="ml-1.5 text-xs text-[#64748B] font-semibold">đ</span>
-          </div>
-          <div id="${scopePrefix}-errorFloor-${pkgId}-${type}" class="hidden text-[10px] text-rose-600 font-medium text-right mt-0.5">
-            Thấp hơn giá vốn (${formatMoney(config.netPrice)} đ)
           </div>
         </div>
       </div>
@@ -1842,7 +1845,7 @@ function recalculateTotals() {
   const totalListed = snap.totalListed;
   const totalPartner = snap.totalPartner;
   const totalCollected = snap.totalActual;
-  const priceDifference = totalListed - totalPartner;
+  const priceDifference = totalCollected - totalPartner;
   const directDiscount = totalListed - totalCollected;
   const profit = totalCollected - totalPartner;
   const finalPayable = totalPartner;
@@ -1865,18 +1868,24 @@ function recalculateTotals() {
   }
   const profitEl = document.getElementById('valProfit');
   if (profitEl) {
-    profitEl.innerText = profit >= 0 ? `+ ${formatMoney(profit)} đ` : `Cảnh báo lỗ (${formatMoney(profit)} đ)`;
-    profitEl.className = profit >= 0 ? 'font-black text-sm text-emerald-700' : 'font-black text-sm text-rose-600';
+    profitEl.innerText = profit >= 0 ? `+ ${formatMoney(profit)} đ` : `${formatMoney(profit)} đ`;
+    profitEl.className = profit >= 0 ? 'font-black text-sm text-emerald-700' : 'font-black text-sm text-slate-700';
   }
   setTxt('valFinalPayable', `${formatMoney(finalPayable)} đ`);
 
   const walletRemainingEl = document.getElementById('walletRemaining');
   if (walletRemainingEl) {
     if (remainingBalance >= 0) {
-      walletRemainingEl.innerText = `${formatMoney(remainingBalance)} đ (Đủ điều kiện)`;
+      walletRemainingEl.innerHTML = `${formatMoney(remainingBalance)} đ (Đủ điều kiện)`;
       walletRemainingEl.className = 'font-bold text-slate-900';
     } else {
-      walletRemainingEl.innerText = `Không đủ (${formatMoney(remainingBalance)} đ)`;
+      walletRemainingEl.innerHTML = `
+        <span class="inline-flex items-center justify-end gap-1.5">
+          <span class="text-rose-600 font-bold">Không đủ (${formatMoney(remainingBalance)} đ)</span>
+          <button type="button" onclick="openQuickWalletModalFromBooking()" title="Nạp tiền vào ví" class="w-5 h-5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs inline-flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 transition-all">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+          </button>
+        </span>`;
       walletRemainingEl.className = 'font-bold text-rose-600';
     }
   }
@@ -1884,10 +1893,16 @@ function recalculateTotals() {
   const mobWalletRemainingEl = document.getElementById('mobileDrawerWalletRemaining');
   if (mobWalletRemainingEl) {
     if (remainingBalance >= 0) {
-      mobWalletRemainingEl.innerText = `${formatMoney(remainingBalance)} đ (Đủ điều kiện)`;
+      mobWalletRemainingEl.innerHTML = `${formatMoney(remainingBalance)} đ (Đủ điều kiện)`;
       mobWalletRemainingEl.className = 'font-bold text-slate-900';
     } else {
-      mobWalletRemainingEl.innerText = `Không đủ (${formatMoney(remainingBalance)} đ)`;
+      mobWalletRemainingEl.innerHTML = `
+        <span class="inline-flex items-center justify-end gap-1.5">
+          <span class="text-rose-600 font-bold">Không đủ (${formatMoney(remainingBalance)} đ)</span>
+          <button type="button" onclick="openQuickWalletModalFromBooking()" title="Nạp tiền vào ví" class="w-5 h-5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs inline-flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 transition-all">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+          </button>
+        </span>`;
       mobWalletRemainingEl.className = 'font-bold text-rose-600';
     }
   }
@@ -1930,7 +1945,7 @@ function recalculateTotals() {
       mobProfitSummary.className = 'font-bold text-emerald-600';
     } else {
       mobProfitSummary.innerText = `${formatMoney(profit)} đ`;
-      mobProfitSummary.className = 'font-bold text-rose-600';
+      mobProfitSummary.className = 'font-bold text-slate-700';
     }
   }
 
@@ -1941,8 +1956,8 @@ function recalculateTotals() {
   }
   const mobProfit = document.getElementById('mobileDrawerProfit');
   if (mobProfit) {
-    mobProfit.innerText = profit >= 0 ? `+ ${formatMoney(profit)} đ` : `Cảnh báo lỗ (${formatMoney(profit)} đ)`;
-    mobProfit.className = profit >= 0 ? 'font-black text-sm text-emerald-700' : 'font-black text-sm text-rose-600';
+    mobProfit.innerText = profit >= 0 ? `+ ${formatMoney(profit)} đ` : `${formatMoney(profit)} đ`;
+    mobProfit.className = profit >= 0 ? 'font-black text-sm text-emerald-700' : 'font-black text-sm text-slate-700';
   }
   const mobileFooter = document.getElementById('mobileBookingFooterBar');
   if (mobileFooter) mobileFooter.classList.toggle('hidden', !(currentSelectedSupplierId && totalTicketsCount > 0));
@@ -1950,6 +1965,16 @@ function recalculateTotals() {
   persistBookingContext();
   updateHeaderCartBadges();
 }
+
+function openQuickWalletModalFromBooking() {
+  const snap = getOrderTotalsSnapshot();
+  const wallet = TecheraDB.getWallet();
+  const deficit = Math.max(0, snap.totalPartner - (wallet.balance || 0));
+  if (typeof openQuickWalletModal === 'function') {
+    openQuickWalletModal(deficit);
+  }
+}
+window.openQuickWalletModalFromBooking = openQuickWalletModalFromBooking;
 
 // ============================================================================
 // MOBILE DRAWER & CART / CHECKOUT ACTIONS
