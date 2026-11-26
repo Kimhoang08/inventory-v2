@@ -117,9 +117,9 @@ function renderBookingSuppliers() {
   const activeSup = suppliers.find(s => s.id === currentSelectedSupplierId) || suppliers[0];
   if (subtitleEl && activeSup) {
     if (activeSup.id === 'techera') {
-      subtitleEl.innerText = 'Nhà cung cấp Techera • Kho nội bộ Techera';
+      subtitleEl.innerText = 'Kho nội bộ Techera';
     } else {
-      subtitleEl.innerText = `${activeSup.name} • API Đối tác KDL`;
+      subtitleEl.innerText = activeSup.name || 'Tập đoàn đối tác';
     }
   }
   if (sidebarBadge && activeSup) {
@@ -430,10 +430,11 @@ function syncSelectedDateLabels() {
   const summary = document.getElementById('selected_date_summary');
   if (summary) {
     summary.innerHTML = `
-      <div onclick="toggleCalendarSection()" class="rounded-xl bg-[#FFF7ED] border border-orange-200/80 px-4 py-3 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-orange-100/60 transition-colors shadow-2xs">
-        <div class="text-sm sm:text-base font-extrabold text-slate-900 truncate">
+      <div onclick="toggleCalendarSection()" class="rounded-xl bg-slate-100 border border-slate-200/90 px-3.5 py-2.5 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-slate-200/60 transition-colors shadow-2xs">
+        <div class="text-xs sm:text-sm font-semibold text-[#0F172A] truncate">
           ${formattedDate}
         </div>
+        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
       </div>`;
   }
 
@@ -661,20 +662,19 @@ function renderPackageFilterTabs() {
 
       let stateCls = '';
       if (isActive) {
-        stateCls = 'bg-brand-500 text-white shadow-sm shadow-orange-500/25 border border-brand-500';
+        stateCls = 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold';
       } else if (query && isMatched) {
-        stateCls = 'bg-orange-50 text-brand-700 border-2 border-orange-400 font-extrabold shadow-2xs ring-2 ring-orange-100/60';
+        stateCls = 'bg-slate-100 text-[#0F172A] border border-slate-300 font-bold';
       } else if (query && !isMatched) {
-        stateCls = 'opacity-35 grayscale bg-slate-100 text-slate-400 border border-slate-200';
+        stateCls = 'opacity-35 grayscale bg-slate-50 text-slate-400 border border-slate-200';
       } else {
-        stateCls = 'bg-slate-50 text-slate-700 border border-slate-200 hover:border-brand-300 hover:text-brand-600';
+        stateCls = 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium';
       }
 
       return `
         <button type="button" role="tab" aria-selected="${isActive ? 'true' : 'false'}" onclick="selectServiceGroupTab('${g.id}')"
-                class="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer inline-flex items-center gap-1.5 ${stateCls}">
+                class="whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center ${stateCls}">
           <span>${g.label}</span>
-          ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white ml-0.5"></span>' : ''}
         </button>`;
     }).join('');
   }
@@ -690,20 +690,19 @@ function renderPackageFilterTabs() {
 
       let stateCls = '';
       if (isActive) {
-        stateCls = 'bg-orange-50 text-brand-600 border-2 border-brand-500 shadow-2xs font-extrabold';
+        stateCls = 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold';
       } else if (query && isMatched) {
-        stateCls = 'bg-orange-50/80 text-brand-700 border-2 border-orange-400 font-bold';
+        stateCls = 'bg-slate-100 text-[#0F172A] border border-slate-300 font-bold';
       } else if (query && !isMatched) {
         stateCls = 'opacity-35 grayscale bg-white text-slate-400 border border-slate-200';
       } else {
-        stateCls = 'bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600';
+        stateCls = 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium';
       }
 
       return `
         <button type="button" role="tab" aria-selected="${isActive ? 'true' : 'false'}" onclick="selectMarketRegionTab('${m.id}')"
-                class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 ${stateCls}">
+                class="whitespace-nowrap px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center ${stateCls}">
           <span>${m.label}</span>
-          ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 ml-0.5"></span>' : ''}
         </button>`;
     }).join('');
   }
@@ -797,7 +796,6 @@ function selectServiceGroupTab(groupId) {
   activeServiceTab = groupId;
   activeMarketTab = null;
   packageConfigStates = {};
-  selectedOrderTickets = {};
   renderPackageFilterTabs();
   renderDirectPackageConfigPanel();
   renderPaxQuantitySection();
@@ -828,8 +826,16 @@ function activateConfiguredPackageInOrderDrawer(pkg, autoOpenMobile = true) {
   if (bookingSessionDiscountRate !== null) {
     applyGlobalDiscountRateToOrderItem(pkg, state, bookingSessionDiscountRate);
   }
+
+  // Thu gọn các gói vé trước đó, chỉ mở gói mới nhất
+  Object.keys(selectedOrderTickets).forEach(k => {
+    if (selectedOrderTickets[k] && k != pkg.id) {
+      selectedOrderTickets[k].isExpanded = false;
+    }
+  });
   state.isExpanded = true;
-  selectedOrderTickets = { [pkg.id]: state };
+  selectedOrderTickets[pkg.id] = state;
+
   renderOrderTicketsAccordions();
   recalculateTotals();
   if (autoOpenMobile && window.innerWidth < 1024) openMobilePaymentDetailDrawer();
@@ -837,7 +843,6 @@ function activateConfiguredPackageInOrderDrawer(pkg, autoOpenMobile = true) {
 
 function selectMarketRegionTab(marketId) {
   activeMarketTab = marketId;
-  selectedOrderTickets = {};
   const resolved = getActiveFilteredPackage();
   if (resolved && !resolved.notFoundBySearch) packageConfigStates[resolved.id] = null;
 
@@ -1103,21 +1108,19 @@ function buildDiningSelectorMarkup(pkg, orderItem, scopePrefix = 'card') {
     const isMatched = !query || r.name.toLowerCase().includes(query);
     let restCls = '';
     if (isActive) {
-      restCls = 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-orange-500/25 font-extrabold';
+      restCls = 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold';
     } else if (query && isMatched) {
-      restCls = 'bg-orange-50 text-brand-700 border-2 border-orange-400 font-extrabold shadow-2xs';
+      restCls = 'bg-slate-100 text-[#0F172A] border border-slate-300 font-bold';
     } else if (query && !isMatched) {
       restCls = 'opacity-35 grayscale bg-white text-slate-400 border border-slate-200';
     } else {
-      restCls = 'bg-white text-slate-700 border border-slate-200 hover:border-brand-300 hover:text-brand-600';
+      restCls = 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium';
     }
 
     return `
       <button type="button" onclick="event.stopPropagation(); selectPackageRestaurant(${pkg.id}, '${r.id}')"
-              class="px-3.5 py-2 rounded-xl text-xs font-extrabold border transition-all cursor-pointer inline-flex items-center gap-1.5 active:scale-95 ${restCls}">
-        <i class="fa-solid fa-utensils text-[11px] ${isActive ? 'text-white' : 'text-slate-400'}"></i>
+              class="px-3.5 py-1.5 rounded-full text-xs border transition-all cursor-pointer inline-flex items-center active:scale-95 ${restCls}">
         <span>${r.name}</span>
-        ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white ml-0.5"></span>' : ''}
       </button>`;
   }).join('');
 
@@ -1127,42 +1130,36 @@ function buildDiningSelectorMarkup(pkg, orderItem, scopePrefix = 'card') {
         const isSoldOut = !s.isAvailable || s.capacity <= 0;
         let slotCls = '';
         if (isSoldOut) {
-          slotCls = 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60';
+          slotCls = 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed opacity-50 font-medium';
         } else if (isSlotActive) {
-          slotCls = 'bg-slate-900 text-white border-slate-900 shadow-sm shadow-slate-900/25 cursor-pointer font-extrabold';
+          slotCls = 'bg-[#0F172A] text-white border-[#0F172A] shadow-xs cursor-pointer font-bold';
         } else {
-          slotCls = 'bg-white text-slate-700 border border-slate-200 hover:border-brand-300 hover:text-brand-600 cursor-pointer';
+          slotCls = 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 cursor-pointer font-medium';
         }
         return `
           <button type="button" ${isSoldOut ? 'disabled' : ''} onclick="event.stopPropagation(); selectPackageTimeSlot(${pkg.id}, '${s.id}')"
-                  class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all inline-flex items-center gap-1.5 active:scale-95 ${slotCls}">
-            <i class="fa-regular fa-clock text-[10px] ${isSlotActive ? 'text-white' : 'text-slate-400'}"></i>
+                  class="px-3.5 py-1.5 rounded-full text-xs border transition-all inline-flex items-center active:scale-95 ${slotCls}">
             <span class="${isSoldOut ? 'line-through' : ''}">${s.timeRange}</span>
-            ${isSoldOut ? '<span class="text-[9px] font-semibold text-rose-500">(Hết)</span>' : ''}
+            ${isSoldOut ? '<span class="text-[9px] font-normal text-rose-500 no-underline ml-1">(Hết)</span>' : ''}
           </button>`;
       }).join('')
     : '';
 
   return `
     <div class="space-y-3" id="${scopePrefix}-dining-config-${pkg.id}">
-      <!-- [#3] NHÀ HÀNG -->
+      <!-- NHÀ HÀNG -->
       <div class="space-y-2 pt-3 border-t border-slate-100">
-        <div class="text-[11px] font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-          <span class="px-1.5 py-0.5 rounded bg-orange-100 text-[#F25C22] text-[10px] font-black">#3</span>
-          <span>NHÀ HÀNG</span>
+        <div class="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+          NHÀ HÀNG
         </div>
         <div class="flex flex-wrap gap-2">${restaurantsHtml}</div>
       </div>
 
-      <!-- [#4] KHUNG GIỜ (Xuất hiện sau khi chọn Tầng #3) -->
+      <!-- KHUNG GIỜ -->
       ${selectedRest ? `
         <div class="space-y-2 pt-3 border-t border-slate-100 animate-fadeIn">
-          <div class="text-[11px] font-black uppercase tracking-wider text-slate-600 flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded bg-orange-100 text-[#F25C22] text-[10px] font-black">#4</span>
-              <span>KHUNG GIỜ</span>
-            </div>
-            <span class="text-[10px] font-semibold text-slate-400 normal-case">(Chạm giờ để mở chi tiết thanh toán)</span>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+            KHUNG GIỜ
           </div>
           <div class="flex flex-wrap gap-2">${slotsHtml}</div>
         </div>
@@ -1214,19 +1211,26 @@ function handleDirectManualQty(pkgId, type, rawVal) {
 // ACCORDION, INLINE DINING SWITCHER & DISCOUNT SLIDER
 // ============================================================================
 
+let drawerDiningSwitcherOpen = {};
+
+function toggleDrawerDiningSwitcher(pkgId) {
+  drawerDiningSwitcherOpen[pkgId] = !drawerDiningSwitcherOpen[pkgId];
+  renderOrderTicketsAccordions();
+}
+window.toggleDrawerDiningSwitcher = toggleDrawerDiningSwitcher;
+
 function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
   if (!pkg || !pkg.hasDiningConfig || !orderItem) return '';
   const selectedRest = getSelectedDiningRestaurant(pkg, orderItem);
   const selectedSlot = getSelectedDiningSlot(pkg, orderItem);
+  const isOpen = !!drawerDiningSwitcherOpen[pkg.id];
 
   const restPills = (pkg.diningRestaurants || []).map(r => {
     const isActive = r.id === orderItem.selectedRestaurantId;
     return `
       <button type="button" onclick="event.stopPropagation(); switchDrawerPackageRestaurant(${pkg.id}, '${r.id}')"
-        class="px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer inline-flex items-center gap-1.5 active:scale-95 ${isActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-2xs font-black' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300'}">
-        <i class="fa-solid fa-utensils text-[10px] ${isActive ? 'text-white' : 'text-slate-400'}"></i>
+        class="px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center active:scale-95 ${isActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold' : 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium'}">
         <span>${r.name}</span>
-        ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white ml-0.5"></span>' : ''}
       </button>`;
   }).join('');
 
@@ -1235,40 +1239,46 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
     const isSoldOut = !s.isAvailable || s.capacity <= 0;
     let slotCls = '';
     if (isSoldOut) {
-      slotCls = 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60';
+      slotCls = 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed opacity-50 font-medium';
     } else if (isSlotActive) {
-      slotCls = 'bg-slate-900 text-white border-slate-900 shadow-2xs font-black cursor-pointer';
+      slotCls = 'bg-[#0F172A] text-white border-[#0F172A] shadow-xs font-bold cursor-pointer';
     } else {
-      slotCls = 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 cursor-pointer font-bold';
+      slotCls = 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 cursor-pointer font-medium';
     }
     return `
       <button type="button" ${isSoldOut ? 'disabled' : ''} onclick="event.stopPropagation(); switchDrawerPackageSlot(${pkg.id}, '${s.id}')"
-        class="px-2.5 py-1.5 rounded-lg text-xs border transition-all inline-flex items-center gap-1 active:scale-95 ${slotCls}">
-        <i class="fa-regular fa-clock text-[10px] ${isSlotActive ? 'text-white' : 'text-slate-400'}"></i>
+        class="px-3 py-1.5 rounded-full text-xs border transition-all inline-flex items-center active:scale-95 ${slotCls}">
         <span class="${isSoldOut ? 'line-through' : ''}">${s.timeRange}</span>
-        ${isSoldOut ? '<span class="text-[9px] text-rose-500 font-semibold">(Hết)</span>' : ''}
+        ${isSoldOut ? '<span class="text-[9px] text-rose-500 font-normal no-underline ml-1">(Hết)</span>' : ''}
       </button>`;
   }).join('') : '';
 
+  const summaryText = selectedSlot
+    ? `${selectedRest ? selectedRest.name : 'Nhà hàng'} • ${selectedSlot.timeRange}`
+    : 'Chưa chọn Nhà hàng & Khung giờ';
+
   return `
-    <div class="p-3 rounded-xl bg-orange-50/50 border border-orange-200/80 space-y-2.5">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-          <i class="fa-solid fa-sliders text-[#F25C22]"></i>
-          <span>ĐỔI NHÀ HÀNG &amp; KHUNG GIỜ</span>
-        </span>
-        <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
-          ${selectedSlot ? `${selectedRest ? selectedRest.name : ''} • ${selectedSlot.timeRange}` : 'Chưa chọn'}
-        </span>
+    <div class="space-y-2">
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
+        <div class="min-w-0 font-medium text-[#0F172A] truncate">
+          <span>${summaryText}</span>
+        </div>
+        <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer">
+          ${isOpen ? 'Xong' : 'Đổi'}
+        </button>
       </div>
-      <div>
-        <div class="text-[10px] font-bold text-slate-500 mb-1">Nhà hàng:</div>
-        <div class="flex flex-wrap gap-1.5">${restPills}</div>
-      </div>
-      <div>
-        <div class="text-[10px] font-bold text-slate-500 mb-1">Khung giờ phục vụ:</div>
-        <div class="flex flex-wrap gap-1.5">${slotPills}</div>
-      </div>
+      ${isOpen ? `
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-[#E2E8F0] space-y-2.5 animate-fadeIn">
+          <div>
+            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">Nhà hàng</div>
+            <div class="flex flex-wrap gap-1.5">${restPills}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">Khung giờ</div>
+            <div class="flex flex-wrap gap-1.5">${slotPills}</div>
+          </div>
+        </div>
+      ` : ''}
     </div>`;
 }
 
@@ -1345,25 +1355,24 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
     }).join('');
 
     html += `
-      <div class="rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden transition-all duration-200" id="${scopePrefix}-accordion-pkg-${pkgId}">
-        <div class="bg-[#FBF9F6] p-3 sm:p-3.5 flex items-center justify-between gap-2.5 cursor-pointer select-none hover:bg-orange-50/40 transition-colors" onclick="toggleOrderTicketAccordion(${pkgId})">
+      <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-2xs overflow-hidden transition-all duration-200" id="${scopePrefix}-accordion-pkg-${pkgId}">
+        <div class="bg-white p-3 sm:p-3.5 flex items-center justify-between gap-2.5 cursor-pointer select-none hover:bg-slate-50/60 transition-colors" onclick="toggleOrderTicketAccordion(${pkgId})">
           <div class="flex items-center gap-2 min-w-0 flex-1">
-            <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkgId})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-100/80 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
-            <span class="w-2.5 h-2.5 rounded-full bg-[#F25C22] shrink-0 ring-2 ring-orange-100"></span>
+            <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkgId})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
             <div class="min-w-0 flex-1">
-              <span class="font-black text-xs text-slate-900 uppercase tracking-tight truncate block" title="${pkg.title}">${pkg.title}</span>
-              ${pkg.hasDiningConfig ? `<span class="text-[10px] font-semibold ${paxEnabled ? 'text-emerald-700' : 'text-amber-700'} block truncate">${selectedSlot ? `${selectedRest ? selectedRest.name : ''} • ${selectedSlot.timeRange}` : 'Chưa chọn Nhà hàng & Khung giờ'}</span>` : ''}
+              <span class="font-bold text-xs text-[#0F172A] uppercase tracking-tight truncate block" title="${pkg.title}">${pkg.title}</span>
+              ${pkg.hasDiningConfig ? `<span class="text-[10px] text-[#64748B] font-normal block truncate mt-0.5">${selectedSlot ? `${selectedRest ? selectedRest.name : ''} • ${selectedSlot.timeRange}` : 'Chưa chọn Nhà hàng & Khung giờ'}</span>` : ''}
             </div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${totalGroupQty > 0 ? 'bg-orange-50 text-[#F25C22] border border-orange-200' : 'bg-slate-100 text-slate-400 border border-slate-200'}">${totalGroupQty} vé</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-[#0F172A] border border-[#E2E8F0]">${totalGroupQty} vé</span>
             <button type="button" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs"><i class="fa-solid ${orderItem.isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[11px]"></i></button>
           </div>
         </div>
         ${orderItem.isExpanded ? `
-          <div class="p-3 sm:p-4 bg-white space-y-3 border-t border-slate-100">
+          <div class="p-3 sm:p-4 bg-white space-y-3 border-t border-[#E2E8F0]">
             ${inlineDiningHtml}
-            ${!paxEnabled ? `<div class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">Chọn Nhà hàng và Khung giờ để xem giá và chọn số lượng.</div>` : tiersHtml}
+            ${!paxEnabled ? `<div class="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">Chọn Nhà hàng và Khung giờ để xem giá và chọn số lượng.</div>` : tiersHtml}
           </div>` : ''}
       </div>`;
   });
@@ -1434,8 +1443,8 @@ function renderGlobalDiscountSelector() {
     } else {
       if (document.activeElement !== slider) slider.value = curPct;
       if (document.activeElement !== input) input.value = curPct;
-      btn.className = `px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
-      btn.innerHTML = `<span>Áp Niêm Yết</span>${isListedActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white shrink-0"></span>' : ''}`;
+      btn.className = `px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListedActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`;
+      btn.innerHTML = `<span>Áp Niêm Yết</span>`;
     }
   });
 }
@@ -1454,8 +1463,8 @@ function handleGlobalDiscountChange(rawVal, source = 'slider') {
     if (slider && (source !== 'slider' || document.activeElement !== slider)) slider.value = num;
     if (input && (source !== 'input' || document.activeElement !== input)) input.value = num;
     if (btn) {
-      btn.className = `px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 ${isListed ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
-      btn.innerHTML = `<span>Áp Niêm Yết</span>${isListed ? '<span class="w-1.5 h-1.5 rounded-full bg-white shrink-0"></span>' : ''}`;
+      btn.className = `px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListed ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`;
+      btn.innerHTML = `<span>Áp Niêm Yết</span>`;
     }
   });
 
@@ -1488,61 +1497,49 @@ function renderDiscountBadge(discount) {
 }
 
 function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePrefix = 'desk', paxEnabled = true, maxAllotment = 50) {
-  const discount = config.listedPrice - sellingPrice;
+  const discount = Math.max(0, config.listedPrice - sellingPrice);
   const lineTotal = qty * sellingPrice;
-  const isFloorError = (sellingPrice < config.netPrice && qty > 0);
-  const isListed = (discount <= 0 || sellingPrice >= config.listedPrice);
+
   return `
-    <div class="bg-slate-50/80 rounded-xl p-3 sm:p-3.5 border border-slate-200/80 space-y-2.5 ${!paxEnabled ? 'opacity-65' : ''}">
-      <!-- Hàng 1 (Thông tin đối tượng & Giá gốc): Tên đối tượng + điều kiện chiều cao; bên phải hiển thị Giá Net Đại lý (in đậm) và Giá niêm yết (gạch ngang nếu có chênh lệch) -->
-      <div class="flex items-start justify-between gap-2">
+    <div class="bg-white rounded-xl p-3 border border-[#E2E8F0] space-y-2.5 ${!paxEnabled ? 'opacity-50' : ''}">
+      <!-- Tên đối tượng & điều kiện: Người lớn - Cao trên 1m4 -->
+      <div class="flex items-center justify-between text-xs">
+        <div class="font-bold text-[#0F172A] flex items-center gap-1 flex-wrap">
+          <span>${config.label}</span>
+          ${config.condition ? `<span class="text-xs text-[#64748B] font-normal"> - ${config.condition}</span>` : ''}
+        </div>
+      </div>
+
+      <!-- Khu vực số lượng bên trái & đơn giá bên phải -->
+      <div class="flex items-center justify-between gap-3">
+        <!-- Bên trái: Bộ đếm số lượng - / 2 / + -->
+        <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
+          <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer">
+            <i class="fa-solid fa-minus text-[10px]"></i>
+          </button>
+          <span class="w-8 text-center font-bold text-xs text-[#0F172A]">${qty}</span>
+          <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-[#F25C19] text-white hover:bg-[#d84814] font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Bên phải: Giá thực nhận đặt cạnh giá niêm yết gạch ngang -->
+        <div class="text-right">
+          <div class="flex items-baseline justify-end gap-1.5">
+            <span class="text-sm font-extrabold text-[#0F172A]">${formatMoney(sellingPrice)} đ</span>
+            ${config.listedPrice > sellingPrice ? `<span class="text-xs text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</span>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Dòng dưới cùng: Tóm tắt mức giảm trên từng vé & Tổng thành tiền của hạng vé đó -->
+      <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#64748B]">
         <div>
-          <div class="font-black text-xs text-slate-900 flex items-center gap-1.5 flex-wrap">
-            <span>${config.label}</span>
-            <span class="text-[11px] text-[#F25C22] font-semibold">(${config.condition})</span>
-          </div>
+          ${discount > 0 ? `<span class="text-emerald-600 font-medium text-[11px]">Giảm ${formatMoney(discount)} đ/vé</span>` : '<span class="text-slate-400 text-[11px]">Giá niêm yết</span>'}
         </div>
-        <div class="text-right shrink-0">
-          <div class="text-xs font-black text-slate-900">${formatMoney(config.netPrice)} đ</div>
-          <div class="text-[10px] text-slate-400 line-through">${formatMoney(config.listedPrice)} đ</div>
-        </div>
-      </div>
-
-      <!-- Hàng 2 (Số lượng & Giá thực nhận): Cụm Số lượng & Cụm Giá thực nhận / vé -->
-      <div class="flex items-end justify-between gap-2.5">
-        <div class="shrink-0">
-          <label class="text-[9.5px] font-bold text-slate-500 uppercase tracking-tight block mb-1 whitespace-nowrap">SỐ LƯỢNG</label>
-          <div class="flex items-center justify-between gap-1 bg-white p-1 rounded-xl border ${paxEnabled ? 'border-[#F25C22]' : 'border-slate-200'} shadow-2xs w-[114px] h-[38px]">
-            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="w-7 h-7 rounded-lg border border-[#F25C22] bg-white text-slate-700 hover:bg-orange-50 font-bold flex items-center justify-center disabled:opacity-30 disabled:border-slate-200 disabled:text-slate-300 disabled:cursor-not-allowed transition-all text-xs cursor-pointer"><i class="fa-solid fa-minus text-[10px]"></i></button>
-            <input type="number" min="0" max="${maxAllotment}" value="${qty}" ${!paxEnabled ? 'disabled' : ''} onchange="handleMultiManualQty(${pkgId}, '${type}', this.value)" class="w-10 text-center font-black text-xs text-slate-900 focus:outline-none disabled:bg-transparent">
-            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="w-7 h-7 rounded-lg border border-[#F25C22] bg-[#F25C22] hover:bg-[#d84814] text-white font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:bg-slate-300 disabled:border-slate-300 disabled:cursor-not-allowed shadow-xs transition-all text-xs cursor-pointer"><i class="fa-solid fa-plus text-[10px]"></i></button>
-          </div>
-        </div>
-        <div class="shrink-0 flex flex-col items-end">
-          <div class="flex items-center justify-between gap-1.5 mb-1 w-full whitespace-nowrap">
-            <label class="text-[9px] font-bold text-slate-500 uppercase tracking-tight whitespace-nowrap">GIÁ THỰC NHẬN / VÉ</label>
-            <div id="${scopePrefix}-tagStatus-${pkgId}-${type}">
-              ${isListed
-                ? `<span class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C22] leading-none">Áp niêm yết</span>`
-                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer leading-none flex items-center gap-1"><span>Đã chiết khấu</span><i class="fa-solid fa-rotate-left text-[7px]"></i></button>`
-              }
-            </div>
-          </div>
-          <div class="relative w-[124px] h-[38px]">
-            <input type="text" id="${scopePrefix}-inputPrice-${pkgId}-${type}" value="${formatMoney(sellingPrice)}" oninput="handleMultiSellingPriceInput(${pkgId}, '${type}', this, '${scopePrefix}')" class="w-full h-full bg-white border ${isFloorError ? 'border-rose-500 bg-rose-50/30 text-rose-600' : 'border-slate-300 text-slate-900'} rounded-xl px-2.5 text-xs font-black text-right pr-6 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22] transition-all shadow-2xs">
-            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold pointer-events-none">đ</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="${scopePrefix}-errorFloor-${pkgId}-${type}" class="${isFloorError ? '' : 'hidden'} text-[10px] text-rose-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i><span>Không được thấp hơn giá Net sàn: ${formatMoney(config.netPrice)} đ</span></div>
-      
-      <!-- Hàng 3 (Tổng kết dòng): Giảm: X đ/vé bên trái & Thành tiền bên phải -->
-      <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between gap-2">
-        <div id="${scopePrefix}-discountLabel-${pkgId}-${type}" class="min-w-0">${renderDiscountBadge(discount)}</div>
-        <div class="text-right shrink-0 whitespace-nowrap ml-auto">
-          <span class="text-[11px] text-slate-400 font-medium">Thành tiền: </span>
-          <span class="text-xs sm:text-sm font-black text-[#F25C22] tracking-tight" id="${scopePrefix}-lineTotal-${pkgId}-${type}">${formatMoney(lineTotal)} đ</span>
+        <div class="text-right font-bold text-[#0F172A]">
+          <span class="text-[#64748B] font-normal text-[11px]">Tổng: </span>
+          <span class="text-xs font-bold text-[#0F172A]">${formatMoney(lineTotal)} đ</span>
         </div>
       </div>
     </div>`;
@@ -1742,7 +1739,9 @@ function recalculateTotals() {
 
   setTxt('mobileFooterTicketsCount', `${totalTicketsCount} vé`);
   setTxt('mobileFooterFinalPayable', `${formatMoney(finalPayable)} đ`);
-  setTxt('mobileDrawerHeaderBadge', `${selectedPackagesCount} gói vé đang chọn • ${totalTicketsCount} vé`);
+  const pad = n => (n < 10 ? '0' + n : '' + n);
+  const formattedDateStr = `${selectedDate.dayName}, ${pad(selectedDate.day)}/${pad(selectedDate.month)}/${selectedDate.year}`;
+  setTxt('mobileDrawerHeaderBadge', `${formattedDateStr} • ${selectedPackagesCount} gói • ${totalTicketsCount} vé`);
   setTxt('cashflowTotalTicketsBadge', `Tổng ${totalTicketsCount} vé`);
   setTxt('mobileDrawerTotalTickets', totalTicketsCount);
   setTxt('mobileDrawerTotalListed', `${formatMoney(totalListed)} đ`);
@@ -2102,7 +2101,7 @@ function handleSaveDraft(statusLabel = 'Nháp') {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderSharedShell({ activePage: 'booking', pageTitle: 'Đặt vé chi tiết', showGlobalHeader: false, hasBottomBar: true });
+  renderSharedShell({ activePage: 'booking', pageTitle: 'Đặt vé chi tiết', showGlobalHeader: false, hasBottomBar: true, hideFloatingCart: true });
 
   const urlParams = new URLSearchParams(window.location.search);
   const paramDest = urlParams.get('dest');
