@@ -257,3 +257,27 @@ input[type=number] {
   border-left: 1px solid rgba(226, 232, 240, 0.95);
   border-top: 1px solid rgba(226, 232, 240, 0.95);
 }
+
+/* ==========================================================================
+   BỐ CỤC 2 CỘT DESKTOP: XÁC NHẬN ĐƠN HÀNG (CHECKOUT)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .checkout-grid-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .checkout-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+  }
+  .checkout-right-column {
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+    min-width: 0;
+  }
+}
