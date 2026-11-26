@@ -1220,10 +1220,27 @@ function toggleDrawerDiningSwitcher(pkgId) {
 window.toggleDrawerDiningSwitcher = toggleDrawerDiningSwitcher;
 
 function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
-  if (!pkg || !pkg.hasDiningConfig || !orderItem) return '';
+  if (!pkg || !orderItem) return '';
   const selectedRest = getSelectedDiningRestaurant(pkg, orderItem);
   const selectedSlot = getSelectedDiningSlot(pkg, orderItem);
   const isOpen = !!drawerDiningSwitcherOpen[pkg.id];
+
+  const summaryParts = [
+    pkg.serviceGroupLabel || pkg.title,
+    pkg.marketLabel,
+    selectedRest ? selectedRest.name : '',
+    selectedSlot ? selectedSlot.timeRange : ''
+  ].filter(Boolean);
+  const summaryText = summaryParts.length > 0 ? summaryParts.join(' • ') : 'Chưa chọn đủ thông tin';
+
+  if (!pkg.hasDiningConfig) {
+    return `
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] text-xs">
+        <div class="min-w-0 font-medium text-[#0F172A] truncate">
+          <span>${summaryText}</span>
+        </div>
+      </div>`;
+  }
 
   const restPills = (pkg.diningRestaurants || []).map(r => {
     const isActive = r.id === orderItem.selectedRestaurantId;
@@ -1252,10 +1269,6 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
         ${isSoldOut ? '<span class="text-[9px] text-rose-500 font-normal no-underline ml-1">(Hết)</span>' : ''}
       </button>`;
   }).join('') : '';
-
-  const summaryText = selectedSlot
-    ? `${selectedRest ? selectedRest.name : 'Nhà hàng'} • ${selectedSlot.timeRange}`
-    : 'Chưa chọn Nhà hàng & Khung giờ';
 
   return `
     <div class="space-y-2">
@@ -1346,7 +1359,7 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
     const paxEnabled = isPackagePaxEnabled(pkg, orderItem);
     const selectedRest = getSelectedDiningRestaurant(pkg, orderItem);
     const selectedSlot = getSelectedDiningSlot(pkg, orderItem);
-    const inlineDiningHtml = (pkg.hasDiningConfig) ? buildInlineDrawerDiningSwitcher(pkg, orderItem) : '';
+    const inlineDiningHtml = buildInlineDrawerDiningSwitcher(pkg, orderItem);
 
     const tiersHtml = TICKET_TIER_KEYS.map(t => {
       const effCfg = getEffectivePackageTierConfig(pkg, orderItem, t);
@@ -1414,9 +1427,8 @@ function renderGlobalDiscountSelector() {
       </div>
       <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/90 shadow-2xs">
         <div class="flex items-center gap-2.5">
-          <button type="button" id="${prefix}-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}">
+          <button type="button" id="${prefix}-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}">
             <span>Áp Niêm Yết</span>
-            ${isListedActive ? '<span class="w-1.5 h-1.5 rounded-full bg-white shrink-0"></span>' : ''}
           </button>
           <div class="flex-1 flex items-center min-w-0">
             <input type="range" id="${prefix}-globalDiscountSlider" min="0" max="100" step="1" value="${curPct}" oninput="handleGlobalDiscountChange(this.value, 'slider')" onchange="handleGlobalDiscountChange(this.value, 'slider')" style="accent-color: #F25C22; cursor: pointer;" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
@@ -1535,10 +1547,10 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
       <!-- Dòng dưới cùng: Tóm tắt mức giảm trên từng vé & Tổng thành tiền của hạng vé đó -->
       <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#64748B]">
         <div>
-          ${discount > 0 ? `<span class="text-emerald-600 font-medium text-[11px]">Giảm ${formatMoney(discount)} đ/vé</span>` : '<span class="text-slate-400 text-[11px]">Giá niêm yết</span>'}
+          ${discount > 0 ? `<span class="text-emerald-600 font-medium text-[11px]">Chiết khấu: -${formatMoney(discount)} đ/vé</span>` : '<span class="text-slate-400 text-[11px]">Giá niêm yết</span>'}
         </div>
         <div class="text-right font-bold text-[#0F172A]">
-          <span class="text-[#64748B] font-normal text-[11px]">Tổng: </span>
+          <span class="text-[#64748B] font-normal text-[11px]">Thành tiền: </span>
           <span class="text-xs font-bold text-[#0F172A]">${formatMoney(lineTotal)} đ</span>
         </div>
       </div>
@@ -1750,6 +1762,17 @@ function recalculateTotals() {
   setTxt('mobileDrawerPriceDiff', `${formatMoney(priceDifference)} đ`);
   setTxt('mobileDrawerFinalPayable', `${formatMoney(finalPayable)} đ`);
   setTxt('mobileDrawerFinalPayableFooter', `${formatMoney(finalPayable)} đ`);
+
+  const mobProfitSummary = document.getElementById('mobileDrawerProfitSummary');
+  if (mobProfitSummary) {
+    if (profit >= 0) {
+      mobProfitSummary.innerText = `+ ${formatMoney(profit)} đ${directDiscount > 0 ? ` (Chiết khấu: -${formatMoney(directDiscount)} đ)` : ''}`;
+      mobProfitSummary.className = 'font-bold text-emerald-600';
+    } else {
+      mobProfitSummary.innerText = `${formatMoney(profit)} đ`;
+      mobProfitSummary.className = 'font-bold text-rose-600';
+    }
+  }
 
   const mobDirectDisc = document.getElementById('mobileDrawerDirectDiscount');
   if (mobDirectDisc) {
