@@ -1234,25 +1234,36 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
   ].filter(Boolean);
   const summaryText = summaryParts.length > 0 ? summaryParts.join(' • ') : 'Chưa chọn đủ thông tin';
 
-  if (!pkg.hasDiningConfig) {
+  const availGroups = getAvailableServiceGroups();
+  const serviceGroupPills = availGroups.map(g => {
+    const isGroupActive = (g.id === pkg.serviceGroup);
     return `
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] text-xs">
-        <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed">
-          <span>${summaryText}</span>
-        </div>
-      </div>`;
-  }
+      <button type="button" onclick="event.stopPropagation(); switchDrawerPackageServiceGroup(${pkg.id}, '${g.id}')"
+        class="px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center active:scale-95 ${isGroupActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold' : 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium'}">
+        <span>${g.label}</span>
+      </button>`;
+  }).join('');
 
-  const restPills = (pkg.diningRestaurants || []).map(r => {
+  const availMarkets = getAvailableMarketsForGroup(pkg.serviceGroup);
+  const marketPills = availMarkets.map(m => {
+    const isMarketActive = (m.id === pkg.marketId);
+    return `
+      <button type="button" onclick="event.stopPropagation(); switchDrawerPackageMarket(${pkg.id}, '${m.id}')"
+        class="px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center active:scale-95 ${isMarketActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold' : 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium'}">
+        <span>${m.label}</span>
+      </button>`;
+  }).join('');
+
+  const restPills = (pkg.hasDiningConfig && pkg.diningRestaurants) ? (pkg.diningRestaurants || []).map(r => {
     const isActive = r.id === orderItem.selectedRestaurantId;
     return `
       <button type="button" onclick="event.stopPropagation(); switchDrawerPackageRestaurant(${pkg.id}, '${r.id}')"
         class="px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer inline-flex items-center active:scale-95 ${isActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs font-bold' : 'bg-white text-[#0F172A] border border-[#E2E8F0] hover:border-slate-300 font-medium'}">
         <span>${r.name}</span>
       </button>`;
-  }).join('');
+  }).join('') : '';
 
-  const slotPills = selectedRest ? (selectedRest.slots || []).map(s => {
+  const slotPills = (pkg.hasDiningConfig && selectedRest) ? (selectedRest.slots || []).map(s => {
     const isSlotActive = s.id === orderItem.selectedTimeSlotId;
     const isSoldOut = !s.isAvailable || s.capacity <= 0;
     let slotCls = '';
@@ -1282,19 +1293,121 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
         </button>
       </div>
       ${isOpen ? `
-        <div class="p-3 rounded-xl bg-slate-50/70 border border-[#E2E8F0] space-y-2.5 animate-fadeIn">
+        <div class="p-3 rounded-xl bg-slate-50/70 border border-[#E2E8F0] space-y-3 animate-fadeIn">
           <div>
-            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">Nhà hàng</div>
-            <div class="flex flex-wrap gap-1.5">${restPills}</div>
+            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1.5">Nhóm vé</div>
+            <div class="flex flex-wrap gap-1.5">${serviceGroupPills}</div>
           </div>
           <div>
-            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">Khung giờ</div>
-            <div class="flex flex-wrap gap-1.5">${slotPills}</div>
+            <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1.5">Thị trường</div>
+            <div class="flex flex-wrap gap-1.5">${marketPills}</div>
           </div>
+          ${pkg.hasDiningConfig ? `
+            <div>
+              <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1.5">Nhà hàng</div>
+              <div class="flex flex-wrap gap-1.5">${restPills}</div>
+            </div>
+            ${selectedRest ? `
+              <div>
+                <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1.5">Khung giờ</div>
+                <div class="flex flex-wrap gap-1.5">${slotPills}</div>
+              </div>
+            ` : ''}
+          ` : ''}
         </div>
       ` : ''}
     </div>`;
 }
+
+function switchDrawerPackageServiceGroup(oldPkgId, newGroupId) {
+  const oldPkg = ticketPackages[oldPkgId];
+  const oldItem = selectedOrderTickets[oldPkgId] || packageConfigStates[oldPkgId];
+  if (!oldPkg || !oldItem || oldPkg.serviceGroup === newGroupId) return;
+
+  let candidate = Object.values(ticketPackages).find(p => p.serviceGroup === newGroupId && p.marketId === oldPkg.marketId);
+  if (!candidate) {
+    candidate = Object.values(ticketPackages).find(p => p.serviceGroup === newGroupId);
+  }
+  if (!candidate) return;
+
+  const newState = getOrInitPackageConfigState(candidate);
+  if (newState && oldItem) {
+    newState.adultQty = oldItem.adultQty || 0;
+    newState.childQty = oldItem.childQty || 0;
+    newState.seniorQty = oldItem.seniorQty || 0;
+    newState.isExpanded = true;
+    if (candidate.hasDiningConfig && oldItem.selectedRestaurantId) {
+      const restExists = (candidate.diningRestaurants || []).some(r => r.id === oldItem.selectedRestaurantId);
+      if (restExists) {
+        newState.selectedRestaurantId = oldItem.selectedRestaurantId;
+        newState.selectedTimeSlotId = oldItem.selectedTimeSlotId;
+      }
+    }
+  }
+  if (bookingSessionDiscountRate !== null) {
+    applyGlobalDiscountRateToOrderItem(candidate, newState, bookingSessionDiscountRate);
+  }
+
+  delete selectedOrderTickets[oldPkgId];
+  selectedOrderTickets[candidate.id] = newState;
+
+  drawerDiningSwitcherOpen[candidate.id] = true;
+  delete drawerDiningSwitcherOpen[oldPkgId];
+
+  activeServiceTab = candidate.serviceGroup;
+  activeMarketTab = candidate.marketId;
+  renderPackageFilterTabs();
+  renderDirectPackageConfigPanel();
+  renderPaxQuantitySection();
+  syncDiningCardPanels();
+
+  renderOrderTicketsAccordions();
+  recalculateTotals();
+}
+window.switchDrawerPackageServiceGroup = switchDrawerPackageServiceGroup;
+
+function switchDrawerPackageMarket(oldPkgId, newMarketId) {
+  const oldPkg = ticketPackages[oldPkgId];
+  const oldItem = selectedOrderTickets[oldPkgId] || packageConfigStates[oldPkgId];
+  if (!oldPkg || !oldItem || oldPkg.marketId === newMarketId) return;
+
+  const candidate = Object.values(ticketPackages).find(p => p.serviceGroup === oldPkg.serviceGroup && p.marketId === newMarketId);
+  if (!candidate) return;
+
+  const newState = getOrInitPackageConfigState(candidate);
+  if (newState && oldItem) {
+    newState.adultQty = oldItem.adultQty || 0;
+    newState.childQty = oldItem.childQty || 0;
+    newState.seniorQty = oldItem.seniorQty || 0;
+    if (candidate.hasDiningConfig && oldItem.selectedRestaurantId) {
+      const restExists = (candidate.diningRestaurants || []).some(r => r.id === oldItem.selectedRestaurantId);
+      if (restExists) {
+        newState.selectedRestaurantId = oldItem.selectedRestaurantId;
+        newState.selectedTimeSlotId = oldItem.selectedTimeSlotId;
+      }
+    }
+    newState.isExpanded = true;
+  }
+  if (bookingSessionDiscountRate !== null) {
+    applyGlobalDiscountRateToOrderItem(candidate, newState, bookingSessionDiscountRate);
+  }
+
+  delete selectedOrderTickets[oldPkgId];
+  selectedOrderTickets[candidate.id] = newState;
+
+  drawerDiningSwitcherOpen[candidate.id] = true;
+  delete drawerDiningSwitcherOpen[oldPkgId];
+
+  activeMarketTab = candidate.marketId;
+  renderPackageFilterTabs();
+  renderDirectPackageConfigPanel();
+  renderPaxQuantitySection();
+  syncDiningCardPanels();
+
+  renderOrderTicketsAccordions();
+  recalculateTotals();
+}
+window.switchDrawerPackageMarket = switchDrawerPackageMarket;
 
 function switchDrawerPackageRestaurant(pkgId, restaurantId) {
   const pkg = ticketPackages[pkgId];
@@ -1394,16 +1507,16 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
 
 function calculateDiscountedTierPrice(listedPrice, netPrice, discountPct) {
   const listed = Number(listedPrice) || 0;
-  const net = Number(netPrice) || 0;
-  const margin = listed - net;
-  const pct = Math.max(0, Math.round(Number(discountPct) || 0));
-  if (pct === 0 || listed <= 0 || margin <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
-  if (pct >= 100) return { sellingPrice: net, discountPerTicket: Math.max(0, listed - net) };
-  const rawDiscount = margin * (pct / 100);
-  const roundedDiscount = Math.round(rawDiscount / 1000) * 1000;
-  if (roundedDiscount <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
-  const sellingPrice = Math.max(net, listed - roundedDiscount);
-  return { sellingPrice, discountPerTicket: listed - sellingPrice };
+  const pct = Math.max(0, Math.min(100, Math.round(Number(discountPct) || 0)));
+  if (pct === 0 || listed <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
+
+  // Công thức: ΔP_i = Round(P_niêm yết, i * D / 100)
+  const discountPerTicket = Math.round(listed * (pct / 100));
+
+  // Giá thực nhận / vé (Giá thu khách): P_thu khách, i = P_niêm yết, i - ΔP_i
+  const sellingPrice = Math.max(0, listed - discountPerTicket);
+
+  return { sellingPrice, discountPerTicket };
 }
 
 function applyGlobalDiscountRateToOrderItem(pkg, orderItem, discountPct) {
@@ -1767,7 +1880,7 @@ function recalculateTotals() {
     }
   }
 
-  const shouldDisable = (snap.hasFloorError || totalTicketsCount === 0);
+  const shouldDisable = (totalTicketsCount === 0);
   ['btnContinueBooking', 'btnMobileFooterContinue', 'btnMobileDrawerContinue'].forEach(btnId => {
     const btn = document.getElementById(btnId);
     if (!btn) return;
