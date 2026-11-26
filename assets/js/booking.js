@@ -434,14 +434,13 @@ function syncSelectedDateLabels() {
         <div class="text-xs sm:text-sm font-semibold text-[#0F172A] truncate">
           ${formattedDate}
         </div>
-        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
       </div>`;
   }
 
   const expandedOpenHoursText = document.getElementById('expandedOpenHoursText');
   if (expandedOpenHoursText) expandedOpenHoursText.innerText = isWeekend ? '08:00 – 21:00' : '08:00 – 21:00';
   const summaryDateLabel = document.getElementById('summaryDateLabel');
-  if (summaryDateLabel) summaryDateLabel.innerText = `Ngày dùng: ${pad(selectedDate.day)}/${pad(selectedDate.month)}/${selectedDate.year} (${isWeekend ? 'Cuối tuần' : 'Ngày thường'})`;
+  if (summaryDateLabel) summaryDateLabel.innerText = `${pad(selectedDate.day)}/${pad(selectedDate.month)}/${selectedDate.year}`;
   return { formattedDate, isWeekend };
 }
 
@@ -796,6 +795,8 @@ function selectServiceGroupTab(groupId) {
   activeServiceTab = groupId;
   activeMarketTab = null;
   packageConfigStates = {};
+  selectedOrderTickets = {};
+  drawerDiningSwitcherOpen = {};
   renderPackageFilterTabs();
   renderDirectPackageConfigPanel();
   renderPaxQuantitySection();
@@ -1236,7 +1237,7 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
   if (!pkg.hasDiningConfig) {
     return `
       <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] text-xs">
-        <div class="min-w-0 font-medium text-[#0F172A] truncate">
+        <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed">
           <span>${summaryText}</span>
         </div>
       </div>`;
@@ -1272,11 +1273,11 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
 
   return `
     <div class="space-y-2">
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
-        <div class="min-w-0 font-medium text-[#0F172A] truncate">
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-start sm:items-center justify-between gap-2 text-xs">
+        <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed flex-1">
           <span>${summaryText}</span>
         </div>
-        <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer">
+        <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer self-start sm:self-auto">
           ${isOpen ? 'Xong' : 'Đổi'}
         </button>
       </div>
@@ -1373,8 +1374,7 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
           <div class="flex items-center gap-2 min-w-0 flex-1">
             <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkgId})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
             <div class="min-w-0 flex-1">
-              <span class="font-bold text-xs text-[#0F172A] uppercase tracking-tight truncate block" title="${pkg.title}">${pkg.title}</span>
-              ${pkg.hasDiningConfig ? `<span class="text-[10px] text-[#64748B] font-normal block truncate mt-0.5">${selectedSlot ? `${selectedRest ? selectedRest.name : ''} • ${selectedSlot.timeRange}` : 'Chưa chọn Nhà hàng & Khung giờ'}</span>` : ''}
+              <span class="font-bold text-xs text-[#0F172A] uppercase tracking-tight block break-words" title="${pkg.title}">${pkg.title}</span>
             </div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
@@ -1502,56 +1502,83 @@ function renderOrderTicketsAccordions() {
 }
 
 function renderDiscountBadge(discount) {
-  if (discount > 0) {
-    return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200/80 text-[10.5px] font-bold text-emerald-700"><i class="fa-solid fa-tag text-[9px]"></i><span>Giảm: ${formatMoney(discount)} đ/vé</span></span>`;
-  }
-  return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200/80 text-[10.5px] font-semibold text-slate-500"><span>Giảm: 0 đ/vé</span></span>`;
+  return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-[#64748B]">Giảm: ${formatMoney(Math.max(0, discount))} đ/vé</span>`;
 }
 
 function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePrefix = 'desk', paxEnabled = true, maxAllotment = 50) {
   const discount = Math.max(0, config.listedPrice - sellingPrice);
   const lineTotal = qty * sellingPrice;
+  const isListed = (sellingPrice >= config.listedPrice);
 
   return `
-    <div class="bg-white rounded-xl p-3 border border-[#E2E8F0] space-y-2.5 ${!paxEnabled ? 'opacity-50' : ''}">
-      <!-- Tên đối tượng & điều kiện: Người lớn - Cao trên 1m4 -->
-      <div class="flex items-center justify-between text-xs">
-        <div class="font-bold text-[#0F172A] flex items-center gap-1 flex-wrap">
-          <span>${config.label}</span>
-          ${config.condition ? `<span class="text-xs text-[#64748B] font-normal"> - ${config.condition}</span>` : ''}
+    <div class="bg-white rounded-2xl p-3.5 border border-[#E2E8F0] space-y-3 shadow-2xs ${!paxEnabled ? 'opacity-50' : ''}">
+      <!-- Hàng 1 — Tên hạng vé & Đơn giá tóm tắt -->
+      <div class="flex items-start justify-between gap-2">
+        <!-- Bên trái: Tên đối tượng Người lớn (chữ đậm màu đen) kèm điều kiện chiều cao (Cao trên 1m4) (màu cam) -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-bold text-sm text-[#0F172A]">${config.label}</span>
+          ${config.condition ? `<span class="text-xs text-[#F25C19] font-medium">(${config.condition})</span>` : ''}
+        </div>
+        <!-- Bên phải: Giá thực nhận/đơn giá hiển thị 902.000 đ (chữ đậm màu đen) và ngay bên dưới là giá gạch ngang 1.058.000 đ (chữ xám nhạt) -->
+        <div class="text-right shrink-0">
+          <div class="text-sm font-bold text-[#0F172A]">${formatMoney(sellingPrice)} đ</div>
+          ${config.listedPrice > sellingPrice ? `<div class="text-xs text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</div>` : ''}
         </div>
       </div>
 
-      <!-- Khu vực số lượng bên trái & đơn giá bên phải -->
-      <div class="flex items-center justify-between gap-3">
-        <!-- Bên trái: Bộ đếm số lượng - / 2 / + -->
-        <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-          <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer">
-            <i class="fa-solid fa-minus text-[10px]"></i>
-          </button>
-          <span class="w-8 text-center font-bold text-xs text-[#0F172A]">${qty}</span>
-          <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-[#F25C19] text-white hover:bg-[#d84814] font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer">
-            <i class="fa-solid fa-plus text-[10px]"></i>
-          </button>
+      <!-- Hàng 2 — Số lượng & Giá thực nhận/vé -->
+      <div class="flex items-end justify-between gap-3">
+        <!-- Bên trái: Nhãn SỐ LƯỢNG (chữ hoa nhỏ, xám) nằm phía trên bộ điều chỉnh gồm nút giảm - (viền cam), giá trị số 2 (chữ đậm) và nút tăng + (nền cam đặc, chữ trắng) gom trong một khung bo tròn viền cam -->
+        <div>
+          <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">SỐ LƯỢNG</div>
+          <div class="inline-flex items-center rounded-xl border border-[#F25C19] bg-white p-0.5 shadow-2xs">
+            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="w-8 h-8 rounded-lg border border-[#F25C19] text-[#F25C19] hover:bg-orange-50 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer active:scale-95">
+              <i class="fa-solid fa-minus text-[10px]"></i>
+            </button>
+            <span class="w-9 text-center font-bold text-sm text-[#0F172A] select-none">${qty}</span>
+            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-[#F25C19] hover:bg-[#d84814] text-white font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer shadow-2xs">
+              <i class="fa-solid fa-plus text-[10px]"></i>
+            </button>
+          </div>
         </div>
 
-        <!-- Bên phải: Giá thực nhận đặt cạnh giá niêm yết gạch ngang -->
-        <div class="text-right">
-          <div class="flex items-baseline justify-end gap-1.5">
-            <span class="text-sm font-extrabold text-[#0F172A]">${formatMoney(sellingPrice)} đ</span>
-            ${config.listedPrice > sellingPrice ? `<span class="text-xs text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</span>` : ''}
+        <!-- Bên phải: Nhãn GIÁ THỰC NHẬN / VÉ đi kèm badge nhỏ Áp niêm yết (viền/chữ cam nhạt), phía dưới là ô nhập/hiển thị giá trị 1.058.000 đ trong khung viền xám bo góc -->
+        <div class="flex flex-col items-end">
+          <div class="flex items-center justify-end gap-1.5 mb-1">
+            <span class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">GIÁ THỰC NHẬN / VÉ</span>
+            <span id="${scopePrefix}-tagStatus-${pkgId}-${type}">
+              ${isListed
+                ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C19] leading-none">Áp niêm yết</span>`
+                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 leading-none cursor-pointer">Đã chiết khấu</button>`}
+            </span>
+          </div>
+          <div class="relative flex items-center justify-end">
+            <input type="text"
+                   id="${scopePrefix}-inputPrice-${pkgId}-${type}"
+                   value="${formatMoney(sellingPrice)}"
+                   oninput="handleMultiSellingPriceInput(${pkgId}, '${type}', this, '${scopePrefix}')"
+                   class="w-32 sm:w-36 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-right text-xs sm:text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#F25C19] focus:ring-1 focus:ring-[#F25C19] transition-all"
+                   ${!paxEnabled ? 'disabled' : ''} />
+            <span class="ml-1.5 text-xs text-[#64748B] font-semibold">đ</span>
+          </div>
+          <div id="${scopePrefix}-errorFloor-${pkgId}-${type}" class="hidden text-[10px] text-rose-600 font-medium text-right mt-0.5">
+            Thấp hơn giá vốn (${formatMoney(config.netPrice)} đ)
           </div>
         </div>
       </div>
 
-      <!-- Dòng dưới cùng: Tóm tắt mức giảm trên từng vé & Tổng thành tiền của hạng vé đó -->
-      <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#64748B]">
-        <div>
-          ${discount > 0 ? `<span class="text-emerald-600 font-medium text-[11px]">Chiết khấu: -${formatMoney(discount)} đ/vé</span>` : '<span class="text-slate-400 text-[11px]">Giá niêm yết</span>'}
+      <!-- Hàng 3 — Mức giảm & Thành tiền: Ngăn cách bằng đường kẻ ngang mảnh -->
+      <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+        <!-- Bên trái: Nhãn pill nền xám nhạt Giảm: 0 đ/vé -->
+        <div id="${scopePrefix}-discountLabel-${pkgId}-${type}">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-[#64748B]">
+            Giảm: ${formatMoney(discount)} đ/vé
+          </span>
         </div>
-        <div class="text-right font-bold text-[#0F172A]">
-          <span class="text-[#64748B] font-normal text-[11px]">Thành tiền: </span>
-          <span class="text-xs font-bold text-[#0F172A]">${formatMoney(lineTotal)} đ</span>
+        <!-- Bên phải: Dòng Thành tiền: 2.116.000 đ, trong đó số tiền nổi bật bằng màu cam đậm -->
+        <div class="text-right">
+          <span class="text-xs text-[#64748B] font-normal">Thành tiền: </span>
+          <span id="${scopePrefix}-lineTotal-${pkgId}-${type}" class="text-sm font-black text-[#F25C19]">${formatMoney(lineTotal)} đ</span>
         </div>
       </div>
     </div>`;
