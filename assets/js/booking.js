@@ -1233,6 +1233,7 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
   const selectedRest = getSelectedDiningRestaurant(pkg, orderItem);
   const selectedSlot = getSelectedDiningSlot(pkg, orderItem);
   const isOpen = !!drawerDiningSwitcherOpen[pkg.id];
+  const totalGroupQty = getPackageTotalQty(orderItem);
 
   const summaryParts = [
     pkg.serviceGroupLabel || pkg.title,
@@ -1292,13 +1293,21 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
 
   return `
     <div class="space-y-2">
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-start sm:items-center justify-between gap-2 text-xs">
-        <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed flex-1">
-          <span>${summaryText}</span>
+      <div class="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkg.id})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+          <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed flex-1">
+            <span>${summaryText}</span>
+          </div>
         </div>
-        <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer self-start sm:self-auto">
-          ${isOpen ? 'Xong' : 'Đổi'}
-        </button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-[#0F172A] border border-[#E2E8F0]">${totalGroupQty} vé</span>
+          <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer">
+            ${isOpen ? 'Xong' : 'Đổi'}
+          </button>
+        </div>
       </div>
       ${isOpen ? `
         <div class="p-3 rounded-xl bg-slate-50/70 border border-[#E2E8F0] space-y-3 animate-fadeIn">
@@ -1486,24 +1495,9 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
     }).join('');
 
     html += `
-      <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-2xs overflow-hidden transition-all duration-200" id="${scopePrefix}-accordion-pkg-${pkgId}">
-        <div class="bg-white p-3 sm:p-3.5 flex items-center justify-between gap-2.5 cursor-pointer select-none hover:bg-slate-50/60 transition-colors" onclick="toggleOrderTicketAccordion(${pkgId})">
-          <div class="flex items-center gap-2 min-w-0 flex-1">
-            <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkgId})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
-            <div class="min-w-0 flex-1">
-              <span class="font-bold text-xs text-[#0F172A] uppercase tracking-tight block break-words" title="${pkg.title}">${pkg.title}</span>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-[#0F172A] border border-[#E2E8F0]">${totalGroupQty} vé</span>
-            <button type="button" class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs"><i class="fa-solid ${orderItem.isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-[11px]"></i></button>
-          </div>
-        </div>
-        ${orderItem.isExpanded ? `
-          <div class="${scopePrefix === 'desk' ? 'p-2 space-y-1.5' : 'p-3 sm:p-4 space-y-3'} bg-white border-t border-[#E2E8F0]">
-            ${inlineDiningHtml}
-            ${!paxEnabled ? `<div class="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">Chọn Nhà hàng và Khung giờ để xem giá và chọn số lượng.</div>` : tiersHtml}
-          </div>` : ''}
+      <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-2xs overflow-hidden transition-all duration-200 ${scopePrefix === 'desk' ? 'p-2 space-y-1.5' : 'p-3 sm:p-4 space-y-3'}" id="${scopePrefix}-accordion-pkg-${pkgId}">
+        ${inlineDiningHtml}
+        ${!paxEnabled ? `<div class="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">Chọn Nhà hàng và Khung giờ để xem giá và chọn số lượng.</div>` : tiersHtml}
       </div>`;
   });
   return html;
@@ -1693,10 +1687,10 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
         <div class="flex flex-col items-end">
           <div class="flex items-center justify-end gap-1 mb-0.5">
             <span class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">GIÁ THỰC NHẬN / VÉ</span>
-            <span id="${scopePrefix}-tagStatus-${pkgId}-${type}">
+            <span id="${scopePrefix}-tagStatus-${pkgId}-${type}" class="shrink-0 whitespace-nowrap">
               ${isListed
-                ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C19] leading-none">Áp niêm yết</span>`
-                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 leading-none cursor-pointer">Đã chiết khấu</button>`}
+                ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C19] leading-none whitespace-nowrap">Áp niêm yết</span>`
+                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 leading-none cursor-pointer whitespace-nowrap">Đã chiết khấu</button>`}
             </span>
           </div>
           <div class="relative flex items-center justify-end">
