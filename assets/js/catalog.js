@@ -59,13 +59,13 @@ const trendingHashtagsList = [
 ];
 let isTrendingExtraExpanded = false;
 
-// 2. NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (MẶC ĐỊNH THEO ĐẶC TẢ)
-// Mặc định: 'Thứ Tư, 18/11/2026' và '2 Người lớn, 0 Trẻ em'
-let catalogSelectedDate = { day: 18, month: 11, year: 2026, dayName: 'Thứ Tư' };
-let catalogDatePickerView = { month: 11, year: 2026 };
-let catalogQuickDateSelected = true;
-let catalogQuickPax = { adult: 2, child: 0, senior: 0 };
-let catalogQuickPaxTouched = true;
+// 2. NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (MẶC ĐỊNH ĐỂ TRỐNG THEO YÊU CẦU)
+let catalogSelectedDate = null;
+const _initCalToday = (typeof getSystemTodayParts === 'function') ? getSystemTodayParts() : { month: 11, year: 2026 };
+let catalogDatePickerView = { month: _initCalToday.month || 11, year: _initCalToday.year || 2026 };
+let catalogQuickDateSelected = false;
+let catalogQuickPax = { adult: 0, child: 0, senior: 0 };
+let catalogQuickPaxTouched = false;
 
 // Active Drawer Tab ('chains' | 'regions')
 let activeDrawerTab = 'chains';
@@ -103,8 +103,7 @@ function matchDestinationChain(itemChain, itemChainLabel, selectedChain) {
   const c2 = (itemChainLabel || '').toUpperCase().trim();
   const sel = (selectedChain || '').toUpperCase().trim();
   if (c1 === sel || c2 === sel) return true;
-  if (sel === 'SUNWORLD_BANA' && (c1.includes('BANA') || c2.includes('BA NA') || c2.includes('BÀ NÀ'))) return true;
-  if (sel === 'SUNWORLD' && (c1.includes('SUNWORLD') || c2.includes('SUNWORLD'))) return true;
+  if ((sel === 'SUNWORLD' || sel === 'SUNWORLD_BANA') && (c1.includes('SUNWORLD') || c2.includes('SUNWORLD') || c1.includes('BANA') || c2.includes('BÀ NÀ'))) return true;
   if (sel === 'VINWONDERS' && (c1.includes('VINWONDERS') || c2.includes('VINWONDERS'))) return true;
   if (sel === 'NOVADREAMS' && (c1.includes('NOVADREAMS') || c2.includes('NOVADREAMS') || c2.includes('NOVALAND'))) return true;
   if (sel === 'DAMSEN_WORLD' && (c1.includes('DAMSEN') || c2.includes('DAMSEN') || c2.includes('ĐẦM SEN'))) return true;
@@ -121,7 +120,6 @@ function renderFilterCheckboxes() {
     { id: 'DAMSEN_WORLD', name: 'DAMSEN_WORLD' },
     { id: 'NOVADREAMS', name: 'NOVADREAMS' },
     { id: 'SUNWORLD', name: 'SUNWORLD' },
-    { id: 'SUNWORLD_BANA', name: 'SUNWORLD_BANA' },
     { id: 'SUOITIEN', name: 'SUOITIEN' },
     { id: 'TTC', name: 'TTC' },
     { id: 'VINWONDERS', name: 'VINWONDERS' },
@@ -703,74 +701,93 @@ function changeCatalogPage(page) {
   if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// 8. DATE & PAX MODALS (MOBILE & DESKTOP)
-function syncDateDisplays() {
-  const dayName = catalogSelectedDate.dayName || computeDayNameVi(catalogSelectedDate.day, catalogSelectedDate.month, catalogSelectedDate.year);
-  const pad = n => (n < 10 ? '0' + n : '' + n);
-  const dmy = `${pad(catalogSelectedDate.day)}/${pad(catalogSelectedDate.month)}/${catalogSelectedDate.year}`;
-  const label = `${dayName}, ${dmy}`;
-
-  const el1 = document.getElementById('catalogDateDisplayValue');
-  const el2 = document.getElementById('catalogQuickDateLabel');
-  if (el1) el1.innerText = label;
-  if (el2) el2.innerText = label;
-}
-
-function syncPaxDisplays() {
-  const parts = [`${catalogQuickPax.adult} Người lớn`, `${catalogQuickPax.child} Trẻ em`];
-  if (catalogQuickPax.senior > 0) parts.push(`${catalogQuickPax.senior} Cao tuổi`);
-  const label = parts.join(', ');
-
-  const el1 = document.getElementById('catalogPaxDisplayValue');
-  const el2 = document.getElementById('catalogQuickPaxLabel');
-  if (el1) el1.innerText = label;
-  if (el2) el2.innerText = label;
-
-  const aEl = document.getElementById('catalogQuickAdultQty');
-  const cEl = document.getElementById('catalogQuickChildQty');
-  const sEl = document.getElementById('catalogQuickSeniorQty');
-  if (aEl) aEl.innerText = String(catalogQuickPax.adult);
-  if (cEl) cEl.innerText = String(catalogQuickPax.child);
-  if (sEl) sEl.innerText = String(catalogQuickPax.senior);
-}
-
 // 8. DATE & PAX ACCORDION ENGINE (MOBILE & DESKTOP)
 function syncDateDisplays() {
+  const el1 = document.getElementById('catalogDateDisplayValue');
+  const el2 = document.getElementById('catalogQuickDateLabel');
+
+  if (!catalogSelectedDate || !catalogSelectedDate.day) {
+    if (el1) {
+      el1.innerText = 'Chọn ngày sử dụng';
+      el1.className = 'text-xs sm:text-sm font-medium text-slate-400 truncate';
+    }
+    if (el2) el2.innerText = 'Chọn ngày sử dụng';
+    return;
+  }
+
   const dayName = catalogSelectedDate.dayName || computeDayNameVi(catalogSelectedDate.day, catalogSelectedDate.month, catalogSelectedDate.year);
   const pad = n => (n < 10 ? '0' + n : '' + n);
   const dmy = `${pad(catalogSelectedDate.day)}/${pad(catalogSelectedDate.month)}/${catalogSelectedDate.year}`;
   const label = `${dayName}, ${dmy}`;
 
-  const el1 = document.getElementById('catalogDateDisplayValue');
-  const el2 = document.getElementById('catalogQuickDateLabel');
-  if (el1) el1.innerText = label;
+  if (el1) {
+    el1.innerText = label;
+    el1.className = 'text-xs sm:text-sm font-black text-slate-800 truncate';
+  }
   if (el2) el2.innerText = label;
 }
 
 function syncPaxDisplays() {
-  const parts = [`${catalogQuickPax.adult} Người lớn`, `${catalogQuickPax.child} Trẻ em`];
-  if (catalogQuickPax.senior > 0) parts.push(`${catalogQuickPax.senior} Người cao tuổi`);
-  const label = parts.join(', ');
-
+  const totalPax = (catalogQuickPax.adult || 0) + (catalogQuickPax.child || 0) + (catalogQuickPax.senior || 0);
   const el1 = document.getElementById('catalogPaxDisplayValue');
   const el2 = document.getElementById('catalogQuickPaxLabel');
-  if (el1) el1.innerText = label;
-  if (el2) el2.innerText = label;
+
+  if (totalPax <= 0) {
+    if (el1) {
+      el1.innerText = 'Chọn số lượng khách';
+      el1.className = 'text-xs sm:text-sm font-medium text-slate-400 truncate';
+    }
+    if (el2) el2.innerText = 'Chọn số lượng khách';
+  } else {
+    const parts = [];
+    if (catalogQuickPax.adult > 0) parts.push(`${catalogQuickPax.adult} Người lớn`);
+    if (catalogQuickPax.child > 0) parts.push(`${catalogQuickPax.child} Trẻ em`);
+    if (catalogQuickPax.senior > 0) parts.push(`${catalogQuickPax.senior} Người cao tuổi`);
+    const label = parts.join(', ');
+
+    if (el1) {
+      el1.innerText = label;
+      el1.className = 'text-xs sm:text-sm font-black text-slate-800 truncate';
+    }
+    if (el2) el2.innerText = label;
+  }
 
   const aEl = document.getElementById('catalogQuickAdultQty');
   const cEl = document.getElementById('catalogQuickChildQty');
   const sEl = document.getElementById('catalogQuickSeniorQty');
-  if (aEl) aEl.innerText = String(catalogQuickPax.adult);
-  if (cEl) cEl.innerText = String(catalogQuickPax.child);
-  if (sEl) sEl.innerText = String(catalogQuickPax.senior);
+  if (aEl) aEl.innerText = String(catalogQuickPax.adult || 0);
+  if (cEl) cEl.innerText = String(catalogQuickPax.child || 0);
+  if (sEl) sEl.innerText = String(catalogQuickPax.senior || 0);
 
   const btnMinusAdult = document.getElementById('btnPaxMinusAdult');
   const btnMinusChild = document.getElementById('btnPaxMinusChild');
   const btnMinusSenior = document.getElementById('btnPaxMinusSenior');
 
-  if (btnMinusAdult) btnMinusAdult.disabled = (catalogQuickPax.adult <= 1);
-  if (btnMinusChild) btnMinusChild.disabled = (catalogQuickPax.child <= 0);
-  if (btnMinusSenior) btnMinusSenior.disabled = (catalogQuickPax.senior <= 0);
+  if (btnMinusAdult) btnMinusAdult.disabled = ((catalogQuickPax.adult || 0) <= 0);
+  if (btnMinusChild) btnMinusChild.disabled = ((catalogQuickPax.child || 0) <= 0);
+  if (btnMinusSenior) btnMinusSenior.disabled = ((catalogQuickPax.senior || 0) <= 0);
+}
+
+function clearCatalogQuickDate() {
+  catalogSelectedDate = null;
+  catalogQuickDateSelected = false;
+  syncDateDisplays();
+  renderCatalogDateGrid();
+  closeInlineDatePicker();
+  try {
+    const ctx = (typeof TecheraDB !== 'undefined' && TecheraDB.getBookingContext) ? TecheraDB.getBookingContext() || {} : {};
+    ctx.selectedDate = null;
+    ctx.hasConfirmedDate = false;
+    if (typeof TecheraDB !== 'undefined' && TecheraDB.saveBookingContext) {
+      TecheraDB.saveBookingContext(ctx);
+    }
+  } catch (_) {}
+}
+
+function clearCatalogQuickPax() {
+  catalogQuickPax = { adult: 0, child: 0, senior: 0 };
+  catalogQuickPaxTouched = false;
+  syncPaxDisplays();
 }
 
 function toggleInlineDatePicker(force) {
@@ -906,7 +923,7 @@ function renderCatalogDateGrid() {
   for (let i = 0; i < offset; i++) html += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const isPast = isBeforeSystemToday(d, month, year, sysToday);
-    const isSelected = catalogQuickDateSelected && catalogSelectedDate.day === d && catalogSelectedDate.month === month && catalogSelectedDate.year === year;
+    const isSelected = catalogQuickDateSelected && catalogSelectedDate && catalogSelectedDate.day === d && catalogSelectedDate.month === month && catalogSelectedDate.year === year;
     html += `
       <button type="button" ${isPast ? 'disabled' : ''} onclick="selectCatalogQuickDate(${d}, ${month}, ${year})"
               class="h-9 rounded-xl text-xs font-black flex items-center justify-center transition-all ${isPast ? 'text-slate-300 cursor-not-allowed opacity-40' : isSelected ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 scale-105 cursor-pointer font-black' : 'text-slate-700 hover:bg-orange-50 hover:text-brand-600 cursor-pointer'}">
@@ -943,15 +960,9 @@ function selectCatalogQuickTodayPreset() {
 function updateCatalogQuickPax(type, delta) {
   if (!Object.prototype.hasOwnProperty.call(catalogQuickPax, type)) return;
   const current = catalogQuickPax[type] || 0;
-  if (type === 'adult') {
-    const next = current + delta;
-    if (next < 1) return;
-    catalogQuickPax.adult = Math.min(50, next);
-  } else {
-    const next = current + delta;
-    if (next < 0) return;
-    catalogQuickPax[type] = Math.min(50, next);
-  }
+  const next = current + delta;
+  if (next < 0) return;
+  catalogQuickPax[type] = Math.min(50, next);
   catalogQuickPaxTouched = true;
   syncPaxDisplays();
 }
@@ -1029,5 +1040,7 @@ window.closeInlineDatePicker = closeInlineDatePicker;
 window.toggleInlinePaxPicker = toggleInlinePaxPicker;
 window.closeInlinePaxPicker = closeInlinePaxPicker;
 window.confirmInlinePaxPicker = confirmInlinePaxPicker;
+window.clearCatalogQuickDate = clearCatalogQuickDate;
+window.clearCatalogQuickPax = clearCatalogQuickPax;
 window.clearCheckboxGroup = clearCheckboxGroup;
  

@@ -6,7 +6,7 @@ const destinationsDatabase = [
   {
     id: "sunworld-bana",
     name: "Sun World Ba Na Hills",
-    chain: "SUNWORLD_BANA",
+    chain: "SUNWORLD",
     chainLabel: "SUNWORLD",
     region: "Đà Nẵng",
     address: "Thôn An Sơn, Hòa Ninh, Hòa Vang, TP Đà Nẵng",
@@ -165,7 +165,6 @@ const filterChainsList = [
   { id: "DAMSEN_WORLD", name: "DAMSEN_WORLD" },
   { id: "NOVADREAMS", name: "NOVADREAMS" },
   { id: "SUNWORLD", name: "SUNWORLD" },
-  { id: "SUNWORLD_BANA", name: "SUNWORLD_BANA" },
   { id: "SUOITIEN", name: "SUOITIEN" },
   { id: "TTC", name: "TTC" },
   { id: "VINWONDERS", name: "VINWONDERS" },

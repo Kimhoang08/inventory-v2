@@ -140,7 +140,7 @@
             <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ NGÀY SỬ DỤNG & giá trị ngày) -->
             <div class="flex-1 min-w-0">
               <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">NGÀY SỬ DỤNG</div>
-              <div id="catalogDateDisplayValue" class="text-xs sm:text-sm font-black text-slate-800 truncate">Thứ Tư, 18/11/2026</div>
+              <div id="catalogDateDisplayValue" class="text-xs sm:text-sm font-medium text-slate-400 truncate">Chọn ngày sử dụng</div>
             </div>
             
             <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
@@ -169,6 +169,7 @@
             <!-- Chân khối lịch -->
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
               <button type="button" onclick="selectCatalogQuickTodayPreset()" class="text-brand-600 font-extrabold hover:underline cursor-pointer">Hôm nay</button>
+              <button type="button" onclick="clearCatalogQuickDate()" class="text-slate-400 hover:text-rose-500 font-medium cursor-pointer">Xóa ngày</button>
               <button type="button" onclick="closeInlineDatePicker()" class="text-slate-500 font-bold hover:text-slate-800 cursor-pointer">Đóng</button>
             </div>
           </div>
@@ -185,7 +186,7 @@
             <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ SỐ LƯỢNG KHÁCH & tóm tắt số khách) -->
             <div class="flex-1 min-w-0">
               <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">SỐ LƯỢNG KHÁCH</div>
-              <div id="catalogPaxDisplayValue" class="text-xs sm:text-sm font-black text-slate-800 truncate">2 Người lớn, 0 Trẻ em</div>
+              <div id="catalogPaxDisplayValue" class="text-xs sm:text-sm font-medium text-slate-400 truncate">Chọn số lượng khách</div>
             </div>
             
             <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
@@ -199,7 +200,10 @@
             <!-- Header khối: Tiêu đề bên trái & nút xác nhận Xong (màu cam) bên phải -->
             <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
               <h4 class="text-xs font-black text-slate-900">Chọn số lượng đối tượng</h4>
-              <button type="button" onclick="confirmInlinePaxPicker()" class="px-3.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs shadow-xs cursor-pointer transition-all">Xong</button>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="clearCatalogQuickPax()" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 cursor-pointer">Xóa</button>
+                <button type="button" onclick="confirmInlinePaxPicker()" class="px-3.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs shadow-xs cursor-pointer transition-all">Xong</button>
+              </div>
             </div>
 
             <!-- Danh sách đối tượng (Stepper / +/-) -->
@@ -211,8 +215,8 @@
                   <div class="text-[10.5px] text-slate-400 font-medium">Cao trên 1m4</div>
                 </div>
                 <div class="flex items-center gap-2.5">
-                  <button id="btnPaxMinusAdult" type="button" onclick="updateCatalogQuickPax('adult', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer">-</button>
-                  <span id="catalogQuickAdultQty" class="w-6 text-center text-xs font-black text-slate-900">2</span>
+                  <button id="btnPaxMinusAdult" type="button" onclick="updateCatalogQuickPax('adult', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
+                  <span id="catalogQuickAdultQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
                   <button id="btnPaxPlusAdult" type="button" onclick="updateCatalogQuickPax('adult', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
                 </div>
               </div>
