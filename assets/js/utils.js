@@ -431,13 +431,13 @@ function getTierQty(orderItem, tier) {
 function getTierPrice(orderItem, pkg, tier) {
   const cfg = getEffectivePackageTierConfig(pkg, orderItem, tier);
   if (!cfg) return 0;
+  const key = getTierPriceKey(tier);
+  if (orderItem && typeof orderItem[key] === 'number') return orderItem[key];
   if (typeof bookingSessionDiscountRate === 'number') {
     const rate = Math.max(0, Math.min(100, bookingSessionDiscountRate));
     const discount = Math.round(cfg.listedPrice * (rate / 100));
     return Math.max(0, cfg.listedPrice - discount);
   }
-  const key = getTierPriceKey(tier);
-  if (orderItem && typeof orderItem[key] === 'number') return orderItem[key];
   return cfg.listedPrice;
 }
 

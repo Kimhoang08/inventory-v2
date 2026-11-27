@@ -1294,20 +1294,12 @@ function buildInlineDrawerDiningSwitcher(pkg, orderItem) {
   return `
     <div class="space-y-2">
       <div class="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-[#E2E8F0] flex items-center justify-between gap-2 text-xs">
-        <div class="flex items-center gap-2 min-w-0 flex-1">
-          <button type="button" onclick="event.stopPropagation(); removeTicketFromOrder(${pkg.id})" title="Xóa loại vé khỏi đơn" class="w-6 h-6 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition-colors shrink-0 cursor-pointer">
-            <i class="fa-solid fa-xmark text-xs"></i>
-          </button>
-          <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed flex-1">
-            <span>${summaryText}</span>
-          </div>
+        <div class="min-w-0 font-medium text-[#0F172A] break-words leading-relaxed flex-1">
+          <span>${summaryText}</span>
         </div>
-        <div class="flex items-center gap-1.5 shrink-0">
-          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-[#0F172A] border border-[#E2E8F0]">${totalGroupQty} vé</span>
-          <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer">
-            ${isOpen ? 'Xong' : 'Đổi'}
-          </button>
-        </div>
+        <button type="button" onclick="event.stopPropagation(); toggleDrawerDiningSwitcher(${pkg.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold text-[#F25C19] border border-orange-200 bg-white hover:bg-orange-50 transition-colors shrink-0 cursor-pointer">
+          ${isOpen ? 'Xong' : 'Đổi'}
+        </button>
       </div>
       ${isOpen ? `
         <div class="p-3 rounded-xl bg-slate-50/70 border border-[#E2E8F0] space-y-3 animate-fadeIn">
@@ -1527,9 +1519,35 @@ function applyGlobalDiscountRateToOrderItem(pkg, orderItem, discountPct) {
   });
 }
 
+function areAllSelectedTicketsListed() {
+  const keys = Object.keys(selectedOrderTickets);
+  if (keys.length === 0) return true;
+  for (const pkgId of keys) {
+    const item = selectedOrderTickets[pkgId];
+    const pkg = ticketPackages[pkgId];
+    if (!item || !pkg) continue;
+    for (const t of TICKET_TIER_KEYS) {
+      const cfg = getEffectivePackageTierConfig(pkg, item, t);
+      if (!cfg) continue;
+      const price = getTierPrice(item, pkg, t);
+      if (price < cfg.listedPrice) return false;
+    }
+  }
+  return true;
+}
+
+function renderTierListedButton(pkgId, type, isListed, label = '') {
+  if (isListed) {
+    return `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Đang áp dụng giá niêm yết" class="px-2 py-0.5 rounded-md text-[9px] font-bold border border-orange-200 bg-[#FFF7ED] text-[#F25C22] hover:bg-[#F25C22] hover:text-white hover:border-[#F25C22] hover:shadow-xs cursor-pointer transition-all whitespace-nowrap leading-none active:scale-95">Áp niêm yết</button>`;
+  } else {
+    return `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để áp giá niêm yết cho ${label || 'đối tượng này'}" class="px-2 py-0.5 rounded-md text-[9px] font-extrabold border border-[#F25C22] bg-white text-[#F25C22] hover:bg-[#F25C22] hover:text-white hover:shadow-xs cursor-pointer transition-all whitespace-nowrap leading-none active:scale-95 flex items-center gap-1"><span>Áp niêm yết</span><i class="fa-solid fa-rotate-left text-[7.5px]"></i></button>`;
+  }
+}
+
 function renderGlobalDiscountSelector() {
   const curPct = Math.max(0, Math.min(100, Math.round(Number(bookingSessionDiscountRate) || 0)));
-  const isListedActive = (curPct === 0);
+  const allListed = areAllSelectedTicketsListed();
+  const isListedActive = (allListed && curPct === 0);
   const buildMarkup = (prefix) => `
     <div class="space-y-1.5 pb-2 border-b border-slate-100">
       <div class="text-[10.5px] font-black text-slate-800 uppercase tracking-wider flex items-center justify-between gap-2">
@@ -1566,7 +1584,7 @@ function renderGlobalDiscountSelector() {
     } else {
       if (document.activeElement !== slider) slider.value = curPct;
       if (document.activeElement !== input) input.value = curPct;
-      btn.className = `px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListedActive ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`;
+      btn.className = `px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListedActive ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
       btn.innerHTML = `<span>Áp Niêm Yết</span>`;
     }
   });
@@ -1586,7 +1604,7 @@ function handleGlobalDiscountChange(rawVal, source = 'slider') {
     if (slider && (source !== 'slider' || document.activeElement !== slider)) slider.value = num;
     if (input && (source !== 'input' || document.activeElement !== input)) input.value = num;
     if (btn) {
-      btn.className = `px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListed ? 'bg-[#F25C19] text-white border-[#F25C19] shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`;
+      btn.className = `px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center ${isListed ? 'bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:text-[#F25C22]'}`;
       btn.innerHTML = `<span>Áp Niêm Yết</span>`;
     }
   });
@@ -1683,14 +1701,12 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
           </div>
         </div>
 
-        <!-- Bên phải: Nhãn GIÁ THỰC NHẬN / VÉ đi kèm badge nhỏ Áp niêm yết (viền/chữ cam nhạt), phía dưới là ô nhập/hiển thị giá trị 1.058.000 đ trong khung viền xám bo góc -->
+        <!-- Bên phải: Nhãn GIÁ THỰC NHẬN / VÉ đi kèm nút Áp niêm yết tương tác (viền/chữ cam nhạt, hover cam đậm), phía dưới là ô nhập/hiển thị giá trị trong khung viền xám bo góc -->
         <div class="flex flex-col items-end">
           <div class="flex items-center justify-end gap-1 mb-0.5">
             <span class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">GIÁ THỰC NHẬN / VÉ</span>
             <span id="${scopePrefix}-tagStatus-${pkgId}-${type}" class="shrink-0 whitespace-nowrap">
-              ${isListed
-                ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C19] leading-none whitespace-nowrap">Áp niêm yết</span>`
-                : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 leading-none cursor-pointer whitespace-nowrap">Đã chiết khấu</button>`}
+              ${renderTierListedButton(pkgId, type, isListed, config.label)}
             </span>
           </div>
           <div class="relative flex items-center justify-end">
@@ -1789,17 +1805,21 @@ function handleMultiSellingPriceInput(pkgId, type, inputElement, originScope = '
   const rawValue = parseMoney(inputElement.value);
   inputElement.value = formatMoney(rawValue);
   selectedOrderTickets[pkgId][getTierPriceKey(type)] = rawValue;
-  if (bookingSessionDiscountRate !== null) {
-    bookingSessionDiscountRate = null;
-    renderGlobalDiscountSelector();
+  if (packageConfigStates[pkgId]) {
+    packageConfigStates[pkgId][getTierPriceKey(type)] = rawValue;
   }
   const pkg = ticketPackages[pkgId];
   const orderItem = selectedOrderTickets[pkgId];
   const config = getEffectivePackageTierConfig(pkg, orderItem, type);
   if (!config) return;
   const qty = getTierQty(orderItem, type);
-  const discount = config.listedPrice - rawValue;
+  const discount = Math.max(0, config.listedPrice - rawValue);
   const isFloorErr = (rawValue < config.netPrice && qty > 0);
+
+  if (areAllSelectedTicketsListed()) {
+    bookingSessionDiscountRate = 0;
+    renderGlobalDiscountSelector();
+  }
 
   ['desk', 'mob'].forEach(scope => {
     if (scope !== originScope) {
@@ -1815,9 +1835,7 @@ function handleMultiSellingPriceInput(pkgId, type, inputElement, originScope = '
     const tagEl = document.getElementById(`${scope}-tagStatus-${pkgId}-${type}`);
     if (tagEl) {
       const isNowListed = (rawValue >= config.listedPrice);
-      tagEl.innerHTML = isNowListed
-        ? `<span class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-[#FFF7ED] border border-orange-200 text-[#F25C22] leading-none">Áp niêm yết</span>`
-        : `<button type="button" onclick="setMultiPricePreset(${pkgId}, '${type}', 'listed')" title="Bấm để quay về giá niêm yết" class="shrink-0 whitespace-nowrap px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer leading-none flex items-center gap-1"><span>Đã chiết khấu</span><i class="fa-solid fa-rotate-left text-[7px]"></i></button>`;
+      tagEl.innerHTML = renderTierListedButton(pkgId, type, isNowListed, config.label);
     }
   });
   recalculateTotals();
@@ -1826,10 +1844,17 @@ function handleMultiSellingPriceInput(pkgId, type, inputElement, originScope = '
 function setMultiPricePreset(pkgId, type, mode) {
   if (!selectedOrderTickets[pkgId]) return;
   const pkg = ticketPackages[pkgId];
-  const config = getEffectivePackageTierConfig(pkg, selectedOrderTickets[pkgId], type);
+  const orderItem = selectedOrderTickets[pkgId];
+  const config = getEffectivePackageTierConfig(pkg, orderItem, type);
   if (!config) return;
-  selectedOrderTickets[pkgId][getTierPriceKey(type)] = (mode === 'listed') ? config.listedPrice : config.netPrice;
-  bookingSessionDiscountRate = null;
+  const targetPrice = (mode === 'listed') ? config.listedPrice : config.netPrice;
+  orderItem[getTierPriceKey(type)] = targetPrice;
+  if (packageConfigStates[pkgId]) {
+    packageConfigStates[pkgId][getTierPriceKey(type)] = targetPrice;
+  }
+  if (areAllSelectedTicketsListed()) {
+    bookingSessionDiscountRate = 0;
+  }
   syncDiningCardPanels();
   renderOrderTicketsAccordions();
   recalculateTotals();
