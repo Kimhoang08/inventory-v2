@@ -130,9 +130,9 @@
         </div>
 
         <!-- HÀNG 2 & 3: BỘ LỌC NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (CHUNG 1 DÒNG TRÊN DESKTOP, GIỮ NGUYÊN GIAO DIỆN MOBILE) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 items-start">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 items-start relative z-20">
           <!-- Cột 1: THẺ CHỌN NGÀY SỬ DỤNG -->
-          <div class="w-full">
+          <div id="catalogDatePickerWrapper" class="w-full relative">
             <button id="btnTriggerDatePicker" type="button" onclick="toggleInlineDatePicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
               <!-- 1. Góc trái: Icon Lịch nằm trong khối vuông bo góc màu cam nhạt -->
               <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
@@ -151,8 +151,8 @@
               </div>
             </button>
 
-            <!-- Khung lịch Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
-            <div id="inlineDatePickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+            <!-- Khung danh sách xổ xuống (Dropdown Popover): Bung nổi bên dưới căn lề phải thẳng hàng Trigger Box trên Desktop -->
+            <div id="inlineDatePickerPanel" class="hidden mt-2.5 md:mt-2 bg-white border border-brand-200/90 md:border-slate-200/90 rounded-2xl p-4 shadow-md md:shadow-xl md:absolute md:top-full md:right-0 md:w-[380px] md:max-w-full md:z-40 transition-all space-y-3.5">
               <!-- Điều hướng Tháng & Năm -->
               <div class="flex items-center justify-between">
                 <button type="button" onclick="changeCatalogCalMonth(-1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">‹</button>
@@ -178,7 +178,7 @@
           </div>
 
           <!-- Cột 2: THẺ CHỌN SỐ LƯỢNG KHÁCH -->
-          <div class="w-full">
+          <div id="catalogPaxPickerWrapper" class="w-full relative">
             <button id="btnTriggerPaxPicker" type="button" onclick="toggleInlinePaxPicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
               <!-- 1. Góc trái: Icon Nhóm khách trong khối vuông bo góc màu cam nhạt -->
               <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
@@ -197,8 +197,8 @@
               </div>
             </button>
 
-            <!-- Khung chọn Pax Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
-            <div id="inlinePaxPickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+            <!-- Khung danh sách xổ xuống (Dropdown Popover): Bung nổi bên dưới căn lề phải thẳng hàng Trigger Box, max-height 280px có thanh cuộn dọc -->
+            <div id="inlinePaxPickerPanel" class="hidden mt-2.5 md:mt-2 bg-white border border-brand-200/90 md:border-slate-200/90 rounded-2xl p-4 shadow-md md:shadow-xl md:absolute md:top-full md:right-0 md:w-[380px] md:max-w-full md:max-h-[280px] md:z-40 transition-all space-y-3">
               <!-- Header khối: Tiêu đề bên trái & nút xác nhận Xong (màu cam) bên phải -->
               <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
                 <h4 class="text-xs font-black text-slate-900">Chọn số lượng đối tượng</h4>
@@ -208,8 +208,8 @@
                 </div>
               </div>
 
-              <!-- Danh sách đối tượng (Stepper / +/-) -->
-              <div class="space-y-3">
+              <!-- Danh sách đối tượng (Stepper / +/-): Cuộn dọc khi có nhiều đối tượng -->
+              <div class="space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
                 <!-- 1. Người lớn (Phụ đề: Cao trên 1m4) -->
                 <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
                   <div>

@@ -999,6 +999,12 @@ function selectDestinationAndProceed(destinationId) {
 document.addEventListener('click', (e) => {
   const wrap = document.getElementById('catalogSearchWrapper');
   if (wrap && !wrap.contains(e.target)) closeDesktopSearchDropdown();
+
+  const dateWrap = document.getElementById('catalogDatePickerWrapper');
+  if (dateWrap && !dateWrap.contains(e.target)) closeInlineDatePicker();
+
+  const paxWrap = document.getElementById('catalogPaxPickerWrapper');
+  if (paxWrap && !paxWrap.contains(e.target)) closeInlinePaxPicker();
 });
 
 window.addEventListener('DOMContentLoaded', () => {
