@@ -59,13 +59,13 @@ const trendingHashtagsList = [
 ];
 let isTrendingExtraExpanded = false;
 
-// 2. NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (MẶC ĐỊNH ĐỂ TRỐNG THEO YÊU CẦU)
+// 2. NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (MẶC ĐỊNH NGÀY TRỐNG, KHÁCH = 1)
 let catalogSelectedDate = null;
 const _initCalToday = (typeof getSystemTodayParts === 'function') ? getSystemTodayParts() : { month: 11, year: 2026 };
 let catalogDatePickerView = { month: _initCalToday.month || 11, year: _initCalToday.year || 2026 };
 let catalogQuickDateSelected = false;
-let catalogQuickPax = { adult: 0, child: 0, senior: 0 };
-let catalogQuickPaxTouched = false;
+let catalogQuickPax = { adult: 1, child: 0, senior: 0 };
+let catalogQuickPaxTouched = true;
 
 // Active Drawer Tab ('chains' | 'regions')
 let activeDrawerTab = 'chains';
@@ -270,6 +270,9 @@ function resetAllFilters() {
   catalogState.selectedChains.clear();
   catalogState.selectedRegions.clear();
   catalogState.keyword = '';
+  catalogState.sortBy = 'popular';
+  const sortSelect = document.getElementById('catalogSortSelect');
+  if (sortSelect) sortSelect.value = 'popular';
   const searchInput = document.getElementById('input_search_destination');
   if (searchInput) searchInput.value = '';
   renderFilterCheckboxes();
@@ -574,10 +577,21 @@ function getFilteredDestinations() {
     });
   }
 
-  if (catalogState.sortBy === 'price_asc') results.sort((a, b) => a.fromPrice - b.fromPrice);
-  else if (catalogState.sortBy === 'price_desc') results.sort((a, b) => b.fromPrice - a.fromPrice);
-  else if (catalogState.sortBy === 'rating_desc') results.sort((a, b) => b.rating - a.rating);
-  else results.sort((a, b) => b.popularIndex - a.popularIndex);
+  if (catalogState.sortBy === 'price_asc') {
+    results.sort((a, b) => a.fromPrice - b.fromPrice);
+  } else if (catalogState.sortBy === 'price_desc') {
+    results.sort((a, b) => b.fromPrice - a.fromPrice);
+  } else if (catalogState.sortBy === 'newest') {
+    const allDests = (typeof TecheraDB !== 'undefined' && TecheraDB.getDestinations) ? TecheraDB.getDestinations() : [];
+    results.sort((a, b) => {
+      const idxA = allDests.findIndex(d => d.id === a.id);
+      const idxB = allDests.findIndex(d => d.id === b.id);
+      return idxB - idxA;
+    });
+  } else {
+    // Mặc định: Phổ biến nhất
+    results.sort((a, b) => b.popularIndex - a.popularIndex);
+  }
 
   return results;
 }

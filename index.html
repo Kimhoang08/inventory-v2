@@ -110,9 +110,9 @@
           <div class="relative w-[48%] flex-[48] min-w-0">
             <select id="catalogSortSelect" onchange="handleSortChange(this.value)" class="w-full appearance-none bg-white border border-slate-200/90 rounded-full px-4 py-2.5 pr-8 text-xs font-black text-slate-700 hover:border-brand-400 focus:outline-none focus:border-brand-500 shadow-2xs transition-colors cursor-pointer truncate">
               <option value="popular">Phổ biến nhất</option>
-              <option value="price_asc">Giá: Thấp đến cao</option>
-              <option value="price_desc">Giá: Cao đến thấp</option>
-              <option value="rating_desc">Đánh giá cao nhất</option>
+              <option value="newest">Mới nhất</option>
+              <option value="price_asc">Giá từ thấp đến cao</option>
+              <option value="price_desc">Giá từ cao đến thấp</option>
             </select>
             <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none"></i>
           </div>
@@ -129,121 +129,124 @@
           </div>
         </div>
 
-        <!-- HÀNG 2 (DƯỚI HÀNG 1): THẺ CHỌN NGÀY SỬ DỤNG (FULL-WIDTH 100% CONTAINER) -->
-        <div class="w-full">
-          <button id="btnTriggerDatePicker" type="button" onclick="toggleInlineDatePicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
-            <!-- 1. Góc trái: Icon Lịch nằm trong khối vuông bo góc màu cam nhạt -->
-            <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-              <i class="fa-regular fa-calendar-days text-sm"></i>
-            </div>
-            
-            <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ NGÀY SỬ DỤNG & giá trị ngày) -->
-            <div class="flex-1 min-w-0">
-              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">NGÀY SỬ DỤNG</div>
-              <div id="catalogDateDisplayValue" class="text-xs sm:text-sm font-medium text-slate-400 truncate">Chọn ngày sử dụng</div>
-            </div>
-            
-            <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
-            <div class="pr-1 text-slate-400 shrink-0">
-              <i id="iconChevronDate" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-            </div>
-          </button>
+        <!-- HÀNG 2 & 3: BỘ LỌC NGÀY SỬ DỤNG & SỐ LƯỢNG KHÁCH (CHUNG 1 DÒNG TRÊN DESKTOP, GIỮ NGUYÊN GIAO DIỆN MOBILE) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 items-start">
+          <!-- Cột 1: THẺ CHỌN NGÀY SỬ DỤNG -->
+          <div class="w-full">
+            <button id="btnTriggerDatePicker" type="button" onclick="toggleInlineDatePicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
+              <!-- 1. Góc trái: Icon Lịch nằm trong khối vuông bo góc màu cam nhạt -->
+              <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                <i class="fa-regular fa-calendar-days text-sm"></i>
+              </div>
+              
+              <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ NGÀY SỬ DỤNG & giá trị ngày) -->
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">NGÀY SỬ DỤNG</div>
+                <div id="catalogDateDisplayValue" class="text-xs sm:text-sm font-medium text-slate-400 truncate">Chọn ngày sử dụng</div>
+              </div>
+              
+              <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
+              <div class="pr-1 text-slate-400 shrink-0">
+                <i id="iconChevronDate" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+              </div>
+            </button>
 
-          <!-- Khung lịch Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
-          <div id="inlineDatePickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
-            <!-- Điều hướng Tháng & Năm -->
-            <div class="flex items-center justify-between">
-              <button type="button" onclick="changeCatalogCalMonth(-1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">‹</button>
-              <span id="catalogDateMonthTitle" class="text-sm font-black text-slate-800">Tháng 11 / 2026</span>
-              <button type="button" onclick="changeCatalogCalMonth(1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">›</button>
-            </div>
+            <!-- Khung lịch Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
+            <div id="inlineDatePickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+              <!-- Điều hướng Tháng & Năm -->
+              <div class="flex items-center justify-between">
+                <button type="button" onclick="changeCatalogCalMonth(-1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">‹</button>
+                <span id="catalogDateMonthTitle" class="text-sm font-black text-slate-800">Tháng 11 / 2026</span>
+                <button type="button" onclick="changeCatalogCalMonth(1)" class="w-8 h-8 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center font-bold text-slate-600 cursor-pointer transition-colors">›</button>
+              </div>
 
-            <!-- Thứ trong tuần -->
-            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-black text-slate-400">
-              <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div class="text-rose-500">CN</div>
-            </div>
+              <!-- Thứ trong tuần -->
+              <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-black text-slate-400">
+                <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div class="text-rose-500">CN</div>
+              </div>
 
-            <!-- Lưới ngày -->
-            <div id="catalogDateGrid" class="grid grid-cols-7 gap-1 text-xs"></div>
+              <!-- Lưới ngày -->
+              <div id="catalogDateGrid" class="grid grid-cols-7 gap-1 text-xs"></div>
 
-            <!-- Chân khối lịch -->
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <button type="button" onclick="selectCatalogQuickTodayPreset()" class="text-brand-600 font-extrabold hover:underline cursor-pointer">Hôm nay</button>
-              <button type="button" onclick="clearCatalogQuickDate()" class="text-slate-400 hover:text-rose-500 font-medium cursor-pointer">Xóa ngày</button>
-              <button type="button" onclick="closeInlineDatePicker()" class="text-slate-500 font-bold hover:text-slate-800 cursor-pointer">Đóng</button>
+              <!-- Chân khối lịch -->
+              <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                <button type="button" onclick="selectCatalogQuickTodayPreset()" class="text-brand-600 font-extrabold hover:underline cursor-pointer">Hôm nay</button>
+                <button type="button" onclick="clearCatalogQuickDate()" class="text-slate-400 hover:text-rose-500 font-medium cursor-pointer">Xóa ngày</button>
+                <button type="button" onclick="closeInlineDatePicker()" class="text-slate-500 font-bold hover:text-slate-800 cursor-pointer">Đóng</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- HÀNG 3 (DƯỚI HÀNG 2): THẺ CHỌN SỐ LƯỢNG KHÁCH (FULL-WIDTH 100% CONTAINER) -->
-        <div class="w-full">
-          <button id="btnTriggerPaxPicker" type="button" onclick="toggleInlinePaxPicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
-            <!-- 1. Góc trái: Icon Nhóm khách trong khối vuông bo góc màu cam nhạt -->
-            <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-user-group text-sm"></i>
-            </div>
-            
-            <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ SỐ LƯỢNG KHÁCH & tóm tắt số khách) -->
-            <div class="flex-1 min-w-0">
-              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">SỐ LƯỢNG KHÁCH</div>
-              <div id="catalogPaxDisplayValue" class="text-xs sm:text-sm font-medium text-slate-400 truncate">Chọn số lượng khách</div>
-            </div>
-            
-            <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
-            <div class="pr-1 text-slate-400 shrink-0">
-              <i id="iconChevronPax" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
-            </div>
-          </button>
-
-          <!-- Khung chọn Pax Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
-          <div id="inlinePaxPickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
-            <!-- Header khối: Tiêu đề bên trái & nút xác nhận Xong (màu cam) bên phải -->
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-              <h4 class="text-xs font-black text-slate-900">Chọn số lượng đối tượng</h4>
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="clearCatalogQuickPax()" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 cursor-pointer">Xóa</button>
-                <button type="button" onclick="confirmInlinePaxPicker()" class="px-3.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs shadow-xs cursor-pointer transition-all">Xong</button>
+          <!-- Cột 2: THẺ CHỌN SỐ LƯỢNG KHÁCH -->
+          <div class="w-full">
+            <button id="btnTriggerPaxPicker" type="button" onclick="toggleInlinePaxPicker()" class="w-full flex items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-brand-400 text-left transition-all cursor-pointer group active:scale-[0.99]">
+              <!-- 1. Góc trái: Icon Nhóm khách trong khối vuông bo góc màu cam nhạt -->
+              <div class="w-9 h-9 rounded-xl bg-orange-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-colors flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-user-group text-sm"></i>
               </div>
-            </div>
+              
+              <!-- 2. Ở giữa: 2 dòng chữ (nhãn phụ SỐ LƯỢNG KHÁCH & tóm tắt số khách) -->
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">SỐ LƯỢNG KHÁCH</div>
+                <div id="catalogPaxDisplayValue" class="text-xs sm:text-sm font-black text-slate-800 truncate">1 Người lớn</div>
+              </div>
+              
+              <!-- 3. Góc phải: Icon mũi tên chỉ xuống [⌄] -->
+              <div class="pr-1 text-slate-400 shrink-0">
+                <i id="iconChevronPax" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+              </div>
+            </button>
 
-            <!-- Danh sách đối tượng (Stepper / +/-) -->
-            <div class="space-y-3">
-              <!-- 1. Người lớn (Phụ đề: Cao trên 1m4) -->
-              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                <div>
-                  <div class="text-xs font-black text-slate-800">Người lớn</div>
-                  <div class="text-[10.5px] text-slate-400 font-medium">Cao trên 1m4</div>
-                </div>
-                <div class="flex items-center gap-2.5">
-                  <button id="btnPaxMinusAdult" type="button" onclick="updateCatalogQuickPax('adult', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
-                  <span id="catalogQuickAdultQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
-                  <button id="btnPaxPlusAdult" type="button" onclick="updateCatalogQuickPax('adult', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+            <!-- Khung chọn Pax Accordion bung mở ngay bên dưới thẻ, đẩy các thành phần bên dưới xuống -->
+            <div id="inlinePaxPickerPanel" class="hidden mt-2.5 bg-white border border-brand-200/90 rounded-2xl p-4 shadow-md transition-all space-y-3.5">
+              <!-- Header khối: Tiêu đề bên trái & nút xác nhận Xong (màu cam) bên phải -->
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                <h4 class="text-xs font-black text-slate-900">Chọn số lượng đối tượng</h4>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="clearCatalogQuickPax()" class="text-[11px] font-bold text-slate-400 hover:text-rose-500 cursor-pointer">Xóa</button>
+                  <button type="button" onclick="confirmInlinePaxPicker()" class="px-3.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-black text-xs shadow-xs cursor-pointer transition-all">Xong</button>
                 </div>
               </div>
 
-              <!-- 2. Trẻ em (Phụ đề: Cao từ 1m – 1m4) -->
-              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                <div>
-                  <div class="text-xs font-black text-slate-800">Trẻ em</div>
-                  <div class="text-[10.5px] text-slate-400 font-medium">Cao từ 1m – 1m4</div>
+              <!-- Danh sách đối tượng (Stepper / +/-) -->
+              <div class="space-y-3">
+                <!-- 1. Người lớn (Phụ đề: Cao trên 1m4) -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div>
+                    <div class="text-xs font-black text-slate-800">Người lớn</div>
+                    <div class="text-[10.5px] text-slate-400 font-medium">Cao trên 1m4</div>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <button id="btnPaxMinusAdult" type="button" onclick="updateCatalogQuickPax('adult', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer">-</button>
+                    <span id="catalogQuickAdultQty" class="w-6 text-center text-xs font-black text-slate-900">1</span>
+                    <button id="btnPaxPlusAdult" type="button" onclick="updateCatalogQuickPax('adult', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2.5">
-                  <button id="btnPaxMinusChild" type="button" onclick="updateCatalogQuickPax('child', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
-                  <span id="catalogQuickChildQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
-                  <button id="btnPaxPlusChild" type="button" onclick="updateCatalogQuickPax('child', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
-                </div>
-              </div>
 
-              <!-- 3. Người cao tuổi (Phụ đề: Từ 60 tuổi trở lên) -->
-              <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                <div>
-                  <div class="text-xs font-black text-slate-800">Người cao tuổi</div>
-                  <div class="text-[10.5px] text-slate-400 font-medium">Từ 60 tuổi trở lên</div>
+                <!-- 2. Trẻ em (Phụ đề: Cao từ 1m – 1m4) -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div>
+                    <div class="text-xs font-black text-slate-800">Trẻ em</div>
+                    <div class="text-[10.5px] text-slate-400 font-medium">Cao từ 1m – 1m4</div>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <button id="btnPaxMinusChild" type="button" onclick="updateCatalogQuickPax('child', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
+                    <span id="catalogQuickChildQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
+                    <button id="btnPaxPlusChild" type="button" onclick="updateCatalogQuickPax('child', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                  </div>
                 </div>
-                <div class="flex items-center gap-2.5">
-                  <button id="btnPaxMinusSenior" type="button" onclick="updateCatalogQuickPax('senior', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
-                  <span id="catalogQuickSeniorQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
-                  <button id="btnPaxPlusSenior" type="button" onclick="updateCatalogQuickPax('senior', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+
+                <!-- 3. Người cao tuổi (Phụ đề: Từ 60 tuổi trở lên) -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div>
+                    <div class="text-xs font-black text-slate-800">Người cao tuổi</div>
+                    <div class="text-[10.5px] text-slate-400 font-medium">Từ 60 tuổi trở lên</div>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <button id="btnPaxMinusSenior" type="button" onclick="updateCatalogQuickPax('senior', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center active:scale-95 cursor-pointer" disabled>-</button>
+                    <span id="catalogQuickSeniorQty" class="w-6 text-center text-xs font-black text-slate-900">0</span>
+                    <button id="btnPaxPlusSenior" type="button" onclick="updateCatalogQuickPax('senior', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center active:scale-95 cursor-pointer">+</button>
+                  </div>
                 </div>
               </div>
             </div>
