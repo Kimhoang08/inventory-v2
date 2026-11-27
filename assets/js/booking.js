@@ -95,9 +95,10 @@ function getSupplierLogoMarkup(sup) {
   const shortCode = sup.shortLabel || 'SW';
 
   if (brandLogo) {
+    const versionedLogo = `${brandLogo}?v=2.9.6`;
     return `
       <div class="w-12 h-12 rounded-xl bg-white border border-slate-200/90 flex items-center justify-center p-1.5 shrink-0 shadow-xs overflow-hidden">
-        <img src="${brandLogo}" alt="${sup.name}" class="max-h-full max-w-full object-contain" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-[#F25C22] to-rose-500 flex items-center justify-center shrink-0 shadow-xs font-black text-white text-base tracking-wider\\'>${shortCode}</div>';" />
+        <img src="${versionedLogo}" alt="${sup.name}" class="max-h-full max-w-full object-contain" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-[#F25C22] to-rose-500 flex items-center justify-center shrink-0 shadow-xs font-black text-white text-base tracking-wider\\'>${shortCode}</div>';" />
       </div>`;
   }
 
@@ -117,9 +118,9 @@ function renderBookingSuppliers() {
   const activeSup = suppliers.find(s => s.id === currentSelectedSupplierId) || suppliers[0];
   if (subtitleEl && activeSup) {
     if (activeSup.id === 'techera') {
-      subtitleEl.innerText = 'Kho nội bộ Techera';
+      subtitleEl.innerText = `${activeSup.name} • Kho nội bộ Techera`;
     } else {
-      subtitleEl.innerText = activeSup.name || 'Tập đoàn đối tác';
+      subtitleEl.innerText = `${activeSup.name} • API Đối tác KDL`;
     }
   }
   if (sidebarBadge && activeSup) {
@@ -265,6 +266,7 @@ function selectBookingSupplier(supplierId) {
   renderOrderTicketsAccordions();
   recalculateTotals();
 
+  const isUnavailable = isBookingDateUnavailable(selectedDate.day, selectedDate.month, selectedDate.year);
   if (isUnavailable) showToast('Ngày đã hết lịch', `Ngày ${formatDateObjDMY(selectedDate)} đã hết vé tại ${supName}, vui lòng chọn ngày khác.`, 'error');
   else showToast('Đã đổi Nhà cung cấp', `Đã chuyển sang ${supName}. Ngày sử dụng và số lượng khách được bảo toàn.`, 'success');
 }
