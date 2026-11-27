@@ -91,8 +91,8 @@ function applyPaymentMethodUi(method) {
     const pm = btn.getAttribute('data-pm');
     const active = (pm === selectedConfirmPaymentMethod);
     btn.className = active
-      ? 'confirm-pm-btn p-4 rounded-2xl border-2 border-[#F25C22] bg-orange-50/50 shadow-xs ring-2 ring-orange-100 transition-all cursor-pointer text-left block space-y-2 select-none'
-      : 'confirm-pm-btn p-4 rounded-2xl border border-slate-200 bg-white hover:border-orange-300 transition-all cursor-pointer text-left block space-y-2 select-none';
+      ? 'confirm-pm-btn p-4 rounded-2xl border-2 border-[#F25C22] bg-[#FFF8F5] transition-all cursor-pointer text-left block space-y-1.5 select-none'
+      : 'confirm-pm-btn p-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-all cursor-pointer text-left block space-y-1.5 select-none';
   });
 
   const wallet = TecheraDB.getWallet();
@@ -201,23 +201,23 @@ function updateConfirmationFinancialSummary() {
     if (walletAfter >= 0) {
       if (confirmWalletAfterPayStatus) {
         confirmWalletAfterPayStatus.innerText = `${formatMoney(walletAfter)} đ`;
-        confirmWalletAfterPayStatus.className = 'font-black text-emerald-700 text-xs sm:text-sm';
+        confirmWalletAfterPayStatus.className = 'font-bold text-[#0F172A] text-xs sm:text-sm';
       }
       if (confirmWalletAfterPayDeficit) confirmWalletAfterPayDeficit.classList.add('hidden');
       if (confirmWalletAfterPay) {
         confirmWalletAfterPay.innerText = `${formatMoney(walletAfter)} đ`;
-        confirmWalletAfterPay.className = 'font-black text-emerald-700';
+        confirmWalletAfterPay.className = 'font-bold text-[#0F172A]';
       }
       if (btnTopupDeficit) btnTopupDeficit.classList.add('hidden');
     } else if (wallet.allowNegativeBalance && walletAfter >= MAX_NEGATIVE_WALLET_LIMIT) {
       if (confirmWalletAfterPayStatus) {
         confirmWalletAfterPayStatus.innerText = `${formatSignedVnd(walletAfter)} (Thấu chi hợp lệ)`;
-        confirmWalletAfterPayStatus.className = 'font-black text-amber-700 text-xs sm:text-sm';
+        confirmWalletAfterPayStatus.className = 'font-bold text-[#0F172A] text-xs sm:text-sm';
       }
       if (confirmWalletAfterPayDeficit) confirmWalletAfterPayDeficit.classList.add('hidden');
       if (confirmWalletAfterPay) {
         confirmWalletAfterPay.innerText = `${formatSignedVnd(walletAfter)} (Thấu chi hợp lệ)`;
-        confirmWalletAfterPay.className = 'font-black text-amber-700';
+        confirmWalletAfterPay.className = 'font-bold text-[#0F172A]';
       }
       if (btnTopupDeficit) btnTopupDeficit.classList.add('hidden');
     } else if (wallet.allowNegativeBalance && walletAfter < MAX_NEGATIVE_WALLET_LIMIT) {
@@ -225,7 +225,7 @@ function updateConfirmationFinancialSummary() {
       currentCheckoutDeficit = Math.abs(walletAfter - MAX_NEGATIVE_WALLET_LIMIT);
       if (confirmWalletAfterPayStatus) {
         confirmWalletAfterPayStatus.innerText = 'Vượt hạn mức âm';
-        confirmWalletAfterPayStatus.className = 'font-black text-rose-600 text-xs sm:text-sm';
+        confirmWalletAfterPayStatus.className = 'font-bold text-rose-600 text-xs sm:text-sm';
       }
       if (confirmWalletAfterPayDeficit) {
         confirmWalletAfterPayDeficit.innerText = `(Thiếu ${formatMoney(currentCheckoutDeficit)} đ)`;
@@ -233,7 +233,7 @@ function updateConfirmationFinancialSummary() {
       }
       if (confirmWalletAfterPay) {
         confirmWalletAfterPay.innerText = `Vượt hạn mức âm (Thiếu ${formatMoney(currentCheckoutDeficit)} đ)`;
-        confirmWalletAfterPay.className = 'font-black text-rose-600';
+        confirmWalletAfterPay.className = 'font-bold text-rose-600';
       }
       if (btnTopupDeficit) btnTopupDeficit.classList.remove('hidden');
     } else {
@@ -241,7 +241,7 @@ function updateConfirmationFinancialSummary() {
       currentCheckoutDeficit = Math.abs(walletAfter);
       if (confirmWalletAfterPayStatus) {
         confirmWalletAfterPayStatus.innerText = 'Số dư ví không đủ';
-        confirmWalletAfterPayStatus.className = 'font-black text-rose-600 text-xs sm:text-sm';
+        confirmWalletAfterPayStatus.className = 'font-bold text-rose-600 text-xs sm:text-sm';
       }
       if (confirmWalletAfterPayDeficit) {
         confirmWalletAfterPayDeficit.innerText = `(Thiếu ${formatMoney(currentCheckoutDeficit)} đ)`;
@@ -249,7 +249,7 @@ function updateConfirmationFinancialSummary() {
       }
       if (confirmWalletAfterPay) {
         confirmWalletAfterPay.innerText = `Số dư ví không đủ (Thiếu ${formatMoney(currentCheckoutDeficit)} đ)`;
-        confirmWalletAfterPay.className = 'font-black text-rose-600';
+        confirmWalletAfterPay.className = 'font-bold text-rose-600';
       }
       if (btnTopupDeficit) btnTopupDeficit.classList.remove('hidden');
     }
@@ -257,12 +257,12 @@ function updateConfirmationFinancialSummary() {
     // Phương thức Hiển thị mã QR
     if (confirmWalletAfterPayStatus) {
       confirmWalletAfterPayStatus.innerText = 'Quét VietQR thu khách (Giữ chỗ 30 phút)';
-      confirmWalletAfterPayStatus.className = 'font-black text-blue-700 text-xs sm:text-sm';
+      confirmWalletAfterPayStatus.className = 'font-bold text-[#0F172A] text-xs sm:text-sm';
     }
     if (confirmWalletAfterPayDeficit) confirmWalletAfterPayDeficit.classList.add('hidden');
     if (confirmWalletAfterPay) {
       confirmWalletAfterPay.innerText = 'Quét VietQR thu khách (Giữ chỗ 30 phút)';
-      confirmWalletAfterPay.className = 'font-black text-blue-700';
+      confirmWalletAfterPay.className = 'font-bold text-[#0F172A]';
     }
     if (btnTopupDeficit) btnTopupDeficit.classList.add('hidden');
   }
@@ -271,16 +271,16 @@ function updateConfirmationFinancialSummary() {
   if (btnPayNow) {
     if (snap.totalTickets === 0) {
       btnPayNow.disabled = true;
-      btnPayNow.className = 'w-full bg-slate-200 text-slate-400 py-4 px-4 rounded-xl font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-none cursor-not-allowed opacity-70 transition-all select-none';
-      btnPayNow.innerHTML = '<i class="fa-solid fa-ticket text-xs"></i><span>Chưa có vé để thanh toán</span>';
+      btnPayNow.className = 'w-full bg-slate-200 text-slate-400 py-4 px-4 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-none cursor-not-allowed opacity-70 transition-all select-none';
+      btnPayNow.innerHTML = '<span>Chưa có vé để thanh toán</span>';
     } else if (selectedConfirmPaymentMethod === 'wallet' && isInsufficientBalance) {
       btnPayNow.disabled = true;
-      btnPayNow.className = 'w-full bg-slate-200 text-slate-400 py-4 px-4 rounded-xl font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-none cursor-not-allowed opacity-75 transition-all select-none';
-      btnPayNow.innerHTML = '<i class="fa-solid fa-ban text-xs"></i><span>🚫 SỐ DƯ VÍ KHÔNG ĐỦ</span>';
+      btnPayNow.className = 'w-full bg-slate-200 text-slate-400 py-4 px-4 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-none cursor-not-allowed opacity-75 transition-all select-none';
+      btnPayNow.innerHTML = '<span>SỐ DƯ VÍ KHÔNG ĐỦ</span>';
     } else {
       btnPayNow.disabled = false;
-      btnPayNow.className = 'w-full bg-[#F25C22] hover:bg-[#d84814] active:scale-[0.99] text-white py-4 px-4 rounded-xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer select-none';
-      btnPayNow.innerHTML = '<i class="fa-solid fa-lock text-xs"></i><span>Xác nhận &amp; Thanh toán</span><i class="fa-solid fa-arrow-right text-xs"></i>';
+      btnPayNow.className = 'w-full bg-[#F25C22] hover:bg-[#d84814] active:scale-[0.99] text-white py-4 px-4 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-orange-500/20 transition-all cursor-pointer select-none';
+      btnPayNow.innerHTML = '<span>Xác nhận &amp; Thanh toán</span>';
     }
   }
 }
@@ -381,11 +381,13 @@ function renderOrderConfirmationPage() {
       if (grp.totalTickets <= 0) return;
 
       const paxLinesHtml = grp.paxItems.map(p => `
-        <div class="flex items-center justify-between text-xs text-slate-700">
-          <span class="font-medium text-slate-800">${p.tierLabel}: <strong class="font-black text-slate-900">${p.qty} vé</strong></span>
-          <span class="font-extrabold text-slate-900">${formatMoney(p.sellingPrice)} đ/vé</span>
+        <div class="flex items-center justify-between text-xs text-[#475569]">
+          <span class="font-normal">${p.tierLabel}: <strong class="font-bold text-[#0F172A]">${p.qty} vé</strong></span>
+          <span class="font-bold text-[#0F172A]">${formatMoney(p.sellingPrice)} đ/vé</span>
         </div>
       `).join('');
+
+      const conditionText = [grp.dateStr ? `Ngày sử dụng: ${grp.dateStr}` : '', grp.marketLabel, grp.diningText].filter(Boolean).join(' • ');
 
       html += `
         <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/90 bg-white space-y-3.5 shadow-2xs">
@@ -393,40 +395,22 @@ function renderOrderConfirmationPage() {
           <div class="flex items-start gap-3">
             <img src="${grp.destImage}" alt="${grp.pkgTitle}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-slate-200 shadow-2xs">
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-bold text-[#F25C22] truncate mb-0.5">${grp.destName}</div>
-              <h3 class="text-sm sm:text-base font-black text-slate-900 uppercase leading-snug tracking-tight line-clamp-2">${grp.pkgTitle}</h3>
+              <h3 class="text-sm sm:text-base font-bold text-[#0F172A] uppercase leading-snug tracking-tight line-clamp-2">${grp.pkgTitle}</h3>
+              ${conditionText ? `<div class="text-xs text-[#475569] font-normal mt-1">${conditionText}</div>` : ''}
             </div>
           </div>
 
-          <!-- Các thẻ điều kiện áp dụng (Badges Row) -->
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-slate-700 text-[11px] font-bold border border-slate-200 shadow-2xs">
-              <i class="fa-regular fa-calendar-check text-[#F25C22] text-[10px]"></i>
-              <span>Ngày dùng: <strong class="text-slate-900 font-extrabold">${grp.dateStr}</strong></span>
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 font-black text-[11px] shadow-2xs">
-              <i class="fa-solid fa-users text-[10px]"></i>
-              <span>${grp.marketLabel}</span>
-            </span>
-            ${grp.diningText ? `
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-[#F25C22] bg-[#FFF7ED] border border-orange-200 shadow-2xs">
-                <i class="fa-solid fa-utensils text-[9px] text-[#F25C22]"></i>
-                <span>${grp.diningText}</span>
-              </span>` : ''}
-          </div>
-
           <!-- Khung chi tiết đối tượng & Tạm tính gói -->
-          <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/80 space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
             <div class="space-y-1.5">${paxLinesHtml}</div>
             <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between">
-              <span class="text-xs font-black text-slate-500 uppercase tracking-wide">TẠM TÍNH:</span>
+              <span class="text-xs font-bold text-[#475569] uppercase tracking-wide">TẠM TÍNH:</span>
               <span class="font-black text-base sm:text-lg text-[#F25C22]">${formatMoney(grp.totalSubtotal)} đ</span>
             </div>
           </div>
 
           <!-- Ghi chú chính sách hoàn/hủy -->
-          <div class="bg-amber-50/70 border border-amber-200/60 rounded-xl px-3 py-1.5 text-[11px] text-amber-800 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-circle-info text-amber-600 text-xs shrink-0"></i>
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-[11px] text-[#475569] font-medium">
             <span>Vé không hoàn hủy trong ngày sử dụng • Miễn phí đổi ngày trước 24h.</span>
           </div>
         </div>`;
@@ -454,9 +438,9 @@ function renderOrderConfirmationPage() {
         const sellPrice = getTierPrice(orderItem, pkg, t);
         packageSubtotal += q * sellPrice;
         tierRows.push(`
-          <div class="flex items-center justify-between text-xs text-slate-700">
-            <span class="font-medium text-slate-800">${cfg.label}: <strong class="font-black text-slate-900">${q} vé</strong></span>
-            <span class="font-extrabold text-slate-900">${formatMoney(sellPrice)} đ/vé</span>
+          <div class="flex items-center justify-between text-xs text-[#475569]">
+            <span class="font-normal">${cfg.label}: <strong class="font-bold text-[#0F172A]">${q} vé</strong></span>
+            <span class="font-bold text-[#0F172A]">${formatMoney(sellPrice)} đ/vé</span>
           </div>
         `);
       });
@@ -467,6 +451,7 @@ function renderOrderConfirmationPage() {
         ? `${diningRest.name} • ${diningSlot.timeRange}`
         : '';
       const marketLabel = pkg.marketLabel || 'Ngoại tỉnh';
+      const conditionText = [formattedUsageDate ? `Ngày sử dụng: ${formattedUsageDate}` : '', marketLabel, diningText].filter(Boolean).join(' • ');
 
       html += `
         <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/90 bg-white space-y-3.5 shadow-2xs">
@@ -474,40 +459,22 @@ function renderOrderConfirmationPage() {
           <div class="flex items-start gap-3">
             <img src="${destImage}" alt="${pkg.title}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-slate-200 shadow-2xs">
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-bold text-[#F25C22] truncate mb-0.5">${destName}</div>
-              <h3 class="text-sm sm:text-base font-black text-slate-900 uppercase leading-snug tracking-tight line-clamp-2">${pkg.title}</h3>
+              <h3 class="text-sm sm:text-base font-bold text-[#0F172A] uppercase leading-snug tracking-tight line-clamp-2">${pkg.title}</h3>
+              ${conditionText ? `<div class="text-xs text-[#475569] font-normal mt-1">${conditionText}</div>` : ''}
             </div>
           </div>
 
-          <!-- Các thẻ điều kiện áp dụng (Badges Row) -->
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-slate-700 text-[11px] font-bold border border-slate-200 shadow-2xs">
-              <i class="fa-regular fa-calendar-check text-[#F25C22] text-[10px]"></i>
-              <span>Ngày dùng: <strong class="text-slate-900 font-extrabold">${formattedUsageDate}</strong></span>
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 font-black text-[11px] shadow-2xs">
-              <i class="fa-solid fa-users text-[10px]"></i>
-              <span>${marketLabel}</span>
-            </span>
-            ${diningText ? `
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-[#F25C22] bg-[#FFF7ED] border border-orange-200 shadow-2xs">
-                <i class="fa-solid fa-utensils text-[9px] text-[#F25C22]"></i>
-                <span>${diningText}</span>
-              </span>` : ''}
-          </div>
-
           <!-- Khung chi tiết đối tượng & Tạm tính gói -->
-          <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200/80 space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
             <div class="space-y-1.5">${tierRows.join('')}</div>
             <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between">
-              <span class="text-xs font-black text-slate-500 uppercase tracking-wide">TẠM TÍNH:</span>
+              <span class="text-xs font-bold text-[#475569] uppercase tracking-wide">TẠM TÍNH:</span>
               <span class="font-black text-base sm:text-lg text-[#F25C22]">${formatMoney(packageSubtotal)} đ</span>
             </div>
           </div>
 
           <!-- Ghi chú chính sách hoàn/hủy -->
-          <div class="bg-amber-50/70 border border-amber-200/60 rounded-xl px-3 py-1.5 text-[11px] text-amber-800 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-circle-info text-amber-600 text-xs shrink-0"></i>
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-[11px] text-[#475569] font-medium">
             <span>Vé không hoàn hủy trong ngày sử dụng • Miễn phí đổi ngày trước 24h.</span>
           </div>
         </div>`;

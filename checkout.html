@@ -23,14 +23,12 @@
             <i class="fa-solid fa-arrow-left text-sm"></i>
           </button>
           <div class="min-w-0">
-            <div class="text-[11px] font-black uppercase tracking-wider text-[#F25C22]">Xác nhận đơn hàng</div>
-            <h1 id="confirmTopVenueName" class="text-base sm:text-xl font-black text-slate-900 truncate">Sun World Ba Na Hills</h1>
-            <p id="confirmSupplierHeaderInfo" class="text-xs text-slate-500 font-semibold truncate">Tập đoàn Sun World • API Đối tác KDL</p>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#F25C22]">Xác nhận đơn hàng</div>
+            <h1 id="confirmTopVenueName" class="text-base sm:text-xl font-bold text-[#0F172A] truncate">Sun World Ba Na Hills</h1>
+            <p id="confirmSupplierHeaderInfo" class="text-xs text-[#475569] font-medium truncate">Tập đoàn Sun World • API Đối tác KDL</p>
           </div>
         </div>
-        <span id="confirmTicketTotalCountBadge" class="px-3.5 py-1.5 rounded-full bg-[#FFF7ED] border border-orange-200 text-[#F25C22] text-xs font-black shrink-0 shadow-2xs">
-          0 vé
-        </span>
+        <span id="confirmTicketTotalCountBadge" class="hidden">0 vé</span>
       </div>
 
       <!-- Bố cục 2 cột Desktop / 1 cột Mobile -->
@@ -42,16 +40,15 @@
           <!-- Card 1 – Thông tin khách hàng (Customer Information Card) -->
       <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 space-y-4 shadow-xs">
         <div class="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-2 text-slate-900 font-black text-base">
-            <i class="fa-solid fa-user-check text-[#F25C22]"></i>
+          <div class="text-[#0F172A] font-bold text-base">
             <span>Thông tin khách hàng</span>
           </div>
           <!-- Quick-Fill Pills -->
           <div class="flex items-center gap-2">
-            <button type="button" onclick="autofillAgentInfo()" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold cursor-pointer transition-colors shadow-2xs flex items-center gap-1">
+            <button type="button" onclick="autofillAgentInfo()" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#475569] text-xs font-semibold cursor-pointer transition-colors shadow-2xs">
               <span>Thông tin Đại lý</span>
             </button>
-            <button type="button" onclick="openFamiliarCustomerModal()" class="px-3 py-1.5 rounded-full bg-[#FFF7ED] hover:bg-orange-100 text-[#F25C22] border border-orange-200/80 text-xs font-extrabold cursor-pointer transition-colors shadow-2xs flex items-center gap-1">
+            <button type="button" onclick="openFamiliarCustomerModal()" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#475569] border border-slate-200 text-xs font-semibold cursor-pointer transition-colors shadow-2xs">
               <span>Khách quen</span>
             </button>
           </div>
@@ -59,35 +56,34 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Họ và tên <span class="text-rose-500">*</span></label>
-            <input id="cust_full_name" type="text" oninput="handleCustomerInput('fullName', this.value)" placeholder="VD: Nguyễn Thị Kim Hoàng" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
+            <label class="block text-xs font-semibold text-[#475569] mb-1">Họ và tên <span class="text-rose-500">*</span></label>
+            <input id="cust_full_name" type="text" oninput="handleCustomerInput('fullName', this.value)" placeholder="VD: Nguyễn Thị Kim Hoàng" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
             <p id="err_cust_full_name" class="hidden text-[11px] text-rose-500 font-semibold mt-1">Vui lòng nhập họ và tên hợp lệ (tối thiểu 2 ký tự).</p>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại <span class="text-rose-500">*</span></label>
-            <input id="cust_phone_number" type="tel" oninput="handleCustomerInput('phoneNumber', this.value)" placeholder="VD: 0987 654 321" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
+            <label class="block text-xs font-semibold text-[#475569] mb-1">Số điện thoại <span class="text-rose-500">*</span></label>
+            <input id="cust_phone_number" type="tel" oninput="handleCustomerInput('phoneNumber', this.value)" placeholder="VD: 0987 654 321" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
             <p id="err_cust_phone_number" class="hidden text-[11px] text-rose-500 font-semibold mt-1">Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 chữ số).</p>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Email nhận vé <span class="text-rose-500">*</span></label>
-          <input id="cust_email_address" type="email" oninput="handleCustomerInput('email', this.value)" placeholder="VD: hoangntk@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
+          <label class="block text-xs font-semibold text-[#475569] mb-1">Email nhận vé <span class="text-rose-500">*</span></label>
+          <input id="cust_email_address" type="email" oninput="handleCustomerInput('email', this.value)" placeholder="VD: hoangntk@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]" />
           <p id="err_cust_email_address" class="hidden text-[11px] text-rose-500 font-semibold mt-1">Vui lòng nhập địa chỉ email hợp lệ.</p>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-xs font-bold text-slate-700">Ghi chú đơn hàng</label>
-            <span id="charCountNote" class="text-[11px] text-slate-400 font-semibold">0/500 ký tự</span>
+            <label class="text-xs font-semibold text-[#475569]">Ghi chú đơn hàng</label>
+            <span id="charCountNote" class="text-[11px] text-[#94A3B8] font-normal">0/500 ký tự</span>
           </div>
-          <textarea id="order_customer_note" rows="2" maxlength="500" oninput="handleCustomerInput('note', this.value); updateNoteCharCount();" placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-normal text-slate-800 focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]"></textarea>
+          <textarea id="order_customer_note" rows="2" maxlength="500" oninput="handleCustomerInput('note', this.value); updateNoteCharCount();" placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-normal text-[#0F172A] focus:outline-none focus:border-[#F25C22] focus:ring-1 focus:ring-[#F25C22]"></textarea>
         </div>
 
         <!-- Banner lưu ý ở đáy Card -->
-        <div class="bg-amber-50/90 border border-amber-200/90 rounded-xl p-3 flex items-center gap-2.5 text-xs text-amber-900">
-          <i class="fa-solid fa-shield-halved text-[#F25C22] text-sm shrink-0"></i>
-          <span class="font-semibold">Vé QR/PDF sẽ gửi qua Email ngay sau khi thanh toán.</span>
+        <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-3 text-xs text-[#475569] font-medium">
+          <span>Vé QR/PDF sẽ gửi qua Email ngay sau khi thanh toán.</span>
         </div>
       </section>
 
@@ -95,14 +91,11 @@
       <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
         <!-- Header Nhóm Khu du lịch -->
         <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3 bg-white">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-2.5 h-2.5 rounded-full bg-[#F25C22] shrink-0"></span>
-            <div class="min-w-0">
-              <h2 id="card2DestName" class="text-sm sm:text-base font-black text-slate-900 truncate">Sun World Ba Na Hills</h2>
-              <div id="card2SupplierSubtitle" class="text-xs font-semibold text-blue-600 truncate">Tập đoàn Sun World • API Đối tác KDL</div>
-            </div>
+          <div class="min-w-0">
+            <h2 class="text-sm sm:text-base font-bold text-[#0F172A] truncate">Thông tin gói vé / dịch vụ</h2>
+            <div id="card2SupplierSubtitle" class="text-xs font-normal text-[#475569] truncate">Tập đoàn Sun World • API Đối tác KDL</div>
           </div>
-          <span id="card2TotalTicketsBadge" class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-black shrink-0">
+          <span id="card2TotalTicketsBadge" class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[#0F172A] text-xs font-semibold shrink-0">
             0 vé đã chọn
           </span>
         </div>
@@ -113,34 +106,23 @@
 
       <!-- Card 3 – Phương thức thanh toán (Payment Method Card) -->
       <section class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 space-y-4 shadow-xs">
-        <div class="text-base font-black text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-credit-card text-[#F25C22]"></i>
+        <div class="text-base font-bold text-[#0F172A]">
           <span>Phương thức thanh toán</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <!-- Thẻ 1: Ví điện tử -->
-          <button type="button" data-pm="wallet" onclick="selectConfirmPaymentMethod('wallet')" class="confirm-pm-btn p-4 rounded-2xl border-2 transition-all cursor-pointer text-left block space-y-2 select-none">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 text-[#F25C22] flex items-center justify-center shrink-0 text-sm">
-                <i class="fa-solid fa-wallet"></i>
-              </div>
-              <span class="font-black text-sm text-slate-900 truncate">Ví điện tử</span>
-            </div>
-            <div class="text-xs text-slate-500 font-semibold pl-10.5">
-              Số dư: <span id="confirmWalletBalanceDisplay" class="font-extrabold text-[#F25C22]">1.000.000 đ</span>
+          <button type="button" data-pm="wallet" onclick="selectConfirmPaymentMethod('wallet')" class="confirm-pm-btn p-4 rounded-2xl border-2 transition-all cursor-pointer text-left block space-y-1.5 select-none">
+            <div class="font-bold text-sm text-[#0F172A] truncate">Ví điện tử</div>
+            <div class="text-xs text-[#475569] font-medium">
+              Số dư: <span id="confirmWalletBalanceDisplay" class="font-bold text-[#0F172A]">1.000.000 đ</span>
             </div>
           </button>
 
           <!-- Thẻ 2: Hiển thị mã QR (Áp dụng cho khách) -->
-          <button type="button" data-pm="vietqr" onclick="selectConfirmPaymentMethod('vietqr')" class="confirm-pm-btn p-4 rounded-2xl border-2 transition-all cursor-pointer text-left block space-y-2 select-none">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0 text-sm">
-                <i class="fa-solid fa-qrcode"></i>
-              </div>
-              <span class="font-black text-sm text-slate-900 truncate">Hiển thị mã QR (Áp dụng cho khách)</span>
-            </div>
-            <div class="text-xs text-slate-500 font-semibold pl-10.5">
+          <button type="button" data-pm="vietqr" onclick="selectConfirmPaymentMethod('vietqr')" class="confirm-pm-btn p-4 rounded-2xl border-2 transition-all cursor-pointer text-left block space-y-1.5 select-none">
+            <div class="font-bold text-sm text-[#0F172A] truncate">Hiển thị mã QR (Áp dụng cho khách)</div>
+            <div class="text-xs text-[#475569] font-medium">
               Quét VietQR theo giá thu khách • Giữ chỗ 30 phút
             </div>
           </button>
@@ -153,40 +135,38 @@
         <!-- Cột phải (~35%–38% chiều rộng): Chứa duy nhất card Tóm tắt thanh toán, trượt theo khi cuộn -->
         <div class="checkout-right-column min-w-0 lg:sticky lg:top-5 self-start" style="position: sticky; top: 20px; align-self: flex-start;">
           <!-- Card 4 – Card Tóm tắt thanh toán & Kiểm soát Số dư (Payment Summary Card) -->
-          <section class="bg-white rounded-2xl border border-slate-200/90 shadow-md overflow-hidden">
-        <!-- Header nền cam đặc (#F25C22) với tiêu đề trắng 🧾 Tóm tắt thanh toán -->
+          <section class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+        <!-- Header nền cam đặc (#F25C22) với tiêu đề trắng Tóm tắt thanh toán -->
         <div class="bg-[#F25C22] px-5 py-4 text-white flex items-center justify-between">
-          <div class="font-black text-base flex items-center gap-2">
-            <i class="fa-solid fa-receipt text-lg"></i>
+          <div class="font-bold text-base">
             <span>Tóm tắt thanh toán</span>
           </div>
         </div>
 
         <div class="p-4 sm:p-6 space-y-4">
-          <!-- Badge Ngày sử dụng: Khung cam nhạt tổng hợp tất cả ngày -->
-          <div class="p-3.5 rounded-xl bg-[#FFF7ED] border border-orange-200/80 flex items-center gap-2 text-xs text-[#C2410C] font-semibold">
-            <i class="fa-regular fa-calendar-check text-[#F25C22] text-sm shrink-0"></i>
-            <span>Ngày sử dụng: <strong id="confirmSummaryDateLabel" class="font-black text-[#9A3412]">-</strong></span>
+          <!-- Khung text Ngày sử dụng: 18/11/2026 nền cam nhạt (#FFF8F5) viền cam mảnh (#FFD6C2) -->
+          <div class="p-3.5 rounded-xl bg-[#FFF8F5] border border-[#FFD6C2] text-xs text-[#0F172A] font-medium">
+            <span>Ngày sử dụng: <strong id="confirmSummaryDateLabel" class="font-bold text-[#0F172A]">-</strong></span>
           </div>
 
           <!-- Bảng kê dòng tiền -->
           <div class="space-y-2.5 text-xs sm:text-sm">
-            <div class="flex justify-between text-slate-500">
+            <div class="flex justify-between text-[#475569]">
               <span>Tổng giá trị đơn hàng (Niêm yết)</span>
-              <span id="confirmTotalListed" class="line-through font-semibold text-slate-400">0 đ</span>
+              <span id="confirmTotalListed" class="line-through font-normal text-[#94A3B8]">0 đ</span>
             </div>
-            <div class="flex justify-between text-emerald-600 font-bold">
-              <span>🏷️ Giảm giá Đại lý (Chiết khấu)</span>
-              <span id="confirmDiscountAmount">- 0 đ</span>
+            <div class="flex justify-between text-[#475569]">
+              <span>Giảm giá Đại lý (Chiết khấu)</span>
+              <span id="confirmDiscountAmount" class="font-semibold text-[#0F172A]">- 0 đ</span>
             </div>
-            <div class="flex justify-between text-slate-800 font-black">
+            <div class="flex justify-between text-[#475569]">
               <span>Tổng tiền đối tác (Net)</span>
-              <span id="confirmTotalNet">0 đ</span>
+              <span id="confirmTotalNet" class="font-bold text-[#0F172A]">0 đ</span>
             </div>
             <div class="pt-3 border-t border-dashed border-slate-200 flex justify-between items-baseline">
               <div>
-                <div class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">TỔNG CỘNG</div>
-                <div class="text-[11px] text-slate-400 font-medium">(Đã gồm thuế & phí)</div>
+                <div class="text-xs sm:text-sm font-bold text-[#0F172A] uppercase tracking-wide">TỔNG CỘNG</div>
+                <div class="text-[11px] text-[#94A3B8] font-normal">(Đã gồm thuế & phí)</div>
               </div>
               <span id="order_grand_total" class="text-xl sm:text-2xl font-black text-[#F25C22]">0 đ</span>
             </div>
@@ -194,41 +174,37 @@
 
           <!-- Khối kiểm tra Số dư ví -->
           <div id="confirmWalletCheckBlock" class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3 text-xs">
-            <div class="flex items-center gap-1.5 shrink-0 text-slate-700 font-bold pt-0.5">
-              <span>👛</span>
+            <div class="text-[#475569] font-medium pt-0.5">
               <span>Số dư ví sau trừ:</span>
             </div>
             <div class="text-right flex flex-col items-end min-w-0">
               <div id="confirmWalletAfterPayRow" class="flex items-center justify-end gap-1.5">
-                <span id="confirmWalletAfterPayStatus" class="font-black text-rose-600 text-xs sm:text-sm">Số dư ví không đủ</span>
-                <button id="btnOpenTopupFromDeficit" type="button" onclick="openQuickWalletModalFromCheckout()" title="Nạp tiền vào ví" class="w-5 h-5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 transition-all">
+                <span id="confirmWalletAfterPayStatus" class="font-bold text-rose-600 text-xs sm:text-sm">Số dư ví không đủ</span>
+                <button id="btnOpenTopupFromDeficit" type="button" onclick="openQuickWalletModalFromCheckout()" title="Nạp tiền vào ví" class="w-5 h-5 rounded-full bg-[#F25C22] hover:bg-[#d84814] text-white font-bold text-xs flex items-center justify-center shrink-0 cursor-pointer shadow-xs active:scale-95 transition-all">
                   <i class="fa-solid fa-plus text-[10px]"></i>
                 </button>
               </div>
-              <div id="confirmWalletAfterPayDeficit" class="text-xs font-black text-rose-600 mt-0.5">(Thiếu 1.704.000 đ)</div>
+              <div id="confirmWalletAfterPayDeficit" class="text-xs font-bold text-rose-600 mt-0.5">(Thiếu 1.704.000 đ)</div>
             </div>
           </div>
 
           <!-- Cụm nút điều hướng phụ -->
           <div class="grid grid-cols-2 gap-3 pt-1">
-            <button type="button" onclick="handleEditOrAddMoreTickets()" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 hover:border-slate-400 text-slate-700 font-extrabold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs active:scale-95">
-              <i class="fa-solid fa-pen text-xs text-slate-500"></i>
+            <button type="button" onclick="handleEditOrAddMoreTickets()" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 hover:border-slate-400 text-[#475569] font-bold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center shadow-2xs active:scale-95">
               <span>Chỉnh sửa</span>
             </button>
-            <button type="button" onclick="handleGoBackToBooking()" class="w-full py-2.5 px-3 rounded-xl border border-orange-200/90 bg-[#FFF7ED] hover:bg-orange-100 text-[#F25C22] font-black text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs active:scale-95">
-              <i class="fa-solid fa-plus text-xs"></i>
+            <button type="button" onclick="handleGoBackToBooking()" class="w-full py-2.5 px-3 rounded-xl border border-[#FFD6C2] bg-[#FFF8F5] hover:bg-orange-100/70 text-[#F25C22] font-bold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center shadow-2xs active:scale-95">
               <span>Chọn thêm</span>
             </button>
           </div>
 
           <!-- Nút Submit chính -->
-          <button id="btnFinalPayNow" type="button" onclick="handleProcessFinalPayment()" class="w-full py-4 rounded-xl font-black text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer">
+          <button id="btnFinalPayNow" type="button" onclick="handleProcessFinalPayment()" class="w-full py-4 rounded-xl font-bold text-sm sm:text-base uppercase tracking-wider flex items-center justify-center shadow-md transition-all cursor-pointer">
             <span>Xác nhận &amp; Thanh toán</span>
           </button>
 
           <!-- Nút lưu trạng thái phụ -->
-          <button type="button" onclick="handleSaveOrderPendingOrDraft('Nháp')" class="w-full py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-2xs active:scale-95">
-            <i class="fa-regular fa-clock text-xs text-slate-500"></i>
+          <button type="button" onclick="handleSaveOrderPendingOrDraft('Nháp')" class="w-full py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-[#475569] font-bold text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-center shadow-2xs active:scale-95">
             <span>Lưu đơn Nháp</span>
           </button>
         </div>
