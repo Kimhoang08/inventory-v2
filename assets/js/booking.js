@@ -1683,10 +1683,10 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
           <span class="font-bold ${isDesk ? 'text-xs' : 'text-sm'} text-[#0F172A]">${config.label}</span>
           ${config.condition ? `<span class="${isDesk ? 'text-[11px]' : 'text-xs'} text-[#F25C19] font-medium">(${config.condition})</span>` : ''}
         </div>
-        <!-- Bên phải: Giá thực nhận/đơn giá hiển thị 902.000 đ (chữ đậm màu đen) và ngay bên dưới là giá gạch ngang 1.058.000 đ (chữ xám nhạt) -->
+        <!-- Bên phải: Giá vốn Net (chữ đậm màu đen) và giá niêm yết gạch ngang (chữ xám nhạt) cố định không đổi khi tùy chỉnh chiết khấu -->
         <div class="text-right shrink-0">
-          <div class="${isDesk ? 'text-xs' : 'text-sm'} font-bold text-[#0F172A]">${formatMoney(sellingPrice)} đ</div>
-          ${config.listedPrice > sellingPrice ? `<div class="${isDesk ? 'text-[10px]' : 'text-xs'} text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</div>` : ''}
+          <div class="${isDesk ? 'text-xs' : 'text-sm'} font-bold text-[#0F172A]">${formatMoney(config.netPrice)} đ</div>
+          ${config.listedPrice > config.netPrice ? `<div class="${isDesk ? 'text-[10px]' : 'text-xs'} text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</div>` : ''}
         </div>
       </div>
 
