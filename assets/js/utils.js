@@ -435,8 +435,9 @@ function getTierPrice(orderItem, pkg, tier) {
   if (orderItem && typeof orderItem[key] === 'number') return orderItem[key];
   if (typeof bookingSessionDiscountRate === 'number') {
     const rate = Math.max(0, Math.min(100, bookingSessionDiscountRate));
-    const discount = Math.round(cfg.listedPrice * (rate / 100));
-    return Math.max(0, cfg.listedPrice - discount);
+    const commission = Math.max(0, (cfg.listedPrice || 0) - (cfg.netPrice || 0));
+    const discount = Math.floor((commission * (rate / 100)) / 1000) * 1000;
+    return Math.max(cfg.netPrice || 0, (cfg.listedPrice || 0) - discount);
   }
   return cfg.listedPrice;
 }

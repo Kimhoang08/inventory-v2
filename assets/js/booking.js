@@ -1497,14 +1497,19 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
 
 function calculateDiscountedTierPrice(listedPrice, netPrice, discountPct) {
   const listed = Number(listedPrice) || 0;
+  const net = Number(netPrice) || 0;
   const pct = Math.max(0, Math.min(100, Math.round(Number(discountPct) || 0)));
   if (pct === 0 || listed <= 0) return { sellingPrice: listed, discountPerTicket: 0 };
 
-  // Công thức: ΔP_i = Round(P_niêm yết, i * D / 100)
-  const discountPerTicket = Math.round(listed * (pct / 100));
+  // Hoa_hong(i) = P_niem_yet(i) - P_net(i): Biên hoa hồng Đại lý được hưởng trên 1 vé
+  const commission = Math.max(0, listed - net);
 
-  // Giá thực nhận / vé (Giá thu khách): P_thu khách, i = P_niêm yết, i - ΔP_i
-  const sellingPrice = Math.max(0, listed - discountPerTicket);
+  // Tien_giam(i) = Floor( [ (P_niem_yet(i) - P_net(i)) x D / 100 ] , 1000 )
+  // Làm tròn xuống bội số 1.000 đồng
+  const discountPerTicket = Math.floor((commission * (pct / 100)) / 1000) * 1000;
+
+  // Gia_thuc_nhan(i) = P_niem_yet(i) - Tien_giam(i)
+  const sellingPrice = Math.max(net, listed - discountPerTicket);
 
   return { sellingPrice, discountPerTicket };
 }
