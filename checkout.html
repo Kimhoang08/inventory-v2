@@ -121,9 +121,9 @@
 
           <!-- Thẻ 2: Hiển thị mã QR (Áp dụng cho khách) -->
           <button type="button" data-pm="vietqr" onclick="selectConfirmPaymentMethod('vietqr')" class="confirm-pm-btn p-4 rounded-2xl border-2 transition-all cursor-pointer text-left block space-y-1.5 select-none">
-            <div class="font-bold text-sm text-[#0F172A] truncate">Hiển thị mã QR (Áp dụng cho khách)</div>
-            <div class="text-xs text-[#475569] font-medium">
-              Quét VietQR theo giá thu khách • Giữ chỗ 30 phút
+            <div class="font-bold text-sm text-[#0F172A]">Hiển thị mã QR (Thu khách)</div>
+            <div class="text-xs text-[#475569] font-medium leading-relaxed">
+              Quét VietQR giá thu khách • Giữ chỗ 30 phút
             </div>
           </button>
         </div>
@@ -151,24 +151,24 @@
 
           <!-- Bảng kê dòng tiền -->
           <div class="space-y-2.5 text-xs sm:text-sm">
-            <div class="flex justify-between text-[#475569]">
+            <div class="flex justify-between items-center text-[#475569] gap-2">
               <span>Tổng giá trị đơn hàng (Niêm yết)</span>
-              <span id="confirmTotalListed" class="line-through font-normal text-[#94A3B8]">0 đ</span>
+              <span id="confirmTotalListed" class="line-through font-normal text-[#94A3B8] whitespace-nowrap shrink-0">0 đ</span>
             </div>
-            <div class="flex justify-between text-[#475569]">
+            <div class="flex justify-between items-center text-[#475569] gap-2">
               <span>Giảm giá Đại lý (Chiết khấu)</span>
-              <span id="confirmDiscountAmount" class="font-semibold text-[#0F172A]">- 0 đ</span>
+              <span id="confirmDiscountAmount" class="font-semibold text-[#0F172A] whitespace-nowrap shrink-0">- 0 đ</span>
             </div>
-            <div class="flex justify-between text-[#475569]">
+            <div class="flex justify-between items-center text-[#475569] gap-2">
               <span>Tổng tiền đối tác (Net)</span>
-              <span id="confirmTotalNet" class="font-bold text-[#0F172A]">0 đ</span>
+              <span id="confirmTotalNet" class="font-bold text-[#0F172A] whitespace-nowrap shrink-0">0 đ</span>
             </div>
-            <div class="pt-3 border-t border-dashed border-slate-200 flex justify-between items-baseline">
+            <div class="pt-3 border-t border-dashed border-slate-200 flex justify-between items-baseline gap-2">
               <div>
                 <div class="text-xs sm:text-sm font-bold text-[#0F172A] uppercase tracking-wide">TỔNG CỘNG</div>
                 <div class="text-[11px] text-[#94A3B8] font-normal">(Đã gồm thuế & phí)</div>
               </div>
-              <span id="order_grand_total" class="text-xl sm:text-2xl font-black text-[#F25C22]">0 đ</span>
+              <span id="order_grand_total" class="text-xl sm:text-2xl font-black text-[#F25C22] whitespace-nowrap shrink-0">0 đ</span>
             </div>
           </div>
 
