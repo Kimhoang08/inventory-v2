@@ -1498,7 +1498,7 @@ function buildOrderAccordionsMarkup(scopePrefix = 'desk') {
           </div>
         </div>
         ${orderItem.isExpanded ? `
-          <div class="p-3 sm:p-4 bg-white space-y-3 border-t border-[#E2E8F0]">
+          <div class="${scopePrefix === 'desk' ? 'p-2 space-y-1.5' : 'p-3 sm:p-4 space-y-3'} bg-white border-t border-[#E2E8F0]">
             ${inlineDiningHtml}
             ${!paxEnabled ? `<div class="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">Chọn Nhà hàng và Khung giờ để xem giá và chọn số lượng.</div>` : tiersHtml}
           </div>` : ''}
@@ -1629,42 +1629,67 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
   const discount = Math.max(0, config.listedPrice - sellingPrice);
   const lineTotal = qty * sellingPrice;
   const isListed = (sellingPrice >= config.listedPrice);
+  const isDesk = (scopePrefix === 'desk');
+
+  const cardClass = isDesk
+    ? `bg-white rounded-xl p-2 border border-[#E2E8F0] space-y-1.5 shadow-2xs ${!paxEnabled ? 'opacity-50' : ''}`
+    : `bg-white rounded-2xl p-3.5 border border-[#E2E8F0] space-y-3 shadow-2xs ${!paxEnabled ? 'opacity-50' : ''}`;
+
+  const btnMinusClass = isDesk
+    ? `w-6 h-6 rounded-md border border-[#F25C19] text-[#F25C19] hover:bg-orange-50 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-[9px] cursor-pointer active:scale-95`
+    : `w-8 h-8 rounded-lg border border-[#F25C19] text-[#F25C19] hover:bg-orange-50 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer active:scale-95`;
+
+  const btnPlusClass = isDesk
+    ? `w-6 h-6 rounded-md bg-[#F25C19] hover:bg-[#d84814] text-white font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-[9px] cursor-pointer shadow-2xs`
+    : `w-8 h-8 rounded-lg bg-[#F25C19] hover:bg-[#d84814] text-white font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer shadow-2xs`;
+
+  const qtySpanClass = isDesk
+    ? `w-6 text-center font-bold text-xs text-[#0F172A] select-none`
+    : `w-9 text-center font-bold text-sm text-[#0F172A] select-none`;
+
+  const inputPriceClass = isDesk
+    ? `w-28 h-7 px-2 rounded-lg border border-slate-200 bg-white text-right text-xs font-bold text-[#0F172A] focus:outline-none focus:border-[#F25C19] focus:ring-1 focus:ring-[#F25C19] transition-all`
+    : `w-32 sm:w-36 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-right text-xs sm:text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#F25C19] focus:ring-1 focus:ring-[#F25C19] transition-all`;
+
+  const row3Class = isDesk
+    ? `pt-1 border-t border-slate-100 flex items-center justify-between text-[11px]`
+    : `pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs`;
 
   return `
-    <div class="bg-white rounded-2xl p-3.5 border border-[#E2E8F0] space-y-3 shadow-2xs ${!paxEnabled ? 'opacity-50' : ''}">
+    <div class="${cardClass}">
       <!-- Hàng 1 — Tên hạng vé & Đơn giá tóm tắt -->
       <div class="flex items-start justify-between gap-2">
         <!-- Bên trái: Tên đối tượng Người lớn (chữ đậm màu đen) kèm điều kiện chiều cao (Cao trên 1m4) (màu cam) -->
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="font-bold text-sm text-[#0F172A]">${config.label}</span>
-          ${config.condition ? `<span class="text-xs text-[#F25C19] font-medium">(${config.condition})</span>` : ''}
+          <span class="font-bold ${isDesk ? 'text-xs' : 'text-sm'} text-[#0F172A]">${config.label}</span>
+          ${config.condition ? `<span class="${isDesk ? 'text-[11px]' : 'text-xs'} text-[#F25C19] font-medium">(${config.condition})</span>` : ''}
         </div>
         <!-- Bên phải: Giá thực nhận/đơn giá hiển thị 902.000 đ (chữ đậm màu đen) và ngay bên dưới là giá gạch ngang 1.058.000 đ (chữ xám nhạt) -->
         <div class="text-right shrink-0">
-          <div class="text-sm font-bold text-[#0F172A]">${formatMoney(sellingPrice)} đ</div>
-          ${config.listedPrice > sellingPrice ? `<div class="text-xs text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</div>` : ''}
+          <div class="${isDesk ? 'text-xs' : 'text-sm'} font-bold text-[#0F172A]">${formatMoney(sellingPrice)} đ</div>
+          ${config.listedPrice > sellingPrice ? `<div class="${isDesk ? 'text-[10px]' : 'text-xs'} text-[#94A3B8] line-through font-normal">${formatMoney(config.listedPrice)} đ</div>` : ''}
         </div>
       </div>
 
       <!-- Hàng 2 — Số lượng & Giá thực nhận/vé -->
-      <div class="flex items-end justify-between gap-3">
+      <div class="flex items-end justify-between gap-2">
         <!-- Bên trái: Nhãn SỐ LƯỢNG (chữ hoa nhỏ, xám) nằm phía trên bộ điều chỉnh gồm nút giảm - (viền cam), giá trị số 2 (chữ đậm) và nút tăng + (nền cam đặc, chữ trắng) gom trong một khung bo tròn viền cam -->
         <div>
-          <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1">SỐ LƯỢNG</div>
-          <div class="inline-flex items-center rounded-xl border border-[#F25C19] bg-white p-0.5 shadow-2xs">
-            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="w-8 h-8 rounded-lg border border-[#F25C19] text-[#F25C19] hover:bg-orange-50 font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer active:scale-95">
-              <i class="fa-solid fa-minus text-[10px]"></i>
+          <div class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-0.5">SỐ LƯỢNG</div>
+          <div class="inline-flex items-center rounded-lg border border-[#F25C19] bg-white p-0.5 shadow-2xs">
+            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', -1)" ${(!paxEnabled || qty <= 0) ? 'disabled' : ''} class="${btnMinusClass}">
+              <i class="fa-solid fa-minus text-[8px]"></i>
             </button>
-            <span class="w-9 text-center font-bold text-sm text-[#0F172A] select-none">${qty}</span>
-            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-[#F25C19] hover:bg-[#d84814] text-white font-bold flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs cursor-pointer shadow-2xs">
-              <i class="fa-solid fa-plus text-[10px]"></i>
+            <span class="${qtySpanClass}">${qty}</span>
+            <button type="button" onclick="updateMultiQty(${pkgId}, '${type}', 1)" ${!paxEnabled ? 'disabled' : ''} class="${btnPlusClass}">
+              <i class="fa-solid fa-plus text-[8px]"></i>
             </button>
           </div>
         </div>
 
         <!-- Bên phải: Nhãn GIÁ THỰC NHẬN / VÉ đi kèm badge nhỏ Áp niêm yết (viền/chữ cam nhạt), phía dưới là ô nhập/hiển thị giá trị 1.058.000 đ trong khung viền xám bo góc -->
         <div class="flex flex-col items-end">
-          <div class="flex items-center justify-end gap-1.5 mb-1">
+          <div class="flex items-center justify-end gap-1 mb-0.5">
             <span class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">GIÁ THỰC NHẬN / VÉ</span>
             <span id="${scopePrefix}-tagStatus-${pkgId}-${type}">
               ${isListed
@@ -1677,18 +1702,18 @@ function renderSubCategoryItem(pkgId, type, config, qty, sellingPrice, scopePref
                    id="${scopePrefix}-inputPrice-${pkgId}-${type}"
                    value="${formatMoney(sellingPrice)}"
                    oninput="handleMultiSellingPriceInput(${pkgId}, '${type}', this, '${scopePrefix}')"
-                   class="w-32 sm:w-36 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-right text-xs sm:text-sm font-bold text-[#0F172A] focus:outline-none focus:border-[#F25C19] focus:ring-1 focus:ring-[#F25C19] transition-all"
+                   class="${inputPriceClass}"
                    ${!paxEnabled ? 'disabled' : ''} />
-            <span class="ml-1.5 text-xs text-[#64748B] font-semibold">đ</span>
+            <span class="ml-1 text-xs text-[#64748B] font-semibold">đ</span>
           </div>
         </div>
       </div>
 
       <!-- Hàng 3 — Mức giảm & Thành tiền: Ngăn cách bằng đường kẻ ngang mảnh -->
-      <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+      <div class="${row3Class}">
         <!-- Bên trái: Nhãn pill nền xám nhạt Giảm: 0 đ/vé -->
         <div id="${scopePrefix}-discountLabel-${pkgId}-${type}">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-[#64748B]">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[10.5px] font-medium text-[#64748B]">
             Giảm: ${formatMoney(discount)} đ/vé
           </span>
         </div>

@@ -35,19 +35,19 @@
         </div>
       </div>
 
-      <!-- 2. Card KDL & NCC -->
-      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 sm:p-5 flex items-center justify-between gap-3 shadow-xs">
-        <div class="min-w-0">
-          <h2 id="detailDestinationName" class="text-base sm:text-lg font-bold text-[#0F172A] truncate">Sun World Ba Na Hills</h2>
-          <div id="detailSupplierSubtitle" class="text-xs text-[#64748B] font-normal mt-0.5 truncate">Tập đoàn Sun World • API Đối tác KDL</div>
-        </div>
-      </div>
-
       <!-- Grid 2 cột -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <!-- Cột Trái -->
-        <div class="lg:col-span-7 xl:col-span-7 space-y-6">
+        <div class="lg:col-span-7 xl:col-span-7 space-y-4 sm:space-y-6">
+
+          <!-- 2. Card KDL & NCC (Rút gọn nằm thẳng hàng với Cột Trái trên Desktop) -->
+          <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 sm:p-5 flex items-center justify-between gap-3 shadow-xs">
+            <div class="min-w-0">
+              <h2 id="detailDestinationName" class="text-base sm:text-lg font-bold text-[#0F172A] truncate">Sun World Ba Na Hills</h2>
+              <div id="detailSupplierSubtitle" class="text-xs text-[#64748B] font-normal mt-0.5 truncate">Tập đoàn Sun World • API Đối tác KDL</div>
+            </div>
+          </div>
 
           <!-- 3. Card Chọn ngày sử dụng dịch vụ -->
           <section id="dateSelectionSection" class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-4 sm:p-5 space-y-3.5">
@@ -173,32 +173,32 @@
         </div>
 
         <!-- Cột Phải (Desktop Sticky Summary Sidebar - Tóm tắt đơn đặt vé) -->
-        <div id="orderSidebarWrapper" class="hidden lg:block lg:col-span-5 xl:col-span-5 lg:sticky lg:top-6 space-y-4">
+        <div id="orderSidebarWrapper" class="hidden lg:block lg:col-span-5 xl:col-span-5 lg:sticky lg:top-6 space-y-3">
           <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-            <!-- 2.1. Header Card & NCC -->
-            <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between gap-2">
+            <!-- 2.1. Header Card & NCC (Gộp Ngày sử dụng lên cùng hàng tiêu đề góc trên bên phải) -->
+            <div class="p-3.5 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between gap-3">
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="text-sm sm:text-base font-black text-slate-900">Tóm tắt đơn đặt vé</h3>
-                  <span id="sidebarSelectedCountBadge" class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/80 text-[10px] font-extrabold shrink-0">
+                  <h3 class="text-sm font-black text-slate-900">Tóm tắt đơn đặt vé</h3>
+                  <span id="sidebarSelectedCountBadge" class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/80 text-[10px] font-extrabold shrink-0">
                     0 gói vé đang chọn
                   </span>
                 </div>
-                <div class="text-[11px] font-semibold text-slate-500 mt-1 flex items-center gap-1.5" id="orderSidebarSupplierBadge">
+                <div class="text-[10.5px] font-semibold text-slate-500 mt-0.5 flex items-center gap-1.5" id="orderSidebarSupplierBadge">
                   <span>NCC: Tập đoàn Sun World - API Đối tác</span>
                 </div>
               </div>
+
+              <!-- Ngày sử dụng (Góc trên bên phải, ngang hàng tiêu đề chính) -->
+              <div class="shrink-0 text-right">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400 tracking-wider">Ngày sử dụng</div>
+                <div id="summaryDateLabel" class="text-xs font-bold text-[#0F172A]">-</div>
+              </div>
             </div>
 
-            <div class="p-4 sm:p-5 space-y-4">
-              <div id="orderSidebarLockBanner" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] font-semibold text-amber-800">
+            <div class="p-3.5 space-y-3">
+              <div id="orderSidebarLockBanner" class="hidden p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] font-semibold text-amber-800">
                 Vui lòng chọn ngày sử dụng để hoàn tất đơn.
-              </div>
-
-              <!-- Ngày sử dụng -->
-              <div class="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-slate-50 border border-slate-200/80">
-                <span class="text-slate-500 font-medium">Ngày sử dụng:</span>
-                <strong id="summaryDateLabel" class="text-slate-900 font-bold">-</strong>
               </div>
 
               <!-- 2.2. Khu vực Tùy chỉnh chiết khấu khách hàng (Bổ sung mới) -->
@@ -207,39 +207,39 @@
                   <span>Chọn mức chiết khấu khách hàng</span>
                   <span class="text-[10px] text-slate-400 font-semibold normal-case">(Áp dụng tất cả đối tượng)</span>
                 </div>
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/90 shadow-2xs">
-                  <div class="flex items-center gap-2.5">
-                    <button type="button" id="desk-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25">
+                <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/90 shadow-2xs">
+                  <div class="flex items-center gap-2">
+                    <button type="button" id="desk-btnDiscountListed" onclick="resetDiscountToListedPrice()" class="px-2 py-1 rounded-lg text-[10.5px] font-extrabold border transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center bg-[#F25C22] text-white border-[#F25C22] shadow-sm shadow-orange-500/25">
                       <span>Áp Niêm Yết</span>
                     </button>
                     <div class="flex-1 flex items-center min-w-0">
-                      <input type="range" id="desk-globalDiscountSlider" min="0" max="100" step="1" value="0" oninput="handleGlobalDiscountChange(this.value, 'slider')" onchange="handleGlobalDiscountChange(this.value, 'slider')" style="accent-color: #F25C22; cursor: pointer;" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                      <input type="range" id="desk-globalDiscountSlider" min="0" max="100" step="1" value="0" oninput="handleGlobalDiscountChange(this.value, 'slider')" onchange="handleGlobalDiscountChange(this.value, 'slider')" style="accent-color: #F25C22; cursor: pointer;" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                     </div>
-                    <div class="relative flex items-center shrink-0 w-16">
-                      <input type="number" id="desk-globalDiscountInput" min="0" max="100" step="1" value="0" oninput="handleGlobalDiscountChange(this.value, 'input')" onchange="handleGlobalDiscountChange(this.value, 'input')" class="w-full pl-2 pr-5 py-1 text-center text-xs font-black bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#F25C22]">
-                      <span class="absolute right-2 text-slate-400 text-xs font-bold pointer-events-none">%</span>
+                    <div class="relative flex items-center shrink-0 w-14">
+                      <input type="number" id="desk-globalDiscountInput" min="0" max="100" step="1" value="0" oninput="handleGlobalDiscountChange(this.value, 'input')" onchange="handleGlobalDiscountChange(this.value, 'input')" class="w-full pl-1.5 pr-4 py-0.5 text-center text-xs font-black bg-white border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#F25C22]">
+                      <span class="absolute right-1.5 text-slate-400 text-xs font-bold pointer-events-none">%</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- 2.3. Khu vực Chi tiết vé đã chọn (Hiển thị đầy đủ, không cuộn nội bộ) -->
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-500">
                   <span>Chi tiết vé đã chọn</span>
                   <span id="totalTicketsCountBadge">0 vé</span>
                 </div>
-                <div id="orderTicketsAccordionContainer" class="space-y-2.5"></div>
+                <div id="orderTicketsAccordionContainer" class="space-y-2"></div>
               </div>
 
               <!-- 2.4. Bảng đối soát dòng tiền -->
-              <div class="pt-3 border-t border-slate-100 space-y-2 text-xs">
+              <div class="pt-2 border-t border-slate-100 space-y-1 text-xs">
                 <div class="flex justify-between text-slate-500"><span>Tổng giá niêm yết</span><span id="valTotalListed" class="font-bold text-slate-700">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Giá vốn Net đối tác</span><span id="valTotalPartner" class="font-bold text-slate-700">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Giảm trực tiếp cho khách</span><span id="valDirectDiscount" class="text-amber-600 font-bold">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Tổng tiền thu khách (Public QR)</span><span id="valTotalCollected" class="font-bold text-slate-900">0 đ</span></div>
                 <div class="flex justify-between text-slate-500"><span>Chênh lệch giá bán</span><span id="valPriceDifference" class="font-semibold text-slate-700">0 đ</span></div>
-                <div class="flex justify-between items-center text-emerald-700 font-bold pt-1.5 border-t border-dashed border-slate-200">
+                <div class="flex justify-between items-center text-emerald-700 font-bold pt-1 border-t border-dashed border-slate-200">
                   <span>Lợi nhuận Đại lý dự kiến</span>
                   <span id="valProfit" class="font-black text-sm text-emerald-700">+ 0 đ</span>
                 </div>
@@ -247,15 +247,15 @@
                   <span>Số dư Ví còn lại sau trừ</span>
                   <span id="walletRemaining" class="font-bold text-slate-700">0 đ</span>
                 </div>
-                <div class="flex justify-between items-baseline pt-2.5 border-t border-slate-200">
+                <div class="flex justify-between items-baseline pt-2 border-t border-slate-200">
                   <span class="text-xs font-black text-slate-900">Cần thanh toán đối tác (Ví):</span>
-                  <span id="valFinalPayable" class="text-lg font-black text-[#F25C22]">0 đ</span>
+                  <span id="valFinalPayable" class="text-base font-black text-[#F25C22]">0 đ</span>
                 </div>
               </div>
 
               <!-- Cụm nút thao tác (CTA) -->
-              <div class="space-y-2 pt-2">
-                <button id="btnContinueBooking" type="button" onclick="continueToCheckoutFromBooking()" disabled class="w-full py-3 rounded-xl bg-[#F25C22] hover:bg-[#d84814] disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-black shadow-sm cursor-pointer transition-colors uppercase tracking-wider">
+              <div class="space-y-1.5 pt-1.5">
+                <button id="btnContinueBooking" type="button" onclick="continueToCheckoutFromBooking()" disabled class="w-full py-2.5 rounded-xl bg-[#F25C22] hover:bg-[#d84814] disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-black shadow-sm cursor-pointer transition-colors uppercase tracking-wider">
                   Tiếp tục Thanh toán
                 </button>
                 <div class="grid grid-cols-2 gap-2">
@@ -410,6 +410,6 @@
   <script src="database/db-store.js"></script>
   <script src="assets/js/utils.js?v=2.9.3"></script>
   <script src="assets/js/layout.js?v=2.6.0"></script>
-  <script src="assets/js/booking.js?v=2.9.3"></script>
+  <script src="assets/js/booking.js?v=2.9.4"></script>
 </body>
 </html>
